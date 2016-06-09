@@ -301,3 +301,17 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#Unity
+Temp/
+obj/
+
+#Custom files
+Stani 2karche_Data/
+leveldata.txt
+*.exe
+*.sln
+*.csproj
+/Library
+
+
