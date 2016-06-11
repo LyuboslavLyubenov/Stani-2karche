@@ -72,7 +72,7 @@ public class BasicExamController : MonoBehaviour
         var questionSeriliazed = JsonUtility.ToJson(question);
         var messageType = "AskAudience";
 
-        for (int i = 0; i < question.Answers.Count; i++)
+        for (int i = 0; i < question.Answers.Length; i++)
         {
             audienceAnswerVoteCount.Add(question.Answers[i], 0);
         }

@@ -100,7 +100,7 @@ public class PlayingUIController : MonoBehaviour
     void LoadQuestion(Question question)
     {
         questionText.text = question.Text;
-        for (int i = 0; i < question.Answers.Count; i++)
+        for (int i = 0; i < question.Answers.Length; i++)
         {
             var buttonIndex = i;
             var answerObj = answersButtons[buttonIndex].gameObject;
@@ -218,7 +218,7 @@ public class PlayingUIController : MonoBehaviour
 
             generatedAudienceAnswers.Add(correctAnswer, correctAnswerChance);
 
-            for (int i = 0; i < currentQuestion.Answers.Count; i++)
+            for (int i = 0; i < currentQuestion.Answers.Length; i++)
             {
                 if (i == currentQuestion.CorrectAnswerIndex)
                 {

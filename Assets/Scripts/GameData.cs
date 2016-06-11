@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.IO;
 using System;
+using System.Collections.Generic;
 
 public class GameData : MonoBehaviour
 {
-    LevelData levelData = null;
-    int questionIndex = 0;
-    int currentMark = 2;
+    const string LevelPath = "LevelData/";
+    const int MarkMin = 3;
+    const int MarkMax = 6;
+
+    int currentQuestionIndex = 0;
+    int currentMarkIndex = 0;
+
+    List<List<Question>> marksQuestions = new List<List<Question>>();
 
     public EventHandler<MarkEventArgs> MarkIncrease = delegate
     {
@@ -15,41 +20,73 @@ public class GameData : MonoBehaviour
 
     void Start()
     {
-        LoadLevelData();
+        SerializeLevelData();
     }
 
-    void LoadLevelData()
+    void SerializeLevelData()
     {
-        var levelDataJson = File.ReadAllText("leveldata.txt");
-        levelData = JsonUtility.FromJson<LevelData>(levelDataJson);
+        for (int i = MarkMin; i <= MarkMax; i++)
+        {
+            var filePath = string.Format("{0}{1}.csv", LevelPath, i);
+            var questionsSerialized = new List<Question>();
+
+            using (StreamReader markQuestionsSR = new StreamReader(filePath, System.Text.Encoding.UTF8))
+            {
+                while (!markQuestionsSR.EndOfStream)
+                {
+                    var questionText = markQuestionsSR.ReadLine().Split(',')[0];
+                    var answersText = new string[4];
+                    var correctAnswerIndex = -1;
+
+                    for (int j = 0; j < 4; j++)
+                    {
+                        var answerParams = markQuestionsSR.ReadLine().Split(',');
+                        answersText[j] = answerParams[0];
+
+                        if (answerParams[1].ToLower() == "верен")
+                        {
+                            correctAnswerIndex = j;
+                        }
+                    }
+
+                    var question = new Question(questionText, answersText, correctAnswerIndex);
+                    questionsSerialized.Add(question);
+                    markQuestionsSR.ReadLine();
+                }
+            }
+
+            marksQuestions.Add(questionsSerialized);
+        }
     }
 
     public Question GetCurrentQuestion()
     {
-        var index = Mathf.Min(levelData.Questions.Count - 1, questionIndex - 1);
-        return levelData.Questions[index];
+        var questions = marksQuestions[currentMarkIndex];
+        var index = Mathf.Min(questions.Count - 1, currentQuestionIndex - 1);
+        return questions[index];
     }
 
     public Question GetNextQuestion()
     {
-        var mark = (((questionIndex) * 6) / levelData.Questions.Count);
-        var nextMark = Mathf.Min(6, ((questionIndex + 1) * 6) / levelData.Questions.Count);
+        var questions = marksQuestions[currentMarkIndex];
 
-        if (mark > currentMark)
+        if (currentQuestionIndex >= questions.Count)
         {
-            MarkIncrease(this, new MarkEventArgs(mark, nextMark));
-            currentMark = mark;
+            if (currentMarkIndex >= marksQuestions.Count)
+            {
+                return null;
+            }
+            else
+            {
+                currentMarkIndex++;
+                currentQuestionIndex = 0;
+
+                MarkIncrease(this, new MarkEventArgs(currentMarkIndex + 2));
+            }   
         }
 
-        if (questionIndex >= levelData.Questions.Count)
-        {
-            return null;   
-        }
-        else
-        {
-            var question = levelData.Questions[questionIndex++];
-            return question;
-        }
+        var question = questions[currentQuestionIndex++];
+        return question;
     }
 }
 
