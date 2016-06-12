@@ -1,11 +1,17 @@
 ﻿using UnityEngine.Networking;
+using System;
 
 public class NetworkData
 {
-    public NetworkData(int connectionId, byte[] buffer, NetworkEventType networkEventType)
+    public NetworkData(int connectionId, string message, NetworkEventType networkEventType)
     {
+        if (connectionId < 0)
+        {
+            throw new ArgumentOutOfRangeException("connectionId");
+        }
+
         this.ConnectionId = connectionId;
-        this.Buffer = buffer;
+        this.Message = message;
         this.NetworkEventType = networkEventType;
     }
 
@@ -15,31 +21,15 @@ public class NetworkData
         private set;
     }
 
-    public byte[] Buffer
+    public string Message
     {
         get;
-        private set;
+        set;
     }
 
     public NetworkEventType NetworkEventType
     {
         get;
         private set;
-    }
-
-    public string ConvertBufferToString()
-    {
-        var message = System.Text.Encoding.UTF8.GetString(Buffer).ToCharArray();
-        var result = new System.Text.StringBuilder();
-
-        foreach (var c in message)
-        {
-            if (c != '\0')
-            {
-                result.Append(c);
-            }
-        }
-
-        return result.ToString();
     }
 }

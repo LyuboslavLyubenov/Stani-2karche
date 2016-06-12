@@ -44,9 +44,12 @@ public class PlayingUIController : MonoBehaviour
         endGameUIController = EndGameUI.GetComponent<EndGameUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
-        basicExamController = GameObject.FindWithTag("MainCamera").GetComponent<BasicExamController>();
-        serverNetworkManager = GameObject.FindWithTag("MainCamera").GetComponent<ServerNetworkManager>();
-        gameData = GameObject.FindWithTag("MainCamera").GetComponent<GameData>();
+
+        var mainCamera = GameObject.FindWithTag("MainCamera");
+
+        basicExamController = mainCamera.GetComponent<BasicExamController>();
+        serverNetworkManager = mainCamera.GetComponent<ServerNetworkManager>();
+        gameData = mainCamera.GetComponent<GameData>();
 
         gameData.MarkIncrease += OnMarkChange;
 
@@ -137,19 +140,6 @@ public class PlayingUIController : MonoBehaviour
         currentMarkText.text = args.Mark.ToString();
     }
 
-    public void OnIncorrectAnswerClick()
-    {
-        //SHOW DEAD SCREEN :(
-        StartCoroutine(EndGameCoroutine());
-    }
-
-
-    public void OnCorrectAnswerClick()
-    {
-        StartCoroutine(LoadNextQuestionCoroutine());
-    }
-
-
     IEnumerator EndGameCoroutine()
     {
         yield return new WaitForFixedUpdate();
@@ -172,6 +162,56 @@ public class PlayingUIController : MonoBehaviour
         }
     }
 
+    IEnumerator ShowFriendAnswerCoroutine(string answer)
+    {
+        yield return new WaitForFixedUpdate();
+        FriendAnswerUI.SetActive(true);
+        friendAnswerUIController.SetResponse(answer);
+    }
+
+    IEnumerator FifthyChanceCoroutine()
+    {
+        List<int> disabledAnswersIndex = new List<int>();
+        var correctAnswerIndex = gameData.GetCurrentQuestion().CorrectAnswerIndex;
+
+        for (int i = 0; i < 2; i++)
+        {
+            int n;
+
+            while (true)
+            {
+                n = Random.Range(0, 4);
+
+                if (n != correctAnswerIndex && !disabledAnswersIndex.Contains(n))
+                {
+                    break;
+                }
+            }
+
+            disabledAnswersIndex.Add(n);
+        }
+
+        for (int i = 0; i < disabledAnswersIndex.Count; i++)
+        {
+            var disabledIndex = disabledAnswersIndex[i];
+            answersButtons[disabledIndex].gameObject.SetActive(false);
+        }
+
+        yield return null;
+    }
+
+    public void OnIncorrectAnswerClick()
+    {
+        //SHOW DEAD SCREEN :(
+        StartCoroutine(EndGameCoroutine());
+    }
+
+
+    public void OnCorrectAnswerClick()
+    {
+        StartCoroutine(LoadNextQuestionCoroutine());
+    }
+
     public void EndGame()
     {
         var currentMark = int.Parse(currentMarkText.text);
@@ -180,13 +220,6 @@ public class PlayingUIController : MonoBehaviour
         gameObject.SetActive(false);
 
         endGameUIController.SetMark(currentMark);
-    }
-
-    IEnumerator ShowFriendAnswerCoroutine(string answer)
-    {
-        yield return new WaitForFixedUpdate();
-        FriendAnswerUI.SetActive(true);
-        friendAnswerUIController.SetResponse(answer);
     }
 
     public void CallAFriend()
@@ -202,14 +235,13 @@ public class PlayingUIController : MonoBehaviour
         {
             basicExamController.AskFriend(currentQuestion);    
         }
-
     }
 
     public void AskAudience()
     {
         var currentQuestion = gameData.GetCurrentQuestion();
 
-        if (serverNetworkManager.ConnectedClientsCount <= 4)
+        if (serverNetworkManager.ConnectedClientsCount < 4)
         {
             var generatedAudienceAnswers = new Dictionary<string, int>();
             var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
@@ -242,37 +274,6 @@ public class PlayingUIController : MonoBehaviour
     public void FifthyChance()
     {
         StartCoroutine(FifthyChanceCoroutine());
-    }
-
-    IEnumerator FifthyChanceCoroutine()
-    {
-        List<int> disabledAnswersIndex = new List<int>();
-        var correctAnswerIndex = gameData.GetCurrentQuestion().CorrectAnswerIndex;
-
-        for (int i = 0; i < 2; i++)
-        {
-            int n;
-
-            while (true)
-            {
-                n = Random.Range(0, 4);
-
-                if (n != correctAnswerIndex && !disabledAnswersIndex.Contains(n))
-                {
-                    break;
-                }
-            }
-
-            disabledAnswersIndex.Add(n);
-        }
-
-        for (int i = 0; i < disabledAnswersIndex.Count; i++)
-        {
-            var disabledIndex = disabledAnswersIndex[i];
-            answersButtons[disabledIndex].gameObject.SetActive(false);
-        }
-
-        yield return null;
     }
 
 }

@@ -22,8 +22,6 @@ public class ServerNetworkManager : MonoBehaviour
 
     GameData gameData = null;
 
-    SecuritySettings securitySettings = null;
-
     public bool IsRunning
     {
         get
@@ -66,12 +64,11 @@ public class ServerNetworkManager : MonoBehaviour
 
     void Start()
     {
-        #if DEBUG
+        #if UNITY_EDITOR_WIN
         Application.runInBackground = true;
         #endif
 
         gameData = GameObject.FindWithTag("MainCamera").GetComponent<GameData>();
-        securitySettings = GameObject.FindWithTag("MainCamera").GetComponent<SecuritySettings>();
 
         ConfigureServer();
         StartServer();
@@ -88,39 +85,50 @@ public class ServerNetworkManager : MonoBehaviour
 
     IEnumerator UpdateCoroutine()
     {
-        if (isRunning)
+        while (true)
         {
-            var recieveNetworkData = NetworkTransportUtils.RecieveMessage();
-
-            switch (recieveNetworkData.NetworkEventType)
+            if (isRunning)
             {
-                case NetworkEventType.ConnectEvent:
-                    connectedClientsId.Add(recieveNetworkData.ConnectionId);
-                    OnClientConnect(this, EventArgs.Empty);
-                    break;
+                NetworkData recieveNetworkData = null;
+                bool hasError = false;
 
-                case NetworkEventType.BroadcastEvent:
-                    break;
+                try
+                {
+                    recieveNetworkData = NetworkTransportUtils.RecieveMessage();
+                }
+                catch (NetworkException e)
+                {
+                    Debug.Log(e.Message);
+                    hasError = true;
+                }
 
-                case NetworkEventType.DataEvent:
-                    var message = recieveNetworkData.ConvertBufferToString();
-
-                    if (!string.IsNullOrEmpty(message))
+                if (!hasError)
+                {
+                    switch (recieveNetworkData.NetworkEventType)
                     {
-                        OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, message));
-                    }
+                        case NetworkEventType.ConnectEvent:
+                            connectedClientsId.Add(recieveNetworkData.ConnectionId);
+                            OnClientConnect(this, EventArgs.Empty);
+                            break;
 
-                    break;
+                        case NetworkEventType.BroadcastEvent:
+                            break;
 
-                case NetworkEventType.DisconnectEvent:
-                    connectedClientsId.Remove(recieveNetworkData.ConnectionId);
-                    OnClientDisconnect(this, EventArgs.Empty);
-                    break;
+                        case NetworkEventType.DataEvent:
+                            var message = recieveNetworkData.Message;
+                            OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, message));
+                            break;
+
+                        case NetworkEventType.DisconnectEvent:
+                            connectedClientsId.Remove(recieveNetworkData.ConnectionId);
+                            OnClientDisconnect(this, EventArgs.Empty);
+                            break;
+                    }    
+                }
             }
-                
-        }
 
-        yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+        }
     }
 
     public void StartServer()
@@ -138,7 +146,6 @@ public class ServerNetworkManager : MonoBehaviour
 
     public void SendClientMessage(int clientId, string message)
     {
-        var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, securitySettings.NETWORK_ENCRYPTION_PASSWORD, securitySettings.SALT);
-        NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, encryptedMessage);
+        NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
     }
 }
