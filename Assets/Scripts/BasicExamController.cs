@@ -22,7 +22,7 @@ public class BasicExamController : MonoBehaviour
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
         serverNetworkManager = GameObject.FindWithTag("MainCamera").GetComponent<ServerNetworkManager>();
-        serverNetworkManager.OnClientSendMessage += OnClientSendMessage;
+        serverNetworkManager.OnClientSentMessage += OnClientSendMessage;
     }
 
     void OnClientSendMessage(object sender, DataSentEventArgs args)

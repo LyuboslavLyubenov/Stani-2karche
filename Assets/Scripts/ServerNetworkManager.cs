@@ -3,13 +3,15 @@ using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Security.Cryptography;
 
 public class ServerNetworkManager : MonoBehaviour
 {
     const int port = 7788;
 
-    int genericHostId = 0;
+    public int MaxConnections;
 
+    int genericHostId = 0;
     ConnectionConfig connectionConfig = null;
     HostTopology topology = null;
     byte communicationChannel = 0;
@@ -20,7 +22,7 @@ public class ServerNetworkManager : MonoBehaviour
 
     GameData gameData = null;
 
-    public int MaxConnections;
+    SecuritySettings securitySettings = null;
 
     public bool IsRunning
     {
@@ -58,7 +60,7 @@ public class ServerNetworkManager : MonoBehaviour
     {
     };
 
-    public EventHandler<DataSentEventArgs> OnClientSendMessage = delegate
+    public EventHandler<DataSentEventArgs> OnClientSentMessage = delegate
     {  
     };
 
@@ -69,6 +71,7 @@ public class ServerNetworkManager : MonoBehaviour
         #endif
 
         gameData = GameObject.FindWithTag("MainCamera").GetComponent<GameData>();
+        securitySettings = GameObject.FindWithTag("MainCamera").GetComponent<SecuritySettings>();
 
         ConfigureServer();
         StartServer();
@@ -104,7 +107,7 @@ public class ServerNetworkManager : MonoBehaviour
 
                     if (!string.IsNullOrEmpty(message))
                     {
-                        OnClientSendMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, message));
+                        OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, message));
                     }
 
                     break;
@@ -135,6 +138,7 @@ public class ServerNetworkManager : MonoBehaviour
 
     public void SendClientMessage(int clientId, string message)
     {
-        NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
+        var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, securitySettings.NETWORK_ENCRYPTION_PASSWORD, securitySettings.SALT);
+        NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, encryptedMessage);
     }
 }
