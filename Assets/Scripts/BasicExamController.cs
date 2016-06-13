@@ -38,7 +38,7 @@ public class BasicExamController : MonoBehaviour
                 
                 WaitingToAnswerUI.SetActive(false);
                 FriendAnswerUI.SetActive(true);
-                friendAnswerUIController.SetResponse(args.Message);
+                friendAnswerUIController.SetResponse(args.Username, args.Message);
                 currentState = GameState.Playing;
 
                 break;

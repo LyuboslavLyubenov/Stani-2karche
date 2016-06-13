@@ -3,7 +3,6 @@ using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Security.Cryptography;
 
 public class ServerNetworkManager : MonoBehaviour
 {
@@ -19,6 +18,7 @@ public class ServerNetworkManager : MonoBehaviour
     bool isRunning = false;
 
     List<int> connectedClientsId = new List<int>();
+    Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
 
     GameData gameData = null;
 
@@ -64,7 +64,7 @@ public class ServerNetworkManager : MonoBehaviour
 
     void Start()
     {
-        #if UNITY_EDITOR_WIN
+        #if UNITY_EDITOR
         Application.runInBackground = true;
         #endif
 
@@ -104,6 +104,8 @@ public class ServerNetworkManager : MonoBehaviour
 
                 if (!hasError)
                 {
+                    var connectionId = recieveNetworkData.ConnectionId;
+
                     switch (recieveNetworkData.NetworkEventType)
                     {
                         case NetworkEventType.ConnectEvent:
@@ -116,11 +118,48 @@ public class ServerNetworkManager : MonoBehaviour
 
                         case NetworkEventType.DataEvent:
                             var message = recieveNetworkData.Message;
-                            OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, message));
+                            var usernameSetCommandIndex = message.IndexOf("UsernameSet");
+
+                            if (usernameSetCommandIndex > -1)
+                            {
+                                var usernameDelimeterIndex = message.IndexOf("=");
+
+                                if (usernameDelimeterIndex <= usernameSetCommandIndex)
+                                {
+                                    break;
+                                }
+
+                                var username = message.Substring(usernameDelimeterIndex + 1, message.Length - usernameDelimeterIndex);
+
+                                if (!string.IsNullOrEmpty(username) &&
+                                    username.Length >= 4 &&
+                                    !connectedClientsNames.ContainsKey(connectionId))
+                                {
+                                    connectedClientsNames.Add(connectionId, username);
+                                }
+                            }
+                            else
+                            {
+
+                                var username = "";
+
+                                if (connectedClientsNames.ContainsKey(connectionId))
+                                {
+                                    username = connectedClientsNames[connectionId];
+                                }
+                                else
+                                {
+                                    username = "Player " + connectionId;
+                                }
+
+                                OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, username, message));
+                            }
+
                             break;
 
                         case NetworkEventType.DisconnectEvent:
-                            connectedClientsId.Remove(recieveNetworkData.ConnectionId);
+                            connectedClientsId.Remove(connectionId);
+                            connectedClientsNames.Remove(connectionId);
                             OnClientDisconnect(this, EventArgs.Empty);
                             break;
                     }    

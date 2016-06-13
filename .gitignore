@@ -314,5 +314,5 @@ leveldata.txt
 *.csproj
 /Library
 
-
 Assets/Scripts/SecuritySettings/SecuritySettings.cs
+clientTest_Data/

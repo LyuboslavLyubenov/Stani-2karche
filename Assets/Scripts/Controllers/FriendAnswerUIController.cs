@@ -10,6 +10,8 @@ public class FriendAnswerUIController : MonoBehaviour
     Text usernameText;
     Text answerText;
 
+    string[] offlineFriendNames = { "Гошо", "Пешо", "Баба яга с мотиката", "г-н Кидиков" };
+
     void Start()
     {
         usernameText = FriendUsername.GetComponent<Text>();
@@ -18,14 +20,22 @@ public class FriendAnswerUIController : MonoBehaviour
 
     public void SetResponse(string answer)
     {
-        StartCoroutine(SetResponse_(answer));
+        var usernameIndex = Random.Range(0, offlineFriendNames.Length);
+        var username = offlineFriendNames[usernameIndex];
+
+        StartCoroutine(SetResponseCoroutine(username, answer));
     }
 
-    IEnumerator SetResponse_(string answer)
+    public void SetResponse(string username, string answer)
+    {
+        StartCoroutine(SetResponseCoroutine(username, answer));
+    }
+
+    IEnumerator SetResponseCoroutine(string username, string answer)
     {
         yield return null;
 
-        usernameText.text = "Иван";
+        usernameText.text = username;
         answerText.text = answer;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine.UI;
 
 public class PlayingUIController : MonoBehaviour
@@ -15,7 +14,6 @@ public class PlayingUIController : MonoBehaviour
     AskAudienceUIController askAudienceUIController;
     FriendAnswerUIController friendAnswerUIController;
     BasicExamController basicExamController;
-
 
     Text questionText = null;
     Button[] answersButtons = null;
