@@ -8,10 +8,12 @@ public class AndroidUIController : MonoBehaviour
     public GameObject QuestionPanelUI;
     public GameObject DialogUI;
     public GameObject ConnectionSettingsUI;
+    public GameObject EnterNameUI;
 
     QuestionUIController questionUIController = null;
     ClientNetworkManager clientNetworkManager = null;
     DialogUIController dialogUIController = null;
+    EnterNameUIController enterNameUIController = null;
 
     Text ipText = null;
 
@@ -22,10 +24,18 @@ public class AndroidUIController : MonoBehaviour
         clientNetworkManager = GameObject.FindWithTag("MainCamera").GetComponent<ClientNetworkManager>();
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
         dialogUIController = DialogUI.GetComponent<DialogUIController>();
+        enterNameUIController = EnterNameUI.GetComponent<EnterNameUIController>();
 
         clientNetworkManager.OnConnectedEvent += OnConnected;
         clientNetworkManager.OnRecievedDataEvent += OnDataRecievedFromServer;
         clientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
+
+        enterNameUIController.OnUsernameSet += OnUsernameSet;
+    }
+
+    void OnUsernameSet(object sender, EventArgs args)
+    {
+        ConnectionSettingsUI.SetActive(true);
     }
 
     void OnConnected(object sender, System.EventArgs args)

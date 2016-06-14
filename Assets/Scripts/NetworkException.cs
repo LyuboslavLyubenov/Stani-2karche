@@ -14,4 +14,5 @@ public class NetworkException : Exception
         get;
         private set;
     }
+
 }
