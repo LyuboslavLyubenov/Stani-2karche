@@ -18,8 +18,7 @@ public class NetworkTransportUtils
         ValidateNetworkOperation(error);
 
         var message = ConvertBufferToString(recBuffer);
-        var networkResponse = (NetworkError)error;
-
+      
         if (!string.IsNullOrEmpty(message))
         {
             var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(message, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT); 

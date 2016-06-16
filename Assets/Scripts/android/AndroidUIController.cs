@@ -90,7 +90,7 @@ public class AndroidUIController : MonoBehaviour
     void ShowDialogMessage(string message)
     {
         DialogUI.SetActive(true);
-        dialogUIController.SetMessage(message);
+        dialogUIController.SetErrorMessage(message);
     }
 
     public void Connect(string ip)

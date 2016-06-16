@@ -9,11 +9,12 @@ public class PlayingUIController : MonoBehaviour
     public GameObject AskAudienceUI;
     public GameObject FriendAnswerUI;
     public GameObject WaitingToAnswerUI;
+    public GameObject LeaderboardUI;
 
-    EndGameUIController endGameUIController;
-    AskAudienceUIController askAudienceUIController;
-    FriendAnswerUIController friendAnswerUIController;
-    BasicExamController basicExamController;
+    EndGameUIController endGameUIController = null;
+    AskAudienceUIController askAudienceUIController = null;
+    FriendAnswerUIController friendAnswerUIController = null;
+    BasicExamController basicExamController = null;
 
     Text questionText = null;
     Button[] answersButtons = null;
@@ -215,6 +216,7 @@ public class PlayingUIController : MonoBehaviour
         var currentMark = int.Parse(currentMarkText.text);
 
         EndGameUI.SetActive(true);
+        LeaderboardUI.SetActive(true);
         gameObject.SetActive(false);
 
         endGameUIController.SetMark(currentMark);

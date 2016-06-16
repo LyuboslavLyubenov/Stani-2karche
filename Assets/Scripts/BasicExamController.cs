@@ -7,6 +7,7 @@ public class BasicExamController : MonoBehaviour
     public GameObject FriendAnswerUI;
     public GameObject AskAudienceUI;
     public GameObject PlayingUI;
+    public GameObject LeaderboardUI;
 
     FriendAnswerUIController friendAnswerUIController = null;
     AskAudienceUIController askAudienceUIController = null;
@@ -19,9 +20,12 @@ public class BasicExamController : MonoBehaviour
 
     void Start()
     {
+        var mainCamera = GameObject.FindWithTag("MainCamera");
+
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
-        serverNetworkManager = GameObject.FindWithTag("MainCamera").GetComponent<ServerNetworkManager>();
+
+        serverNetworkManager = mainCamera.GetComponent<ServerNetworkManager>();
         serverNetworkManager.OnClientSentMessage += OnClientSendMessage;
     }
 

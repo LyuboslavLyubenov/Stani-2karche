@@ -10,6 +10,10 @@ public class ClientNetworkManager : MonoBehaviour
 
     const int Port = 7788;
 
+    public GameObject DialogUI;
+
+    DialogUIController dialogUIController = null;
+
     int connectionId = 0;
     int genericHostId = 0;
 
@@ -47,6 +51,11 @@ public class ClientNetworkManager : MonoBehaviour
         Application.runInBackground = true;
         #endif
 
+        if (DialogUI != null)
+        {
+            dialogUIController = DialogUI.GetComponent<DialogUIController>();
+        }
+
         connectionConfig = new ConnectionConfig();
         connectionConfig.MaxConnectionAttempt = 3;
         communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
@@ -69,7 +78,13 @@ public class ClientNetworkManager : MonoBehaviour
                 }
                 catch (NetworkException e)
                 {
-                    Debug.Log(e.ErrorN);
+                    if (dialogUIController != null)
+                    {
+                        var message = (NetworkError)e.ErrorN;
+                        DialogUI.SetActive(true);
+                        dialogUIController.SetErrorMessage(message); 
+                    }
+
                     hasError = true;
                 }
 

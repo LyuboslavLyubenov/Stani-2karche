@@ -129,7 +129,7 @@ public class ServerNetworkManager : MonoBehaviour
                                     break;
                                 }
 
-                                var username = message.Substring(usernameDelimeterIndex + 1, message.Length - usernameDelimeterIndex);
+                                var username = message.Substring(usernameDelimeterIndex + 1, message.Length - usernameDelimeterIndex - 1);
 
                                 if (!string.IsNullOrEmpty(username) &&
                                     username.Length >= 4 &&
