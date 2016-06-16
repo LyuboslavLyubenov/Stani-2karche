@@ -9,13 +9,6 @@ public class LeaderboardUIController : MonoBehaviour
     public GameObject PlayerScorePrefab;
     public GameObject ContentPanel;
 
-    void OnEnable()
-    {
-        //TODO: DECOUPLE
-        var leaderboardSerializer = GameObject.FindWithTag("MainCamera").GetComponent<LeaderboardSerializer>();
-        Populate(leaderboardSerializer.Leaderboard);
-    }
-
     public void Populate(IList<PlayerScore> playersScore)
     {
         StartCoroutine(PopulateCoroutine(playersScore));
