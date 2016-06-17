@@ -38,9 +38,11 @@ public class ServerNetworkManager : MonoBehaviour
         }
     }
 
+    public Dictionary<int, string> ConnectedClientsNames
     {
         get
         {
+            return connectedClientsNames;
         }
     }
 
