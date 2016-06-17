@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class BasicExamController : MonoBehaviour
 {
@@ -24,14 +25,15 @@ public class BasicExamController : MonoBehaviour
 
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
-
         serverNetworkManager = mainCamera.GetComponent<ServerNetworkManager>();
+
         serverNetworkManager.OnClientSentMessage += OnClientSendMessage;
     }
 
+
+
     void OnClientSendMessage(object sender, DataSentEventArgs args)
     {
-
         switch (currentState)
         {
             case GameState.Playing:
@@ -57,7 +59,7 @@ public class BasicExamController : MonoBehaviour
                     audienceAnswerVoteCount[args.Message]++;
                 }
 
-                if (audienceVotedId.Count >= serverNetworkManager.ConnectedClientsCount)
+                if (audienceVotedId.Count >= serverNetworkManager.ConnectedClientsId.Count)
                 {
                     AskAudienceUI.SetActive(true);
                     WaitingToAnswerUI.SetActive(false);
@@ -71,39 +73,23 @@ public class BasicExamController : MonoBehaviour
         }
     }
 
+    public void AskFriend(Question question, int clientConnectionId)
+    {
+        serverNetworkManager.CallFriend(question, clientConnectionId);
+        WaitingToAnswerUI.SetActive(true);
+        currentState = GameState.AskingAFriend;
+    }
+
     public void AskAudience(Question question)
     {
-        var questionSeriliazed = JsonUtility.ToJson(question);
-        var messageType = "AskAudience";
-
         for (int i = 0; i < question.Answers.Length; i++)
         {
             audienceAnswerVoteCount.Add(question.Answers[i], 0);
         }
 
-        for (int i = 0; i < serverNetworkManager.ConnectedClientsCount; i++)
-        {
-            var clientId = serverNetworkManager.ConnectedClientsId[i];
-            
-            serverNetworkManager.SendClientMessage(clientId, messageType);
-            serverNetworkManager.SendClientMessage(clientId, questionSeriliazed);
-        }
+        serverNetworkManager.AskAudience(question);
 
         WaitingToAnswerUI.SetActive(true);
         currentState = GameState.AskingAudience;
-    }
-
-    public void AskFriend(Question question)
-    {
-        var connectionIndex = UnityEngine.Random.Range(0, serverNetworkManager.ConnectedClientsCount);
-        var connectionId = serverNetworkManager.ConnectedClientsId[connectionIndex];
-        var questionSeriliazed = JsonUtility.ToJson(question);
-        var messageType = "AskFriend";
-
-        serverNetworkManager.SendClientMessage(connectionId, messageType);
-        serverNetworkManager.SendClientMessage(connectionId, questionSeriliazed);
-
-        WaitingToAnswerUI.SetActive(true);
-        currentState = GameState.AskingAFriend;
     }
 }

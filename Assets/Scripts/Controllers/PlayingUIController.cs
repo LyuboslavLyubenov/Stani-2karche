@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Linq;
 
 public class PlayingUIController : MonoBehaviour
 {
@@ -10,11 +11,13 @@ public class PlayingUIController : MonoBehaviour
     public GameObject FriendAnswerUI;
     public GameObject WaitingToAnswerUI;
     public GameObject LeaderboardUI;
+    public GameObject CallAFriendUI;
 
     EndGameUIController endGameUIController = null;
     AskAudienceUIController askAudienceUIController = null;
     FriendAnswerUIController friendAnswerUIController = null;
     BasicExamController basicExamController = null;
+    CallAFriendUIController callAFriendUIController = null;
 
     Text questionText = null;
     Button[] answersButtons = null;
@@ -43,6 +46,7 @@ public class PlayingUIController : MonoBehaviour
         endGameUIController = EndGameUI.GetComponent<EndGameUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
+        callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
 
         var mainCamera = GameObject.FindWithTag("MainCamera");
 
@@ -50,6 +54,7 @@ public class PlayingUIController : MonoBehaviour
         serverNetworkManager = mainCamera.GetComponent<ServerNetworkManager>();
         gameData = mainCamera.GetComponent<GameData>();
 
+        callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         gameData.MarkIncrease += OnMarkChange;
 
         yield return null;
@@ -120,6 +125,17 @@ public class PlayingUIController : MonoBehaviour
         }
     }
 
+    void OnMarkChange(object sender, MarkEventArgs args)
+    {
+        currentMarkText.text = args.Mark.ToString();
+    }
+
+    void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
+    {
+        var currentQuestion = gameData.GetCurrentQuestion();
+        basicExamController.AskFriend(currentQuestion, args.PlayerConnectionId);
+    }
+
     void DeactivateAnswers()
     {
         for (int i = 0; i < answersButtons.Length; i++)
@@ -132,11 +148,6 @@ public class PlayingUIController : MonoBehaviour
     {
         answersAnimators[buttonIndex].SetTrigger("clicked");
         answersAnimators[buttonIndex].SetBool("isCorrect", isCorrect);
-    }
-
-    void OnMarkChange(object sender, MarkEventArgs args)
-    {
-        currentMarkText.text = args.Mark.ToString();
     }
 
     IEnumerator EndGameCoroutine()
@@ -226,14 +237,17 @@ public class PlayingUIController : MonoBehaviour
     {
         var currentQuestion = gameData.GetCurrentQuestion();
 
-        if (serverNetworkManager.ConnectedClientsCount <= 0)
+        if (serverNetworkManager.ConnectedClientsId.Count <= 0)
         {
             var rightAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
             StartCoroutine(ShowFriendAnswerCoroutine(rightAnswer));
         }
         else
         {
-            basicExamController.AskFriend(currentQuestion);    
+            var clientsConnectionIdNames = serverNetworkManager.ConnectedClientsNames;
+
+            CallAFriendUI.SetActive(true);
+            callAFriendUIController.SetContacts(clientsConnectionIdNames);    
         }
     }
 
@@ -241,7 +255,7 @@ public class PlayingUIController : MonoBehaviour
     {
         var currentQuestion = gameData.GetCurrentQuestion();
 
-        if (serverNetworkManager.ConnectedClientsCount < 4)
+        if (serverNetworkManager.ConnectedClientsId.Count < 4)
         {
             var generatedAudienceAnswers = new Dictionary<string, int>();
             var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];

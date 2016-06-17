@@ -30,19 +30,17 @@ public class ServerNetworkManager : MonoBehaviour
         }
     }
 
-    public int ConnectedClientsCount
-    {
-        get
-        {
-            return connectedClientsId.Count;    
-        }
-    }
-
     public IList<int> ConnectedClientsId
     {
         get
         {
             return connectedClientsId;    
+        }
+    }
+
+    {
+        get
+        {
         }
     }
 
@@ -186,5 +184,26 @@ public class ServerNetworkManager : MonoBehaviour
     public void SendClientMessage(int clientId, string message)
     {
         NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
+    }
+
+    public void CallFriend(Question question, int friendId)
+    {
+        var questionJSON = JsonUtility.ToJson(question);
+
+        SendClientMessage(friendId, "AskFriend");
+        SendClientMessage(friendId, questionJSON);
+    }
+
+    public void AskAudience(Question question)
+    {
+        var questionJSON = JsonUtility.ToJson(question);
+
+        for (int i = 0; i < connectedClientsId.Count; i++)
+        {
+            var clientConnectionId = connectedClientsId[i];
+
+            SendClientMessage(clientConnectionId, "AskAudience");
+            SendClientMessage(clientConnectionId, questionJSON);
+        }
     }
 }
