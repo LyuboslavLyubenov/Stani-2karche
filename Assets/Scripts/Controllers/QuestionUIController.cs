@@ -12,6 +12,7 @@ public class QuestionUIController : MonoBehaviour
     {
     };
 
+    public bool ShouldPlayButtonAnimation = true;
 
     Text questionText = null;
     Text[] answersTexts = new Text[AnswersCount];
@@ -61,7 +62,7 @@ public class QuestionUIController : MonoBehaviour
             {
                 DisableAnswers();
 
-                if (ShouldPlayAnimation)
+                if (ShouldPlayButtonAnimation)
                 {
                     PlayClickedAnimation(buttonIndex, isCorrect);    
                 }
