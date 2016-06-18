@@ -47,10 +47,6 @@ public class ClientNetworkManager : MonoBehaviour
 
     void Start()
     {
-        #if DEVELOPMENT_BUILD
-        Application.runInBackground = true;
-        #endif
-
         if (DialogUI != null)
         {
             dialogUIController = DialogUI.GetComponent<DialogUIController>();

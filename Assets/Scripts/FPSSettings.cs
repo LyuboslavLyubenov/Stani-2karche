@@ -9,8 +9,6 @@ public class FPSSettings : MonoBehaviour
     {
         QualitySettings.vSyncCount = 1;
         Application.targetFrameRate = 60;
+        Application.runInBackground = true;
     }
-
-
-
 }

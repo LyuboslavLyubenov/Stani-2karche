@@ -8,14 +8,15 @@ public class QuestionUIController : MonoBehaviour
 {
     const int AnswersCount = 4;
    
+    public EventHandler<AnswerEventArgs> OnAnswerClick = delegate
+    {
+    };
+
+
     Text questionText = null;
     Text[] answersTexts = new Text[AnswersCount];
     Button[] answersButtons = new Button[AnswersCount];
     Animator[] answersAnimators = new Animator[AnswersCount];
-
-    public EventHandler<AnswerEventArgs> OnAnswerClick = delegate
-    {
-    };
 
     void Start()
     {
@@ -59,7 +60,16 @@ public class QuestionUIController : MonoBehaviour
         button.onClick.AddListener(() =>
             {
                 DisableAnswers();
-                PlayClickedAnimation(buttonIndex, isCorrect);
+
+                if (ShouldPlayAnimation)
+                {
+                    PlayClickedAnimation(buttonIndex, isCorrect);    
+                }
+                else
+                {
+                    var answer = answersTexts[buttonIndex].text;
+                    OnAnswerClick(this, new AnswerEventArgs(answer, isCorrect));
+                }
             });
     }
 

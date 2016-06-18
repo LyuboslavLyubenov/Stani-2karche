@@ -47,6 +47,7 @@ public class AndroidUIController : MonoBehaviour
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
         clientNetworkManager.SendData(args.Answer);
+        QuestionPanelUI.SetActive(false);
     }
 
     void OnUsernameSet(object sender, EventArgs args)
@@ -54,7 +55,7 @@ public class AndroidUIController : MonoBehaviour
         ConnectionSettingsUI.SetActive(true);
     }
 
-    void OnConnected(object sender, System.EventArgs args)
+    void OnConnected(object sender, EventArgs args)
     {
         currentState = GameState.Playing;
         ConnectionSettingsUI.SetActive(false);
