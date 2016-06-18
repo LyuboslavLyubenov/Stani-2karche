@@ -316,3 +316,5 @@ leveldata.txt
 
 Assets/Scripts/SecuritySettings/SecuritySettings.cs
 clientTest_Data/
+output_log.txt
+serverTest_Data/

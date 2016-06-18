@@ -18,11 +18,7 @@ public class PlayingUIController : MonoBehaviour
     FriendAnswerUIController friendAnswerUIController = null;
     BasicExamController basicExamController = null;
     CallAFriendUIController callAFriendUIController = null;
-
-    Text questionText = null;
-    Button[] answersButtons = null;
-    Text[] answersTexts = null;
-    Animator[] answersAnimators = null;
+    QuestionUIController questionUIController = null;
 
     GameObject helpFromFriendButton = null;
     GameObject helpFromAudienceButton = null;
@@ -47,6 +43,7 @@ public class PlayingUIController : MonoBehaviour
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
+        questionUIController = GetComponentInChildren<QuestionUIController>();
 
         var mainCamera = GameObject.FindWithTag("MainCamera");
 
@@ -56,11 +53,10 @@ public class PlayingUIController : MonoBehaviour
 
         callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         gameData.MarkIncrease += OnMarkChange;
+        questionUIController.OnAnswerClick += OnAnswerClick;
 
         yield return null;
         InitializeHelpPanel();
-        yield return null;
-        InitializeQuestionPanel();
         yield return null;
         InitializeMarkPanel();
         yield return null;
@@ -70,7 +66,7 @@ public class PlayingUIController : MonoBehaviour
     void LoadFirstQuestion()
     {
         var question = gameData.GetNextQuestion();
-        LoadQuestion(question);
+        questionUIController.LoadQuestion(question);
     }
 
     void InitializeHelpPanel()
@@ -81,48 +77,9 @@ public class PlayingUIController : MonoBehaviour
         surrenderButton = GameObject.FindGameObjectWithTag("SurrenderButton");
     }
 
-    void InitializeQuestionPanel()
-    {
-        var answers = GameObject.FindGameObjectsWithTag("Answer");
-
-        answersButtons = new Button[answers.Length];
-        answersTexts = new Text[answers.Length];
-        answersAnimators = new Animator[answers.Length];
-
-        questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
-
-        for (int i = 0; i < answers.Length; i++)
-        {
-            answersButtons[i] = answers[i].GetComponent<Button>();
-            answersTexts[i] = answers[i].transform.GetChild(0).GetComponent<Text>();
-            answersAnimators[i] = answers[i].GetComponent<Animator>();
-        }     
-    }
-
     void InitializeMarkPanel()
     {
         currentMarkText = GameObject.FindGameObjectWithTag("CurrentMark").GetComponent<Text>();
-    }
-
-    void LoadQuestion(Question question)
-    {
-        questionText.text = question.Text;
-        for (int i = 0; i < question.Answers.Length; i++)
-        {
-            var buttonIndex = i;
-            var answerObj = answersButtons[buttonIndex].gameObject;
-
-            answerObj.SetActive(true);
-
-            answersTexts[buttonIndex].text = question.Answers[buttonIndex];
-            answersButtons[buttonIndex].interactable = true;
-            answersButtons[buttonIndex].onClick.AddListener(() =>
-                {
-                    DeactivateAnswers();
-                    PlayClickedAnimation(buttonIndex, buttonIndex == question.CorrectAnswerIndex);
-                }
-            );
-        }
     }
 
     void OnMarkChange(object sender, MarkEventArgs args)
@@ -136,29 +93,27 @@ public class PlayingUIController : MonoBehaviour
         basicExamController.AskFriend(currentQuestion, args.PlayerConnectionId);
     }
 
-    void DeactivateAnswers()
+    void OnAnswerClick(object sender, AnswerEventArgs args)
     {
-        for (int i = 0; i < answersButtons.Length; i++)
+        if (args.IsCorrect)
         {
-            answersButtons[i].interactable = false;
+            StartCoroutine(LoadNextQuestionCoroutine());
         }
-    }
-
-    void PlayClickedAnimation(int buttonIndex, bool isCorrect)
-    {
-        answersAnimators[buttonIndex].SetTrigger("clicked");
-        answersAnimators[buttonIndex].SetBool("isCorrect", isCorrect);
+        else
+        {
+            StartCoroutine(EndGameCoroutine());    
+        }
     }
 
     IEnumerator EndGameCoroutine()
     {
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForEndOfFrame();
         EndGame();
     }
 
     IEnumerator LoadNextQuestionCoroutine()
     {
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForEndOfFrame();
 
         var nextQuestion = gameData.GetNextQuestion();
 
@@ -168,13 +123,13 @@ public class PlayingUIController : MonoBehaviour
         }
         else
         {
-            LoadQuestion(nextQuestion);
+            questionUIController.LoadQuestion(nextQuestion);
         }
     }
 
     IEnumerator ShowFriendAnswerCoroutine(string answer)
     {
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForEndOfFrame();
         FriendAnswerUI.SetActive(true);
         friendAnswerUIController.SetResponse(answer);
     }
@@ -190,7 +145,7 @@ public class PlayingUIController : MonoBehaviour
 
             while (true)
             {
-                n = Random.Range(0, 4);
+                n = UnityEngine.Random.Range(0, 4);
 
                 if (n != correctAnswerIndex && !disabledAnswersIndex.Contains(n))
                 {
@@ -204,22 +159,10 @@ public class PlayingUIController : MonoBehaviour
         for (int i = 0; i < disabledAnswersIndex.Count; i++)
         {
             var disabledIndex = disabledAnswersIndex[i];
-            answersButtons[disabledIndex].gameObject.SetActive(false);
+            questionUIController.DeactivateAnswerObj(disabledIndex);
         }
 
         yield return null;
-    }
-
-    public void OnIncorrectAnswerClick()
-    {
-        //SHOW DEAD SCREEN :(
-        StartCoroutine(EndGameCoroutine());
-    }
-
-
-    public void OnCorrectAnswerClick()
-    {
-        StartCoroutine(LoadNextQuestionCoroutine());
     }
 
     public void EndGame()
@@ -289,5 +232,4 @@ public class PlayingUIController : MonoBehaviour
     {
         StartCoroutine(FifthyChanceCoroutine());
     }
-
 }

@@ -81,8 +81,14 @@ public class ClientNetworkManager : MonoBehaviour
                     if (dialogUIController != null)
                     {
                         var message = (NetworkError)e.ErrorN;
+
                         DialogUI.SetActive(true);
-                        dialogUIController.SetErrorMessage(message); 
+                        dialogUIController.SetErrorMessage(message);
+
+                        if (message == NetworkError.Timeout)
+                        {
+                            Disconnect();
+                        }
                     }
 
                     hasError = true;
@@ -155,6 +161,8 @@ public class ClientNetworkManager : MonoBehaviour
         isRunning = false;
         NetworkTransport.Disconnect(genericHostId, connectionId, out error);
         NetworkTransport.Shutdown();
+
+        OnDisconnectedEvent(this, EventArgs.Empty);
     }
 
     public void SendData(string data)

@@ -21,16 +21,32 @@ public class AndroidUIController : MonoBehaviour
 
     void Start()
     {
-        clientNetworkManager = GameObject.FindWithTag("MainCamera").GetComponent<ClientNetworkManager>();
-        questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
-        dialogUIController = DialogUI.GetComponent<DialogUIController>();
-        enterNameUIController = EnterNameUI.GetComponent<EnterNameUIController>();
+        LoadControllers();
+        AttachEventsHooks();
+    }
 
+    void AttachEventsHooks()
+    {
         clientNetworkManager.OnConnectedEvent += OnConnected;
         clientNetworkManager.OnRecievedDataEvent += OnDataRecievedFromServer;
         clientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
 
         enterNameUIController.OnUsernameSet += OnUsernameSet;
+    
+        questionUIController.OnAnswerClick += OnAnswerClick;
+    }
+
+    void LoadControllers()
+    {
+        clientNetworkManager = GameObject.FindWithTag("MainCamera").GetComponent<ClientNetworkManager>();
+        questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
+        dialogUIController = DialogUI.GetComponent<DialogUIController>();
+        enterNameUIController = EnterNameUI.GetComponent<EnterNameUIController>();
+    }
+
+    void OnAnswerClick(object sender, AnswerEventArgs args)
+    {
+        clientNetworkManager.SendData(args.Answer);
     }
 
     void OnUsernameSet(object sender, EventArgs args)

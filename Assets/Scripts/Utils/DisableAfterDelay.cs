@@ -30,7 +30,7 @@ public class DisableAfterDelay : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (Input.GetMouseButton(0))
+        if (DisableAfterClick && Input.GetMouseButton(0))
         {
             StopCoroutine(DisableWithDelay());
             gameObject.SetActive(false);

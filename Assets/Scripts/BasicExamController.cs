@@ -30,8 +30,6 @@ public class BasicExamController : MonoBehaviour
         serverNetworkManager.OnClientSentMessage += OnClientSendMessage;
     }
 
-
-
     void OnClientSendMessage(object sender, DataSentEventArgs args)
     {
         switch (currentState)
