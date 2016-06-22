@@ -9,6 +9,9 @@ public class ServerNetworkManager : MonoBehaviour
     const int port = 7788;
 
     public int MaxConnections;
+    public GameObject DialogUI;
+
+    DialogUIController dialogUIController = null;
 
     int genericHostId = 0;
     ConnectionConfig connectionConfig = null;
@@ -70,6 +73,11 @@ public class ServerNetworkManager : MonoBehaviour
 
         gameData = GameObject.FindWithTag("MainCamera").GetComponent<GameData>();
 
+        if (DialogUI != null)
+        {
+            dialogUIController = DialogUI.GetComponent<DialogUIController>();
+        }
+
         ConfigureServer();
         StartServer();
 
@@ -98,6 +106,13 @@ public class ServerNetworkManager : MonoBehaviour
                 }
                 catch (NetworkException e)
                 {
+                    if (dialogUIController != null)
+                    {
+                        var errorMessage = (NetworkError)e.ErrorN;
+                        DialogUI.SetActive(true);
+                        dialogUIController.SetErrorMessage(errorMessage);
+                    }
+
                     Debug.Log(e.Message);
                     hasError = true;
                 }

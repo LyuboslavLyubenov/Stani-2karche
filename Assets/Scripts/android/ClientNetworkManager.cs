@@ -147,9 +147,23 @@ public class ClientNetworkManager : MonoBehaviour
         byte error;
         genericHostId = NetworkTransport.AddHost(topology, 0);
         connectionId = NetworkTransport.Connect(genericHostId, ip, Port, 0, out error);
-        isRunning = true;
-    }
 
+
+        if (dialogUIController != null)
+        {
+            var errorMessage = (NetworkConnectionError)error;
+
+            if (errorMessage == NetworkConnectionError.NoError)
+            {
+                isRunning = true;
+            }
+            else
+            {
+                DialogUI.SetActive(true);
+                dialogUIController.SetErrorMessage(errorMessage);
+            }
+        }
+    }
 
     public void Disconnect()
     {
