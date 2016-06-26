@@ -5,16 +5,13 @@ using UnityEngine.UI;
 public class ConnectionSettingsUIController : MonoBehaviour
 {
     public GameObject IPTextObj;
+    public AndroidUIController androidUIController;
 
     Text ipText = null;
 
-    AndroidUIController androidUIController = null;
-
-    // Use this for initialization
     void Start()
     {
         ipText = IPTextObj.GetComponent<Text>();
-        androidUIController = GameObject.FindWithTag("MainCamera").GetComponent<AndroidUIController>();
     }
 
     public void ConnectToServer()

@@ -10,6 +10,7 @@ public class AndroidUIController : MonoBehaviour
     public GameObject DialogUI;
     public GameObject ConnectionSettingsUI;
     public GameObject EnterNameUI;
+    public GameObject ConnectingUI;
 
     QuestionUIController questionUIController = null;
     ClientNetworkManager clientNetworkManager = null;
@@ -53,14 +54,16 @@ public class AndroidUIController : MonoBehaviour
 
     void OnUsernameSet(object sender, EventArgs args)
     {
-        ConnectionSettingsUI.SetActive(true);
+        ConnectingUI.SetActive(true);
     }
 
     void OnConnected(object sender, EventArgs args)
     {
         currentState = GameState.Playing;
-        ConnectionSettingsUI.SetActive(false);
+        //ConnectionSettingsUI.SetActive(false);
+        ConnectingUI.SetActive(false);
         ConnectedUI.SetActive(true);
+        Vibrate();
     }
 
     void OnDataRecievedFromServer(object sender, DataSentEventArgs args)
@@ -85,21 +88,27 @@ public class AndroidUIController : MonoBehaviour
             case GameState.AskingAudience:
 
                 LoadQuestion(args.Message);
+                Vibrate();
 
-                #if UNITY_ANDROID
-                Handheld.Vibrate();
-                #endif
                 currentState = GameState.Playing;
 
                 break;
         }
     }
 
+    void Vibrate()
+    {
+        #if UNITY_ANDROID
+        Handheld.Vibrate();
+        #endif
+    }
+
     void OnDisconnectFromServer(object sender, System.EventArgs args)
     {
         currentState = GameState.Playing;
         ConnectedUI.SetActive(false);
-        ConnectionSettingsUI.SetActive(true);
+        ConnectingUI.SetActive(true);
+        //ConnectionSettingsUI.SetActive(true);
     }
 
     void LoadQuestion(string questionJSON)

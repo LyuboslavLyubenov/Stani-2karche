@@ -10,6 +10,7 @@ public class ClientNetworkManager : MonoBehaviour
 
     public GameObject DialogUI;
     public LANBroadcastService broadcastService;
+    public int RetriesBeforeSearchingForAnotherServer = 3;
 
     DialogUIController dialogUIController = null;
 
@@ -68,7 +69,9 @@ public class ClientNetworkManager : MonoBehaviour
 
     IEnumerator OnServerFound(string address)
     {
-        for (int i = 0; i < 3; i++)
+        bool successfullyConnected = false;
+
+        for (int i = 0; i < RetriesBeforeSearchingForAnotherServer; i++)
         {
             ConnectToHost(address);
 
@@ -76,8 +79,14 @@ public class ClientNetworkManager : MonoBehaviour
 
             if (isRunning)
             {
+                successfullyConnected = true;
                 break;
             }
+        }
+
+        if (!successfullyConnected)
+        {
+            broadcastService.RestartService();
         }
     }
 

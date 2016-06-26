@@ -12,15 +12,11 @@ using System.Collections.Generic;
 public class LANBroadcastService : MonoBehaviour
 {
     const int Port = 7777;
+    const float TimeDelaySendBroadcastInSeconds = 0.5f;
 
     const string IAmServer = "Stani2karcheServer";
     const string IAmClient = "Stani2karcheClient";
 
-    public float TimeDelaySendBroadcastInSeconds = 0.5f;
-    /// <summary>
-    /// Client only! Should stop search broadcast service after first found server
-    /// </summary>
-    public bool ShouldStopSearchWhenFound = false;
     public BroadcastType broadcastType = BroadcastType.Client;
 
     public EventHandler<BroadcastIpEventArgs> OnFound = delegate
@@ -33,6 +29,11 @@ public class LANBroadcastService : MonoBehaviour
     bool isRunning = false;
 
     void Start()
+    {
+        Initialize();
+    }
+
+    void Initialize()
     {
         var endPoint = listenEndPoint;
         ConfigUDPCLient(endPoint);
@@ -60,6 +61,12 @@ public class LANBroadcastService : MonoBehaviour
 
     void OnDisable()
     {
+        Dispose();
+    }
+
+    void Dispose()
+    {
+        StopAllCoroutines();
         udpClient.Close();
         udpClient = null;
     }
@@ -85,11 +92,7 @@ public class LANBroadcastService : MonoBehaviour
             {
                 //TODO: TELL THE SERVER THAT YOU FOUND IT
                 OnFound(this, new BroadcastIpEventArgs(ip.Address.ToString()));
-
-                if (ShouldStopSearchWhenFound)
-                {
-                    isRunning = false;
-                }
+                isRunning = false;       
             }
 
             yield return Ninja.JumpBack;
@@ -156,6 +159,12 @@ public class LANBroadcastService : MonoBehaviour
         }
 
         return result.ToString();
+    }
+
+    public void RestartService()
+    {
+        Dispose();
+        Initialize();
     }
 }
 
