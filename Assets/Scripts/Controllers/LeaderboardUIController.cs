@@ -9,6 +9,9 @@ public class LeaderboardUIController : MonoBehaviour
     public GameObject PlayerScorePrefab;
     public GameObject ContentPanel;
 
+    const int SpaceBetweenScore = 20;
+
+
     public void Populate(IList<PlayerScore> playersScore)
     {
         StartCoroutine(PopulateCoroutine(playersScore));
@@ -17,6 +20,8 @@ public class LeaderboardUIController : MonoBehaviour
     IEnumerator PopulateCoroutine(IList<PlayerScore> playersScore)
     {
         yield return null;
+
+        var defaultRect = PlayerScorePrefab.GetComponent<RectTransform>();
 
         for (int i = 0; i < playersScore.Count; i++)
         {
@@ -33,16 +38,18 @@ public class LeaderboardUIController : MonoBehaviour
             //SET POSITION AND PARENT
             score.transform.SetParent(ContentPanel.transform);
 
-            scoreRect.anchoredPosition = new Vector2(0, -60 + (-90 * i));
-            scoreRect.sizeDelta = PlayerScorePrefab.GetComponent<RectTransform>().sizeDelta;
+            var nextY = (SpaceBetweenScore + scoreRect.sizeDelta.y) + ((defaultRect.sizeDelta.y + SpaceBetweenScore) * i);
+            scoreRect.anchoredPosition = new Vector2(0, -nextY);
+            scoreRect.sizeDelta = defaultRect.sizeDelta;
                 
             yield return null;
         }
 
         var lastElementIndex = ContentPanel.transform.childCount - 1;
         var lastElementObj = ContentPanel.transform.GetChild(lastElementIndex);
-        var lastElementPos = lastElementObj.GetComponent<RectTransform>().anchoredPosition;
-        var contentPanelHeight = Mathf.Abs(lastElementPos.y) + 60;
+        var lasatElementRect = lastElementObj.GetComponent<RectTransform>();
+        var lastElementPos = lasatElementRect.anchoredPosition;
+        var contentPanelHeight = Mathf.Abs(lastElementPos.y) + lasatElementRect.sizeDelta.y;
         var contentPanelRect = ContentPanel.GetComponent<RectTransform>();
 
         contentPanelRect.sizeDelta = new Vector2(0, contentPanelHeight);

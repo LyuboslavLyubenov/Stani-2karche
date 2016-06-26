@@ -6,24 +6,25 @@ using System.Collections;
 
 public class ServerNetworkManager : MonoBehaviour
 {
-    const int port = 7788;
+    const int Port = 7788;
 
     public int MaxConnections;
     public GameObject DialogUI;
+    public LANBroadcastService broadcastService;
 
     DialogUIController dialogUIController = null;
 
     int genericHostId = 0;
+
     ConnectionConfig connectionConfig = null;
     HostTopology topology = null;
+
     byte communicationChannel = 0;
 
     bool isRunning = false;
 
     List<int> connectedClientsId = new List<int>();
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
-
-    GameData gameData = null;
 
     public bool IsRunning
     {
@@ -67,12 +68,6 @@ public class ServerNetworkManager : MonoBehaviour
 
     void Start()
     {
-        #if UNITY_EDITOR
-        Application.runInBackground = true;
-        #endif
-
-        gameData = GameObject.FindWithTag("MainCamera").GetComponent<GameData>();
-
         if (DialogUI != null)
         {
             dialogUIController = DialogUI.GetComponent<DialogUIController>();
@@ -113,7 +108,6 @@ public class ServerNetworkManager : MonoBehaviour
                         dialogUIController.SetErrorMessage(errorMessage);
                     }
 
-                    Debug.Log(e.Message);
                     hasError = true;
                 }
 
@@ -147,26 +141,18 @@ public class ServerNetworkManager : MonoBehaviour
                                 var username = message.Substring(usernameDelimeterIndex + 1, message.Length - usernameDelimeterIndex - 1);
 
                                 if (!string.IsNullOrEmpty(username) &&
-                                    username.Length >= 4 &&
-                                    !connectedClientsNames.ContainsKey(connectionId))
+                                    username.Length >= 4)
                                 {
-                                    connectedClientsNames.Add(connectionId, username);
+                                    connectedClientsNames[connectionId] = username;
+                                }
+                                else
+                                {
+                                    connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
                                 }
                             }
                             else
                             {
-
-                                var username = "";
-
-                                if (connectedClientsNames.ContainsKey(connectionId))
-                                {
-                                    username = connectedClientsNames[connectionId];
-                                }
-                                else
-                                {
-                                    username = "Player " + connectionId;
-                                }
-
+                                var username = connectedClientsNames[connectionId];
                                 OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, username, message));
                             }
 
@@ -188,12 +174,13 @@ public class ServerNetworkManager : MonoBehaviour
     public void StartServer()
     {
         NetworkTransport.Init();
-        genericHostId = NetworkTransport.AddHost(topology, port, null);
+        genericHostId = NetworkTransport.AddHost(topology, Port, null);
         isRunning = true;
     }
 
     public void StopServer()
     {
+        NetworkTransport.RemoveHost(genericHostId);
         NetworkTransport.Shutdown();
         isRunning = false;
     }

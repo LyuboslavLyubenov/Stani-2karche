@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.Networking;
 
 public class AndroidUIController : MonoBehaviour
 {
@@ -84,6 +85,10 @@ public class AndroidUIController : MonoBehaviour
             case GameState.AskingAudience:
 
                 LoadQuestion(args.Message);
+
+                #if UNITY_ANDROID
+                Handheld.Vibrate();
+                #endif
                 currentState = GameState.Playing;
 
                 break;

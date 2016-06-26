@@ -2,15 +2,14 @@
 using System.Collections;
 using UnityEngine.Networking;
 using System;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 public class ClientNetworkManager : MonoBehaviour
 {
-    const string AlreadyConnectedToServer = "Вече сте свързан към сървъра";
-    const string ConnectionFailed = "Проблем при свързване със сървъра";
-
     const int Port = 7788;
 
     public GameObject DialogUI;
+    public LANBroadcastService broadcastService;
 
     DialogUIController dialogUIController = null;
 
@@ -52,11 +51,59 @@ public class ClientNetworkManager : MonoBehaviour
             dialogUIController = DialogUI.GetComponent<DialogUIController>();
         }
 
+        ConfigureClient();
+
+        if (broadcastService != null)
+        {
+            broadcastService.OnFound += OnServerFound;
+        }
+
+        StartCoroutine(UpdateCoroutine());
+    }
+
+    void OnServerFound(object sender, BroadcastIpEventArgs args)
+    {
+        StartCoroutine(OnServerFound(args.IPAddress));   
+    }
+
+    IEnumerator OnServerFound(string address)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            ConnectToHost(address);
+
+            yield return new WaitForSeconds(0.5f);
+
+            if (isRunning)
+            {
+                break;
+            }
+        }
+    }
+
+    void ConfigureClient()
+    {
         connectionConfig = new ConnectionConfig();
         connectionConfig.MaxConnectionAttempt = 3;
         communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
+    }
 
-        StartCoroutine(UpdateCoroutine());
+    void HandleErrorMessage(byte error)
+    {
+        if (dialogUIController != null)
+        {
+            var errorMessage = (NetworkConnectionError)error;
+
+            if (errorMessage == NetworkConnectionError.NoError)
+            {
+                isRunning = true;
+            }
+            else
+            {
+                DialogUI.SetActive(true);
+                dialogUIController.SetErrorMessage(errorMessage);
+            }
+        }
     }
 
     IEnumerator UpdateCoroutine()
@@ -92,6 +139,13 @@ public class ClientNetworkManager : MonoBehaviour
 
                 if (!hasError)
                 {
+                    var username = "";
+
+                    if (PlayerPrefs.HasKey("Username"))
+                    {
+                        username = PlayerPrefs.GetString("Username");
+                    }
+                       
                     switch (recieveNetworkData.NetworkEventType)
                     {
                         case NetworkEventType.Nothing:
@@ -99,14 +153,16 @@ public class ClientNetworkManager : MonoBehaviour
                             break;
 
                         case NetworkEventType.ConnectEvent:
-                            var username = PlayerPrefs.GetString("Username");
                             SendData("UsernameSet=" + username);
                             OnConnectedEvent(this, EventArgs.Empty);
                             break;
 
+                        case NetworkEventType.BroadcastEvent:
+                            break;
+
                         case NetworkEventType.DataEvent:
                             var message = recieveNetworkData.Message;
-                            OnRecievedDataEvent(this, new DataSentEventArgs(connectionId, null, message));
+                            OnRecievedDataEvent(this, new DataSentEventArgs(connectionId, username, message));
                             break;
 
                         case NetworkEventType.DisconnectEvent:
@@ -114,7 +170,6 @@ public class ClientNetworkManager : MonoBehaviour
                             NetworkTransport.Shutdown();
                             isRunning = false;
                             break;
-
                     }      
                 }
             }
@@ -144,25 +199,17 @@ public class ClientNetworkManager : MonoBehaviour
 
         NetworkTransport.Init();
         HostTopology topology = new HostTopology(connectionConfig, 2);
-        byte error;
         genericHostId = NetworkTransport.AddHost(topology, 0);
+
+        byte error;
         connectionId = NetworkTransport.Connect(genericHostId, ip, Port, 0, out error);
 
-
-        if (dialogUIController != null)
+        if (error != 0)
         {
-            var errorMessage = (NetworkConnectionError)error;
-
-            if (errorMessage == NetworkConnectionError.NoError)
-            {
-                isRunning = true;
-            }
-            else
-            {
-                DialogUI.SetActive(true);
-                dialogUIController.SetErrorMessage(errorMessage);
-            }
+            HandleErrorMessage(error);    
         }
+
+        isRunning = true;
     }
 
     public void Disconnect()
@@ -170,7 +217,10 @@ public class ClientNetworkManager : MonoBehaviour
         byte error;
         isRunning = false;
         NetworkTransport.Disconnect(genericHostId, connectionId, out error);
+        NetworkTransport.RemoveHost(genericHostId);
         NetworkTransport.Shutdown();
+
+        HandleErrorMessage(error);
 
         OnDisconnectedEvent(this, EventArgs.Empty);
     }
