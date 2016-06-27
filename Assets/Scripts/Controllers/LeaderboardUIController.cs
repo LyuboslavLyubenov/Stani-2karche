@@ -9,7 +9,7 @@ public class LeaderboardUIController : MonoBehaviour
     public GameObject PlayerScorePrefab;
     public GameObject ContentPanel;
 
-    const int SpaceBetweenScore = 20;
+    const int SpaceBetweenScore = 10;
 
 
     public void Populate(IList<PlayerScore> playersScore)
@@ -22,6 +22,7 @@ public class LeaderboardUIController : MonoBehaviour
         yield return null;
 
         var defaultRect = PlayerScorePrefab.GetComponent<RectTransform>();
+        var height = defaultRect.sizeDelta.y;
 
         for (int i = 0; i < playersScore.Count; i++)
         {
@@ -36,20 +37,19 @@ public class LeaderboardUIController : MonoBehaviour
             scoreTextObj.GetComponent<Text>().text = playerScoreData.Score.ToString();
 
             //SET POSITION AND PARENT
-            score.transform.SetParent(ContentPanel.transform);
+            score.transform.SetParent(ContentPanel.transform, false);
 
-            var nextY = (SpaceBetweenScore + scoreRect.sizeDelta.y) + ((defaultRect.sizeDelta.y + SpaceBetweenScore) * i);
+            var nextY = ((scoreRect.sizeDelta.y + SpaceBetweenScore) * (i + 1));
             scoreRect.anchoredPosition = new Vector2(0, -nextY);
-            scoreRect.sizeDelta = defaultRect.sizeDelta;
                 
-            yield return null;
+            yield return new WaitForEndOfFrame();
         }
 
         var lastElementIndex = ContentPanel.transform.childCount - 1;
         var lastElementObj = ContentPanel.transform.GetChild(lastElementIndex);
-        var lasatElementRect = lastElementObj.GetComponent<RectTransform>();
-        var lastElementPos = lasatElementRect.anchoredPosition;
-        var contentPanelHeight = Mathf.Abs(lastElementPos.y) + lasatElementRect.sizeDelta.y;
+        var lastElementRect = lastElementObj.GetComponent<RectTransform>();
+        var lastElementPos = lastElementRect.anchoredPosition;
+        var contentPanelHeight = Mathf.Abs(lastElementPos.y) + lastElementRect.sizeDelta.y + SpaceBetweenScore;
         var contentPanelRect = ContentPanel.GetComponent<RectTransform>();
 
         contentPanelRect.sizeDelta = new Vector2(0, contentPanelHeight);
