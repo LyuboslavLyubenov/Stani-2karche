@@ -10,9 +10,11 @@ public class BasicExamController : MonoBehaviour
     public GameObject AskAudienceUI;
     public GameObject PlayingUI;
     public GameObject LeaderboardUI;
+    public GameObject LoadingUI;
 
     public ServerNetworkManager serverNetworkManager;
     public LeaderboardSerializer leaderboardSerializer;
+    public GameData gameData;
 
     FriendAnswerUIController friendAnswerUIController = null;
     AskAudienceUIController askAudienceUIController = null;
@@ -32,6 +34,8 @@ public class BasicExamController : MonoBehaviour
         var playingUIController = PlayingUI.GetComponent<PlayingUIController>();
 
         playingUIController.OnGameEnd += OnGameEnd;
+
+        StartCoroutine(HideLoadingUIWhenLoaded());
     }
 
     void OnGameEnd(object sender, MarkEventArgs args)
@@ -78,6 +82,14 @@ public class BasicExamController : MonoBehaviour
 
                 break;
         }
+    }
+
+    IEnumerator HideLoadingUIWhenLoaded()
+    {
+        yield return new WaitUntil(() => gameData.Loaded);
+        yield return new WaitUntil(() => leaderboardSerializer.Loaded);
+        yield return new WaitForSeconds(3f);
+        LoadingUI.SetActive(false);
     }
 
     IEnumerator SetPlayerScore(int mark)
