@@ -9,7 +9,7 @@ using CielaSpike;
 public class LeaderboardSerializer : MonoBehaviour
 {
     const string FilePath = "LevelData/";
-    const string FileName = "rating.csv";
+    const string FileName = "Rating.csv";
 
     public string RatingFilePrefix;
     public bool AllowDublicates;

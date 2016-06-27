@@ -3,10 +3,16 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using CielaSpike;
 
 public class GameData : MonoBehaviour
 {
     const string LevelPath = "LevelData/";
+    const int MarkMin = 3;
+    const int MarkMax = 6;
+
 
     /// <summary>
     /// If true questions for given marks are aways with randomized order
@@ -17,21 +23,35 @@ public class GameData : MonoBehaviour
     /// </summary>
     public bool ShouldShuffleAnswers = true;
 
-    const int MarkMin = 3;
-    const int MarkMax = 6;
+    public EventHandler<MarkEventArgs> MarkIncrease = delegate
+    {
+    };
+
+    public bool Loaded
+    {
+        get
+        {
+            return loaded; 
+        }
+    }
+
+    bool loaded = false;
 
     int nextQuestionIndex = 0;
     int currentMarkIndex = 0;
 
     List<List<Question>> marksQuestions = new List<List<Question>>();
 
-    public EventHandler<MarkEventArgs> MarkIncrease = delegate
-    {
-    };
-
     void Start()
     {
+        this.StartCoroutineAsync(SerializeLevelDataAsync());
+    }
+
+    IEnumerator SerializeLevelDataAsync()
+    {
         marksQuestions = SerializeLevelData();
+        loaded = true;
+        yield return null;
     }
 
     List<List<Question>> SerializeLevelData()
@@ -89,6 +109,11 @@ public class GameData : MonoBehaviour
 
     public Question GetCurrentQuestion()
     {
+        if (!loaded)
+        {
+            throw new Exception("Not loaded questions yet");
+        }
+
         var questions = marksQuestions[currentMarkIndex];
         var index = Mathf.Min(questions.Count - 1, nextQuestionIndex - 1);
         return questions[index];
@@ -96,6 +121,11 @@ public class GameData : MonoBehaviour
 
     public Question GetNextQuestion()
     {
+        if (!loaded)
+        {
+            throw new Exception("Not loaded questions yet");
+        }
+
         var questions = marksQuestions[currentMarkIndex];
 
         if (nextQuestionIndex >= questions.Count)

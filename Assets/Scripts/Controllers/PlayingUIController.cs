@@ -13,10 +13,13 @@ public class PlayingUIController : MonoBehaviour
     public GameObject LeaderboardUI;
     public GameObject CallAFriendUI;
 
+    public ServerNetworkManager serverNetworkManager = null;
+    public GameData gameData = null;
+    public BasicExamController basicExamController = null;
+
     EndGameUIController endGameUIController = null;
     AskAudienceUIController askAudienceUIController = null;
     FriendAnswerUIController friendAnswerUIController = null;
-    BasicExamController basicExamController = null;
     CallAFriendUIController callAFriendUIController = null;
     QuestionUIController questionUIController = null;
 
@@ -26,9 +29,6 @@ public class PlayingUIController : MonoBehaviour
     GameObject surrenderButton = null;
 
     Text currentMarkText = null;
-
-    ServerNetworkManager serverNetworkManager = null;
-    GameData gameData = null;
 
     void Start()
     {
@@ -45,12 +45,6 @@ public class PlayingUIController : MonoBehaviour
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
         questionUIController = GetComponentInChildren<QuestionUIController>();
 
-        var mainCamera = GameObject.FindWithTag("MainCamera");
-
-        basicExamController = mainCamera.GetComponent<BasicExamController>();
-        serverNetworkManager = mainCamera.GetComponent<ServerNetworkManager>();
-        gameData = mainCamera.GetComponent<GameData>();
-
         callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         gameData.MarkIncrease += OnMarkChange;
         questionUIController.OnAnswerClick += OnAnswerClick;
@@ -65,6 +59,14 @@ public class PlayingUIController : MonoBehaviour
 
     void LoadFirstQuestion()
     {
+        StartCoroutine(LoadFirstQuestionCoroutine());
+    }
+
+    IEnumerator LoadFirstQuestionCoroutine()
+    {
+        
+        yield return new WaitForEndOfFrame();
+        yield return new WaitUntil(() => gameData.Loaded);
         var question = gameData.GetNextQuestion();
         questionUIController.LoadQuestion(question);
     }
