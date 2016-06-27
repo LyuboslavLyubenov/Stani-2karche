@@ -17,6 +17,10 @@ public class PlayingUIController : MonoBehaviour
     public GameData gameData = null;
     public BasicExamController basicExamController = null;
 
+    public System.EventHandler<MarkEventArgs> OnGameEnd = delegate
+    {
+    };
+
     EndGameUIController endGameUIController = null;
     AskAudienceUIController askAudienceUIController = null;
     FriendAnswerUIController friendAnswerUIController = null;
@@ -64,7 +68,6 @@ public class PlayingUIController : MonoBehaviour
 
     IEnumerator LoadFirstQuestionCoroutine()
     {
-        
         yield return new WaitForEndOfFrame();
         yield return new WaitUntil(() => gameData.Loaded);
         var question = gameData.GetNextQuestion();
@@ -176,6 +179,8 @@ public class PlayingUIController : MonoBehaviour
         gameObject.SetActive(false);
 
         endGameUIController.SetMark(currentMark);
+
+        OnGameEnd(this, new MarkEventArgs(currentMark));
     }
 
     public void CallAFriend()

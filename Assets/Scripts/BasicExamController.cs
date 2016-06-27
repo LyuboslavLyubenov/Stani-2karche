@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Collections;
 
 public class BasicExamController : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class BasicExamController : MonoBehaviour
     public GameObject LeaderboardUI;
 
     public ServerNetworkManager serverNetworkManager;
+    public LeaderboardSerializer leaderboardSerializer;
 
     FriendAnswerUIController friendAnswerUIController = null;
     AskAudienceUIController askAudienceUIController = null;
@@ -26,6 +28,15 @@ public class BasicExamController : MonoBehaviour
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
 
         serverNetworkManager.OnClientSentMessage += OnClientSendMessage;
+
+        var playingUIController = PlayingUI.GetComponent<PlayingUIController>();
+
+        playingUIController.OnGameEnd += OnGameEnd;
+    }
+
+    void OnGameEnd(object sender, MarkEventArgs args)
+    {
+        StartCoroutine(SetPlayerScore(args.Mark));
     }
 
     void OnClientSendMessage(object sender, DataSentEventArgs args)
@@ -67,6 +78,20 @@ public class BasicExamController : MonoBehaviour
 
                 break;
         }
+    }
+
+    IEnumerator SetPlayerScore(int mark)
+    {
+        yield return new WaitUntil(() => leaderboardSerializer.Loaded);
+        var playerName = "Анонимен играч";
+
+        if (PlayerPrefs.HasKey("Username"))
+        {
+            playerName = PlayerPrefs.GetString("Username");
+        }
+
+        var playerScore = new PlayerScore(playerName, mark);
+        leaderboardSerializer.SetPlayerScore(playerScore);
     }
 
     public void AskFriend(Question question, int clientConnectionId)
