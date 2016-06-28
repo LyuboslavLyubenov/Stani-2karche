@@ -26,6 +26,10 @@ public class LeaderboardUIController : MonoBehaviour
 
         for (int i = 0; i < playersScore.Count; i++)
         {
+            //create Score object
+            //fill the data (playerName and score(mark))
+            //set its parent to ContentPanel
+            //move its y below previous sibling element
             var playerScoreData = playersScore[i];
             var score = Instantiate(PlayerScorePrefab);
             var scoreRect = score.GetComponent<RectTransform>();
@@ -45,6 +49,8 @@ public class LeaderboardUIController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        //get last element position
+        //resize ContentPanel so its height = last element position + last element height + SpaceBetweenScore
         var lastElementIndex = ContentPanel.transform.childCount - 1;
         var lastElementObj = ContentPanel.transform.GetChild(lastElementIndex);
         var lastElementRect = lastElementObj.GetComponent<RectTransform>();

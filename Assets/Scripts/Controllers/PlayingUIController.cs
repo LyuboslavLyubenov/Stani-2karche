@@ -69,6 +69,7 @@ public class PlayingUIController : MonoBehaviour
     IEnumerator LoadFirstQuestionCoroutine()
     {
         yield return new WaitForEndOfFrame();
+        //make sure all levels are loaded
         yield return new WaitUntil(() => gameData.Loaded);
         var question = gameData.GetNextQuestion();
         questionUIController.LoadQuestion(question);
@@ -122,19 +123,22 @@ public class PlayingUIController : MonoBehaviour
 
         var nextQuestion = gameData.GetNextQuestion();
 
+        //if last question
         if (nextQuestion == null)
         {
+            //show game end screen
             EndGame();
         }
         else
         {
+            //if not load next question
             questionUIController.LoadQuestion(nextQuestion);
         }
     }
 
     IEnumerator ShowFriendAnswerCoroutine(string answer)
     {
-        yield return new WaitForEndOfFrame();
+        yield return null;
         FriendAnswerUI.SetActive(true);
         friendAnswerUIController.SetResponse(answer);
     }
@@ -150,6 +154,7 @@ public class PlayingUIController : MonoBehaviour
 
             while (true)
             {
+                //make sure we dont disable correct answer and we dont disable answer 2 times
                 n = UnityEngine.Random.Range(0, 4);
 
                 if (n != correctAnswerIndex && !disabledAnswersIndex.Contains(n))
@@ -187,13 +192,16 @@ public class PlayingUIController : MonoBehaviour
     {
         var currentQuestion = gameData.GetCurrentQuestion();
 
+        //if we dont have any clients connected
         if (serverNetworkManager.ConnectedClientsId.Count <= 0)
         {
+            //generate question
             var rightAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
             StartCoroutine(ShowFriendAnswerCoroutine(rightAnswer));
         }
         else
         {
+            //if we do ask our client (friend)
             var clientsConnectionIdNames = serverNetworkManager.ConnectedClientsNames;
 
             CallAFriendUI.SetActive(true);
@@ -205,6 +213,7 @@ public class PlayingUIController : MonoBehaviour
     {
         var currentQuestion = gameData.GetCurrentQuestion();
 
+        //if we have less than 4 connected clients
         if (serverNetworkManager.ConnectedClientsId.Count < 4)
         {
             var generatedAudienceAnswers = new Dictionary<string, int>();
@@ -214,6 +223,7 @@ public class PlayingUIController : MonoBehaviour
 
             generatedAudienceAnswers.Add(correctAnswer, correctAnswerChance);
 
+            //generate chances
             for (int i = 0; i < currentQuestion.Answers.Length; i++)
             {
                 if (i == currentQuestion.CorrectAnswerIndex)

@@ -2,15 +2,18 @@
 using System.Collections;
 using UnityEngine.Networking;
 using System;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
+/// <summary>
+/// Client network manager.
+/// </summary>
 public class ClientNetworkManager : MonoBehaviour
 {
     const int Port = 7788;
 
     public GameObject DialogUI;
     public LANBroadcastService broadcastService;
-    public int RetriesBeforeSearchingForAnotherServer = 3;
+    //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
+    public byte RetriesBeforeSearchingForAnotherServer = 3;
 
     DialogUIController dialogUIController = null;
 
@@ -35,7 +38,7 @@ public class ClientNetworkManager : MonoBehaviour
         
     };
 
-    public EventHandler<DataSentEventArgs> OnRecievedDataEvent = delegate
+    public EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate
     {
         
     };
@@ -56,27 +59,40 @@ public class ClientNetworkManager : MonoBehaviour
 
         if (broadcastService != null)
         {
-            broadcastService.OnFound += OnServerFound;
+            broadcastService.OnFound += OnServerFoundCoroutine;
         }
 
         StartCoroutine(UpdateCoroutine());
     }
 
-    void OnServerFound(object sender, BroadcastIpEventArgs args)
+    /// <summary>
+    /// Configures the client connection settings.
+    /// </summary>
+    void ConfigureClient()
     {
-        StartCoroutine(OnServerFound(args.IPAddress));   
+        connectionConfig = new ConnectionConfig();
+        connectionConfig.MaxConnectionAttempt = RetriesBeforeSearchingForAnotherServer; 
+        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced); //make sure messages are delivered and send in correct order
     }
 
-    IEnumerator OnServerFound(string address)
+    void OnServerFoundCoroutine(object sender, BroadcastIpEventArgs args)
+    {
+        //if server found try to connect
+        StartCoroutine(OnServerFoundCoroutine(args.IPAddress));   
+    }
+
+    IEnumerator OnServerFoundCoroutine(string address)
     {
         bool successfullyConnected = false;
 
         for (int i = 0; i < RetriesBeforeSearchingForAnotherServer; i++)
         {
+            //try to connect
             ConnectToHost(address);
 
             yield return new WaitForSeconds(0.5f);
 
+            //if connected dont try again
             if (isRunning)
             {
                 successfullyConnected = true;
@@ -86,15 +102,89 @@ public class ClientNetworkManager : MonoBehaviour
 
         if (!successfullyConnected)
         {
+            //if we were unable to connect to the host, restart broadcast service and start searching for new server
             broadcastService.RestartService();
         }
     }
 
-    void ConfigureClient()
+    //used for receiving messages from server
+    IEnumerator UpdateCoroutine()
     {
-        connectionConfig = new ConnectionConfig();
-        connectionConfig.MaxConnectionAttempt = 3;
-        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
+        while (true)
+        {
+            if (isRunning)
+            {
+                NetworkData receiveNetworkData = null;
+                var hasError = false;
+
+                try
+                {
+                    receiveNetworkData = NetworkTransportUtils.ReceiveMessage();
+                }
+                catch (NetworkException e)
+                {
+                    //if there is a error
+                    if (dialogUIController != null)
+                    {
+                        //get its type
+                        var message = (NetworkError)e.ErrorN;
+
+                        //show it on screen
+                        DialogUI.SetActive(true);
+                        dialogUIController.SetErrorMessage(message);
+
+                        //if cannot connect to server
+                        if (message == NetworkError.Timeout)
+                        {
+                            //disconnect
+                            Disconnect();
+                        }
+                    }
+
+                    hasError = true;
+                }
+
+                if (!hasError)
+                {
+                    var username = "";
+
+                    if (PlayerPrefs.HasKey("Username"))
+                    {
+                        username = PlayerPrefs.GetString("Username");
+                    }
+
+                    switch (receiveNetworkData.NetworkEventType)
+                    {
+                        case NetworkEventType.Nothing:
+                            //nothing happend
+                            break;
+
+                        case NetworkEventType.ConnectEvent:
+                            //if connected to server
+                            //send our username
+                            SendData("UsernameSet=" + username);
+                            OnConnectedEvent(this, EventArgs.Empty);
+                            break;
+
+                        case NetworkEventType.BroadcastEvent:
+                            break;
+
+                        case NetworkEventType.DataEvent:
+                            var message = receiveNetworkData.Message;
+                            OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));
+                            break;
+
+                        case NetworkEventType.DisconnectEvent:
+                            OnDisconnectedEvent(this, EventArgs.Empty);
+                            NetworkTransport.Shutdown();
+                            isRunning = false;
+                            break;
+                    }      
+                }
+            }
+
+            yield return new WaitForSeconds(0.5f);
+        }
     }
 
     void HandleErrorMessage(byte error)
@@ -115,81 +205,13 @@ public class ClientNetworkManager : MonoBehaviour
         }
     }
 
-    IEnumerator UpdateCoroutine()
-    {
-        while (true)
-        {
-            if (isRunning)
-            {
-                NetworkData recieveNetworkData = null;
-                var hasError = false;
-
-                try
-                {
-                    recieveNetworkData = NetworkTransportUtils.RecieveMessage();
-                }
-                catch (NetworkException e)
-                {
-                    if (dialogUIController != null)
-                    {
-                        var message = (NetworkError)e.ErrorN;
-
-                        DialogUI.SetActive(true);
-                        dialogUIController.SetErrorMessage(message);
-
-                        if (message == NetworkError.Timeout)
-                        {
-                            Disconnect();
-                        }
-                    }
-
-                    hasError = true;
-                }
-
-                if (!hasError)
-                {
-                    var username = "";
-
-                    if (PlayerPrefs.HasKey("Username"))
-                    {
-                        username = PlayerPrefs.GetString("Username");
-                    }
-                       
-                    switch (recieveNetworkData.NetworkEventType)
-                    {
-                        case NetworkEventType.Nothing:
-
-                            break;
-
-                        case NetworkEventType.ConnectEvent:
-                            SendData("UsernameSet=" + username);
-                            OnConnectedEvent(this, EventArgs.Empty);
-                            break;
-
-                        case NetworkEventType.BroadcastEvent:
-                            break;
-
-                        case NetworkEventType.DataEvent:
-                            var message = recieveNetworkData.Message;
-                            OnRecievedDataEvent(this, new DataSentEventArgs(connectionId, username, message));
-                            break;
-
-                        case NetworkEventType.DisconnectEvent:
-                            OnDisconnectedEvent(this, EventArgs.Empty);
-                            NetworkTransport.Shutdown();
-                            isRunning = false;
-                            break;
-                    }      
-                }
-            }
-
-            yield return new WaitForSeconds(0.5f);
-        }
-    }
-
+    /// <summary>
+    /// Connects to host.
+    /// </summary>
+    /// <param name="ip">Ip</param>
     public void ConnectToHost(string ip)
     {
-        if (ip.Length < 4)
+        if (string.IsNullOrEmpty(ip) && ip.Length < 4)
         {
             throw new ArgumentOutOfRangeException("ip", "Invalid ip address length");
         }
@@ -200,7 +222,8 @@ public class ClientNetworkManager : MonoBehaviour
         {
             throw new ArgumentException("Invalid ip address");
         }
-            
+
+        //if currently connected, disconnect
         if (isRunning)
         {
             Disconnect();

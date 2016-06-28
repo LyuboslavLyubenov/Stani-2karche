@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>
+/// Ask audience user interface controller.
+/// </summary>
 public class AskAudienceUIController : MonoBehaviour
 {
     GameObject[] answers;
@@ -23,10 +26,16 @@ public class AskAudienceUIController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the vote count and shows 
+    /// </summary>
+    /// <param name="answersVoteCount">Votes count for every answer</param>
+    /// <param name="inProcentage">If set to <c>true</c> will show procentage instead of voted count.</param>
     public void SetVoteCount(Dictionary<string, int> answersVoteCount, bool inProcentage)
     {
-        var chancesValues = answersVoteCount.Select(a => a.Value).ToArray();
-        var chancesSum = chancesValues.Sum();
+        var votedCountValues = answersVoteCount.Select(a => a.Value).ToArray();
+        //all votes count
+        var chancesSum = votedCountValues.Sum();
         var answerIndex = 0;
 
         foreach (KeyValuePair<string, int> chance in answersVoteCount)
@@ -35,6 +44,7 @@ public class AskAudienceUIController : MonoBehaviour
           
             if (inProcentage)
             {
+                //calculate procentage
                 var chanceToBeCorrect = ((float)chance.Value / chancesSum) * 100f;
                 chanceToBeCorrectText[answerIndex].text = string.Format("{0:F0}%", chanceToBeCorrect);                
             }

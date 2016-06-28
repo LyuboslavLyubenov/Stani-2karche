@@ -1,5 +1,8 @@
 ﻿using System;
 
+/// <summary>
+/// Used for individual cell of the phone (Call A friend joker) 
+/// </summary>
 public class CallFriendPageElement
 {
     public CallFriendPageElement(int connectionId, string name)

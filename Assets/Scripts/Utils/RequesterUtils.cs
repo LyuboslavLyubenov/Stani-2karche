@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using System.IO;
 using System.Net;
-using System.IO;
-using UnityEngine;
 using System.Text;
+using UnityEngine;
 
 public class RequesterUtils
 {
@@ -10,9 +9,8 @@ public class RequesterUtils
     const string AppKey = "kid_SJtjx5CS";
     const string AppSecret = "82d0a91bc91c455e94415271a875d5ef";
 
-    private RequesterUtils()
+    RequesterUtils()
     {
-        
     }
 
     public static HttpWebRequest ConfigRequester(string method, string data, bool useSession)

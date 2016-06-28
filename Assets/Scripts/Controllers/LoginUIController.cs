@@ -11,15 +11,11 @@ public class LoginUIController : MonoBehaviour
     public Text UsernameText;
     public Text PasswordText;
 
-    void Start()
-    {
-        this.StartCoroutineAsync(LoginAsync());
-    }
-
     IEnumerator LoginAsync()
     {
         yield return null;
 
+        //set user credentials
         var username = UsernameText.text;
         var password = PasswordText.text;
         var userCredentials = new _UserCredentials();
@@ -30,15 +26,19 @@ public class LoginUIController : MonoBehaviour
         var data = JsonUtility.ToJson(userCredentials);
         var requester = RequesterUtils.ConfigRequester("POST", data, false);
 
+        //make login request to the server
         using (HttpWebResponse Response = requester.GetResponse() as HttpWebResponse)
         {
             if (Response.StatusCode != HttpStatusCode.OK)
             {
+                //something went wrong
                 throw new Exception("The request did not complete successfully and returned status code " + Response.StatusCode);   
             }                
 
+            //login is successfull 
             using (StreamReader Reader = new StreamReader(Response.GetResponseStream()))
             {
+                //parse received data
                 string returnDataJSON = Reader.ReadToEnd();
 
                 yield return Ninja.JumpToUnity;
@@ -55,6 +55,11 @@ public class LoginUIController : MonoBehaviour
 
     void OnLoggedIn(_UserRetrievedData userData)
     {
-        
+
+    }
+
+    public void Login()
+    {
+        this.StartCoroutineAsync(LoginAsync());
     }
 }

@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 [Serializable]
 public class Question
@@ -15,7 +13,6 @@ public class Question
         {
             throw new ArgumentException("Въпросът не трябва да е празен");
         }
-
 
         if (answers.Length != 4)
         {
@@ -34,7 +31,6 @@ public class Question
         {
             throw new ArgumentOutOfRangeException("correctAnswerIndex", "correctAnswerIndex трябва да бъде със стойности между 0 и 3 (включително)");
         }
-
 
         this.Text = text;
         this.Answers = answers;

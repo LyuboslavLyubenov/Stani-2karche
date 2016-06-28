@@ -6,17 +6,20 @@ using System;
 using System.Net.NetworkInformation;
 using System.Threading;
 using CielaSpike;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Collections.Generic;
 
+/// <summary>
+/// LAN broadcast service.
+/// </summary>
 public class LANBroadcastService : MonoBehaviour
 {
     const int Port = 7777;
+    //Only if server
     const float TimeDelaySendBroadcastInSeconds = 0.5f;
-
+    //messages send
     const string IAmServer = "Stani2karcheServer";
     const string IAmClient = "Stani2karcheClient";
-
+    //what type i am
     public BroadcastType broadcastType = BroadcastType.Client;
 
     public EventHandler<BroadcastIpEventArgs> OnFound = delegate
@@ -53,8 +56,10 @@ public class LANBroadcastService : MonoBehaviour
     void ConfigUDPCLient(IPEndPoint endPoint)
     {
         udpClient = new UdpClient();
+        //enable receiving and sending broadcast
         udpClient.EnableBroadcast = true;
         udpClient.Client.EnableBroadcast = true;
+        //lines below basically tell that we gonna receive from/ send to endpoint
         udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         udpClient.Client.Bind(endPoint);
     }
@@ -118,6 +123,10 @@ public class LANBroadcastService : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Gets IPv4 addresses of all connected to network interfaces(LAN, WIFI, etc...).
+    /// </summary>
+    /// <returns>The all IPv4 addresses</returns>
     List<string> GetAllIPv4Addresses()
     {
         List<string> output = new List<string>();
@@ -140,6 +149,7 @@ public class LANBroadcastService : MonoBehaviour
         return output;
     }
 
+    //Filter unused part of the buffer and convert to string
     string ConvertAndFilterBuffer(byte[] buffer)
     {
         if (buffer == null)

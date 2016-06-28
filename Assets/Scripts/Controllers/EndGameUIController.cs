@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
 public class EndGameUIController : MonoBehaviour
 {
     public GameObject LeaderboardUI;
+    public LeaderboardSerializer leaderboardSerializer;
 
     LeaderboardUIController leaderboardUIController = null;
 
     void OnEnable()
     {
-        var leaderboardSerializer = GameObject.FindWithTag("MainCamera").GetComponent<LeaderboardSerializer>();
-
-        if (leaderboardUIController == null)
+        if (leaderboardUIController != null)
         {
             leaderboardUIController = LeaderboardUI.GetComponent<LeaderboardUIController>();    
         }

@@ -7,7 +7,7 @@ using System.Collections;
 public class ServerNetworkManager : MonoBehaviour
 {
     const int Port = 7788;
-
+    //how many clients can be connected to the server
     public int MaxConnections;
     public GameObject DialogUI;
     public LANBroadcastService broadcastService;
@@ -22,8 +22,9 @@ public class ServerNetworkManager : MonoBehaviour
     byte communicationChannel = 0;
 
     bool isRunning = false;
-
+    //Id of all connected clients
     List<int> connectedClientsId = new List<int>();
+    //Their names
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
 
     public bool IsRunning
@@ -82,7 +83,7 @@ public class ServerNetworkManager : MonoBehaviour
     void ConfigureServer()
     {
         connectionConfig = new ConnectionConfig();
-        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
+        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);//make sure all messages are in order and received
         topology = new HostTopology(connectionConfig, MaxConnections);
     }
 
@@ -97,7 +98,7 @@ public class ServerNetworkManager : MonoBehaviour
 
                 try
                 {
-                    recieveNetworkData = NetworkTransportUtils.RecieveMessage();
+                    recieveNetworkData = NetworkTransportUtils.ReceiveMessage();
                 }
                 catch (NetworkException e)
                 {
@@ -113,6 +114,7 @@ public class ServerNetworkManager : MonoBehaviour
 
                 if (!hasError)
                 {
+                    //client id
                     var connectionId = recieveNetworkData.ConnectionId;
 
                     switch (recieveNetworkData.NetworkEventType)
@@ -126,16 +128,20 @@ public class ServerNetworkManager : MonoBehaviour
                             break;
 
                         case NetworkEventType.DataEvent:
+                            //if we received data from client
                             var message = recieveNetworkData.Message;
                             var usernameSetCommandIndex = message.IndexOf("UsernameSet");
 
+                            //is user trying to send username
                             if (usernameSetCommandIndex > -1)
                             {
+                                //yes!
                                 var usernameDelimeterIndex = message.IndexOf("=");
 
                                 if (usernameDelimeterIndex <= usernameSetCommandIndex)
                                 {
-                                    break;
+                                    //empty username :(
+                                    connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
                                 }
 
                                 var username = message.Substring(usernameDelimeterIndex + 1, message.Length - usernameDelimeterIndex - 1);
@@ -152,6 +158,7 @@ public class ServerNetworkManager : MonoBehaviour
                             }
                             else
                             {
+                                //its not asking to set username
                                 var username = connectedClientsNames[connectionId];
                                 OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, username, message));
                             }
@@ -159,6 +166,7 @@ public class ServerNetworkManager : MonoBehaviour
                             break;
 
                         case NetworkEventType.DisconnectEvent:
+                            //if disconnected remove from connected clients list
                             connectedClientsId.Remove(connectionId);
                             connectedClientsNames.Remove(connectionId);
                             OnClientDisconnect(this, EventArgs.Empty);
@@ -185,6 +193,7 @@ public class ServerNetworkManager : MonoBehaviour
         isRunning = false;
     }
 
+    //useful if you want to send individual client a message
     public void SendClientMessage(int clientId, string message)
     {
         NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);

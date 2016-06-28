@@ -6,6 +6,9 @@ using UnityEngine;
 using System.Collections;
 using CielaSpike;
 
+/// <summary>
+/// Used to load leaderboard file data
+/// </summary>
 public class LeaderboardSerializer : MonoBehaviour
 {
     const string FilePath = "LevelData/";
@@ -123,6 +126,9 @@ public class LeaderboardSerializer : MonoBehaviour
         yield return null;
     }
 
+    /// <summary>
+    /// Sets the player score in the leaderboard file
+    /// </summary>
     public void SetPlayerScore(PlayerScore playerScore)
     {
         this.StartCoroutineAsync(SetPlayerScoreAsync(playerScore));

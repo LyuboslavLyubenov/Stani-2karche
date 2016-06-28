@@ -5,6 +5,9 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Call A friend user interface controller.
+/// </summary>
 public class CallAFriendUIController : MonoBehaviour
 {
     public Button NextButton;
@@ -20,7 +23,7 @@ public class CallAFriendUIController : MonoBehaviour
     Text[] friendSelectToCallNames = null;
 
     int currentPageIndex = 0;
-
+    //pages on the phone
     List<CallFriendPageElement[]> pages = new List<CallFriendPageElement[]>();
 
     void Start()
@@ -33,21 +36,13 @@ public class CallAFriendUIController : MonoBehaviour
             friendSelectToCallNames[i] = friendSelectToCallButtons[i].GetComponentInChildren<Text>();
         }
 
-        NextButton.onClick.AddListener(OnNextButtonClick);
         PrevButton.onClick.AddListener(OnPreviousButtonClick);
+        NextButton.onClick.AddListener(OnNextButtonClick);
     }
 
     void OnDisable()
     {
         DisableAllButtons();
-    }
-
-    void DisableAllButtons()
-    {
-        for (int i = 0; i < friendSelectToCallButtons.Length; i++)
-        {
-            friendSelectToCallButtons[i].gameObject.SetActive(false);
-        }
     }
 
     void OnNextButtonClick()
@@ -72,6 +67,14 @@ public class CallAFriendUIController : MonoBehaviour
         }
     }
 
+    void DisableAllButtons()
+    {
+        for (int i = 0; i < friendSelectToCallButtons.Length; i++)
+        {
+            friendSelectToCallButtons[i].gameObject.SetActive(false);
+        }
+    }
+
     void ReloadContacts()
     {
         if (pages.Count <= 0)
@@ -85,6 +88,7 @@ public class CallAFriendUIController : MonoBehaviour
 
         for (int i = 0; i < pages[currentPageIndex].Length; i++)
         {
+            //reload
             var friendData = pages[currentPageIndex][i];
             var friendConnectionId = friendData.ConnectionId;
             var eventArgs = new PlayerCalledEventArgs(friendConnectionId);

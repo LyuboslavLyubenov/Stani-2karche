@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 public class NetworkTransportUtils
 {
-    public static NetworkData RecieveMessage()
+    public static NetworkData ReceiveMessage()
     {
         int recHostId; 
         int connectionId; 
