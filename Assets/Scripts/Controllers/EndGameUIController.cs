@@ -10,7 +10,7 @@ public class EndGameUIController : MonoBehaviour
 
     void OnEnable()
     {
-        if (leaderboardUIController != null)
+        if (LeaderboardUI != null)
         {
             leaderboardUIController = LeaderboardUI.GetComponent<LeaderboardUIController>();    
         }

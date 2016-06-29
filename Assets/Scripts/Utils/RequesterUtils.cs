@@ -5,18 +5,21 @@ using UnityEngine;
 
 public class RequesterUtils
 {
-    const string KinveyUrl = "http://baas.kinvey.com/";
-    const string AppKey = "kid_SJtjx5CS";
-    const string AppSecret = "82d0a91bc91c455e94415271a875d5ef";
+    public const string KinveyUrl = "http://baas.kinvey.com/";
+    public const string AppKey = "kid_SJtjx5CS";
+    public const string AppSecret = "82d0a91bc91c455e94415271a875d5ef";
 
     RequesterUtils()
     {
     }
 
-    public static HttpWebRequest ConfigRequester(string method, string data, bool useSession)
+    public static HttpWebRequest ConfigRequester(string url, string method, string data, bool useSession)
     {
-        var endUrl = KinveyUrl + "user/" + AppKey + "/login";
-        var request = WebRequest.Create(endUrl) as HttpWebRequest;
+        var request = WebRequest.Create(url) as HttpWebRequest;
+
+        request.PreAuthenticate = true;
+        request.Method = method;
+        request.ReadWriteTimeout = 1000;
 
         if (useSession && PlayerPrefs.HasKey("SessionAuth"))
         {
@@ -29,19 +32,18 @@ public class RequesterUtils
             request.Headers.Set("Authorization", "Basic " + credentials);    
         }
 
-        if (!string.IsNullOrEmpty(data))
+        request.Headers.Set("X-Kinvey-Api-Version", "3");
+
+        if (!string.IsNullOrEmpty(data) && method != "GET")
         {
             var dataBytes = Encoding.UTF8.GetBytes(data);
 
-            Stream requestStream = request.GetRequestStream();
-            requestStream.Write(dataBytes, 0, dataBytes.Length);
-
             request.ContentType = "application/json";
             request.ContentLength = data.Length;
-        }
 
-        request.Method = method;
-        request.Headers.Set("X-Kinvey-Api-Version", "3");
+            Stream requestStream = request.GetRequestStream();
+            requestStream.Write(dataBytes, 0, dataBytes.Length);
+        }
 
         return request;
     }

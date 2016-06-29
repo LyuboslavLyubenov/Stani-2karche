@@ -8,23 +8,20 @@ using UnityEngine.UI;
 
 public class LoginUIController : MonoBehaviour
 {
-    public Text UsernameText;
-    public Text PasswordText;
+    public InputField UsernameInputField;
+    public InputField PasswordInputField;
 
-    IEnumerator LoginAsync()
+    IEnumerator LoginAsync(string username, string password)
     {
-        yield return null;
-
         //set user credentials
-        var username = UsernameText.text;
-        var password = PasswordText.text;
         var userCredentials = new _UserCredentials();
 
         userCredentials.username = username;
         userCredentials.password = password;
 
         var data = JsonUtility.ToJson(userCredentials);
-        var requester = RequesterUtils.ConfigRequester("POST", data, false);
+        var url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey + "/login";
+        var requester = RequesterUtils.ConfigRequester(url, "POST", data, false);
 
         //make login request to the server
         using (HttpWebResponse Response = requester.GetResponse() as HttpWebResponse)
@@ -49,17 +46,15 @@ public class LoginUIController : MonoBehaviour
                 yield return Ninja.JumpBack;
             }
         }
-
-        yield return null;
     }
 
     void OnLoggedIn(_UserRetrievedData userData)
     {
-
+        Debug.Log("Logged in successfuly ");
     }
 
     public void Login()
     {
-        this.StartCoroutineAsync(LoginAsync());
+        //this.StartCoroutineAsync(LoginAsync());
     }
 }
