@@ -13,7 +13,7 @@ public class ClientNetworkManager : MonoBehaviour
     public GameObject DialogUI;
     public LANBroadcastService broadcastService;
     //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
-    public byte RetriesBeforeSearchingForAnotherServer = 3;
+    public byte RetriesBeforeSearchingForAnotherServer = 2;
 
     DialogUIController dialogUIController = null;
 
@@ -174,34 +174,17 @@ public class ClientNetworkManager : MonoBehaviour
                             OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));
                             break;
 
-                        case NetworkEventType.DisconnectEvent:
-                            OnDisconnectedEvent(this, EventArgs.Empty);
+                        case NetworkEventType.DisconnectEvent:                            
                             NetworkTransport.Shutdown();
                             isRunning = false;
+                            broadcastService.RestartService();
+                            OnDisconnectedEvent(this, EventArgs.Empty);
                             break;
                     }      
                 }
             }
 
             yield return new WaitForSeconds(0.5f);
-        }
-    }
-
-    void HandleErrorMessage(byte error)
-    {
-        if (dialogUIController != null)
-        {
-            var errorMessage = (NetworkConnectionError)error;
-
-            if (errorMessage == NetworkConnectionError.NoError)
-            {
-                isRunning = true;
-            }
-            else
-            {
-                DialogUI.SetActive(true);
-                dialogUIController.SetErrorMessage(errorMessage);
-            }
         }
     }
 
@@ -236,12 +219,18 @@ public class ClientNetworkManager : MonoBehaviour
         byte error;
         connectionId = NetworkTransport.Connect(genericHostId, ip, Port, 0, out error);
 
-        if (error != 0)
+        var networkError = (NetworkConnectionError)error;
+        if (networkError != NetworkConnectionError.NoError)
         {
-            HandleErrorMessage(error);    
+            Disconnect();
+            DialogUI.SetActive(true);
+            dialogUIController.SetErrorMessage(networkError);
+        }
+        else
+        {
+            isRunning = true;    
         }
 
-        isRunning = true;
     }
 
     public void Disconnect()
@@ -252,7 +241,15 @@ public class ClientNetworkManager : MonoBehaviour
         NetworkTransport.RemoveHost(genericHostId);
         NetworkTransport.Shutdown();
 
-        HandleErrorMessage(error);
+        var networkError = (NetworkError)error;
+
+        if (networkError != NetworkError.Ok)
+        {
+            DialogUI.SetActive(true);
+            dialogUIController.SetErrorMessage(networkError);
+        }
+
+        broadcastService.RestartService();
 
         OnDisconnectedEvent(this, EventArgs.Empty);
     }

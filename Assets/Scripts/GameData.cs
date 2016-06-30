@@ -14,11 +14,11 @@ public class GameData : MonoBehaviour
     /// <summary>
     /// If true questions for given marks are aways with randomized order
     /// </summary>
-    public bool ShouldShuffleQuestions = true;
+    public bool ShuffleQuestions = true;
     /// <summary>
     /// If true answers for every questions will be in random arrangement
     /// </summary>
-    public bool ShouldShuffleAnswers = true;
+    public bool ShuffleAnswers = true;
 
     public EventHandler<MarkEventArgs> MarkIncrease = delegate
     {
@@ -80,7 +80,7 @@ public class GameData : MonoBehaviour
 
                         if (answerParams[1].ToLower() == "верен")
                         {
-                            //if answer have neighbour cell on the rigth with content "верен" then current answer is the right one
+                            //if answer have neighbour cell on the rigth with content "верен" then its right
                             correctAnswer = answerParams[0];
                         }
                     }
@@ -93,7 +93,7 @@ public class GameData : MonoBehaviour
                         continue;
                     }
 
-                    if (ShouldShuffleAnswers)
+                    if (ShuffleAnswers)
                     {
                         answersText.Shuffle();
                     }
@@ -104,7 +104,7 @@ public class GameData : MonoBehaviour
                 }
             }
 
-            if (ShouldShuffleQuestions)
+            if (ShuffleQuestions)
             {
                 questionsSerialized.Shuffle();
             }
