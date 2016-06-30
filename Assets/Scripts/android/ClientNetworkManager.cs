@@ -6,7 +6,7 @@ using System;
 /// <summary>
 /// Client network manager.
 /// </summary>
-public class ClientNetworkManager : MonoBehaviour
+public class ClientNetworkManager : MonoBehaviour, INetworkManager
 {
     const int Port = 7788;
 
@@ -33,20 +33,23 @@ public class ClientNetworkManager : MonoBehaviour
         }
     }
 
-    public EventHandler OnConnectedEvent = delegate
+    public EventHandler OnConnectedEvent
     {
-        
-    };
+        get;
+        set;
+    }
 
-    public EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate
+    public EventHandler<DataSentEventArgs> OnReceivedDataEvent
     {
-        
-    };
- 
-    public EventHandler OnDisconnectedEvent = delegate
+        get;
+        set;
+    }
+
+    public EventHandler OnDisconnectedEvent
     {
-        
-    };
+        get;
+        set;
+    }
 
     void Start()
     {
@@ -162,8 +165,13 @@ public class ClientNetworkManager : MonoBehaviour
                         case NetworkEventType.ConnectEvent:
                             //if connected to server
                             //send our username
-                            SendData("UsernameSet=" + username);
-                            OnConnectedEvent(this, EventArgs.Empty);
+                            SendMessage("UsernameSet=" + username);
+
+                            if (OnConnectedEvent != null)
+                            {
+                                OnConnectedEvent(this, EventArgs.Empty);    
+                            }
+
                             break;
 
                         case NetworkEventType.BroadcastEvent:
@@ -171,14 +179,24 @@ public class ClientNetworkManager : MonoBehaviour
 
                         case NetworkEventType.DataEvent:
                             var message = receiveNetworkData.Message;
-                            OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));
+
+                            if (OnReceivedDataEvent != null)
+                            {
+                                OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));    
+                            }
+
                             break;
 
                         case NetworkEventType.DisconnectEvent:                            
                             NetworkTransport.Shutdown();
                             isRunning = false;
                             broadcastService.RestartService();
-                            OnDisconnectedEvent(this, EventArgs.Empty);
+
+                            if (OnDisconnectedEvent != null)
+                            {
+                                OnDisconnectedEvent(this, EventArgs.Empty);    
+                            }
+
                             break;
                     }      
                 }
@@ -251,10 +269,13 @@ public class ClientNetworkManager : MonoBehaviour
 
         broadcastService.RestartService();
 
-        OnDisconnectedEvent(this, EventArgs.Empty);
+        if (OnDisconnectedEvent != null)
+        {
+            OnDisconnectedEvent(this, EventArgs.Empty);    
+        }
     }
 
-    public void SendData(string data)
+    public void SendMessage(string data)
     {
         NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, data);
     }

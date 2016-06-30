@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-public class ServerNetworkManager : MonoBehaviour
+public class ServerNetworkManager : MonoBehaviour, INetworkManager
 {
     const int Port = 7788;
     //how many clients can be connected to the server
@@ -51,21 +51,23 @@ public class ServerNetworkManager : MonoBehaviour
         }
     }
 
-    public EventHandler OnClientConnect = delegate
+    public EventHandler OnConnectedEvent
     {
-    };
+        get;
+        set;
+    }
 
-    public EventHandler OnClientDisconnect = delegate
+    public EventHandler<DataSentEventArgs> OnReceivedDataEvent
     {
-    };
+        get;
+        set;
+    }
 
-    public EventHandler<DataSentEventArgs> OnClientBroadcast = delegate
+    public EventHandler OnDisconnectedEvent
     {
-    };
-
-    public EventHandler<DataSentEventArgs> OnClientSentMessage = delegate
-    {  
-    };
+        get;
+        set;
+    }
 
     void Start()
     {
@@ -121,7 +123,12 @@ public class ServerNetworkManager : MonoBehaviour
                     {
                         case NetworkEventType.ConnectEvent:
                             connectedClientsId.Add(recieveNetworkData.ConnectionId);
-                            OnClientConnect(this, EventArgs.Empty);
+
+                            if (OnConnectedEvent != null)
+                            {
+                                OnConnectedEvent(this, EventArgs.Empty);    
+                            }
+
                             break;
 
                         case NetworkEventType.BroadcastEvent:
@@ -160,7 +167,11 @@ public class ServerNetworkManager : MonoBehaviour
                             {
                                 //its not asking to set username
                                 var username = connectedClientsNames[connectionId];
-                                OnClientSentMessage(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, username, message));
+
+                                if (OnReceivedDataEvent != null)
+                                {
+                                    OnReceivedDataEvent(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, username, message));    
+                                }
                             }
 
                             break;
@@ -169,7 +180,12 @@ public class ServerNetworkManager : MonoBehaviour
                             //if disconnected remove from connected clients list
                             connectedClientsId.Remove(connectionId);
                             connectedClientsNames.Remove(connectionId);
-                            OnClientDisconnect(this, EventArgs.Empty);
+
+                            if (OnDisconnectedEvent != null)
+                            {
+                                OnDisconnectedEvent(this, EventArgs.Empty);    
+                            }
+
                             break;
                     }    
                 }
@@ -194,7 +210,7 @@ public class ServerNetworkManager : MonoBehaviour
     }
 
     //useful if you want to send individual client a message
-    public void SendClientMessage(int clientId, string message)
+    public void SendMessage(int clientId, string message)
     {
         NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
     }
@@ -203,8 +219,8 @@ public class ServerNetworkManager : MonoBehaviour
     {
         var questionJSON = JsonUtility.ToJson(question);
 
-        SendClientMessage(friendId, "AskFriend");
-        SendClientMessage(friendId, questionJSON);
+        SendMessage(friendId, "AskFriend");
+        SendMessage(friendId, questionJSON);
     }
 
     public void AskAudience(Question question)
@@ -215,8 +231,8 @@ public class ServerNetworkManager : MonoBehaviour
         {
             var clientConnectionId = connectedClientsId[i];
 
-            SendClientMessage(clientConnectionId, "AskAudience");
-            SendClientMessage(clientConnectionId, questionJSON);
+            SendMessage(clientConnectionId, "AskAudience");
+            SendMessage(clientConnectionId, questionJSON);
         }
     }
 }

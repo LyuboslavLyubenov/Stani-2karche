@@ -59,7 +59,7 @@ public class AndroidUIController : MonoBehaviour
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
         //send answer to the server
-        clientNetworkManager.SendData(args.Answer);
+        clientNetworkManager.SendMessage(args.Answer);
         //hide Question UI
         QuestionPanelUI.SetActive(false);
     }

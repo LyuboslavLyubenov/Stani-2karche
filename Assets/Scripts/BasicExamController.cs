@@ -35,7 +35,7 @@ public class BasicExamController : MonoBehaviour
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
 
-        serverNetworkManager.OnClientSentMessage += OnClientSendMessage;
+        serverNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
 
         var playingUIController = PlayingUI.GetComponent<PlayingUIController>();
 

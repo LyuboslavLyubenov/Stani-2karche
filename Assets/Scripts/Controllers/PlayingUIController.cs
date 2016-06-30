@@ -16,6 +16,7 @@ public class PlayingUIController : MonoBehaviour
     public ServerNetworkManager serverNetworkManager = null;
     public GameData gameData = null;
     public BasicExamController basicExamController = null;
+    public QuestionUIController questionUIController = null;
 
     public System.EventHandler<MarkEventArgs> OnGameEnd = delegate
     {
@@ -25,7 +26,6 @@ public class PlayingUIController : MonoBehaviour
     AskAudienceUIController askAudienceUIController = null;
     FriendAnswerUIController friendAnswerUIController = null;
     CallAFriendUIController callAFriendUIController = null;
-    QuestionUIController questionUIController = null;
 
     GameObject helpFromFriendButton = null;
     GameObject helpFromAudienceButton = null;
@@ -47,7 +47,6 @@ public class PlayingUIController : MonoBehaviour
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
-        questionUIController = GetComponentInChildren<QuestionUIController>();
 
         callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         gameData.MarkIncrease += OnMarkChange;
