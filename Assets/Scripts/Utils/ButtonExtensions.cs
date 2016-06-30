@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Reflection;
+﻿using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public static class ButtonExtensions

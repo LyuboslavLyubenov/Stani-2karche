@@ -45,6 +45,7 @@ public class QuestionPanelSyncClient : MonoBehaviour
                     if (answerText.text == clickedAnswer)
                     {
                         answerButton.SimulateClick();
+                        answerButton.onClick.Invoke();
                         break;
                     }
                 }

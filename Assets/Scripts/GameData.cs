@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using CielaSpike;
+using System.Linq;
 
 public class GameData : MonoBehaviour
 {
@@ -63,26 +64,36 @@ public class GameData : MonoBehaviour
             //get file path for the current mark
             var filePath = string.Format("{0}{1}.csv", LevelPath, i);
             var questionsSerialized = new List<Question>();
+            var questionsToAdd = 0;
 
             using (StreamReader markQuestionsSR = new StreamReader(filePath, System.Text.Encoding.UTF8))
             {
+                var questionSettings = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
+                questionsToAdd = int.Parse(questionSettings[1]);
+
+                markQuestionsSR.ReadLine();
+
                 while (!markQuestionsSR.EndOfStream)
                 {
-                    var questionText = markQuestionsSR.ReadLine().Split(',')[0];
+                    var questionText = markQuestionsSR.ReadLine().Replace("\"", "").Split(',')[0];
                     var answersText = new List<string>();
                     var correctAnswerIndex = -1;
                     var correctAnswer = "";
 
                     for (int j = 0; j < 4; j++)
                     {
-                        var answerParams = markQuestionsSR.ReadLine().Split(',');
+                        var answerParams = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
                         answersText.Add(answerParams[0]);
 
                         if (answerParams[1].ToLower() == "верен")
                         {
-                            //if answer have neighbour cell on the rigth with content "верен" then its right
                             correctAnswer = answerParams[0];
                         }
+                    }
+
+                    if (ShuffleAnswers)
+                    {
+                        answersText.Shuffle();
                     }
 
                     correctAnswerIndex = answersText.IndexOf(correctAnswer);
@@ -93,23 +104,20 @@ public class GameData : MonoBehaviour
                         continue;
                     }
 
-                    if (ShuffleAnswers)
-                    {
-                        answersText.Shuffle();
-                    }
-
                     var question = new Question(questionText, answersText.ToArray(), correctAnswerIndex);
                     questionsSerialized.Add(question);
                     markQuestionsSR.ReadLine();
                 }
             }
 
+
             if (ShuffleQuestions)
             {
                 questionsSerialized.Shuffle();
             }
 
-            serializedMarksQuestions.Add(questionsSerialized);
+            var questions = questionsSerialized.Take(questionsToAdd).ToList();
+            serializedMarksQuestions.Add(questions);
         }
 
         return serializedMarksQuestions;

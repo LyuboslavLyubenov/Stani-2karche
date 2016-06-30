@@ -12,13 +12,11 @@ public class AndroidUIController : MonoBehaviour
     public GameObject QuestionPanelUI;
     public GameObject DialogUI;
     public GameObject ConnectionSettingsUI;
-    public GameObject EnterNameUI;
     public GameObject ConnectingUI;
     public ClientNetworkManager clientNetworkManager;
 
     QuestionUIController questionUIController = null;
     DialogUIController dialogUIController = null;
-    EnterNameUIController enterNameUIController = null;
 
     Text ipText = null;
    
@@ -29,6 +27,8 @@ public class AndroidUIController : MonoBehaviour
     {
         LoadControllers();
         AttachEventsHooks();
+
+        ConnectingUI.SetActive(true);
     }
 
     /// <summary>
@@ -38,7 +38,6 @@ public class AndroidUIController : MonoBehaviour
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
         dialogUIController = DialogUI.GetComponent<DialogUIController>();
-        enterNameUIController = EnterNameUI.GetComponent<EnterNameUIController>();
     }
 
     /// <summary>
@@ -50,8 +49,6 @@ public class AndroidUIController : MonoBehaviour
         clientNetworkManager.OnReceivedDataEvent += OnDataRecievedFromServer;
         clientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
 
-        enterNameUIController.OnUsernameSet += OnUsernameSet;
-    
         questionUIController.OnAnswerClick += OnAnswerClick;
     }
 
@@ -62,12 +59,6 @@ public class AndroidUIController : MonoBehaviour
         clientNetworkManager.SendMessage(args.Answer);
         //hide Question UI
         QuestionPanelUI.SetActive(false);
-    }
-
-    void OnUsernameSet(object sender, EventArgs args)
-    {
-        //if username is set show loading bar (connectingui)
-        ConnectingUI.SetActive(true);
     }
 
     void OnConnected(object sender, EventArgs args)
