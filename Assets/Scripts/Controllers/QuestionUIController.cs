@@ -12,6 +12,10 @@ public class QuestionUIController : MonoBehaviour
     {
     };
 
+    public EventHandler<QuestionEventArgs> OnQuestionLoaded = delegate
+    {
+    };
+
     public bool ShouldPlayButtonAnimation = true;
 
     Text questionText = null;
@@ -52,6 +56,11 @@ public class QuestionUIController : MonoBehaviour
             answersButtons[buttonIndex].interactable = true;
             answersButtons[buttonIndex].onClick.RemoveAllListeners();
             AttachButtonListener(buttonIndex, isCorrect);
+        }
+
+        if (OnQuestionLoaded != null)
+        {
+            OnQuestionLoaded(this, new QuestionEventArgs(question));    
         }
     }
 
@@ -111,5 +120,24 @@ public class QuestionUIController : MonoBehaviour
     public void _OnCorrectAnswerAnimEnd(string answer)
     {
         OnAnswerClick(this, new AnswerEventArgs(answer, true));
+    }
+}
+
+public class QuestionEventArgs : EventArgs
+{
+    public QuestionEventArgs(Question question)
+    {
+        if (question == null)
+        {
+            throw new ArgumentNullException("question");
+        }
+
+        this.Question = question;
+    }
+
+    public Question Question
+    {
+        get;
+        set;
     }
 }

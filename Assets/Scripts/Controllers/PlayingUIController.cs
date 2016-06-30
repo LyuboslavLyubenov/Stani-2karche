@@ -13,10 +13,10 @@ public class PlayingUIController : MonoBehaviour
     public GameObject LeaderboardUI;
     public GameObject CallAFriendUI;
 
-    public ServerNetworkManager serverNetworkManager = null;
-    public GameData gameData = null;
-    public BasicExamController basicExamController = null;
-    public QuestionUIController questionUIController = null;
+    public ServerNetworkManager ServerNetworkManager = null;
+    public GameData GameData = null;
+    public BasicExamController BasicExamController = null;
+    public QuestionUIController QuestionUIController = null;
 
     public System.EventHandler<MarkEventArgs> OnGameEnd = delegate
     {
@@ -49,8 +49,8 @@ public class PlayingUIController : MonoBehaviour
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
 
         callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
-        gameData.MarkIncrease += OnMarkChange;
-        questionUIController.OnAnswerClick += OnAnswerClick;
+        GameData.MarkIncrease += OnMarkChange;
+        QuestionUIController.OnAnswerClick += OnAnswerClick;
 
         yield return null;
         InitializeHelpPanel();
@@ -69,9 +69,9 @@ public class PlayingUIController : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         //make sure all levels are loaded
-        yield return new WaitUntil(() => gameData.Loaded);
-        var question = gameData.GetNextQuestion();
-        questionUIController.LoadQuestion(question);
+        yield return new WaitUntil(() => GameData.Loaded);
+        var question = GameData.GetNextQuestion();
+        QuestionUIController.LoadQuestion(question);
     }
 
     void InitializeHelpPanel()
@@ -94,8 +94,8 @@ public class PlayingUIController : MonoBehaviour
 
     void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
     {
-        var currentQuestion = gameData.GetCurrentQuestion();
-        basicExamController.AskFriend(currentQuestion, args.PlayerConnectionId);
+        var currentQuestion = GameData.GetCurrentQuestion();
+        BasicExamController.AskFriend(currentQuestion, args.PlayerConnectionId);
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)
@@ -120,7 +120,7 @@ public class PlayingUIController : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        var nextQuestion = gameData.GetNextQuestion();
+        var nextQuestion = GameData.GetNextQuestion();
 
         //if last question
         if (nextQuestion == null)
@@ -131,7 +131,7 @@ public class PlayingUIController : MonoBehaviour
         else
         {
             //if not load next question
-            questionUIController.LoadQuestion(nextQuestion);
+            QuestionUIController.LoadQuestion(nextQuestion);
         }
     }
 
@@ -145,7 +145,7 @@ public class PlayingUIController : MonoBehaviour
     IEnumerator FifthyChanceCoroutine()
     {
         List<int> disabledAnswersIndex = new List<int>();
-        var correctAnswerIndex = gameData.GetCurrentQuestion().CorrectAnswerIndex;
+        var correctAnswerIndex = GameData.GetCurrentQuestion().CorrectAnswerIndex;
 
         for (int i = 0; i < 2; i++)
         {
@@ -168,7 +168,7 @@ public class PlayingUIController : MonoBehaviour
         for (int i = 0; i < disabledAnswersIndex.Count; i++)
         {
             var disabledIndex = disabledAnswersIndex[i];
-            questionUIController.DeactivateAnswerObj(disabledIndex);
+            QuestionUIController.DeactivateAnswerObj(disabledIndex);
         }
 
         yield return null;
@@ -189,10 +189,10 @@ public class PlayingUIController : MonoBehaviour
 
     public void CallAFriend()
     {
-        var currentQuestion = gameData.GetCurrentQuestion();
+        var currentQuestion = GameData.GetCurrentQuestion();
 
         //if we dont have any clients connected
-        if (serverNetworkManager.ConnectedClientsId.Count <= 0)
+        if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
         {
             //generate question
             var rightAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
@@ -201,7 +201,7 @@ public class PlayingUIController : MonoBehaviour
         else
         {
             //if we do ask our client (friend)
-            var clientsConnectionIdNames = serverNetworkManager.ConnectedClientsNames;
+            var clientsConnectionIdNames = ServerNetworkManager.ConnectedClientsNames;
 
             CallAFriendUI.SetActive(true);
             callAFriendUIController.SetContacts(clientsConnectionIdNames);    
@@ -210,10 +210,10 @@ public class PlayingUIController : MonoBehaviour
 
     public void AskAudience()
     {
-        var currentQuestion = gameData.GetCurrentQuestion();
+        var currentQuestion = GameData.GetCurrentQuestion();
 
         //if we have less than 4 connected clients
-        if (serverNetworkManager.ConnectedClientsId.Count < 4)
+        if (ServerNetworkManager.ConnectedClientsId.Count < 4)
         {
             var generatedAudienceAnswers = new Dictionary<string, int>();
             var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
@@ -240,7 +240,7 @@ public class PlayingUIController : MonoBehaviour
         }
         else
         {
-            basicExamController.AskAudience(currentQuestion);
+            BasicExamController.AskAudience(currentQuestion);
         }
     }
 

@@ -1,0 +1,13 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Reflection;
+using UnityEngine.EventSystems;
+
+public static class ButtonExtensions
+{
+    public static void SimulateClick(this Button btn)
+    {
+        var pointer = new PointerEventData(EventSystem.current);
+        ExecuteEvents.Execute(btn.gameObject, pointer, ExecuteEvents.submitHandler);
+    }
+}

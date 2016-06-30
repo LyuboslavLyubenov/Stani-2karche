@@ -210,17 +210,26 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
     }
 
     //useful if you want to send individual client a message
-    public void SendMessage(int clientId, string message)
+    public void SendClientMessage(int clientId, string message)
     {
         NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
+    }
+
+    public void SendAllClientsMessage(string message)
+    {
+        for (int i = 0; i < connectedClientsId.Count; i++)
+        {
+            var clientId = connectedClientsId[i];
+            SendClientMessage(clientId, message);
+        }
     }
 
     public void CallFriend(Question question, int friendId)
     {
         var questionJSON = JsonUtility.ToJson(question);
 
-        SendMessage(friendId, "AskFriend");
-        SendMessage(friendId, questionJSON);
+        SendClientMessage(friendId, "AskFriend");
+        SendClientMessage(friendId, questionJSON);
     }
 
     public void AskAudience(Question question)
@@ -231,8 +240,8 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
         {
             var clientConnectionId = connectedClientsId[i];
 
-            SendMessage(clientConnectionId, "AskAudience");
-            SendMessage(clientConnectionId, questionJSON);
+            SendClientMessage(clientConnectionId, "AskAudience");
+            SendClientMessage(clientConnectionId, questionJSON);
         }
     }
 }
