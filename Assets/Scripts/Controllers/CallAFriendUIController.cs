@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using CielaSpike;
 
 /// <summary>
 /// Call A friend user interface controller.
@@ -110,11 +111,6 @@ public class CallAFriendUIController : MonoBehaviour
         }
     }
 
-    public void SetContacts(Dictionary<int, string> playersConnectionIdName)
-    {
-        StartCoroutine(SetContactsCoroutine(playersConnectionIdName));
-    }
-
     IEnumerator SetContactsCoroutine(Dictionary<int, string> playersConnectionIdName)
     {
         yield return null;
@@ -133,6 +129,11 @@ public class CallAFriendUIController : MonoBehaviour
         }
 
         ReloadContacts();
+    }
+
+    public void SetContacts(Dictionary<int, string> playersConnectionIdName)
+    {
+        this.StartCoroutine(SetContactsCoroutine(playersConnectionIdName));
     }
 
 }
