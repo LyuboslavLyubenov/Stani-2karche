@@ -36,6 +36,11 @@ public class LANBroadcastService : MonoBehaviour
         Initialize();
     }
 
+    void OnDisable()
+    {
+        Dispose();
+    }
+
     void Initialize()
     {
         var endPoint = listenEndPoint;
@@ -64,14 +69,10 @@ public class LANBroadcastService : MonoBehaviour
         udpClient.Client.Bind(endPoint);
     }
 
-    void OnDisable()
-    {
-        Dispose();
-    }
-
     void Dispose()
     {
         StopAllCoroutines();
+        isRunning = false;
         udpClient.Close();
         udpClient = null;
     }

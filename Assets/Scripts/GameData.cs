@@ -47,6 +47,7 @@ public class GameData : MonoBehaviour
 
     IEnumerator SerializeLevelDataAsync()
     {
+        yield return Ninja.JumpToUnity;
         marksQuestions = SerializeLevelData();
         loaded = true;
         yield return null;
@@ -66,7 +67,7 @@ public class GameData : MonoBehaviour
             var questionsSerialized = new List<Question>();
             var questionsToAdd = 0;
 
-            using (StreamReader markQuestionsSR = new StreamReader(filePath, System.Text.Encoding.UTF8))
+            using (StreamReader markQuestionsSR = new StreamReader(filePath, System.Text.Encoding.Default, true))
             {
                 var questionSettings = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
                 questionsToAdd = int.Parse(questionSettings[1]);

@@ -41,6 +41,8 @@ public class BasicExamController : MonoBehaviour
 
         playingUIController.OnGameEnd += OnGameEnd;
 
+        LoadingUI.SetActive(true);
+
         StartCoroutine(HideLoadingUIWhenLoaded());
     }
 

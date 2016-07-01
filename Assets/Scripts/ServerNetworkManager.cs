@@ -82,6 +82,12 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
         StartCoroutine(UpdateCoroutine());
     }
 
+    void OnDisable()
+    {
+        StopAllCoroutines();
+        StopServer();
+    }
+
     void ConfigureServer()
     {
         connectionConfig = new ConnectionConfig();

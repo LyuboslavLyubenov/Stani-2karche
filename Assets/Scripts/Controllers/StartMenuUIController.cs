@@ -1,11 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class StartMenuUIController : MonoBehaviour
 {
-    public void LoadGame()
+    public GameObject GameTypesUI;
+    public EnterNameUIController EnterNameUIController;
+
+    void Start()
     {
-        SceneManager.LoadScene("Playing");
+        EnterNameUIController.OnUsernameSet += OnUsernameSet;
+    }
+
+    void OnUsernameSet(object sender, System.EventArgs args)
+    {
+        GameTypesUI.SetActive(true);
     }
 }

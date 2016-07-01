@@ -15,7 +15,7 @@ public class LeaderboardSerializer : MonoBehaviour
     const string FileName = "Rating.csv";
 
     public string RatingFilePrefix;
-    public bool AllowDublicates;
+    public bool AllowDublicates = false;
 
     List<PlayerScore> leaderboard = new List<PlayerScore>();
     bool loaded = false;
