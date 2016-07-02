@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
-using System.Linq;
-using System.Collections;
 
 public class NotificationsController : MonoBehaviour
 {
@@ -25,6 +23,11 @@ public class NotificationsController : MonoBehaviour
         notificationElementSizeY = notificationElementPrefab.GetComponent<RectTransform>().sizeDelta.y;
     }
 
+    int GetNotificationCount()
+    {
+        return Container.childCount; 
+    }
+
     public void AddNotification(Color color, string message)
     {
         var notification = Instantiate(notificationElementPrefab);
@@ -41,10 +44,5 @@ public class NotificationsController : MonoBehaviour
         notificationRect.anchoredPosition = new Vector2(0, -newY);
 
         allNotifications.Add(notification.gameObject);
-    }
-
-    int GetNotificationCount()
-    {
-        return Container.childCount; 
     }
 }

@@ -9,10 +9,8 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
     const int Port = 7788;
     //how many clients can be connected to the server
     public int MaxConnections;
-    public GameObject DialogUI;
-    public LANBroadcastService broadcastService;
-
-    DialogUIController dialogUIController = null;
+    public NotificationsController NotificationServiceController;
+    public LANBroadcastService BroadcastService;
 
     int genericHostId = 0;
 
@@ -71,11 +69,6 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
 
     void Start()
     {
-        if (DialogUI != null)
-        {
-            dialogUIController = DialogUI.GetComponent<DialogUIController>();
-        }
-
         ConfigureServer();
         StartServer();
 
@@ -110,13 +103,10 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
                 }
                 catch (NetworkException e)
                 {
-                    if (dialogUIController != null)
-                    {
-                        var errorMessage = (NetworkError)e.ErrorN;
-                        DialogUI.SetActive(true);
-                        dialogUIController.SetErrorMessage(errorMessage);
-                    }
+                    var error = (NetworkError)e.ErrorN;
+                    var errorMessage = NetworkErrorUtils.GetMessage(error);
 
+                    NotificationServiceController.AddNotification(new Color(230, 30, 30), errorMessage);
                     hasError = true;
                 }
 

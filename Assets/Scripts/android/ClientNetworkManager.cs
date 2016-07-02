@@ -10,12 +10,10 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
 {
     const int Port = 7788;
 
-    public GameObject DialogUI;
-    public LANBroadcastService broadcastService;
+    public LANBroadcastService BroadcastService;
+    public NotificationsController NotificationsController;
     //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
     public byte RetriesBeforeSearchingForAnotherServer = 2;
-
-    DialogUIController dialogUIController = null;
 
     int connectionId = 0;
     int genericHostId = 0;
@@ -53,16 +51,11 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
 
     void Start()
     {
-        if (DialogUI != null)
-        {
-            dialogUIController = DialogUI.GetComponent<DialogUIController>();
-        }
-
         ConfigureClient();
 
-        if (broadcastService != null)
+        if (BroadcastService != null)
         {
-            broadcastService.OnFound += OnServerFoundCoroutine;
+            BroadcastService.OnFound += OnServerFoundCoroutine;
         }
 
         StartCoroutine(UpdateCoroutine());
@@ -106,7 +99,7 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         if (!successfullyConnected)
         {
             //if we were unable to connect to the host, restart broadcast service and start searching for new server
-            broadcastService.RestartService();
+            BroadcastService.RestartService();
         }
     }
 
@@ -126,24 +119,18 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
                 }
                 catch (NetworkException e)
                 {
-                    //if there is a error
-                    if (dialogUIController != null)
+                    var error = (NetworkError)e.ErrorN;
+                    var errorMessage = NetworkErrorUtils.GetMessage(error);
+
+                    NotificationsController.AddNotification(Color.red, errorMessage);
+
+                    //if cannot connect to server
+                    if (error == NetworkError.Timeout)
                     {
-                        //get its type
-                        var message = (NetworkError)e.ErrorN;
-
-                        //show it on screen
-                        DialogUI.SetActive(true);
-                        dialogUIController.SetErrorMessage(message);
-
-                        //if cannot connect to server
-                        if (message == NetworkError.Timeout)
-                        {
-                            //disconnect
-                            Disconnect();
-                        }
+                        //disconnect
+                        Disconnect();
                     }
-
+           
                     hasError = true;
                 }
 
@@ -190,7 +177,7 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
                         case NetworkEventType.DisconnectEvent:                            
                             NetworkTransport.Shutdown();
                             isRunning = false;
-                            broadcastService.RestartService();
+                            BroadcastService.RestartService();
 
                             if (OnDisconnectedEvent != null)
                             {
@@ -238,11 +225,12 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         connectionId = NetworkTransport.Connect(genericHostId, ip, Port, 0, out error);
 
         var networkError = (NetworkConnectionError)error;
+
         if (networkError != NetworkConnectionError.NoError)
         {
+            var errorMessage = NetworkErrorUtils.GetMessage(networkError);
+            NotificationsController.AddNotification(Color.red, errorMessage);
             Disconnect();
-            DialogUI.SetActive(true);
-            dialogUIController.SetErrorMessage(networkError);
         }
         else
         {
@@ -263,11 +251,12 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
 
         if (networkError != NetworkError.Ok)
         {
-            DialogUI.SetActive(true);
-            dialogUIController.SetErrorMessage(networkError);
+            var errorMessage = NetworkErrorUtils.GetMessage(networkError);
+            NotificationsController.AddNotification(Color.red, errorMessage);
+            return;
         }
 
-        broadcastService.RestartService();
+        BroadcastService.RestartService();
 
         if (OnDisconnectedEvent != null)
         {

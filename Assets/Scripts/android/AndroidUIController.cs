@@ -10,13 +10,12 @@ public class AndroidUIController : MonoBehaviour
 {
     public GameObject ConnectedUI;
     public GameObject QuestionPanelUI;
-    public GameObject DialogUI;
     public GameObject ConnectionSettingsUI;
     public GameObject ConnectingUI;
-    public ClientNetworkManager clientNetworkManager;
+    public ClientNetworkManager ClientNetworkManager;
+    public NotificationsController NotificationsController;
 
     QuestionUIController questionUIController = null;
-    DialogUIController dialogUIController = null;
 
     Text ipText = null;
    
@@ -37,7 +36,6 @@ public class AndroidUIController : MonoBehaviour
     void LoadControllers()
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
-        dialogUIController = DialogUI.GetComponent<DialogUIController>();
     }
 
     /// <summary>
@@ -45,9 +43,9 @@ public class AndroidUIController : MonoBehaviour
     /// </summary>
     void AttachEventsHooks()
     {
-        clientNetworkManager.OnConnectedEvent += OnConnected;
-        clientNetworkManager.OnReceivedDataEvent += OnDataRecievedFromServer;
-        clientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
+        ClientNetworkManager.OnConnectedEvent += OnConnected;
+        ClientNetworkManager.OnReceivedDataEvent += OnDataRecievedFromServer;
+        ClientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
 
         questionUIController.OnAnswerClick += OnAnswerClick;
     }
@@ -56,7 +54,7 @@ public class AndroidUIController : MonoBehaviour
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
         //send answer to the server
-        clientNetworkManager.SendMessage(args.Answer);
+        ClientNetworkManager.SendMessage(args.Answer);
         //hide Question UI
         QuestionPanelUI.SetActive(false);
     }
@@ -140,16 +138,6 @@ public class AndroidUIController : MonoBehaviour
     }
 
     /// <summary>
-    /// Shows the dialog message.
-    /// </summary>
-    /// <param name="message">Message.</param>
-    void ShowDialogMessage(string message)
-    {
-        DialogUI.SetActive(true);
-        dialogUIController.SetErrorMessage(message);
-    }
-
-    /// <summary>
     /// Connect the specified ip.
     /// </summary>
     /// <param name="ip">Ip</param>
@@ -157,11 +145,13 @@ public class AndroidUIController : MonoBehaviour
     {
         try
         {
-            clientNetworkManager.ConnectToHost(ip);    
+            ClientNetworkManager.ConnectToHost(ip);    
         }
-        catch (Exception e)
+        catch (NetworkException e)
         {
-            ShowDialogMessage(e.Message);
+            var error = (NetworkConnectionError)e.ErrorN;
+            var errorMessage = NetworkErrorUtils.GetMessage(error);
+            NotificationsController.AddNotification(Color.red, errorMessage);
         }
     }
 
@@ -172,11 +162,13 @@ public class AndroidUIController : MonoBehaviour
     {
         try
         {
-            clientNetworkManager.Disconnect();
+            ClientNetworkManager.Disconnect();
         }
-        catch (Exception ex)
+        catch (NetworkException e)
         {
-            ShowDialogMessage(ex.Message);
+            var error = (NetworkConnectionError)e.ErrorN;
+            var errorMessage = NetworkErrorUtils.GetMessage(error);
+            NotificationsController.AddNotification(Color.red, errorMessage);
         }
     }
 }
