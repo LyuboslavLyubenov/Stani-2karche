@@ -8,7 +8,15 @@ public class StartMenuUIController : MonoBehaviour
 
     void Start()
     {
-        EnterNameUIController.OnUsernameSet += OnUsernameSet;
+        if (PlayerPrefs.HasKey("Username"))
+        {
+            OnUsernameSet(null, System.EventArgs.Empty);
+        }
+        else
+        {
+            EnterNameUIController.gameObject.SetActive(true);
+            EnterNameUIController.OnUsernameSet += OnUsernameSet;    
+        }
     }
 
     void OnUsernameSet(object sender, System.EventArgs args)

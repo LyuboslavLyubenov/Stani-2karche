@@ -6,9 +6,14 @@ public class GameTypesUIController : MonoBehaviour
 {
     public GameObject NormalExamSelectModeUI;
 
+    void Deactivate()
+    {
+        GetComponent<Animator>().SetTrigger("disabled");
+    }
+
     public void LoadNormalGame()
     {
-        gameObject.SetActive(false);
+        Deactivate();
         NormalExamSelectModeUI.SetActive(true);
     }
 

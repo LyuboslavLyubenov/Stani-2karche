@@ -48,6 +48,7 @@ public class PlayingUIController : MonoBehaviour
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
 
+
         callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         GameData.MarkIncrease += OnMarkChange;
         QuestionUIController.OnAnswerClick += OnAnswerClick;

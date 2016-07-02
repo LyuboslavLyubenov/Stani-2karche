@@ -23,8 +23,13 @@ public class EnterNameUIController : MonoBehaviour
         if (PlayerPrefs.HasKey("Username"))
         {
             OnUsernameSet(this, EventArgs.Empty);
-            this.gameObject.SetActive(false);
+            Deactivate();
         }
+    }
+
+    void Deactivate()
+    {
+        GetComponent<Animator>().SetTrigger("disabled");
     }
 
     public void SaveUsername()
@@ -32,6 +37,6 @@ public class EnterNameUIController : MonoBehaviour
         var usernameText = UsernameTextField.GetComponent<Text>();
         PlayerPrefs.SetString("Username", usernameText.text);
         OnUsernameSet(this, EventArgs.Empty);
-        this.gameObject.SetActive(false);
+        Deactivate();
     }
 }
