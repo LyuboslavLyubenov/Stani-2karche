@@ -8,7 +8,6 @@ using UnityEngine.Networking;
 /// </summary>
 public class AndroidUIController : MonoBehaviour
 {
-    public GameObject ConnectedUI;
     public GameObject QuestionPanelUI;
     public GameObject ConnectionSettingsUI;
     public GameObject ConnectingUI;
@@ -67,7 +66,7 @@ public class AndroidUIController : MonoBehaviour
         //hide loading bar
         ConnectingUI.SetActive(false);
         //show successfull connection message
-        ConnectedUI.SetActive(true);
+        NotificationsController.AddNotification(Color.green, "Успешно свързан");
         //vibrate if mobile
         Vibrate();
     }
@@ -121,8 +120,6 @@ public class AndroidUIController : MonoBehaviour
         //if dissconnected from server
         //reset game state
         currentState = GameState.Playing;
-        //if connected message is somehow visible, hide it
-        ConnectedUI.SetActive(false);
         //show loading bar
         ConnectingUI.SetActive(true);
     }
