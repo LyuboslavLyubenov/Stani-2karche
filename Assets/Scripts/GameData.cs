@@ -33,12 +33,29 @@ public class GameData : MonoBehaviour
         }
     }
 
+    public List<int> QuestionsToTakePerMark
+    {
+        get
+        {
+            return questionsToTakePerMark;
+        }
+    }
+
+    public int CurrentMarkIndex
+    {
+        get
+        {
+            return currentMarkIndex;
+        }
+    }
+
     bool loaded = false;
 
     int nextQuestionIndex = 0;
     int currentMarkIndex = 0;
 
     List<List<Question>> marksQuestions = new List<List<Question>>();
+    List<int> questionsToTakePerMark = new List<int>();
 
     void Start()
     {
@@ -47,7 +64,6 @@ public class GameData : MonoBehaviour
 
     IEnumerator SerializeLevelDataAsync()
     {
-        yield return Ninja.JumpToUnity;
         marksQuestions = SerializeLevelData();
         loaded = true;
         yield return null;
@@ -71,6 +87,8 @@ public class GameData : MonoBehaviour
             {
                 var questionSettings = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
                 questionsToAdd = int.Parse(questionSettings[1]);
+
+                questionsToTakePerMark.Add(questionsToAdd);
 
                 markQuestionsSR.ReadLine();
 
@@ -101,6 +119,7 @@ public class GameData : MonoBehaviour
 
                     if (correctAnswerIndex == -1)
                     {
+                        throw new Exception("Въпрос номер " + questionsSerialized.Count + " има само грешни отговори.");
                         //question cannot have only wrong answers
                         continue;
                     }
@@ -117,7 +136,7 @@ public class GameData : MonoBehaviour
                 questionsSerialized.Shuffle();
             }
 
-            var questions = questionsSerialized.Take(questionsToAdd).ToList();
+            var questions = questionsSerialized.ToList();
             serializedMarksQuestions.Add(questions);
         }
 
@@ -152,8 +171,14 @@ public class GameData : MonoBehaviour
         }
 
         var questions = marksQuestions[currentMarkIndex];
+        var questionsToTake = questionsToTakePerMark[currentMarkIndex];
 
-        if (nextQuestionIndex >= questions.Count)
+        if (questionsToTake > questions.Count)
+        {
+            questionsToTake = questions.Count;
+        }
+
+        if (nextQuestionIndex >= questionsToTake)
         {
             if (currentMarkIndex >= marksQuestions.Count)
             {

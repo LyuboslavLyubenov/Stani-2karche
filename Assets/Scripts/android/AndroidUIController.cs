@@ -77,7 +77,7 @@ public class AndroidUIController : MonoBehaviour
         switch (currentState)
         {
             case GameState.Playing:
-
+                
                 //change our game state
                 if (args.Message == "AskFriend")
                 {
@@ -87,14 +87,27 @@ public class AndroidUIController : MonoBehaviour
                 {
                     currentState = GameState.AskingAudience;
                 }
+                else if (args.Message == "RiskyTrust")
+                {
+                    currentState = GameState.RiskyTrust;
+                }
 
                 break;
+
+            case GameState.RiskyTrust: 
 
             case GameState.AskingAFriend:
                 
             case GameState.AskingAudience:
                 //if you are choosed from "Ask friend" or "Help from Audience"
                 //Load question
+
+                if (args.Message == "AnswerTimeout")
+                {
+                    QuestionPanelUI.SetActive(false);
+                    return;
+                }
+
                 LoadQuestion(args.Message);
                 //Vibrate if mobile
                 Vibrate();

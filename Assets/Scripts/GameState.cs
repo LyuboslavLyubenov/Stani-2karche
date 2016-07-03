@@ -2,5 +2,6 @@
 {
     Playing,
     AskingAFriend,
-    AskingAudience
+    AskingAudience,
+    RiskyTrust
 }

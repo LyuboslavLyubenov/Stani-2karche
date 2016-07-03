@@ -22,6 +22,16 @@ public class PlayingUIController : MonoBehaviour
     {
     };
 
+    public Button[] Jokers
+    {
+        get
+        {
+            return jokers;
+        }
+    }
+
+    Button[] jokers;
+
     EndGameUIController endGameUIController = null;
     AskAudienceUIController askAudienceUIController = null;
     FriendAnswerUIController friendAnswerUIController = null;
@@ -77,10 +87,16 @@ public class PlayingUIController : MonoBehaviour
 
     void InitializeHelpPanel()
     {
-        helpFromFriendButton = GameObject.FindGameObjectWithTag("HelpFromFriendButton");
-        helpFromAudienceButton = GameObject.FindGameObjectWithTag("HelpFromAudienceButton");
-        fifthyChanceButton = GameObject.FindGameObjectWithTag("FifthyChanceButton");
+        helpFromFriendButton = GameObject.FindGameObjectWithTag("HelpFromFriend");
+        helpFromAudienceButton = GameObject.FindGameObjectWithTag("HelpFromAudience");
+        fifthyChanceButton = GameObject.FindGameObjectWithTag("FifthyChance");
         surrenderButton = GameObject.FindGameObjectWithTag("SurrenderButton");
+
+        jokers = new Button[3];
+
+        jokers[0] = helpFromFriendButton.GetComponent<Button>();
+        jokers[1] = helpFromAudienceButton.GetComponent<Button>();
+        jokers[2] = fifthyChanceButton.GetComponent<Button>();
     }
 
     void InitializeMarkPanel()

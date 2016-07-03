@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Collections;
+using System.Linq;
 
 /// <summary>
 /// Basic exam controller. Used to controll UI for "Standart play mode" or "Нормално изпитване" 
@@ -15,12 +16,13 @@ public class BasicExamController : MonoBehaviour
     public GameObject LeaderboardUI;
     public GameObject LoadingUI;
 
-    public ServerNetworkManager serverNetworkManager;
-    public LeaderboardSerializer leaderboardSerializer;
-    public GameData gameData;
+    public ServerNetworkManager ServerNetworkManager;
+    public LeaderboardSerializer LeaderboardSerializer;
+    public GameData GameData;
 
     FriendAnswerUIController friendAnswerUIController = null;
     AskAudienceUIController askAudienceUIController = null;
+    PlayingUIController playingUIController = null;
 
     //how many votes each answer have
     Dictionary<string, int> audienceAnswerVoteCount = new Dictionary<string, int>();
@@ -34,11 +36,9 @@ public class BasicExamController : MonoBehaviour
         //load all controllers
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
+        playingUIController = PlayingUI.GetComponent<PlayingUIController>();
 
-        serverNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
-
-        var playingUIController = PlayingUI.GetComponent<PlayingUIController>();
-
+        ServerNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
         playingUIController.OnGameEnd += OnGameEnd;
 
         LoadingUI.SetActive(true);
@@ -58,8 +58,23 @@ public class BasicExamController : MonoBehaviour
 
         switch (currentState)
         {
-            case GameState.Playing:
-                    //nothing
+            case GameState.RiskyTrust:
+
+                var currentQuestion = GameData.GetCurrentQuestion();
+                var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
+
+                if (args.Message == correctAnswer)
+                {
+                    StartCoroutine(EnableRandomDisabledJoker());
+                }
+                else
+                {
+                    //WRONG ANSWER MOTHERFUCKER
+                    var markIndex = GameData.CurrentMarkIndex;
+                    GameData.QuestionsToTakePerMark[markIndex]++;
+                    //TODO: Play animation ?
+                }
+
                 break;
 
             case GameState.AskingAFriend:
@@ -83,8 +98,7 @@ public class BasicExamController : MonoBehaviour
                     audienceAnswerVoteCount[args.Message]++;
                 }
 
-
-                if (audienceVotedId.Count >= serverNetworkManager.ConnectedClientsId.Count)
+                if (audienceVotedId.Count >= ServerNetworkManager.ConnectedClientsId.Count)
                 {
                     //we got all audience votes
                     //show them to the user
@@ -100,18 +114,32 @@ public class BasicExamController : MonoBehaviour
         }
     }
 
+    IEnumerator EnableRandomDisabledJoker()
+    {
+        yield return new WaitForEndOfFrame();
+
+        var disabledJokers = playingUIController.Jokers.Where(j => !j.interactable).ToList();
+
+        if (disabledJokers.Count > 0)
+        {
+            var index = UnityEngine.Random.Range(0, disabledJokers.Count);
+            disabledJokers[index].interactable = true;
+            //TODO: MAYBE PLAY ANIMATION?!?
+        }
+    }
+
     IEnumerator HideLoadingUIWhenLoaded()
     {
-        yield return new WaitUntil(() => gameData.Loaded); //wait until all levels are loaded (3.csv, 4.csv, 5.csv, 6.csv)
-        yield return new WaitUntil(() => leaderboardSerializer.Loaded); // wait until leaderboard file is loaded
-        yield return new WaitForSeconds(3f); //additional 3 seconds loading screen (because i can)
+        yield return new WaitUntil(() => GameData.Loaded); //wait until all levels are loaded (3.csv, 4.csv, 5.csv, 6.csv)
+        yield return new WaitUntil(() => LeaderboardSerializer.Loaded); // wait until leaderboard file is loaded
+        yield return new WaitForSeconds(3f); //additional seconds loading screen (because i can)
         LoadingUI.SetActive(false);//hide me
     }
 
     IEnumerator SetPlayerScore(int mark)
     {
-        yield return new WaitUntil(() => leaderboardSerializer.Loaded);//first leaderboard file must be loaded
-        //if we dont have name use this one
+        yield return new WaitUntil(() => LeaderboardSerializer.Loaded);//first leaderboard file must be loaded
+        //if we dont have name use this one 
         var playerName = "Анонимен играч";
 
         if (PlayerPrefs.HasKey("Username"))
@@ -120,15 +148,24 @@ public class BasicExamController : MonoBehaviour
         }
 
         var playerScore = new PlayerScore(playerName, mark);
-        leaderboardSerializer.SetPlayerScore(playerScore);
+        LeaderboardSerializer.SetPlayerScore(playerScore);
+    }
+
+    void StopReceivingAnswer(int clientConnectionId)
+    {
+        ServerNetworkManager.SendClientMessage(clientConnectionId, "AnswerTimeout");
+        currentState = GameState.Playing;
     }
 
     public void AskFriend(Question question, int clientConnectionId)
     {
         //tell to the serverNetworkManager to send request to the given client
-        serverNetworkManager.CallFriend(question, clientConnectionId);
+        ServerNetworkManager.CallFriend(question, clientConnectionId);
         //tell the user that we wait for answer
         WaitingToAnswerUI.SetActive(true);
+
+        WaitingToAnswerUI.GetComponent<DisableAfterDelay>().OnTimeEnd += (object sender, EventArgs e) => StopReceivingAnswer(clientConnectionId);
+
         currentState = GameState.AskingAFriend;
     }
 
@@ -142,9 +179,15 @@ public class BasicExamController : MonoBehaviour
             audienceAnswerVoteCount.Add(question.Answers[i], 0);
         }
 
-        serverNetworkManager.AskAudience(question);
+        ServerNetworkManager.AskAudience(question);
         //user wait until all answers are collected
         WaitingToAnswerUI.SetActive(true);
+
+        WaitingToAnswerUI.GetComponent<DisableAfterDelay>().OnTimeEnd += (object sender, EventArgs e) =>
+        {
+            currentState = GameState.Playing;
+        };
+
         currentState = GameState.AskingAudience;
     }
 }
