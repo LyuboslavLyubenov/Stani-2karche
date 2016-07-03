@@ -75,8 +75,9 @@ public class LeaderboardSerializer : MonoBehaviour
             var playerScore = new PlayerScore(name, score);
 
             leaderboard.Add(playerScore);
-            
         }
+
+        sr.Close();
 
         leaderboard = leaderboard.OrderByDescending(ps => ps.Score).ToList();
         loaded = true;

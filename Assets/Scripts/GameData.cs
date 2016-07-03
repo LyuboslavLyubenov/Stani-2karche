@@ -83,52 +83,57 @@ public class GameData : MonoBehaviour
             var questionsSerialized = new List<Question>();
             var questionsToAdd = 0;
 
-            using (StreamReader markQuestionsSR = new StreamReader(filePath, System.Text.Encoding.Default, true))
+            using (FileStream fs = new FileStream(filePath, FileMode.Open))
             {
-                var questionSettings = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
-                questionsToAdd = int.Parse(questionSettings[1]);
-
-                questionsToTakePerMark.Add(questionsToAdd);
-
-                markQuestionsSR.ReadLine();
-
-                while (!markQuestionsSR.EndOfStream)
+                using (StreamReader markQuestionsSR = new StreamReader(fs, System.Text.Encoding.Default, true))
                 {
-                    var questionText = markQuestionsSR.ReadLine().Replace("\"", "").Split(',')[0];
-                    var answersText = new List<string>();
-                    var correctAnswerIndex = -1;
-                    var correctAnswer = "";
+                    var questionSettings = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
+                    questionsToAdd = int.Parse(questionSettings[1]);
 
-                    for (int j = 0; j < 4; j++)
-                    {
-                        var answerParams = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
-                        answersText.Add(answerParams[0]);
+                    questionsToTakePerMark.Add(questionsToAdd);
 
-                        if (answerParams[1].ToLower() == "верен")
-                        {
-                            correctAnswer = answerParams[0];
-                        }
-                    }
-
-                    if (ShuffleAnswers)
-                    {
-                        answersText.Shuffle();
-                    }
-
-                    correctAnswerIndex = answersText.IndexOf(correctAnswer);
-
-                    if (correctAnswerIndex == -1)
-                    {
-                        throw new Exception("Въпрос номер " + questionsSerialized.Count + " има само грешни отговори.");
-                        //question cannot have only wrong answers
-                        continue;
-                    }
-
-                    var question = new Question(questionText, answersText.ToArray(), correctAnswerIndex);
-                    questionsSerialized.Add(question);
                     markQuestionsSR.ReadLine();
+
+                    while (!markQuestionsSR.EndOfStream)
+                    {
+                        var questionText = markQuestionsSR.ReadLine().Replace("\"", "").Split(',')[0];
+                        var answersText = new List<string>();
+                        var correctAnswerIndex = -1;
+                        var correctAnswer = "";
+
+                        for (int j = 0; j < 4; j++)
+                        {
+                            var answerParams = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
+                            answersText.Add(answerParams[0]);
+
+                            if (answerParams[1].ToLower() == "верен")
+                            {
+                                correctAnswer = answerParams[0];
+                            }
+                        }
+
+                        if (ShuffleAnswers)
+                        {
+                            answersText.Shuffle();
+                        }
+
+                        correctAnswerIndex = answersText.IndexOf(correctAnswer);
+
+                        if (correctAnswerIndex == -1)
+                        {
+                            throw new Exception("Въпрос номер " + questionsSerialized.Count + " има само грешни отговори.");
+                            //question cannot have only wrong answers
+                            continue;
+                        }
+
+                        var question = new Question(questionText, answersText.ToArray(), correctAnswerIndex);
+                        questionsSerialized.Add(question);
+                        markQuestionsSR.ReadLine();
+                    }
                 }
+                
             }
+
 
 
             if (ShuffleQuestions)
