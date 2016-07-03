@@ -13,7 +13,7 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
     public LANBroadcastService BroadcastService;
     public NotificationsController NotificationsController;
     //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
-    public byte RetriesBeforeSearchingForAnotherServer = 2;
+    public byte RetriesBeforeSearchingForAnotherServer = 3;
 
     int connectionId = 0;
     int genericHostId = 0;
@@ -253,7 +253,6 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         {
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
             NotificationsController.AddNotification(Color.red, errorMessage);
-            return;
         }
 
         BroadcastService.RestartService();

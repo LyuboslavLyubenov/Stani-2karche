@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class NotificationsController : MonoBehaviour
 {
-    const int SpaceBetweenNotifications = 10;
+    const int SpaceBetweenNotifications = 20;
     const int StartOffset = 10;
 
     public Transform Container;
@@ -40,7 +40,7 @@ public class NotificationsController : MonoBehaviour
 
         notification.SetParent(Container, false);
 
-        var newY = StartOffset + (GetNotificationCount() * notificationRect.sizeDelta.y + SpaceBetweenNotifications);
+        var newY = notificationRect.sizeDelta.y + StartOffset + (GetNotificationCount() * (notificationRect.sizeDelta.y + SpaceBetweenNotifications));
         notificationRect.anchoredPosition = new Vector2(0, -newY);
 
         allNotifications.Add(notification.gameObject);
