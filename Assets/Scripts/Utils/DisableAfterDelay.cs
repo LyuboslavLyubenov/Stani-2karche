@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Linq;
 
 public class DisableAfterDelay : MonoBehaviour
 {
@@ -12,9 +13,24 @@ public class DisableAfterDelay : MonoBehaviour
     {
         
     };
-    public EventHandler OnTimeEnd = delegate
+
+    public event EventHandler OnTimeEnd
     {
-        
+        add
+        {
+            if (onTimeEnd == null || !onTimeEnd.GetInvocationList().Contains(value))
+            {
+                onTimeEnd += value;
+            }
+        }
+        remove
+        {
+            onTimeEnd -= value;
+        }
+    }
+
+    EventHandler onTimeEnd = delegate
+    {
     };
 
     void OnEnable()
@@ -24,8 +40,7 @@ public class DisableAfterDelay : MonoBehaviour
 
     void OnDisable()
     {
-        PassedSeconds = 0;
-        OnTimeEnd(this, EventArgs.Empty);
+        onTimeEnd(this, EventArgs.Empty);
     }
 
     void FixedUpdate()

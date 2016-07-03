@@ -7,10 +7,18 @@ public class NotificationElementController : MonoBehaviour
     void Start()
     {
         GetComponent<Button>().onClick.AddListener(Dismiss);
+        StartCoroutine(DismissAfterDelay());
+    }
+
+    IEnumerator DismissAfterDelay()
+    {
+        yield return new WaitForSeconds(5);
+        Dismiss();
     }
 
     void OnDisable()
     {
+        StopAllCoroutines();
         Destroy(this.gameObject);
     }
 
