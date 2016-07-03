@@ -58,19 +58,24 @@ public class LeaderboardSerializer : MonoBehaviour
         yield return null;
 
         var endPath = GetEndPath();
+        var sr = new StreamReader(endPath);
 
-        using (FileStream fs = new FileStream(endPath, FileMode.OpenOrCreate))
+        while (true)
         {
-            using (StreamReader sr = new StreamReader(fs))
-            {
-                var line = sr.ReadLine();
-                var playerScoreData = line.Split(',');
-                var name = playerScoreData[0];
-                var score = int.Parse(playerScoreData[1]);
-                var playerScore = new PlayerScore(name, score);
+            var line = sr.ReadLine();
 
-                leaderboard.Add(playerScore);
+            if (string.IsNullOrEmpty(line))
+            {
+                break;
             }
+
+            var playerScoreData = line.Split(',');
+            var name = playerScoreData[0];
+            var score = int.Parse(playerScoreData[1]);
+            var playerScore = new PlayerScore(name, score);
+
+            leaderboard.Add(playerScore);
+            
         }
 
         leaderboard = leaderboard.OrderByDescending(ps => ps.Score).ToList();
