@@ -51,7 +51,7 @@ public class GameData : MonoBehaviour
 
     bool loaded = false;
 
-    int nextQuestionIndex = 0;
+    int currentQuestionIndex = 0;
     int currentMarkIndex = 0;
 
     List<List<Question>> marksQuestions = new List<List<Question>>();
@@ -87,8 +87,16 @@ public class GameData : MonoBehaviour
             {
                 using (StreamReader markQuestionsSR = new StreamReader(fs, System.Text.Encoding.Default, true))
                 {
-                    var questionSettings = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
-                    questionsToAdd = int.Parse(questionSettings[1]);
+                    var questionSettings = markQuestionsSR.ReadLine().Trim('\"').Split(',');
+
+                    if (questionSettings.Length < 2)
+                    {
+                        questionsToAdd = int.MaxValue;    
+                    }
+                    else
+                    {
+                        questionsToAdd = int.Parse(questionSettings[1]);    
+                    }
 
                     questionsToTakePerMark.Add(questionsToAdd);
 
@@ -96,17 +104,17 @@ public class GameData : MonoBehaviour
 
                     while (!markQuestionsSR.EndOfStream)
                     {
-                        var questionText = markQuestionsSR.ReadLine().Replace("\"", "").Split(',')[0];
+                        var questionText = markQuestionsSR.ReadLine().Trim('\"').Split(',')[0];
                         var answersText = new List<string>();
                         var correctAnswerIndex = -1;
                         var correctAnswer = "";
 
                         for (int j = 0; j < 4; j++)
                         {
-                            var answerParams = markQuestionsSR.ReadLine().Replace("\"", "").Split(',');
+                            var answerParams = markQuestionsSR.ReadLine().Trim('\"').Split(',');
                             answersText.Add(answerParams[0]);
 
-                            if (answerParams[1].ToLower() == "верен")
+                            if (answerParams.Length == 2 && answerParams[1].ToLower() == "верен")
                             {
                                 correctAnswer = answerParams[0];
                             }
@@ -123,18 +131,14 @@ public class GameData : MonoBehaviour
                         {
                             throw new Exception("Въпрос номер " + questionsSerialized.Count + " има само грешни отговори.");
                             //question cannot have only wrong answers
-                            continue;
                         }
 
                         var question = new Question(questionText, answersText.ToArray(), correctAnswerIndex);
                         questionsSerialized.Add(question);
                         markQuestionsSR.ReadLine();
                     }
-                }
-                
+                }                
             }
-
-
 
             if (ShuffleQuestions)
             {
@@ -160,7 +164,7 @@ public class GameData : MonoBehaviour
         }
 
         var questions = marksQuestions[currentMarkIndex];
-        var index = Mathf.Min(questions.Count - 1, nextQuestionIndex - 1);
+        var index = Mathf.Min(questions.Count - 1, currentQuestionIndex);
         return questions[index];
     }
 
@@ -183,7 +187,7 @@ public class GameData : MonoBehaviour
             questionsToTake = questions.Count;
         }
 
-        if (nextQuestionIndex >= questionsToTake)
+        if (currentQuestionIndex >= questionsToTake)
         {
             if (currentMarkIndex >= marksQuestions.Count)
             {
@@ -192,13 +196,15 @@ public class GameData : MonoBehaviour
             else
             {
                 currentMarkIndex++;
-                nextQuestionIndex = 0;
+                currentQuestionIndex = 0;
+
+                questions = marksQuestions[currentMarkIndex];
 
                 MarkIncrease(this, new MarkEventArgs(currentMarkIndex + 2));
             }   
         }
 
-        var question = questions[nextQuestionIndex++];
+        var question = questions[currentQuestionIndex++];
         return question;
     }
 }
