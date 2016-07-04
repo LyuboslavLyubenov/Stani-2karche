@@ -11,7 +11,7 @@ public class BasicExamController : MonoBehaviour
 {
     public GameObject WaitingToAnswerUI;
     public GameObject FriendAnswerUI;
-    public GameObject AskAudienceUI;
+    public GameObject AudienceAnswerUI;
     public GameObject PlayingUI;
     public GameObject LeaderboardUI;
     public GameObject LoadingUI;
@@ -21,7 +21,7 @@ public class BasicExamController : MonoBehaviour
     public GameData GameData;
 
     FriendAnswerUIController friendAnswerUIController = null;
-    AskAudienceUIController askAudienceUIController = null;
+    AudienceAnswerUIController audienceAnswerUIController = null;
     PlayingUIController playingUIController = null;
 
     //how many votes each answer have
@@ -35,7 +35,7 @@ public class BasicExamController : MonoBehaviour
     {
         //load all controllers
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
-        askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
+        audienceAnswerUIController = AudienceAnswerUI.GetComponent<AudienceAnswerUIController>();
         playingUIController = PlayingUI.GetComponent<PlayingUIController>();
 
         ServerNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
@@ -102,9 +102,9 @@ public class BasicExamController : MonoBehaviour
                 {
                     //we got all audience votes
                     //show them to the user
-                    AskAudienceUI.SetActive(true);
+                    AudienceAnswerUI.SetActive(true);
                     WaitingToAnswerUI.SetActive(false);
-                    askAudienceUIController.SetVoteCount(audienceAnswerVoteCount, true);
+                    audienceAnswerUIController.SetVoteCount(audienceAnswerVoteCount, true);
                     audienceAnswerVoteCount.Clear();
                     audienceVotedId.Clear();
                     currentState = GameState.Playing;

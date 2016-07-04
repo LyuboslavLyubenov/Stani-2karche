@@ -3,8 +3,9 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using CielaSpike;
 using System.Linq;
+using CielaSpike;
+using System.Threading;
 
 public class GameData : MonoBehaviour
 {
@@ -64,6 +65,7 @@ public class GameData : MonoBehaviour
 
     IEnumerator SerializeLevelDataAsync()
     {
+        Thread.Sleep(33);
         marksQuestions = SerializeLevelData();
         loaded = true;
         yield return null;
@@ -87,7 +89,7 @@ public class GameData : MonoBehaviour
             {
                 using (StreamReader markQuestionsSR = new StreamReader(fs, System.Text.Encoding.Default, true))
                 {
-                    var questionSettings = markQuestionsSR.ReadLine().Trim('\"').Split(',');
+                    var questionSettings = markQuestionsSR.ReadLine().Split(',');
 
                     if (questionSettings.Length < 2)
                     {
@@ -104,19 +106,23 @@ public class GameData : MonoBehaviour
 
                     while (!markQuestionsSR.EndOfStream)
                     {
-                        var questionText = markQuestionsSR.ReadLine().Trim('\"').Split(',')[0];
+                        var questionText = markQuestionsSR.ReadLine().Trim(new char[] { '\"', ',' });
                         var answersText = new List<string>();
                         var correctAnswerIndex = -1;
                         var correctAnswer = "";
 
                         for (int j = 0; j < 4; j++)
                         {
-                            var answerParams = markQuestionsSR.ReadLine().Trim('\"').Split(',');
-                            answersText.Add(answerParams[0]);
+                            var answerParams = markQuestionsSR.ReadLine().Split(',');
+                            var answerTextNotFiltered = answerParams.Take(answerParams.Length - 1).ToArray();
+                            var answerText = string.Join("", answerTextNotFiltered).Trim(new char[] { '\"', ',' });
+                            var isAnswerCorrect = answerParams.Last().ToLower() == "верен";
 
-                            if (answerParams.Length == 2 && answerParams[1].ToLower() == "верен")
+                            answersText.Add(answerText);
+
+                            if (isAnswerCorrect)
                             {
-                                correctAnswer = answerParams[0];
+                                correctAnswer = answerText;
                             }
                         }
 
@@ -129,7 +135,7 @@ public class GameData : MonoBehaviour
 
                         if (correctAnswerIndex == -1)
                         {
-                            throw new Exception("Въпрос номер " + questionsSerialized.Count + " има само грешни отговори.");
+                            throw new Exception("Въпрос номер" + questionsSerialized.Count + " във файл " + i + ".csv има само грешни отговори.");
                             //question cannot have only wrong answers
                         }
 
@@ -163,6 +169,11 @@ public class GameData : MonoBehaviour
             throw new Exception("Not loaded questions yet");
         }
 
+        if (currentMarkIndex >= marksQuestions.Count)
+        {
+            return null;
+        }
+
         var questions = marksQuestions[currentMarkIndex];
         var index = Mathf.Min(questions.Count - 1, currentQuestionIndex);
         return questions[index];
@@ -179,6 +190,12 @@ public class GameData : MonoBehaviour
             throw new Exception("Not loaded questions yet");
         }
 
+        if (currentMarkIndex >= marksQuestions.Count)
+        {
+            return null;
+        }
+
+        var nextQuestionIndex = currentQuestionIndex + 1;
         var questions = marksQuestions[currentMarkIndex];
         var questionsToTake = questionsToTakePerMark[currentMarkIndex];
 
@@ -187,25 +204,21 @@ public class GameData : MonoBehaviour
             questionsToTake = questions.Count;
         }
 
-        if (currentQuestionIndex >= questionsToTake)
+        if (nextQuestionIndex >= questionsToTake)
         {
-            if (currentMarkIndex >= marksQuestions.Count)
-            {
-                return null;
-            }
-            else
-            {
-                currentMarkIndex++;
-                currentQuestionIndex = 0;
+            currentMarkIndex++;
+            currentQuestionIndex = 0;
+            MarkIncrease(this, new MarkEventArgs(currentMarkIndex + 2));
 
-                questions = marksQuestions[currentMarkIndex];
-
-                MarkIncrease(this, new MarkEventArgs(currentMarkIndex + 2));
-            }   
+            return GetCurrentQuestion();
         }
+        else
+        {
+            currentQuestionIndex = nextQuestionIndex;
 
-        var question = questions[currentQuestionIndex++];
-        return question;
+            var question = questions[currentQuestionIndex];
+            return question;
+        }
     }
 }
 

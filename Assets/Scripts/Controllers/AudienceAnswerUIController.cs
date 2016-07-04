@@ -7,7 +7,7 @@ using System.Linq;
 /// <summary>
 /// Ask audience user interface controller.
 /// </summary>
-public class AskAudienceUIController : MonoBehaviour
+public class AudienceAnswerUIController : MonoBehaviour
 {
     GameObject[] answers;
     Text[] answersText;
@@ -33,12 +33,13 @@ public class AskAudienceUIController : MonoBehaviour
     /// <param name="inProcentage">If set to <c>true</c> will show procentage instead of voted count.</param>
     public void SetVoteCount(Dictionary<string, int> answersVoteCount, bool inProcentage)
     {
-        var votedCountValues = answersVoteCount.Select(a => a.Value).ToArray();
+        var answersVotes = answersVoteCount.Shuffled();
+        var votedCountValues = answersVotes.Select(a => a.Value).ToArray();
         //all votes count
         var chancesSum = votedCountValues.Sum();
         var answerIndex = 0;
 
-        foreach (KeyValuePair<string, int> chance in answersVoteCount)
+        foreach (KeyValuePair<string, int> chance in answersVotes)
         {
             answersText[answerIndex].text = chance.Key;
           

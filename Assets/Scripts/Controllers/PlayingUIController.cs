@@ -33,7 +33,7 @@ public class PlayingUIController : MonoBehaviour
     Button[] jokers;
 
     EndGameUIController endGameUIController = null;
-    AskAudienceUIController askAudienceUIController = null;
+    AudienceAnswerUIController askAudienceUIController = null;
     FriendAnswerUIController friendAnswerUIController = null;
     CallAFriendUIController callAFriendUIController = null;
 
@@ -54,7 +54,7 @@ public class PlayingUIController : MonoBehaviour
         yield return null;
 
         endGameUIController = EndGameUI.GetComponent<EndGameUIController>();
-        askAudienceUIController = AskAudienceUI.GetComponent<AskAudienceUIController>();
+        askAudienceUIController = AskAudienceUI.GetComponent<AudienceAnswerUIController>();
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
 
@@ -81,7 +81,7 @@ public class PlayingUIController : MonoBehaviour
         yield return new WaitForEndOfFrame();
         //make sure all levels are loaded
         yield return new WaitUntil(() => GameData.Loaded);
-        var question = GameData.GetNextQuestion();
+        var question = GameData.GetCurrentQuestion();
         QuestionUIController.LoadQuestion(question);
     }
 
