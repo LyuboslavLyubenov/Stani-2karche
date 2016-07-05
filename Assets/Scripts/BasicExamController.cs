@@ -49,7 +49,7 @@ public class BasicExamController : MonoBehaviour
     void OnGameEnd(object sender, MarkEventArgs args)
     {
         //if game ends set player mark on the leaderboard
-        StartCoroutine(SetPlayerScore(args.Mark));
+        StartCoroutine(SetPlayerScore(args.Mark));    
     }
 
     void OnClientSendMessage(object sender, DataSentEventArgs args)
@@ -132,7 +132,7 @@ public class BasicExamController : MonoBehaviour
     {
         yield return new WaitUntil(() => GameData.Loaded); //wait until all levels are loaded (3.csv, 4.csv, 5.csv, 6.csv)
         yield return new WaitUntil(() => LeaderboardSerializer.Loaded); // wait until leaderboard file is loaded
-        yield return new WaitForSeconds(3f); //additional seconds loading screen (because i can)
+        yield return new WaitForSeconds(1f); //additional seconds loading screen (because i can)
         LoadingUI.SetActive(false);//hide me
     }
 

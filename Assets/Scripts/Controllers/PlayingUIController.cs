@@ -6,12 +6,16 @@ using System.Linq;
 
 public class PlayingUIController : MonoBehaviour
 {
+    //0 to 1 max
+    const float ChanceToHaveLuckAfterWrongAnswer = 0.5f;
+
     public GameObject EndGameUI;
     public GameObject AskAudienceUI;
     public GameObject FriendAnswerUI;
     public GameObject WaitingToAnswerUI;
     public GameObject LeaderboardUI;
     public GameObject CallAFriendUI;
+    public GameObject RiskyTrustUI;
 
     public ServerNetworkManager ServerNetworkManager = null;
     public GameData GameData = null;
@@ -57,7 +61,6 @@ public class PlayingUIController : MonoBehaviour
         askAudienceUIController = AskAudienceUI.GetComponent<AudienceAnswerUIController>();
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
-
 
         callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         GameData.MarkIncrease += OnMarkChange;
@@ -119,15 +122,22 @@ public class PlayingUIController : MonoBehaviour
     {
         if (args.IsCorrect)
         {
+            if (ServerNetworkManager.ConnectedClientsId.Count > 0 &&
+                jokers.Count(j => !j.interactable) > 0 &&
+                Random.value > ChanceToHaveLuckAfterWrongAnswer)
+            {
+                RiskyTrustUI.SetActive(true);
+            }
+
             StartCoroutine(LoadNextQuestionCoroutine());
         }
         else
         {
-            StartCoroutine(EndGameCoroutine());    
+            StartCoroutine(EndGameAfterFrameCoroutine());    
         }
     }
 
-    IEnumerator EndGameCoroutine()
+    IEnumerator EndGameAfterFrameCoroutine()
     {
         yield return new WaitForEndOfFrame();
         EndGame();

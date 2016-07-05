@@ -8,6 +8,12 @@ public class RiskyTrustUIController : MonoBehaviour
     public GameData GameData;
     public GameObject WaitingForAnswerUI;
 
+    public void ActivateDisabledAnimation()
+    {
+        //TODO:
+        gameObject.SetActive(false);
+    }
+
     public void ActivateJoker()
     {
         if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
@@ -24,7 +30,6 @@ public class RiskyTrustUIController : MonoBehaviour
         ServerNetworkManager.SendClientMessage(friendConnectionId, currentQuestionJSON);
 
         WaitingForAnswerUI.SetActive(true);
-
         gameObject.SetActive(false);
     }
 }

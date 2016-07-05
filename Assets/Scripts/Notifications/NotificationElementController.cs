@@ -1,18 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class NotificationElementController : MonoBehaviour
+public class NotificationElementController : MonoBehaviour, IPointerUpHandler
 {
+    public int WaitBeforeDisableSeconds = 5;
+
     void Start()
     {
-        GetComponent<Button>().onClick.AddListener(Dismiss);
         StartCoroutine(DismissAfterDelay());
     }
 
     IEnumerator DismissAfterDelay()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(WaitBeforeDisableSeconds);
         Dismiss();
     }
 
@@ -20,6 +22,11 @@ public class NotificationElementController : MonoBehaviour
     {
         StopAllCoroutines();
         Destroy(this.gameObject);
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        Dismiss();
     }
 
     public void Dismiss()

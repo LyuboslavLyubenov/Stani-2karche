@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
-using UnityEngine.Networking;
 
 /// <summary>
 /// Responsible for voting (call a friend and audience vote) and showing error dialogs
@@ -73,6 +72,12 @@ public class AndroidUIController : MonoBehaviour
 
     void OnDataRecievedFromServer(object sender, DataSentEventArgs args)
     {
+        if (args.Message == "AnswerTimeout")
+        {
+            QuestionPanelUI.SetActive(false);
+            return;
+        }
+
         //if recieved something from the server
         switch (currentState)
         {
@@ -101,12 +106,6 @@ public class AndroidUIController : MonoBehaviour
             case GameState.AskingAudience:
                 //if you are choosed from "Ask friend" or "Help from Audience"
                 //Load question
-
-                if (args.Message == "AnswerTimeout")
-                {
-                    QuestionPanelUI.SetActive(false);
-                    return;
-                }
 
                 LoadQuestion(args.Message);
                 //Vibrate if mobile

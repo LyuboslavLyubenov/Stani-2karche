@@ -14,6 +14,7 @@ public class LeaderboardSerializer : MonoBehaviour
     const string FilePath = "LevelData/";
     const string FileName = "Rating.csv";
 
+    public string LevelName = "философия";
     public string RatingFilePrefix;
     public bool AllowDublicates = false;
 
@@ -50,7 +51,7 @@ public class LeaderboardSerializer : MonoBehaviour
 
     string GetEndPath()
     {
-        return string.Format("{0}{1}{2}", FilePath, RatingFilePrefix, FileName);
+        return string.Format("{0}\\{1}\\{2}{3}", FilePath, LevelName, RatingFilePrefix, FileName);
     }
 
     IEnumerator LoadLeaderboardAsync()

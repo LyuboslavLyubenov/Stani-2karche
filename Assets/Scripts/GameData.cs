@@ -4,12 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using CSharpJExcel.Jxl;
 using CielaSpike;
 using System.Threading;
 
 public class GameData : MonoBehaviour
 {
-    const string LevelPath = "LevelData/";
+    const string LevelPath = "LevelData\\";
     const int MarkMin = 3;
     const int MarkMax = 6;
 
@@ -21,6 +22,8 @@ public class GameData : MonoBehaviour
     /// If true answers for every questions will be in random arrangement
     /// </summary>
     public bool ShuffleAnswers = true;
+
+    public string LevelCategory = "философия";
 
     public EventHandler<MarkEventArgs> MarkIncrease = delegate
     {
@@ -50,6 +53,15 @@ public class GameData : MonoBehaviour
         }
     }
 
+    public bool IsLastQuestion
+    {
+        get
+        {
+            return (currentMarkIndex < marksQuestions.Count) && ((currentQuestionIndex + 1) >= marksQuestions[currentMarkIndex].Count);
+        }
+    }
+
+
     bool loaded = false;
 
     int currentQuestionIndex = 0;
@@ -65,8 +77,8 @@ public class GameData : MonoBehaviour
 
     IEnumerator SerializeLevelDataAsync()
     {
-        Thread.Sleep(33);
-        marksQuestions = SerializeLevelData();
+        Thread.Sleep(100);
+        SerializeLevelData();
         loaded = true;
         yield return null;
     }
@@ -74,88 +86,75 @@ public class GameData : MonoBehaviour
     /// <summary>
     /// Load all questions and seperate them by categories
     /// </summary>
-    List<List<Question>> SerializeLevelData()
+    void SerializeLevelData()
     {
-        var serializedMarksQuestions = new List<List<Question>>();
+        var levelPath = Directory.GetCurrentDirectory() + '\\' + LevelPath + LevelCategory;
+        var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.Contains(".xls")).ToArray();
 
-        for (int i = MarkMin; i <= MarkMax; i++)
+        for (int i = 0; i < questionFilesPath.Length; i++)
         {
-            //get file path for the current mark
-            var filePath = string.Format("{0}{1}.csv", LevelPath, i);
-            var questionsSerialized = new List<Question>();
-            var questionsToAdd = 0;
+            var questions = new List<Question>();
+            var markQuestionsDataPath = questionFilesPath[i];
+            var workbook = Workbook.getWorkbook(new FileInfo(markQuestionsDataPath));
+            var sheet = workbook.getSheet(0);
+            var questionsToTake = sheet.getCell(1, 0).getContents();
 
-            using (FileStream fs = new FileStream(filePath, FileMode.Open))
+            questionsToTakePerMark.Add(int.Parse(questionsToTake));
+
+            for (int rowi = 2; rowi < sheet.getRows() - 6; rowi += 6)
             {
-                using (StreamReader markQuestionsSR = new StreamReader(fs, System.Text.Encoding.Default, true))
+                var questionText = sheet.getCell(0, rowi).getContents();
+
+                if (string.IsNullOrEmpty(questionText))
                 {
-                    var questionSettings = markQuestionsSR.ReadLine().Split(',');
+                    throw new Exception("Празен въпрос. Във файл " + (MarkMin + i) + ".xls на ред " + (rowi + 1));    
+                }
 
-                    if (questionSettings.Length < 2)
+                var answers = new List<string>();
+                var correctAnswer = "";
+
+                for (int answersRowI = rowi + 1; answersRowI < rowi + 5; answersRowI++)
+                {   
+                    var answerText = sheet.getCell(0, answersRowI).getContents();
+                    var isCorrect = sheet.getCell(1, answersRowI).getContents().ToLower() == "верен";
+
+                    if (string.IsNullOrEmpty(answerText))
                     {
-                        questionsToAdd = int.MaxValue;    
+                        throw new Exception("Не може да има празен отговор. Файл " + (MarkMin + i) + ".xls на ред " + (answersRowI + 1));
                     }
-                    else
+
+                    answers.Add(answerText);
+
+                    if (isCorrect)
                     {
-                        questionsToAdd = int.Parse(questionSettings[1]);    
-                    }
-
-                    questionsToTakePerMark.Add(questionsToAdd);
-
-                    markQuestionsSR.ReadLine();
-
-                    while (!markQuestionsSR.EndOfStream)
-                    {
-                        var questionText = markQuestionsSR.ReadLine().Trim(new char[] { '\"', ',' });
-                        var answersText = new List<string>();
-                        var correctAnswerIndex = -1;
-                        var correctAnswer = "";
-
-                        for (int j = 0; j < 4; j++)
+                        if (!string.IsNullOrEmpty(correctAnswer))
                         {
-                            var answerParams = markQuestionsSR.ReadLine().Split(',');
-                            var answerTextNotFiltered = answerParams.Take(answerParams.Length - 1).ToArray();
-                            var answerText = string.Join("", answerTextNotFiltered).Trim(new char[] { '\"', ',' });
-                            var isAnswerCorrect = answerParams.Last().ToLower() == "верен";
-
-                            answersText.Add(answerText);
-
-                            if (isAnswerCorrect)
-                            {
-                                correctAnswer = answerText;
-                            }
+                            throw new Exception("Не може да има 2 верни отговора на 1 въпрос. Файл " + (MarkMin + i) + ".xls на ред " + (answersRowI + 1));    
                         }
 
-                        if (ShuffleAnswers)
-                        {
-                            answersText.Shuffle();
-                        }
-
-                        correctAnswerIndex = answersText.IndexOf(correctAnswer);
-
-                        if (correctAnswerIndex == -1)
-                        {
-                            throw new Exception("Въпрос номер" + questionsSerialized.Count + " във файл " + i + ".csv има само грешни отговори.");
-                            //question cannot have only wrong answers
-                        }
-
-                        var question = new Question(questionText, answersText.ToArray(), correctAnswerIndex);
-                        questionsSerialized.Add(question);
-                        markQuestionsSR.ReadLine();
+                        correctAnswer = answerText;
                     }
-                }                
+                }
+
+                if (string.IsNullOrEmpty(correctAnswer))
+                {
+                    throw new Exception("Няма правилен отговор. Файл " + MarkMin + i + ".xls на въпрос на ред " + rowi + 1);
+                }
+
+                if (ShuffleAnswers)
+                {
+                    answers.Shuffle();
+                }
+
+                var correctAnswerIndex = answers.IndexOf(correctAnswer);
+                var question = new Question(questionText, answers.ToArray(), correctAnswerIndex);
+
+                questions.Add(question);
             }
 
-            if (ShuffleQuestions)
-            {
-                questionsSerialized.Shuffle();
-            }
+            marksQuestions.Add(questions);
 
-            var questions = questionsSerialized.ToList();
-            serializedMarksQuestions.Add(questions);
         }
-
-        return serializedMarksQuestions;
     }
 
     /// <summary>
