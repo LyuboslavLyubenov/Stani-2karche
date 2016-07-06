@@ -15,6 +15,7 @@ public class BasicExamController : MonoBehaviour
     public GameObject PlayingUI;
     public GameObject LeaderboardUI;
     public GameObject LoadingUI;
+    public GameObject RiskyTrustUI;
 
     public ServerNetworkManager ServerNetworkManager;
     public LeaderboardSerializer LeaderboardSerializer;
@@ -31,6 +32,8 @@ public class BasicExamController : MonoBehaviour
 
     GameState currentState = GameState.Playing;
 
+    Question riskyTrustQuestion = null;
+
     void Start()
     {
         //load all controllers
@@ -40,8 +43,6 @@ public class BasicExamController : MonoBehaviour
 
         ServerNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
         playingUIController.OnGameEnd += OnGameEnd;
-
-        LoadingUI.SetActive(true);
 
         StartCoroutine(HideLoadingUIWhenLoaded());
     }
@@ -60,8 +61,12 @@ public class BasicExamController : MonoBehaviour
         {
             case GameState.RiskyTrust:
 
-                var currentQuestion = GameData.GetCurrentQuestion();
-                var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
+                if (riskyTrustQuestion == null)
+                {
+                    return;
+                }
+
+                var correctAnswer = riskyTrustQuestion.Answers[riskyTrustQuestion.CorrectAnswerIndex];
 
                 if (args.Message == correctAnswer)
                 {
@@ -74,6 +79,10 @@ public class BasicExamController : MonoBehaviour
                     GameData.QuestionsToTakePerMark[markIndex]++;
                     //TODO: Play animation ?
                 }
+
+                WaitingToAnswerUI.SetActive(false);
+                riskyTrustQuestion = null;
+                currentState = GameState.Playing;
 
                 break;
 
@@ -125,6 +134,7 @@ public class BasicExamController : MonoBehaviour
             var index = UnityEngine.Random.Range(0, disabledJokers.Count);
             disabledJokers[index].interactable = true;
             //TODO: MAYBE PLAY ANIMATION?!?
+            //TODO: Play sound
         }
     }
 
@@ -155,6 +165,28 @@ public class BasicExamController : MonoBehaviour
     {
         ServerNetworkManager.SendClientMessage(clientConnectionId, "AnswerTimeout");
         currentState = GameState.Playing;
+    }
+
+    public void ActivateRiskyTrustJoker()
+    {
+        if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
+        {
+            throw new System.Exception("Жокера може да се изпозлва само когато си онлайн.");
+        }
+
+        riskyTrustQuestion = GameData.GetRandomQuestion();
+
+        var randomQuestionJSON = JsonUtility.ToJson(riskyTrustQuestion);
+        var friendConnectionIdIndex = UnityEngine.Random.Range(0, ServerNetworkManager.ConnectedClientsId.Count);
+        var friendConnectionId = ServerNetworkManager.ConnectedClientsId[friendConnectionIdIndex];
+
+        ServerNetworkManager.SendClientMessage(friendConnectionId, "RiskyTrust");
+        ServerNetworkManager.SendClientMessage(friendConnectionId, randomQuestionJSON);
+
+        WaitingToAnswerUI.SetActive(true);
+        RiskyTrustUI.SetActive(false);
+
+        currentState = GameState.RiskyTrust;
     }
 
     public void AskFriend(Question question, int clientConnectionId)
