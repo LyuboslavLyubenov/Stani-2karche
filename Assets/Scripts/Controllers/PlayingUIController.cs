@@ -7,7 +7,7 @@ using System.Linq;
 public class PlayingUIController : MonoBehaviour
 {
     //0 to 1 max
-    const float ChanceToHaveLuckAfterWrongAnswer = 0.5f;
+    const float ChanceToHaveLuckAfterWrongAnswer = 0f;
 
     public GameObject EndGameUI;
     public GameObject AskAudienceUI;
@@ -16,6 +16,7 @@ public class PlayingUIController : MonoBehaviour
     public GameObject LeaderboardUI;
     public GameObject CallAFriendUI;
     public GameObject RiskyTrustUI;
+    public Text QuestionsRemainingToNextMark;
 
     public ServerNetworkManager ServerNetworkManager = null;
     public GameData GameData = null;
@@ -85,6 +86,7 @@ public class PlayingUIController : MonoBehaviour
         //make sure all levels are loaded
         yield return new WaitUntil(() => GameData.Loaded);
         var question = GameData.GetCurrentQuestion();
+        QuestionsRemainingToNextMark.text = GameData.RemainingQuestionsToNextMark.ToString();
         QuestionUIController.LoadQuestion(question);
     }
 
@@ -159,6 +161,7 @@ public class PlayingUIController : MonoBehaviour
         {
             //if not load next question
             QuestionUIController.LoadQuestion(nextQuestion);
+            QuestionsRemainingToNextMark.text = GameData.RemainingQuestionsToNextMark.ToString();
         }
     }
 
