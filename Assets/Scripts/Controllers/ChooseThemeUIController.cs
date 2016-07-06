@@ -42,7 +42,7 @@ public class ChooseThemeUIController : MonoBehaviour
             var elementButton = themeElement.GetComponent<Button>();
             elementButton.onClick.AddListener(OnChoosedTheme);
 
-            yield return null;
+            yield return new WaitForSeconds(0.05f);
         }
 
         var elementsCount = ContentPanel.childCount;
@@ -55,7 +55,7 @@ public class ChooseThemeUIController : MonoBehaviour
 
         contentRectTransform.sizeDelta = new Vector2(width, height);
 
-        yield return null;
+        yield return new WaitForEndOfFrame();
     }
 
     void OnChoosedTheme()

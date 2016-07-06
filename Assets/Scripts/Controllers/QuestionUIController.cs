@@ -34,8 +34,6 @@ public class QuestionUIController : MonoBehaviour
         var answers = GameObject.FindGameObjectsWithTag("Answer").Take(AnswersCount)
             .ToArray();
 
-        yield return null;
-
         questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
 
         yield return null;
@@ -140,7 +138,7 @@ public class QuestionUIController : MonoBehaviour
             throw new ArgumentOutOfRangeException("index");
         }
 
-        answersAnimators[index].SetBool("hidden", true);
+        answersAnimators[index].SetBool("hide", true);
     }
 
     public void HideAllAnswers()
