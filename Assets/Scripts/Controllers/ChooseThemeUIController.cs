@@ -16,12 +16,7 @@ public class ChooseThemeUIController : MonoBehaviour
 
     GameObject themeElementPrefab;
 
-    void Start()
-    {
-        StartCoroutine(Initialize());
-    }
-
-    IEnumerator Initialize()
+    IEnumerator InitializeCoroutine()
     {
         themeElementPrefab = Resources.Load<GameObject>("Prefabs/ThemeToSelectButton");
 
@@ -77,5 +72,10 @@ public class ChooseThemeUIController : MonoBehaviour
         LoadingUI.SetActive(true);
         BasicExamPlaygroundUI.SetActive(true);
         gameObject.SetActive(false);
+    }
+
+    public void Initialize()
+    {
+        StartCoroutine(InitializeCoroutine());
     }
 }
