@@ -10,7 +10,7 @@ using System.Threading;
 
 public class GameData : MonoBehaviour
 {
-    const string LevelPath = "LevelData\\";
+    const string LevelPath = "LevelData\\теми\\";
     const int MarkMin = 3;
     const int MarkMax = 6;
 
@@ -53,6 +53,14 @@ public class GameData : MonoBehaviour
         }
     }
 
+    public int RemainingQuestionsToNextMark
+    {
+        get
+        {
+            return questionsToTakePerMark[currentMarkIndex] - currentQuestionIndex - 1;    
+        }
+    }
+
     public bool IsLastQuestion
     {
         get
@@ -69,11 +77,6 @@ public class GameData : MonoBehaviour
 
     List<List<Question>> marksQuestions = new List<List<Question>>();
     List<int> questionsToTakePerMark = new List<int>();
-
-    void Start()
-    {
-        this.StartCoroutineAsync(SerializeLevelDataAsync());
-    }
 
     IEnumerator SerializeLevelDataAsync()
     {
@@ -152,9 +155,19 @@ public class GameData : MonoBehaviour
                 questions.Add(question);
             }
 
+            if (ShuffleQuestions)
+            {
+                questions.Shuffle();
+            }
+
             marksQuestions.Add(questions);
 
         }
+    }
+
+    public void LoadDataAsync()
+    {
+        this.StartCoroutineAsync(SerializeLevelDataAsync());
     }
 
     /// <summary>
@@ -218,6 +231,12 @@ public class GameData : MonoBehaviour
             var question = questions[currentQuestionIndex];
             return question;
         }
+    }
+
+    public Question GetRandomQuestion()
+    {
+        var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Count);
+        return marksQuestions[currentMarkIndex][questionIndex];
     }
 }
 

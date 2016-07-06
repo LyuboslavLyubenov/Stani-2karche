@@ -40,6 +40,7 @@ public class DisableAfterDelay : MonoBehaviour
 
     void OnDisable()
     {
+        PassedSeconds = 0;
         onTimeEnd(this, EventArgs.Empty);
     }
 

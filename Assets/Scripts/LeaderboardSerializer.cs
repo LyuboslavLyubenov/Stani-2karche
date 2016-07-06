@@ -5,17 +5,17 @@ using System.Linq;
 using UnityEngine;
 using System.Collections;
 using CielaSpike;
+using System.Threading;
 
 /// <summary>
 /// Used to load leaderboard file data
 /// </summary>
 public class LeaderboardSerializer : MonoBehaviour
 {
-    const string FilePath = "LevelData/";
+    const string FilePath = "LevelData\\теми";
     const string FileName = "Rating.csv";
 
-    public string LevelName = "философия";
-    public string RatingFilePrefix;
+    public string LevelCategory = "философия";
     public bool AllowDublicates = false;
 
     List<PlayerScore> leaderboard = new List<PlayerScore>();
@@ -44,19 +44,15 @@ public class LeaderboardSerializer : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        this.StartCoroutineAsync(LoadLeaderboardAsync());
-    }
-
     string GetEndPath()
     {
-        return string.Format("{0}\\{1}\\{2}{3}", FilePath, LevelName, RatingFilePrefix, FileName);
+        return string.Format("{0}\\{1}\\{2}", FilePath, LevelCategory, FileName);
     }
 
     IEnumerator LoadLeaderboardAsync()
     {
         yield return null;
+        Thread.Sleep(100);
 
         var endPath = GetEndPath();
         var sr = new StreamReader(endPath);
@@ -133,5 +129,10 @@ public class LeaderboardSerializer : MonoBehaviour
     public void SetPlayerScore(PlayerScore playerScore)
     {
         this.StartCoroutineAsync(SetPlayerScoreAsync(playerScore));
+    }
+
+    public void LoadDataAsync()
+    {
+        this.StartCoroutineAsync(LoadLeaderboardAsync());
     }
 }
