@@ -22,27 +22,60 @@ public class QuestionUIController : MonoBehaviour
     Text[] answersTexts = new Text[AnswersCount];
     Button[] answersButtons = new Button[AnswersCount];
     Animator[] answersAnimators = new Animator[AnswersCount];
+    HiddenAnswerAnimatorController[] hiddenAnswerAnimatorControllers = new HiddenAnswerAnimatorController[AnswersCount];
 
     void Start()
     {
+        StartCoroutine(InitializeCoroutine());
+    }
+
+    IEnumerator InitializeCoroutine()
+    {
         var answers = GameObject.FindGameObjectsWithTag("Answer").Take(AnswersCount)
             .ToArray();
-        
+
+        yield return null;
+
         questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
+
+        yield return null;
 
         for (int i = 0; i < answers.Length; i++)
         {
             answersButtons[i] = answers[i].GetComponent<Button>();
             answersTexts[i] = answers[i].transform.GetComponentInChildren<Text>();
             answersAnimators[i] = answers[i].GetComponent<Animator>();
-        } 
+            hiddenAnswerAnimatorControllers[i] = answersAnimators[i].GetBehaviour<HiddenAnswerAnimatorController>();
+        
+            yield return null;
+        }
     }
 
     IEnumerator LoadQuestionCoroutine(Question question)
     {
-        yield return null;
+        yield return new WaitForEndOfFrame();
 
         questionText.text = question.Text;
+
+        DisableAnswers();
+        HideAllAnswers();
+            
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            var hiddenAnswerAnimatorController = hiddenAnswerAnimatorControllers[i];
+
+            while (true)
+            {
+                var finished = hiddenAnswerAnimatorController.Hidden; 
+
+                if (finished)
+                {
+                    break;
+                }
+
+                yield return new WaitForEndOfFrame();
+            }
+        }
 
         for (int i = 0; i < AnswersCount; i++)
         {
@@ -55,7 +88,10 @@ public class QuestionUIController : MonoBehaviour
             answersTexts[buttonIndex].text = question.Answers[buttonIndex];
             answersButtons[buttonIndex].interactable = true;
             answersButtons[buttonIndex].onClick.RemoveAllListeners();
+
             AttachButtonListener(buttonIndex, isCorrect);
+
+            yield return new WaitForEndOfFrame();
         }
 
         if (OnQuestionLoaded != null)
@@ -104,7 +140,20 @@ public class QuestionUIController : MonoBehaviour
             throw new ArgumentOutOfRangeException("index");
         }
 
-        answersButtons[index].gameObject.SetActive(false);
+        answersAnimators[index].SetBool("hidden", true);
+    }
+
+    public void HideAllAnswers()
+    {
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            hiddenAnswerAnimatorControllers[i].Hidden = false;
+
+            if (answersAnimators[i].gameObject.activeInHierarchy)
+            {
+                answersAnimators[i].SetTrigger("hide");    
+            }
+        }
     }
 
     public void LoadQuestion(Question question)

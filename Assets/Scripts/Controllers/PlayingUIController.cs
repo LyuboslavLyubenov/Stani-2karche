@@ -7,7 +7,7 @@ using System.Linq;
 public class PlayingUIController : MonoBehaviour
 {
     //0 to 1 max
-    const float ChanceToHaveLuckAfterWrongAnswer = 0f;
+    const float ChanceToHaveLuckAfterWrongAnswer = 0.8f;
 
     public GameObject EndGameUI;
     public GameObject AskAudienceUI;
