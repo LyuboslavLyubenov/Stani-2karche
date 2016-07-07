@@ -55,6 +55,11 @@ public class QuestionUIController : MonoBehaviour
 
         questionText.text = question.Text;
 
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            answersButtons[i].gameObject.SetActive(true);
+        }
+
         DisableAnswers();
         HideAllAnswers();
             
@@ -88,8 +93,6 @@ public class QuestionUIController : MonoBehaviour
             answersButtons[buttonIndex].onClick.RemoveAllListeners();
 
             AttachButtonListener(buttonIndex, isCorrect);
-
-            yield return new WaitForEndOfFrame();
         }
 
         if (OnQuestionLoaded != null)
@@ -138,7 +141,15 @@ public class QuestionUIController : MonoBehaviour
             throw new ArgumentOutOfRangeException("index");
         }
 
+        hiddenAnswerAnimatorControllers[index].Hidden = false;
         answersAnimators[index].SetBool("hide", true);
+        StartCoroutine(DisableAfterHidden(index));
+    }
+
+    IEnumerator DisableAfterHidden(int answerIndex)
+    {
+        yield return new WaitUntil(() => hiddenAnswerAnimatorControllers[answerIndex].Hidden);
+        answersButtons[answerIndex].gameObject.SetActive(false);
     }
 
     public void HideAllAnswers()

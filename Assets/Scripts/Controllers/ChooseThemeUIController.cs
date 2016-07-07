@@ -54,8 +54,6 @@ public class ChooseThemeUIController : MonoBehaviour
         var height = contentRectTransform.sizeDelta.y;
 
         contentRectTransform.sizeDelta = new Vector2(width, height);
-
-        yield return new WaitForEndOfFrame();
     }
 
     void OnChoosedTheme()
