@@ -198,7 +198,7 @@ public class PlayingUIController : MonoBehaviour
         for (int i = 0; i < disabledAnswersIndex.Count; i++)
         {
             var disabledIndex = disabledAnswersIndex[i];
-            QuestionUIController.DeactivateAnswerObj(disabledIndex);
+            QuestionUIController.HideAnswer(disabledIndex);
         }
 
         yield return null;

@@ -22,7 +22,6 @@ public class QuestionUIController : MonoBehaviour
     Text[] answersTexts = new Text[AnswersCount];
     Button[] answersButtons = new Button[AnswersCount];
     Animator[] answersAnimators = new Animator[AnswersCount];
-    HiddenAnswerAnimatorController[] hiddenAnswerAnimatorControllers = new HiddenAnswerAnimatorController[AnswersCount];
 
     void Start()
     {
@@ -43,8 +42,7 @@ public class QuestionUIController : MonoBehaviour
             answersButtons[i] = answers[i].GetComponent<Button>();
             answersTexts[i] = answers[i].transform.GetComponentInChildren<Text>();
             answersAnimators[i] = answers[i].GetComponent<Animator>();
-            hiddenAnswerAnimatorControllers[i] = answersAnimators[i].GetBehaviour<HiddenAnswerAnimatorController>();
-        
+ 
             yield return null;
         }
     }
@@ -55,23 +53,16 @@ public class QuestionUIController : MonoBehaviour
 
         questionText.text = question.Text;
 
-        for (int i = 0; i < AnswersCount; i++)
-        {
-            answersButtons[i].gameObject.SetActive(true);
-        }
-
         DisableAnswers();
         HideAllAnswers();
-            
+
         for (int i = 0; i < AnswersCount; i++)
         {
-            var hiddenAnswerAnimatorController = hiddenAnswerAnimatorControllers[i];
-
             while (true)
             {
-                var finished = hiddenAnswerAnimatorController.Hidden; 
+                var stateInfo = answersAnimators[i].GetCurrentAnimatorStateInfo(0);
 
-                if (finished)
+                if (stateInfo.IsTag("Hidden"))
                 {
                     break;
                 }
@@ -84,9 +75,6 @@ public class QuestionUIController : MonoBehaviour
         {
             var buttonIndex = i;
             var isCorrect = (buttonIndex == question.CorrectAnswerIndex);
-            var answerObj = answersButtons[buttonIndex].gameObject;
-
-            answerObj.SetActive(true);
 
             answersTexts[buttonIndex].text = question.Answers[buttonIndex];
             answersButtons[buttonIndex].interactable = true;
@@ -95,12 +83,15 @@ public class QuestionUIController : MonoBehaviour
             AttachButtonListener(buttonIndex, isCorrect);
         }
 
+        ShowAllAnswers();
+
         if (OnQuestionLoaded != null)
         {
             OnQuestionLoaded(this, new QuestionEventArgs(question));    
         }
     }
 
+   
     void AttachButtonListener(int buttonIndex, bool isCorrect)
     {
         var button = answersButtons[buttonIndex];
@@ -134,34 +125,49 @@ public class QuestionUIController : MonoBehaviour
         answersAnimators[buttonIndex].SetBool("isCorrect", isCorrect);
     }
 
-    public void DeactivateAnswerObj(int index)
+    void ShowAnswer(int index)
     {
         if (index < 0 || index >= AnswersCount)
         {
             throw new ArgumentOutOfRangeException("index");
         }
 
-        hiddenAnswerAnimatorControllers[index].Hidden = false;
-        answersAnimators[index].SetBool("hide", true);
-        StartCoroutine(DisableAfterHidden(index));
+        var currentState = answersAnimators[index].GetCurrentAnimatorStateInfo(0);
+
+        if (!currentState.IsTag("Visible"))
+        {
+            answersAnimators[index].SetTrigger("show");
+        }
     }
 
-    IEnumerator DisableAfterHidden(int answerIndex)
+    public void HideAnswer(int index)
     {
-        yield return new WaitUntil(() => hiddenAnswerAnimatorControllers[answerIndex].Hidden);
-        answersButtons[answerIndex].gameObject.SetActive(false);
+        if (index < 0 || index >= AnswersCount)
+        {
+            throw new ArgumentOutOfRangeException("index");
+        }
+
+        var currentState = answersAnimators[index].GetCurrentAnimatorStateInfo(0);
+
+        if (!currentState.IsTag("Hidden"))
+        {
+            answersAnimators[index].SetTrigger("hide");    
+        }
     }
 
     public void HideAllAnswers()
     {
         for (int i = 0; i < AnswersCount; i++)
         {
-            hiddenAnswerAnimatorControllers[i].Hidden = false;
+            HideAnswer(i);
+        }
+    }
 
-            if (answersAnimators[i].gameObject.activeInHierarchy)
-            {
-                answersAnimators[i].SetTrigger("hide");    
-            }
+    public void ShowAllAnswers()
+    {
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            ShowAnswer(i);  
         }
     }
 
