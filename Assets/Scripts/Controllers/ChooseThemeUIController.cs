@@ -3,10 +3,13 @@ using System.IO;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 public class ChooseThemeUIController : MonoBehaviour
 {
     const int SpaceBetweenElements = 10;
+
+    readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
     public GameObject LoadingUI;
     public GameObject BasicExamPlaygroundUI;
@@ -16,44 +19,55 @@ public class ChooseThemeUIController : MonoBehaviour
 
     GameObject themeElementPrefab;
 
+    bool IsValidLevel(string path)
+    {
+        var files = Directory.GetFiles(path).Select(f => f.Substring(path.Length + 1)).ToArray(); 
+        var isValidLevel = files.All(f => RequiredFiles.Contains(f));
+        return isValidLevel;
+    }
+
     IEnumerator InitializeCoroutine()
     {
         themeElementPrefab = Resources.Load<GameObject>("Prefabs/ThemeToSelectButton");
 
         var currentDirectory = Directory.GetCurrentDirectory() + "\\LevelData\\теми\\";
-        var availableThemes = Directory.GetDirectories(currentDirectory);
-        var elementWidth = themeElementPrefab.GetComponent<RectTransform>().sizeDelta.x;
+        var availableThemes = Directory.GetDirectories(currentDirectory).Where(IsValidLevel).ToArray();
 
-        for (int i = 0; i < availableThemes.Length; i++)
+        if (availableThemes.Length > 0)
         {
-            var themeElement = Instantiate(themeElementPrefab);
-            var elementRectTransform = themeElement.GetComponent<RectTransform>();
+            var elementWidth = themeElementPrefab.GetComponent<RectTransform>().sizeDelta.x;
 
-            themeElement.transform.SetParent(ContentPanel, false);
+            for (int i = 0; i < availableThemes.Length; i++)
+            {
+                var themeElement = Instantiate(themeElementPrefab);
+                var elementRectTransform = themeElement.GetComponent<RectTransform>();
 
-            var x = (elementWidth / 2) + SpaceBetweenElements + (i * (elementWidth + SpaceBetweenElements));
-            var y = elementRectTransform.anchoredPosition.y;
+                themeElement.transform.SetParent(ContentPanel, false);
 
-            elementRectTransform.anchoredPosition = new Vector2(x, y);
+                var x = (elementWidth / 2) + SpaceBetweenElements + (i * (elementWidth + SpaceBetweenElements));
+                var y = elementRectTransform.anchoredPosition.y;
 
-            var elementText = themeElement.GetComponentInChildren<Text>();
-            elementText.text = availableThemes[i].Remove(0, currentDirectory.Length);
+                elementRectTransform.anchoredPosition = new Vector2(x, y);
 
-            var elementButton = themeElement.GetComponent<Button>();
-            elementButton.onClick.AddListener(OnChoosedTheme);
+                var elementText = themeElement.GetComponentInChildren<Text>();
+                elementText.text = availableThemes[i].Remove(0, currentDirectory.Length);
 
-            yield return new WaitForSeconds(0.05f);
+                var elementButton = themeElement.GetComponent<Button>();
+                elementButton.onClick.AddListener(OnChoosedTheme);
+
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            var elementsCount = ContentPanel.childCount;
+            var lastElement = ContentPanel.GetChild(elementsCount - 1);
+            var lastElementRectTransform = lastElement.GetComponent<RectTransform>();
+            var contentRectTransform = ContentPanel.GetComponent<RectTransform>();
+
+            var width = lastElementRectTransform.localPosition.x + (elementWidth / 2) + SpaceBetweenElements;
+            var height = contentRectTransform.sizeDelta.y;
+
+            contentRectTransform.sizeDelta = new Vector2(width, height);
         }
-
-        var elementsCount = ContentPanel.childCount;
-        var lastElement = ContentPanel.GetChild(elementsCount - 1);
-        var lastElementRectTransform = lastElement.GetComponent<RectTransform>();
-        var contentRectTransform = ContentPanel.GetComponent<RectTransform>();
-
-        var width = lastElementRectTransform.localPosition.x + (elementWidth / 2) + SpaceBetweenElements;
-        var height = contentRectTransform.sizeDelta.y;
-
-        contentRectTransform.sizeDelta = new Vector2(width, height);
     }
 
     void OnChoosedTheme()
