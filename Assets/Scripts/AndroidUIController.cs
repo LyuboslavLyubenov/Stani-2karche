@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections;
+using System.Linq;
 
 /// <summary>
 /// Responsible for voting (call a friend and audience vote) and showing error dialogs
@@ -10,8 +12,11 @@ public class AndroidUIController : MonoBehaviour
     public GameObject QuestionPanelUI;
     public GameObject ConnectionSettingsUI;
     public GameObject ConnectingUI;
+
     public ClientNetworkManager ClientNetworkManager;
     public NotificationsController NotificationsController;
+
+    public Animator QuestionPanelAnimator;
 
     QuestionUIController questionUIController = null;
 
@@ -72,10 +77,34 @@ public class AndroidUIController : MonoBehaviour
 
     void OnDataRecievedFromServer(object sender, DataSentEventArgs args)
     {
-        if (args.Message == "AnswerTimeout")
+        if (currentState == GameState.Playing && args.Message == "AnswerTimeout")
         {
             QuestionPanelUI.SetActive(false);
+            NotificationsController.AddNotification(Color.blue, "Съжалявам, времето за отговаряне на въпроса свърши.");
             return;
+        }
+
+        if (currentState == GameState.Playing && args.Message.IndexOf("RemainingTime") > -1)
+        {
+            var messageParams = args.Message.Split('=');
+
+            if (messageParams.Length != 2)
+            {
+                return;
+            }
+
+            int remainingTime;
+            bool isValidNumber = int.TryParse(messageParams[1], out remainingTime);
+
+            if (!isValidNumber)
+            {
+                return;
+            }
+
+            if (remainingTime > 0 && remainingTime <= 10 && remainingTime % 2 == 0)
+            {
+                QuestionPanelAnimator.SetTrigger("shake");
+            }
         }
 
         //if recieved something from the server
@@ -138,12 +167,23 @@ public class AndroidUIController : MonoBehaviour
 
     void LoadQuestion(string questionJSON)
     {
+        StartCoroutine(LoadQuestionCoroutine(questionJSON));
+    }
+
+    IEnumerator LoadQuestionCoroutine(string questionJSON)
+    {
         //deserialize received question
         var question = JsonUtility.FromJson<Question>(questionJSON);
         //activate question panel
         QuestionPanelUI.SetActive(true);
+
+        yield return null;
         //populate question data
         questionUIController.LoadQuestion(question);
+
+        yield return null;
+
+        NotificationsController.AddNotification(Color.gray, "Имаш 30 секунди за отговор. Кликни на мен за да ме махнеш");
     }
 
     /// <summary>

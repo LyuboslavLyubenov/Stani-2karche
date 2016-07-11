@@ -167,6 +167,11 @@ public class BasicExamController : MonoBehaviour
         currentState = GameState.Playing;
     }
 
+    void SentRemainingTimeToClient(int clientConnectionId, int remainingTimeInSeconds)
+    {
+        ServerNetworkManager.SendClientMessage(clientConnectionId, "RemainingTime=" + remainingTimeInSeconds);
+    }
+
     public void ActivateRiskyTrustJoker()
     {
         if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
@@ -176,8 +181,9 @@ public class BasicExamController : MonoBehaviour
 
         riskyTrustQuestion = GameData.GetRandomQuestion();
 
+        var random = new System.Random(DateTime.Now.Millisecond);
         var randomQuestionJSON = JsonUtility.ToJson(riskyTrustQuestion);
-        var friendConnectionIdIndex = UnityEngine.Random.Range(0, ServerNetworkManager.ConnectedClientsId.Count);
+        var friendConnectionIdIndex = random.Next(0, ServerNetworkManager.ConnectedClientsId.Count);
         var friendConnectionId = ServerNetworkManager.ConnectedClientsId[friendConnectionIdIndex];
 
         ServerNetworkManager.SendClientMessage(friendConnectionId, "RiskyTrust");
@@ -196,7 +202,10 @@ public class BasicExamController : MonoBehaviour
         //tell the user that we wait for answer
         WaitingToAnswerUI.SetActive(true);
 
-        WaitingToAnswerUI.GetComponent<DisableAfterDelay>().OnTimeEnd += (object sender, EventArgs e) => StopReceivingAnswer(clientConnectionId);
+        var disableAfterDelayComponent = WaitingToAnswerUI.GetComponent<DisableAfterDelay>();
+
+        disableAfterDelayComponent.OnTimePass += (object sender, RemainingTimeEventArgs args) => SentRemainingTimeToClient(clientConnectionId, args.Seconds);
+        disableAfterDelayComponent.OnTimeEnd += (object sender, EventArgs e) => StopReceivingAnswer(clientConnectionId);
 
         currentState = GameState.AskingAFriend;
     }
@@ -215,7 +224,17 @@ public class BasicExamController : MonoBehaviour
         //user wait until all answers are collected
         WaitingToAnswerUI.SetActive(true);
 
-        WaitingToAnswerUI.GetComponent<DisableAfterDelay>().OnTimeEnd += (object sender, EventArgs e) =>
+        var disableAfterDelayComponent = WaitingToAnswerUI.GetComponent<DisableAfterDelay>();
+
+        disableAfterDelayComponent.OnTimePass += (object sender, RemainingTimeEventArgs e) =>
+        {
+            for (int i = 0; i < ServerNetworkManager.ConnectedClientsId.Count; i++)
+            {
+                SentRemainingTimeToClient(ServerNetworkManager.ConnectedClientsId[i], e.Seconds);       
+            }        
+        };
+        
+        disableAfterDelayComponent.OnTimeEnd += (object sender, EventArgs e) =>
         {
             currentState = GameState.Playing;
         };
