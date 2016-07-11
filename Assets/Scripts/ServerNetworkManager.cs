@@ -106,7 +106,7 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
                     var error = (NetworkError)e.ErrorN;
                     var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-                    NotificationServiceController.AddNotification(new Color(230, 30, 30), errorMessage);
+                    NotificationServiceController.AddNotification(Color.red, errorMessage);
                     hasError = true;
                 }
 

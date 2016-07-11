@@ -10,10 +10,20 @@ public class DisableAfterDelay : MonoBehaviour
     public bool DisableAfterClick = true;
     public bool UseAnimator = false;
 
-    public EventHandler OnTimePass = delegate
+    public event EventHandler<RemainingTimeEventArgs> OnTimePass
     {
-        
-    };
+        add
+        {
+            if (onTimePass == null || !onTimePass.GetInvocationList().Contains(value))
+            {
+                onTimePass += value;
+            }
+        }
+        remove
+        {
+            onTimePass -= value;
+        }
+    }
 
     public event EventHandler OnTimeEnd
     {
@@ -29,6 +39,10 @@ public class DisableAfterDelay : MonoBehaviour
             onTimeEnd -= value;
         }
     }
+
+    EventHandler<RemainingTimeEventArgs> onTimePass = delegate
+    {
+    };
 
     EventHandler onTimeEnd = delegate
     {
@@ -68,13 +82,14 @@ public class DisableAfterDelay : MonoBehaviour
 
     IEnumerator DisableWithDelay()
     {
-        while (PassedSeconds <= DelayInSeconds)
+        while (PassedSeconds < DelayInSeconds)
         {
             yield return new WaitForSeconds(1f);
             PassedSeconds++;
-            OnTimePass(this, EventArgs.Empty);
+            onTimePass(this, new RemainingTimeEventArgs(DelayInSeconds - PassedSeconds));
         }
 
         Disable();
     }
 }
+

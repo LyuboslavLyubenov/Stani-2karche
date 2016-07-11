@@ -18,6 +18,8 @@ public class QuestionUIController : MonoBehaviour
 
     public bool ShouldPlayButtonAnimation = true;
 
+    bool initialized = false;
+
     Text questionText = null;
     Text[] answersTexts = new Text[AnswersCount];
     Button[] answersButtons = new Button[AnswersCount];
@@ -30,6 +32,8 @@ public class QuestionUIController : MonoBehaviour
 
     IEnumerator InitializeCoroutine()
     {
+        yield return null;
+
         var answers = GameObject.FindGameObjectsWithTag("Answer").Take(AnswersCount)
             .ToArray();
 
@@ -45,10 +49,13 @@ public class QuestionUIController : MonoBehaviour
  
             yield return null;
         }
+
+        initialized = true;
     }
 
     IEnumerator LoadQuestionCoroutine(Question question)
     {
+        yield return new WaitUntil(() => initialized);
         yield return new WaitForEndOfFrame();
 
         questionText.text = question.Text;

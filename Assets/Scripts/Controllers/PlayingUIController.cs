@@ -6,8 +6,8 @@ using System.Linq;
 
 public class PlayingUIController : MonoBehaviour
 {
-    //0 to 1 max
-    const float ChanceToHaveLuckAfterWrongAnswer = 0.8f;
+    //255 = 100% 0 = 0%
+    const byte ChanceToHaveLuckAfterAnswer = 150;
 
     public GameObject EndGameUI;
     public GameObject AskAudienceUI;
@@ -112,6 +112,15 @@ public class PlayingUIController : MonoBehaviour
     void OnMarkChange(object sender, MarkEventArgs args)
     {
         currentMarkText.text = args.Mark.ToString();
+    
+        var chanceForJoker = Random.Range(0, byte.MaxValue);
+
+        if (ServerNetworkManager.ConnectedClientsId.Count > 0 &&
+            jokers.Count(j => !j.interactable) > 0 &&
+            chanceForJoker >= ChanceToHaveLuckAfterAnswer)
+        {
+            RiskyTrustUI.SetActive(true);
+        }
     }
 
     void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
@@ -124,13 +133,6 @@ public class PlayingUIController : MonoBehaviour
     {
         if (args.IsCorrect)
         {
-            if (ServerNetworkManager.ConnectedClientsId.Count > 0 &&
-                jokers.Count(j => !j.interactable) > 0 &&
-                Random.value > ChanceToHaveLuckAfterWrongAnswer)
-            {
-                RiskyTrustUI.SetActive(true);
-            }
-
             StartCoroutine(LoadNextQuestionCoroutine());
         }
         else
@@ -241,13 +243,17 @@ public class PlayingUIController : MonoBehaviour
     public void AskAudience()
     {
         var currentQuestion = GameData.GetCurrentQuestion();
+        var minForOnlineVote = 4;
 
+        #if DEVELOPMENT_BUILD
+        minForOnlineVote = 1;
+        #endif
         //if we have less than 4 connected clients
-        if (ServerNetworkManager.ConnectedClientsId.Count < 4)
+        if (ServerNetworkManager.ConnectedClientsId.Count < minForOnlineVote)
         {
             var generatedAudienceAnswers = new Dictionary<string, int>();
             var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
-            var correctAnswerChance = Random.Range(40, 80);
+            var correctAnswerChance = Random.Range(40, 85);
             var wrongAnswersLeftOverChance = 100 - correctAnswerChance;
 
             generatedAudienceAnswers.Add(correctAnswer, correctAnswerChance);
