@@ -6,6 +6,7 @@ public class StartMenuUIController : MonoBehaviour
 {
     public GameObject GameTypesUI;
     public EnterNameUIController EnterNameUIController;
+    public HomeScreenTutorialsSwitcher TutorialsSwitcher;
 
     void Start()
     {
@@ -32,6 +33,7 @@ public class StartMenuUIController : MonoBehaviour
 
     void OnUsernameSet(object sender, System.EventArgs args)
     {
+        TutorialsSwitcher.ExplainGameTypes();
         GameTypesUI.SetActive(true);
     }
 }
