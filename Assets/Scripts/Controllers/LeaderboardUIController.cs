@@ -14,7 +14,7 @@ public class LeaderboardUIController : MonoBehaviour
 
     void Start()
     {
-        PlayerScorePrefab = Resources.Load<GameObject>("Prefabs/PlayerScore");
+        PlayerScorePrefab = Resources.Load<GameObject>("Prefabs/LeaderboardPlayerScoreElement");
 
         if (ContentPanel == null)
         {

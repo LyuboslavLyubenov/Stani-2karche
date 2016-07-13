@@ -44,7 +44,7 @@ public class FriendAnswerUIController : ExtendedMonoBehaviour
         var usernameIndex = UnityEngine.Random.Range(0, offlineFriendNames.Length);
         var username = offlineFriendNames[usernameIndex];
 
-        CoroutineUtils.WaitForFrames(1, () => _SetResponse(username, answer));
+        CoroutineUtils.WaitForFrames(0, () => _SetResponse(username, answer));
     }
 
     public void SetResponse(string username, string answer)
