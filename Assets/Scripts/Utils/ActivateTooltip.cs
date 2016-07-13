@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Used to activate tooltip on start menu
 /// </summary>
-public class ActivateTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     const int Offset = 10;
 
@@ -85,18 +85,12 @@ public class ActivateTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExit
     }
 
     //if mouse hover or finger is holding on current object
+    //wait for DelayInSeconds to check if cursor is still on objects, if so activate tooltip
     public void OnPointerEnter(PointerEventData eventData)
     {
         //we should show tooltip
         showTooltip = true;
-        StartCoroutine(SetActiveTooltip());
-    }
-
-    //wait for DelayInSeconds to check if cursor is still on objects, if so activate tooltip
-    IEnumerator SetActiveTooltip()
-    {
-        yield return new WaitForSeconds(DelayInSeconds);
-        Tooltip.SetActive(showTooltip);
+        CoroutineUtils.WaitForSeconds(1f, () => Tooltip.SetActive(showTooltip));
     }
 
     //disable tooltip on mouse/finger exiting object
