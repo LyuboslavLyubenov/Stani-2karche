@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 
-public class EnterNameUIController : MonoBehaviour
+public class EnterNameUIController : ExtendedMonoBehaviour
 {
     public GameObject UsernameTextField;
     public EventHandler OnUsernameSet = delegate
@@ -13,13 +13,16 @@ public class EnterNameUIController : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(InitializationCoroutine());
+        if (UsernameTextField == null)
+        {
+            throw new NullReferenceException("UsernameTextField is null on EnterNameUIController obj");
+        }
+
+        CoroutineUtils.WaitForFrames(1, Initialize);
     }
 
-    IEnumerator InitializationCoroutine()
+    void Initialize()
     {
-        yield return null;
-
         if (PlayerPrefs.HasKey("Username"))
         {
             OnUsernameSet(this, EventArgs.Empty);

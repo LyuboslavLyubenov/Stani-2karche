@@ -186,7 +186,7 @@ public class PlayingUIController : MonoBehaviour
             while (true)
             {
                 //make sure we dont disable correct answer and we dont disable answer 2 times
-                n = UnityEngine.Random.Range(0, 4);
+                n = Random.Range(0, 4);
 
                 if (n != correctAnswerIndex && !disabledAnswersIndex.Contains(n))
                 {

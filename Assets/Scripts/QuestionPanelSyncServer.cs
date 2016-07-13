@@ -1,13 +1,26 @@
 ﻿using UnityEngine;
+using System;
 
 public class QuestionPanelSyncServer : MonoBehaviour
 {
     public PlayingUIController PlayingUIController;
-   
+    public NotificationsController notificationsService;
+
     ServerNetworkManager serverNetworkManager;
 
     void Start()
     {
+        if (PlayingUIController == null)
+        {
+            if (notificationsService == null)
+            {
+                throw new Exception("Not found notification service");
+            }
+                
+            notificationsService.AddNotification(Color.red, "PlayingUIController on QuestionPanelSyncServer is null");
+            return;
+        }
+
         serverNetworkManager = PlayingUIController.ServerNetworkManager;
 
         var questionUIController = PlayingUIController.QuestionUIController;

@@ -1,21 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class EndGameUIController : MonoBehaviour
 {
     public GameObject LeaderboardUI;
-    public LeaderboardSerializer leaderboardSerializer;
+    public LeaderboardSerializer LeaderboardSerializer;
 
     LeaderboardUIController leaderboardUIController = null;
 
     void OnEnable()
-    {
-        if (LeaderboardUI != null)
+    { 
+        if (LeaderboardUI == null)
         {
-            leaderboardUIController = LeaderboardUI.GetComponent<LeaderboardUIController>();    
+            throw new NullReferenceException("LeaderboardUI is null on EndGameUIController obj");
         }
 
-        leaderboardUIController.Populate(leaderboardSerializer.Leaderboard);
+        if (LeaderboardSerializer == null)
+        {
+            throw new NullReferenceException("LeaderboardSerializer is null on EndGameUIController obj");
+        }
+
+        leaderboardUIController = LeaderboardUI.GetComponent<LeaderboardUIController>(); 
+        leaderboardUIController.Populate(LeaderboardSerializer.Leaderboard);
     }
 
     public void SetMark(int mark)

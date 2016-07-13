@@ -16,6 +16,12 @@ public class AudienceAnswerUIController : MonoBehaviour
     void OnEnable()
     {
         answers = GameObject.FindGameObjectsWithTag("AudienceAnswerChance");
+
+        if (answers.Length != 4)
+        {
+            throw new Exception("Answers must be exactly 4. AudienceAnswerUIController obj");
+        }
+
         answersText = new Text[answers.Length];
         chanceToBeCorrectText = new Text[answers.Length];   
 

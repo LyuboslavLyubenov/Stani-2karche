@@ -11,8 +11,25 @@ public class WaitingToAnswerUIController : MonoBehaviour
 
     void OnEnable()
     {
+        if (RemainingSecondsObject == null)
+        {
+            throw new NullReferenceException("RemainingSecondsObjects is null on WaitingToAnswerUIController obj");
+        }
+
         disableAfterDelay = GetComponent<DisableAfterDelay>();
+
+        if (disableAfterDelay == null)
+        {
+            throw new Exception("WaitingToAnswerUIController obj must have DisableAfterDelay component");
+        }
+
         remainingSecondsText = RemainingSecondsObject.GetComponent<Text>();
+
+        if (remainingSecondsText == null)
+        {
+            throw new Exception("RemainingSecondsObject obj is null or doesnt have Text component");
+        }
+
         UpdateTimer();
 
         disableAfterDelay.OnTimePass += OnTimePass;

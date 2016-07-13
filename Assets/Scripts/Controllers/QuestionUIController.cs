@@ -37,15 +37,44 @@ public class QuestionUIController : MonoBehaviour
         var answers = GameObject.FindGameObjectsWithTag("Answer").Take(AnswersCount)
             .ToArray();
 
+        if (answers.Length != 4)
+        {
+            throw new NullReferenceException("Invalid answers count. Found " + answers.Length + " expected 4.");
+        }
+
         questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
+
+        if (questionText == null)
+        {
+            throw new NullReferenceException("Cannot found Text component on questionText");
+        }
 
         yield return null;
 
         for (int i = 0; i < answers.Length; i++)
         {
-            answersButtons[i] = answers[i].GetComponent<Button>();
-            answersTexts[i] = answers[i].transform.GetComponentInChildren<Text>();
-            answersAnimators[i] = answers[i].GetComponent<Animator>();
+            var answerButton = answers[i].GetComponent<Button>();
+            var answerText = answers[i].transform.GetComponentInChildren<Text>();
+            var answerAnimator = answers[i].GetComponent<Animator>();
+
+            if (answerButton == null)
+            {
+                throw new Exception("Answer must be button");
+            }
+
+            if (answerText == null)
+            {
+                throw new Exception("Answer must have text component");
+            }
+
+            if (answerAnimator == null)
+            {
+                throw new Exception("Answer must have animator component");
+            }
+
+            answersButtons[i] = answerButton;
+            answersTexts[i] = answerText;
+            answersAnimators[i] = answerAnimator;
  
             yield return null;
         }

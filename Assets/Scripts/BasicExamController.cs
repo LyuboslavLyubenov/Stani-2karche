@@ -7,7 +7,7 @@ using System.Linq;
 /// <summary>
 /// Basic exam controller. Used to controll UI for "Standart play mode" or "Нормално изпитване" 
 /// </summary>
-public class BasicExamController : MonoBehaviour
+public class BasicExamController : ExtendedMonoBehaviour
 {
     public GameObject WaitingToAnswerUI;
     public GameObject FriendAnswerUI;
@@ -50,7 +50,7 @@ public class BasicExamController : MonoBehaviour
     void OnGameEnd(object sender, MarkEventArgs args)
     {
         //if game ends set player mark on the leaderboard
-        StartCoroutine(SetPlayerScore(args.Mark));    
+        CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () => SetPlayerScore(args.Mark));
     }
 
     void OnClientSendMessage(object sender, DataSentEventArgs args)
@@ -146,9 +146,9 @@ public class BasicExamController : MonoBehaviour
         LoadingUI.SetActive(false);//hide me
     }
 
-    IEnumerator SetPlayerScore(int mark)
+    void SetPlayerScore(int mark)
     {
-        yield return new WaitUntil(() => LeaderboardSerializer.Loaded);//first leaderboard file must be loaded
+        //first leaderboard file must be loaded
         //if we dont have name use this one 
         var playerName = "Анонимен играч";
 

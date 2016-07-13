@@ -6,11 +6,21 @@ using System;
 
 public class LeaderboardUIController : MonoBehaviour
 {
-    public GameObject PlayerScorePrefab;
+    const int SpaceBetweenScore = 10;
+    
     public GameObject ContentPanel;
 
-    const int SpaceBetweenScore = 10;
+    GameObject PlayerScorePrefab;
 
+    void Start()
+    {
+        PlayerScorePrefab = Resources.Load<GameObject>("Prefabs/PlayerScore");
+
+        if (ContentPanel == null)
+        {
+            throw new Exception("ContentPanel is null on LeaderboardUIController obj");
+        }
+    }
 
     public void Populate(IList<PlayerScore> playersScore)
     {

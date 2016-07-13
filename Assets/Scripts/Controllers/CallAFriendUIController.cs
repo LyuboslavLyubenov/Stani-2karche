@@ -29,6 +29,21 @@ public class CallAFriendUIController : MonoBehaviour
 
     void Start()
     {
+        if (NextButton == null)
+        {
+            throw new Exception("NextButton button is null on CallAFriendUIController obj");
+        }
+
+        if (PrevButton == null)
+        {
+            throw new Exception("PrevButton button is null on CallAFriendUIController obj");
+        }
+
+        if (FriendsToSelectPanel == null)
+        {
+            throw new Exception("FriendsToSelectPanel obj is null on CallAFriendUIController obj");
+        }
+
         friendSelectToCallButtons = FriendsToSelectPanel.GetComponentsInChildren<Button>();
         friendSelectToCallNames = new Text[friendSelectToCallButtons.Length];
 

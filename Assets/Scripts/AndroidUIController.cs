@@ -2,7 +2,6 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
-using System.Linq;
 
 /// <summary>
 /// Responsible for voting (call a friend and audience vote) and showing error dialogs
@@ -27,10 +26,44 @@ public class AndroidUIController : MonoBehaviour
 
     void Start()
     {
+        CheckDependecies();
         LoadControllers();
         AttachEventsHooks();
 
         ConnectingUI.SetActive(true);
+    }
+
+    void CheckDependecies()
+    {
+        if (QuestionPanelUI == null)
+        {
+            throw new Exception("QuestionPanelUI is null on AndroidUIController obj");
+        }
+
+        if (ConnectionSettingsUI == null)
+        {
+            throw new Exception("ConnectionSettingsUI is null on AndroidUIController obj");
+        }
+
+        if (ConnectingUI == null)
+        {
+            throw new Exception("ConnectingUI is null on AndroidUIController obj");
+        }
+
+        if (ClientNetworkManager == null)
+        {
+            throw new Exception("ClientNetworkManager is null on AndroidUIController obj");
+        }
+
+        if (NotificationsController == null)
+        {
+            throw new Exception("NotificationsController is null on AndroidUIController obj");
+        }
+
+        if (QuestionPanelAnimator == null)
+        {
+            throw new Exception("QuestionPanelAnimator is null on AndroidUIController obj");
+        }
     }
 
     /// <summary>
@@ -39,6 +72,11 @@ public class AndroidUIController : MonoBehaviour
     void LoadControllers()
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
+
+        if (questionUIController == null)
+        {
+            throw new Exception("QuestionUIController component is null");
+        }
     }
 
     /// <summary>
