@@ -20,6 +20,8 @@ public class BasicExamController : ExtendedMonoBehaviour
     public ServerNetworkManager ServerNetworkManager;
     public LeaderboardSerializer LeaderboardSerializer;
     public GameData GameData;
+    public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
+    public NotificationsController NotificationService;
 
     FriendAnswerUIController friendAnswerUIController = null;
     AudienceAnswerUIController audienceAnswerUIController = null;
@@ -43,6 +45,9 @@ public class BasicExamController : ExtendedMonoBehaviour
 
         ServerNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
         playingUIController.OnGameEnd += OnGameEnd;
+
+        DialogSwitcher.gameObject.SetActive(true);
+        DialogSwitcher.ExplainThemeSelect();
 
         StartCoroutine(HideLoadingUIWhenLoaded());
     }
@@ -111,16 +116,31 @@ public class BasicExamController : ExtendedMonoBehaviour
                 {
                     //we got all audience votes
                     //show them to the user
-                    AudienceAnswerUI.SetActive(true);
+
                     WaitingToAnswerUI.SetActive(false);
-                    audienceAnswerUIController.SetVoteCount(audienceAnswerVoteCount, true);
-                    audienceAnswerVoteCount.Clear();
-                    audienceVotedId.Clear();
+
+                    if (audienceAnswerVoteCount.Any(avc => avc.Value > 0))
+                    {
+                        ShowAudienceVote();
+                    }
+                    else
+                    {
+                        NotificationService.AddNotification(Color.blue, "Никой не гласува :(");
+                    }
+
                     currentState = GameState.Playing;
                 }
 
                 break;
         }
+    }
+
+    void ShowAudienceVote()
+    {
+        AudienceAnswerUI.SetActive(true);
+        audienceAnswerUIController.SetVoteCount(audienceAnswerVoteCount, true);
+        audienceAnswerVoteCount.Clear();
+        audienceVotedId.Clear();
     }
 
     IEnumerator EnableRandomDisabledJoker()
@@ -236,7 +256,14 @@ public class BasicExamController : ExtendedMonoBehaviour
         
         disableAfterDelayComponent.OnTimeEnd += (object sender, EventArgs e) =>
         {
+            ServerNetworkManager.SendAllClientsMessage("AnswerTimeout");
             currentState = GameState.Playing;
+
+            if (audienceAnswerVoteCount.Any(avc => avc.Value > 0))
+            {
+                WaitingToAnswerUI.SetActive(false);
+                ShowAudienceVote();
+            }
         };
 
         currentState = GameState.AskingAudience;
