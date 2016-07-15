@@ -6,7 +6,7 @@ using System.Collections;
 /// <summary>
 /// Responsible for voting (call a friend and audience vote) and showing error dialogs
 /// </summary>
-public class AndroidUIController : MonoBehaviour
+public class BasicExamAndroidUIController : MonoBehaviour
 {
     public GameObject QuestionPanelUI;
     public GameObject ConnectionSettingsUI;
@@ -14,6 +14,7 @@ public class AndroidUIController : MonoBehaviour
 
     public ClientNetworkManager ClientNetworkManager;
     public NotificationsController NotificationsController;
+    public ConnectionSettingsUIController connectionSettingsUIController;
 
     public Animator QuestionPanelAnimator;
 
@@ -89,6 +90,8 @@ public class AndroidUIController : MonoBehaviour
         ClientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
 
         questionUIController.OnAnswerClick += OnAnswerClick;
+
+        connectionSettingsUIController.OnConnectToServer += ((sender, e) => Connect(e.IPAddress));
     }
 
     //if clicked on any answer

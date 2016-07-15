@@ -1,8 +1,8 @@
 ﻿using System;
 
-public class BroadcastIpEventArgs : EventArgs
+public class IpEventArgs : EventArgs
 {
-    public BroadcastIpEventArgs(string ip)
+    public IpEventArgs(string ip)
     {
         if (string.IsNullOrEmpty(ip))
         {

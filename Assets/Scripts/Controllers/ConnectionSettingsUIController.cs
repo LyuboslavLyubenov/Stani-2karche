@@ -1,32 +1,26 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using System;
 
 public class ConnectionSettingsUIController : MonoBehaviour
 {
-    public GameObject IPTextObj;
-    public AndroidUIController AndroidUIController;
+    public Text IPText;
 
-    Text ipText = null;
+    public EventHandler<IpEventArgs> OnConnectToServer = delegate
+    {
+    };
 
     void Start()
     {
-        if (IPTextObj == null)
+        if (IPText == null)
         {
-            throw new NullReferenceException("IPTextObj is null on ConnectionSettingsUIController obj");
+            throw new NullReferenceException("IPText is null on ConnectionSettingsUIController obj");
         }
-
-        if (AndroidUIController == null)
-        {
-            throw new NullReferenceException("AndroidUIController is null on ConnectionSettingsUIController obj");
-        }
-
-        ipText = IPTextObj.GetComponent<Text>();
     }
 
     public void ConnectToServer()
     {
-        AndroidUIController.Connect(ipText.text);
+        var ipEventArgs = new IpEventArgs(IPText.text);
+        OnConnectToServer(this, ipEventArgs);
     }
 }

@@ -71,7 +71,7 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced); //make sure messages are delivered and send in correct order
     }
 
-    void OnServerFoundCoroutine(object sender, BroadcastIpEventArgs args)
+    void OnServerFoundCoroutine(object sender, IpEventArgs args)
     {
         //if server found try to connect
         StartCoroutine(OnServerFoundCoroutine(args.IPAddress));   

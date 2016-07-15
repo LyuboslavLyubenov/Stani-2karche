@@ -22,7 +22,7 @@ public class LANBroadcastService : MonoBehaviour
     //what type i am
     public BroadcastType broadcastType = BroadcastType.Client;
 
-    public EventHandler<BroadcastIpEventArgs> OnFound = delegate
+    public EventHandler<IpEventArgs> OnFound = delegate
     {
     };
 
@@ -97,7 +97,7 @@ public class LANBroadcastService : MonoBehaviour
             if (!string.IsNullOrEmpty(message) && message.Length > 0 && message.Equals(IAmServer))
             {
                 //TODO: TELL THE SERVER THAT YOU FOUND IT
-                OnFound(this, new BroadcastIpEventArgs(ip.Address.ToString()));
+                OnFound(this, new IpEventArgs(ip.Address.ToString()));
                 isRunning = false;       
             }
 
