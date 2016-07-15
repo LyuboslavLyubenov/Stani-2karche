@@ -1,32 +1,39 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 
 public class MarkPanelController : MonoBehaviour
 {
-    public GameData GameData;
-
     Animator animator;
+    Text markText;
+
+    public string Mark
+    {
+        get
+        {
+            return markText.text;
+        }
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentNullException("value", "Mark cannot be null");
+            }
+
+            markText.text = value;
+            animator.SetTrigger("MarkIncreased");
+        }
+    }
 
     void Start()
     {
-        if (GameData == null)
-        {
-            throw new Exception("Gamedata is null on MarkPanelController");
-        }
-
         animator = GetComponent<Animator>();
+        markText.GetComponentInChildren<Text>();
 
         if (animator == null)
         {
             throw new Exception("Animator not found on Object holding MarkPanelController");
         }
-
-        GameData.MarkIncrease += OnMarkIncrease;
-    }
-
-    void OnMarkIncrease(object sender, System.EventArgs args)
-    {
-        animator.SetTrigger("MarkIncreased");
     }
 }

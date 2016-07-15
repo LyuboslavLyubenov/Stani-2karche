@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 
-public class PlayingUIController : ExtendedMonoBehaviour
+public class BasicPlayerPlayingUIController : ExtendedMonoBehaviour
 {
     //0f = 0% 1f = 100%
     const float ChanceToHaveLuckAfterAnswer = 0.6f;
@@ -12,9 +12,11 @@ public class PlayingUIController : ExtendedMonoBehaviour
 
     public Text QuestionsRemainingToNextMark;
 
-    public ServerNetworkManager ServerNetworkManager = null;
-    public GameData GameData = null;
-    public QuestionUIController QuestionUIController = null;
+    public ServerNetworkManager ServerNetworkManager;
+    public GameData GameData;
+
+    public QuestionUIController QuestionUIController;
+    public MarkPanelController MarkPanelController;
 
     public System.EventHandler<MarkEventArgs> OnGameEnd = delegate
     {
@@ -55,8 +57,6 @@ public class PlayingUIController : ExtendedMonoBehaviour
     GameObject fifthyChanceButton = null;
     GameObject surrenderButton = null;
 
-    Text currentMarkText = null;
-
     void Start()
     {
         StartCoroutine(Initialize());
@@ -72,13 +72,6 @@ public class PlayingUIController : ExtendedMonoBehaviour
         yield return null;
         InitializeHelpPanel();
         yield return null;
-        InitializeMarkPanel();
-        yield return null;
-        LoadFirstQuestion();
-    }
-
-    void LoadFirstQuestion()
-    {
         StartCoroutine(LoadFirstQuestionCoroutine());
     }
 
@@ -108,15 +101,10 @@ public class PlayingUIController : ExtendedMonoBehaviour
         jokers[2] = fifthyChanceButton.GetComponent<Button>();
     }
 
-    void InitializeMarkPanel()
-    {
-        currentMarkText = GameObject.FindGameObjectWithTag("CurrentMark").GetComponent<Text>();
-    }
-
     void OnMarkChange(object sender, MarkEventArgs args)
     {
-        currentMarkText.text = args.Mark.ToString();
-    
+        MarkPanelController.Mark = args.Mark.ToString();
+
         var chanceForJoker = Random.value;
 
         if (ServerNetworkManager.ConnectedClientsId.Count > 0 &&
@@ -188,9 +176,34 @@ public class PlayingUIController : ExtendedMonoBehaviour
         }
     }
 
+    Dictionary<string, int> GenerateAudienceVotes(Question question)
+    {
+        var generatedAudienceAnswersVotes = new Dictionary<string, int>();
+        var correctAnswer = question.Answers[question.CorrectAnswerIndex];
+        var correctAnswerChance = Random.Range(40, 85);
+        var wrongAnswersLeftOverChance = 100 - correctAnswerChance;
+
+        generatedAudienceAnswersVotes.Add(correctAnswer, correctAnswerChance);
+
+        //generate chances
+        for (int i = 0; i < question.Answers.Length; i++)
+        {
+            if (i == question.CorrectAnswerIndex)
+            {
+                continue;
+            }
+
+            var wrongAnswerChance = Random.Range(0, wrongAnswersLeftOverChance);
+            generatedAudienceAnswersVotes.Add(question.Answers[i], wrongAnswersLeftOverChance);
+            wrongAnswersLeftOverChance -= wrongAnswerChance;
+        }
+
+        return generatedAudienceAnswersVotes;
+    }
+
     public void EndGame()
     {
-        var currentMark = int.Parse(currentMarkText.text);
+        var currentMark = int.Parse(MarkPanelController.Mark);
         OnGameEnd(this, new MarkEventArgs(currentMark));
         gameObject.SetActive(false);
     }
@@ -238,26 +251,7 @@ public class PlayingUIController : ExtendedMonoBehaviour
         //if we have less than 4 connected clients
         if (ServerNetworkManager.ConnectedClientsId.Count < minForOnlineVote)
         {
-            var generatedAudienceAnswersVotes = new Dictionary<string, int>();
-            var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
-            var correctAnswerChance = Random.Range(40, 85);
-            var wrongAnswersLeftOverChance = 100 - correctAnswerChance;
-
-            generatedAudienceAnswersVotes.Add(correctAnswer, correctAnswerChance);
-
-            //generate chances
-            for (int i = 0; i < currentQuestion.Answers.Length; i++)
-            {
-                if (i == currentQuestion.CorrectAnswerIndex)
-                {
-                    continue;
-                }
-                    
-                var wrongAnswerChance = Random.Range(0, wrongAnswersLeftOverChance);
-                generatedAudienceAnswersVotes.Add(currentQuestion.Answers[i], wrongAnswersLeftOverChance);
-                wrongAnswersLeftOverChance -= wrongAnswerChance;
-            }
-
+            var generatedAudienceAnswersVotes = GenerateAudienceVotes(currentQuestion);
             var audienceVoteEventArgs = new AudienceVoteEventArgs(generatedAudienceAnswersVotes);
             OnAudienceVoteGenerated(this, audienceVoteEventArgs);
         }

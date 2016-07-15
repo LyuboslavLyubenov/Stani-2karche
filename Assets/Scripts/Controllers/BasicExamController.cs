@@ -31,7 +31,7 @@ public class BasicExamController : ExtendedMonoBehaviour
 
     FriendAnswerUIController friendAnswerUIController = null;
     AudienceAnswerUIController audienceAnswerUIController = null;
-    PlayingUIController playingUIController = null;
+    BasicPlayerPlayingUIController playingUIController = null;
 
     //how many votes each answer have
     Dictionary<string, int> audienceAnswerVoteCount = new Dictionary<string, int>();
@@ -47,7 +47,7 @@ public class BasicExamController : ExtendedMonoBehaviour
         //load all controllers
         friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
         audienceAnswerUIController = AudienceAnswerUI.GetComponent<AudienceAnswerUIController>();
-        playingUIController = PlayingUI.GetComponent<PlayingUIController>();
+        playingUIController = PlayingUI.GetComponent<BasicPlayerPlayingUIController>();
 
         ServerNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
 

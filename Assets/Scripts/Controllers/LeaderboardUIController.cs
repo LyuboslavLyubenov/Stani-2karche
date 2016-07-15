@@ -9,6 +9,7 @@ public class LeaderboardUIController : MonoBehaviour
     const int SpaceBetweenScore = 10;
     
     public GameObject ContentPanel;
+    public LeaderboardSerializer LeaderboardSerializer;
 
     GameObject PlayerScorePrefab;
 
@@ -20,6 +21,8 @@ public class LeaderboardUIController : MonoBehaviour
         {
             throw new Exception("ContentPanel is null on LeaderboardUIController obj");
         }
+             
+        Populate(LeaderboardSerializer.Leaderboard);
     }
 
     public void Populate(IList<PlayerScore> playersScore)
@@ -59,6 +62,11 @@ public class LeaderboardUIController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        ResizeContentPanel();
+    }
+
+    void ResizeContentPanel()
+    {
         //get last element position
         //resize ContentPanel so its height = last element position + last element height + SpaceBetweenScore
         var lastElementIndex = ContentPanel.transform.childCount - 1;
