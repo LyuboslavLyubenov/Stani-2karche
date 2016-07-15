@@ -16,12 +16,18 @@ public class BasicExamController : ExtendedMonoBehaviour
     public GameObject LeaderboardUI;
     public GameObject LoadingUI;
     public GameObject RiskyTrustUI;
+    public GameObject EndGameUI;
+    public GameObject CallAFriendUI;
+    public GameObject BasicExamPlaygroundUI;
 
     public ServerNetworkManager ServerNetworkManager;
     public LeaderboardSerializer LeaderboardSerializer;
     public GameData GameData;
     public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
     public NotificationsController NotificationService;
+    public CallAFriendUIController CallAFriendUIController;
+    public ChooseThemeUIController ChooseThemeUIController;
+    public BasicExamPlayerTutorialUIController TutorialUIController;
 
     FriendAnswerUIController friendAnswerUIController = null;
     AudienceAnswerUIController audienceAnswerUIController = null;
@@ -44,18 +50,79 @@ public class BasicExamController : ExtendedMonoBehaviour
         playingUIController = PlayingUI.GetComponent<PlayingUIController>();
 
         ServerNetworkManager.OnReceivedDataEvent += OnClientSendMessage;
+
         playingUIController.OnGameEnd += OnGameEnd;
+        playingUIController.OnFriendAnswerGenerated += OnFriendAnswerGenerated;
+        playingUIController.OnAudienceVoteGenerated += OnAudienceVoteGenerated;
+        playingUIController.ShowRiskyTrustChance += (sender, e) => RiskyTrustUI.SetActive(true);
+        playingUIController.ShowOnlineCallFriendMenu += ShowCallFriendUI;
+        playingUIController.GetOnlineAudienceAnswer += GetOnlineAudienceAnswer;
 
         DialogSwitcher.gameObject.SetActive(true);
         DialogSwitcher.ExplainThemeSelect();
 
+        ChooseThemeUIController.OnChoosedTheme += OnChoosedTheme;
+
         StartCoroutine(HideLoadingUIWhenLoaded());
+    }
+
+    void OnChoosedTheme(object sender, EventArgs args)
+    {
+        LoadingUI.SetActive(true);
+        BasicExamPlaygroundUI.SetActive(true);
+        CoroutineUtils.WaitForSeconds(2f, TutorialUIController.Activate);
+    }
+
+    void GetOnlineAudienceAnswer(object sender, EventArgs args)
+    {
+        var currentQuestion = GameData.GetCurrentQuestion();
+        AskAudience(currentQuestion);
+    }
+
+    void ShowCallFriendUI(object sender, System.EventArgs args)
+    {
+        var contacts = ServerNetworkManager.ConnectedClientsNames;
+        
+        CallAFriendUI.SetActive(true);
+        CallAFriendUIController.SetContacts(contacts);
+    }
+
+    void OnAudienceVoteGenerated(object sender, AudienceVoteEventArgs args)
+    {
+        AudienceAnswerUI.SetActive(true);
+        audienceAnswerUIController.SetVoteCount(args.AnswersVotes, true);
+    }
+
+    void OnFriendAnswerGenerated(object sender, AnswerEventArgs args)
+    {
+        FriendAnswerUI.SetActive(true);
+        friendAnswerUIController.SetResponse(args.Answer);
     }
 
     void OnGameEnd(object sender, MarkEventArgs args)
     {
         //if game ends set player mark on the leaderboard
-        CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () => SetPlayerScore(args.Mark));
+        EndGameUI.SetActive(true);
+
+        var endGameUIController = EndGameUI.GetComponent<EndGameUIController>();
+
+        CoroutineUtils.WaitForFrames(0, () => endGameUIController.SetMark(args.Mark));
+        CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () => SavePlayerScore(args.Mark));
+    }
+
+    void SavePlayerScore(int mark)
+    {
+        //first leaderboard file must be loaded
+        //if we dont have name use this one 
+        var playerName = "Анонимен играч";
+
+        if (PlayerPrefs.HasKey("Username"))
+        {
+            playerName = PlayerPrefs.GetString("Username");
+        }
+
+        var playerScore = new PlayerScore(playerName, mark);
+        LeaderboardSerializer.SetPlayerScore(playerScore);
     }
 
     void OnClientSendMessage(object sender, DataSentEventArgs args)
@@ -166,21 +233,6 @@ public class BasicExamController : ExtendedMonoBehaviour
         LoadingUI.SetActive(false);//hide me
     }
 
-    void SetPlayerScore(int mark)
-    {
-        //first leaderboard file must be loaded
-        //if we dont have name use this one 
-        var playerName = "Анонимен играч";
-
-        if (PlayerPrefs.HasKey("Username"))
-        {
-            playerName = PlayerPrefs.GetString("Username");
-        }
-
-        var playerScore = new PlayerScore(playerName, mark);
-        LeaderboardSerializer.SetPlayerScore(playerScore);
-    }
-
     void StopReceivingAnswer(int clientConnectionId)
     {
         ServerNetworkManager.SendClientMessage(clientConnectionId, "AnswerTimeout");
@@ -196,7 +248,7 @@ public class BasicExamController : ExtendedMonoBehaviour
     {
         if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
         {
-            throw new System.Exception("Жокера може да се изпозлва само когато си онлайн.");
+            throw new Exception("Жокера може да се изпозлва само когато си онлайн.");
         }
 
         riskyTrustQuestion = GameData.GetRandomQuestion();
@@ -224,8 +276,8 @@ public class BasicExamController : ExtendedMonoBehaviour
 
         var disableAfterDelayComponent = WaitingToAnswerUI.GetComponent<DisableAfterDelay>();
 
-        disableAfterDelayComponent.OnTimePass += (object sender, RemainingTimeEventArgs args) => SentRemainingTimeToClient(clientConnectionId, args.Seconds);
-        disableAfterDelayComponent.OnTimeEnd += (object sender, EventArgs e) => StopReceivingAnswer(clientConnectionId);
+        disableAfterDelayComponent.OnTimePass += (sender, args) => SentRemainingTimeToClient(clientConnectionId, args.Seconds);
+        disableAfterDelayComponent.OnTimeEnd += (sender, e) => StopReceivingAnswer(clientConnectionId);
 
         currentState = GameState.AskingAFriend;
     }
@@ -246,7 +298,7 @@ public class BasicExamController : ExtendedMonoBehaviour
 
         var disableAfterDelayComponent = WaitingToAnswerUI.GetComponent<DisableAfterDelay>();
 
-        disableAfterDelayComponent.OnTimePass += (object sender, RemainingTimeEventArgs e) =>
+        disableAfterDelayComponent.OnTimePass += (sender, e) =>
         {
             for (int i = 0; i < ServerNetworkManager.ConnectedClientsId.Count; i++)
             {
@@ -254,7 +306,7 @@ public class BasicExamController : ExtendedMonoBehaviour
             }        
         };
         
-        disableAfterDelayComponent.OnTimeEnd += (object sender, EventArgs e) =>
+        disableAfterDelayComponent.OnTimeEnd += (sender, e) =>
         {
             ServerNetworkManager.SendAllClientsMessage("AnswerTimeout");
             currentState = GameState.Playing;

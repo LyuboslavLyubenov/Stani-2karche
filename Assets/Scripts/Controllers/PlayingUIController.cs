@@ -4,26 +4,39 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 
-public class PlayingUIController : MonoBehaviour
+public class PlayingUIController : ExtendedMonoBehaviour
 {
-    //255 = 100% 0 = 0%
-    const byte ChanceToHaveLuckAfterAnswer = 150;
+    //0f = 0% 1f = 100%
+    const float ChanceToHaveLuckAfterAnswer = 0.6f;
+    const float ChanceForGeneratingRightAnswerFriendCall = 0.85f;
 
-    public GameObject EndGameUI;
-    public GameObject AskAudienceUI;
-    public GameObject FriendAnswerUI;
-    public GameObject WaitingToAnswerUI;
-    public GameObject LeaderboardUI;
-    public GameObject CallAFriendUI;
-    public GameObject RiskyTrustUI;
     public Text QuestionsRemainingToNextMark;
 
     public ServerNetworkManager ServerNetworkManager = null;
     public GameData GameData = null;
-    public BasicExamController BasicExamController = null;
     public QuestionUIController QuestionUIController = null;
 
     public System.EventHandler<MarkEventArgs> OnGameEnd = delegate
+    {
+    };
+    
+    public System.EventHandler<AnswerEventArgs> OnFriendAnswerGenerated = delegate
+    {
+    };
+
+    public System.EventHandler<AudienceVoteEventArgs> OnAudienceVoteGenerated = delegate
+    {
+    };
+
+    public System.EventHandler ShowRiskyTrustChance = delegate
+    {
+    };
+
+    public System.EventHandler ShowOnlineCallFriendMenu = delegate
+    {
+    };
+
+    public System.EventHandler GetOnlineAudienceAnswer = delegate
     {
     };
 
@@ -36,11 +49,6 @@ public class PlayingUIController : MonoBehaviour
     }
 
     Button[] jokers;
-
-    EndGameUIController endGameUIController = null;
-    AudienceAnswerUIController askAudienceUIController = null;
-    FriendAnswerUIController friendAnswerUIController = null;
-    CallAFriendUIController callAFriendUIController = null;
 
     GameObject helpFromFriendButton = null;
     GameObject helpFromAudienceButton = null;
@@ -58,12 +66,6 @@ public class PlayingUIController : MonoBehaviour
     {
         yield return null;
 
-        endGameUIController = EndGameUI.GetComponent<EndGameUIController>();
-        askAudienceUIController = AskAudienceUI.GetComponent<AudienceAnswerUIController>();
-        friendAnswerUIController = FriendAnswerUI.GetComponent<FriendAnswerUIController>();
-        callAFriendUIController = CallAFriendUI.GetComponent<CallAFriendUIController>();
-
-        callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
         GameData.MarkIncrease += OnMarkChange;
         QuestionUIController.OnAnswerClick += OnAnswerClick;
 
@@ -82,10 +84,12 @@ public class PlayingUIController : MonoBehaviour
 
     IEnumerator LoadFirstQuestionCoroutine()
     {
-        yield return new WaitForEndOfFrame();
         //make sure all levels are loaded
         yield return new WaitUntil(() => GameData.Loaded);
+        yield return null;
+
         var question = GameData.GetCurrentQuestion();
+
         QuestionsRemainingToNextMark.text = GameData.RemainingQuestionsToNextMark.ToString();
         QuestionUIController.LoadQuestion(question);
     }
@@ -113,44 +117,30 @@ public class PlayingUIController : MonoBehaviour
     {
         currentMarkText.text = args.Mark.ToString();
     
-        var chanceForJoker = Random.Range(0, byte.MaxValue);
+        var chanceForJoker = Random.value;
 
         if (ServerNetworkManager.ConnectedClientsId.Count > 0 &&
             jokers.Count(j => !j.interactable) > 0 &&
             chanceForJoker >= ChanceToHaveLuckAfterAnswer)
         {
-            RiskyTrustUI.SetActive(true);
+            ShowRiskyTrustChance(this, System.EventArgs.Empty);
         }
-    }
-
-    void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
-    {
-        var currentQuestion = GameData.GetCurrentQuestion();
-        BasicExamController.AskFriend(currentQuestion, args.PlayerConnectionId);
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
         if (args.IsCorrect)
         {
-            StartCoroutine(LoadNextQuestionCoroutine());
+            CoroutineUtils.WaitForFrames(0, LoadNextQuestion);
         }
         else
         {
-            StartCoroutine(EndGameAfterFrameCoroutine());    
+            CoroutineUtils.WaitForFrames(0, EndGame);   
         }
     }
 
-    IEnumerator EndGameAfterFrameCoroutine()
+    void LoadNextQuestion()
     {
-        yield return new WaitForEndOfFrame();
-        EndGame();
-    }
-
-    IEnumerator LoadNextQuestionCoroutine()
-    {
-        yield return new WaitForEndOfFrame();
-
         var nextQuestion = GameData.GetNextQuestion();
 
         //if last question
@@ -167,17 +157,11 @@ public class PlayingUIController : MonoBehaviour
         }
     }
 
-    IEnumerator ShowFriendAnswerCoroutine(string answer)
+    void ActivateFifthyChanceJoker()
     {
-        yield return null;
-        FriendAnswerUI.SetActive(true);
-        friendAnswerUIController.SetResponse(answer);
-    }
-
-    IEnumerator FifthyChanceCoroutine()
-    {
-        List<int> disabledAnswersIndex = new List<int>();
-        var correctAnswerIndex = GameData.GetCurrentQuestion().CorrectAnswerIndex;
+        var currentQuestion = GameData.GetCurrentQuestion();
+        var correctAnswerIndex = currentQuestion.CorrectAnswerIndex;
+        var disabledAnswersIndex = new List<int>();
 
         for (int i = 0; i < 2; i++)
         {
@@ -202,21 +186,13 @@ public class PlayingUIController : MonoBehaviour
             var disabledIndex = disabledAnswersIndex[i];
             QuestionUIController.HideAnswer(disabledIndex);
         }
-
-        yield return null;
     }
 
     public void EndGame()
     {
         var currentMark = int.Parse(currentMarkText.text);
-
-        EndGameUI.SetActive(true);
-        LeaderboardUI.SetActive(true);
-        gameObject.SetActive(false);
-
-        endGameUIController.SetMark(currentMark);
-
         OnGameEnd(this, new MarkEventArgs(currentMark));
+        gameObject.SetActive(false);
     }
 
     public void CallAFriend()
@@ -227,16 +203,26 @@ public class PlayingUIController : MonoBehaviour
         if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
         {
             //generate question
-            var rightAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
-            StartCoroutine(ShowFriendAnswerCoroutine(rightAnswer));
+            var answers = currentQuestion.Answers;
+            var correctAnswer = answers[currentQuestion.CorrectAnswerIndex];
+            var answerSelected = answers[currentQuestion.CorrectAnswerIndex];
+            var isCorrect = true;
+
+            if (Random.value >= ChanceForGeneratingRightAnswerFriendCall)
+            {
+                var wrongAnswers = answers.Where(a => a != correctAnswer).ToArray();
+                var wrongAnswerIndex = Random.Range(0, wrongAnswers.Length);
+
+                answerSelected = wrongAnswers[wrongAnswerIndex];
+                isCorrect = false;
+            }
+
+            var answerEventArgs = new AnswerEventArgs(answerSelected, isCorrect);
+            CoroutineUtils.WaitForFrames(0, () => OnFriendAnswerGenerated(this, answerEventArgs));
         }
         else
         {
-            //if we do ask our client (friend)
-            var clientsConnectionIdNames = ServerNetworkManager.ConnectedClientsNames;
-
-            CallAFriendUI.SetActive(true);
-            callAFriendUIController.SetContacts(clientsConnectionIdNames);    
+            ShowOnlineCallFriendMenu(this, System.EventArgs.Empty); 
         }
     }
 
@@ -248,15 +234,16 @@ public class PlayingUIController : MonoBehaviour
         #if DEVELOPMENT_BUILD
         minForOnlineVote = 1;
         #endif
+
         //if we have less than 4 connected clients
         if (ServerNetworkManager.ConnectedClientsId.Count < minForOnlineVote)
         {
-            var generatedAudienceAnswers = new Dictionary<string, int>();
+            var generatedAudienceAnswersVotes = new Dictionary<string, int>();
             var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
             var correctAnswerChance = Random.Range(40, 85);
             var wrongAnswersLeftOverChance = 100 - correctAnswerChance;
 
-            generatedAudienceAnswers.Add(correctAnswer, correctAnswerChance);
+            generatedAudienceAnswersVotes.Add(correctAnswer, correctAnswerChance);
 
             //generate chances
             for (int i = 0; i < currentQuestion.Answers.Length; i++)
@@ -267,21 +254,21 @@ public class PlayingUIController : MonoBehaviour
                 }
                     
                 var wrongAnswerChance = Random.Range(0, wrongAnswersLeftOverChance);
-                generatedAudienceAnswers.Add(currentQuestion.Answers[i], wrongAnswersLeftOverChance);
+                generatedAudienceAnswersVotes.Add(currentQuestion.Answers[i], wrongAnswersLeftOverChance);
                 wrongAnswersLeftOverChance -= wrongAnswerChance;
             }
 
-            AskAudienceUI.SetActive(true);
-            askAudienceUIController.SetVoteCount(generatedAudienceAnswers, true);
+            var audienceVoteEventArgs = new AudienceVoteEventArgs(generatedAudienceAnswersVotes);
+            OnAudienceVoteGenerated(this, audienceVoteEventArgs);
         }
         else
         {
-            BasicExamController.AskAudience(currentQuestion);
+            GetOnlineAudienceAnswer(this, System.EventArgs.Empty);
         }
     }
 
     public void FifthyChance()
     {
-        StartCoroutine(FifthyChanceCoroutine());
+        CoroutineUtils.WaitForFrames(0, ActivateFifthyChanceJoker);
     }
 }

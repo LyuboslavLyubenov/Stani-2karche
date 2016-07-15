@@ -15,7 +15,7 @@ public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
         CoroutineUtils.WaitForFrames(0, () =>
             {
                 var message = base.TeacherDialogs["ExplainThemeSelect"];
-                base.DisplayMessage(message, 3);
+                base.DisplayMessage(message, 1.5f);
             });
     }
 }

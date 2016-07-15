@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System;
 
 public class ChooseThemeUIController : MonoBehaviour
 {
@@ -11,11 +12,13 @@ public class ChooseThemeUIController : MonoBehaviour
 
     readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
-    public GameObject LoadingUI;
-    public GameObject BasicExamPlaygroundUI;
     public Transform ContentPanel;
     public GameData GameData;
     public LeaderboardSerializer LeaderboardSerializer;
+
+    public EventHandler OnChoosedTheme = delegate
+    {
+    };
 
     GameObject themeElementPrefab;
 
@@ -53,7 +56,7 @@ public class ChooseThemeUIController : MonoBehaviour
                 elementText.text = availableThemes[i].Remove(0, currentDirectory.Length);
 
                 var elementButton = themeElement.GetComponent<Button>();
-                elementButton.onClick.AddListener(OnChoosedTheme);
+                elementButton.onClick.AddListener(ChooseTheme);
 
                 yield return new WaitForSeconds(0.05f);
             }
@@ -70,7 +73,7 @@ public class ChooseThemeUIController : MonoBehaviour
         }
     }
 
-    void OnChoosedTheme()
+    void ChooseTheme()
     {
         var button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         var categoryName = button.GetComponentInChildren<Text>().text;
@@ -80,9 +83,9 @@ public class ChooseThemeUIController : MonoBehaviour
 
         LeaderboardSerializer.LevelCategory = categoryName;
         LeaderboardSerializer.LoadDataAsync();
-           
-        LoadingUI.SetActive(true);
-        BasicExamPlaygroundUI.SetActive(true);
+
+        OnChoosedTheme(this, EventArgs.Empty);
+
         gameObject.SetActive(false);
     }
 
