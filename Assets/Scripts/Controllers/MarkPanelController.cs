@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 using UnityEngine.UI;
 
-public class MarkPanelController : MonoBehaviour
+public class MarkPanelController : ExtendedMonoBehaviour
 {
+    public Text MarkText;
+
     Animator animator;
-    Text markText;
 
     public string Mark
     {
         get
         {
-            return markText.text;
+            return MarkText.text;
         }
         set
         {
@@ -21,19 +21,24 @@ public class MarkPanelController : MonoBehaviour
                 throw new ArgumentNullException("value", "Mark cannot be null");
             }
 
-            markText.text = value;
-            animator.SetTrigger("MarkIncreased");
+            SetMark(value);
         }
     }
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        markText.GetComponentInChildren<Text>();
+        MarkText.GetComponentInChildren<Text>();
 
         if (animator == null)
         {
             throw new Exception("Animator not found on Object holding MarkPanelController");
         }
+    }
+
+    void SetMark(string mark)
+    {
+        MarkText.text = mark;
+        animator.SetTrigger("MarkIncreased");
     }
 }
