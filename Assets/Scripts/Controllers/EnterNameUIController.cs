@@ -18,6 +18,8 @@ public class EnterNameUIController : ExtendedMonoBehaviour
             throw new NullReferenceException("UsernameTextField is null on EnterNameUIController obj");
         }
 
+        transform.localScale = new Vector3(0, 0, 0);
+
         CoroutineUtils.WaitForFrames(1, Initialize);
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using UnityEngine;
 
 public class HomeScreenTutorialsSwitcher : DialogSwitcher
@@ -11,7 +10,7 @@ public class HomeScreenTutorialsSwitcher : DialogSwitcher
 
     protected override void Start()
     {
-        string path = Directory.GetCurrentDirectory() + "\\LevelData\\homeScreenTutorials.txt";
+        string path = "Tutorials Texts\\homeScreenTutorials";
         base.DialogFilePath = path;
         base.Start();
     }

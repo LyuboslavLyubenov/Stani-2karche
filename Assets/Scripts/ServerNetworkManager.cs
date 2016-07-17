@@ -88,6 +88,14 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
         topology = new HostTopology(connectionConfig, MaxConnections);
     }
 
+    void ShowNotification(Color color, string message)
+    {
+        if (NotificationServiceController != null)
+        {
+            NotificationServiceController.AddNotification(color, message);          
+        }
+    }
+
     IEnumerator UpdateCoroutine()
     {
         while (true)
@@ -106,7 +114,7 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
                     var error = (NetworkError)e.ErrorN;
                     var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-                    NotificationServiceController.AddNotification(Color.red, errorMessage);
+                    ShowNotification(Color.red, errorMessage);
                     hasError = true;
                 }
 

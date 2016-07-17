@@ -7,6 +7,10 @@ using System.IO;
 public abstract class DialogSwitcher : ExtendedMonoBehaviour
 {
     public TeacherDialogController TeacherDialogController;
+
+    /// <summary>
+    /// Path to dialogs file starting from Resources folder
+    /// </summary>
     public string DialogFilePath;
 
     GameObject teacherDialogObj;
@@ -44,12 +48,13 @@ public abstract class DialogSwitcher : ExtendedMonoBehaviour
 
         teacherDialogObj = TeacherDialogController.gameObject;
 
-        var allTeacherDialogsFile = File.ReadAllLines(DialogFilePath);
+        var dialogFile = Resources.Load<TextAsset>(DialogFilePath).text;
+        var dialogFileLines = dialogFile.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
 
-        for (int i = 0; i < allTeacherDialogsFile.Length - 2; i += 3)
+        for (int i = 0; i < dialogFileLines.Length - 2; i += 3)
         {
-            var tutorialName = allTeacherDialogsFile[i];
-            var tutorialText = allTeacherDialogsFile[i + 1];
+            var tutorialName = dialogFileLines[i];
+            var tutorialText = dialogFileLines[i + 1];
 
             teacherDialogs.Add(tutorialName, tutorialText);
         }

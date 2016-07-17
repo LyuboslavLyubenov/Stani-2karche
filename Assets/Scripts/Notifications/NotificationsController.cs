@@ -6,6 +6,7 @@ public class NotificationsController : MonoBehaviour
 {
     const int SpaceBetweenNotifications = 20;
     const int StartOffset = 10;
+    const int NormalDisableDelayInSeconds = 5;
 
     public Transform Container;
 
@@ -28,7 +29,7 @@ public class NotificationsController : MonoBehaviour
         return Container.childCount; 
     }
 
-    public void AddNotification(Color color, string message)
+    void _AddNotification(Color color, string message, int disableDelayInSeconds)
     {
         var notification = Instantiate(notificationElementPrefab);
         var notificationRect = notification.GetComponent<RectTransform>();
@@ -43,6 +44,19 @@ public class NotificationsController : MonoBehaviour
         var newY = notificationRect.sizeDelta.y + StartOffset + (GetNotificationCount() * (notificationRect.sizeDelta.y + SpaceBetweenNotifications));
         notificationRect.anchoredPosition = new Vector2(0, -newY);
 
+        var notificationController = notification.GetComponent<NotificationElementController>();
+        notificationController.WaitBeforeDisableSeconds = disableDelayInSeconds;
+
         allNotifications.Add(notification.gameObject);
+    }
+
+    public void AddNotification(Color color, string message)
+    {
+        _AddNotification(color, message, NormalDisableDelayInSeconds);
+    }
+
+    public void AddNotification(Color color, string message, int disableDelayInSeconds)
+    {
+        _AddNotification(color, message, disableDelayInSeconds);
     }
 }

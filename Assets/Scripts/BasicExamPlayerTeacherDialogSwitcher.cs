@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System;
+﻿using System;
 using UnityEngine;
 
 public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
@@ -10,7 +9,7 @@ public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
 
     protected override void Start()
     {
-        string TeacherDialogsFilePath = Directory.GetCurrentDirectory() + "\\LevelData\\basicExamPlayerTeacherDialogs.txt";
+        string TeacherDialogsFilePath = Application.dataPath + "\\Tutorials Texts\\basicExamPlayerTeacherDialogs.txt";
         base.DialogFilePath = TeacherDialogsFilePath;
         base.Start();
     }

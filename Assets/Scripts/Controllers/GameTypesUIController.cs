@@ -6,6 +6,11 @@ public class GameTypesUIController : MonoBehaviour
 {
     public GameObject NormalExamSelectModeUI;
 
+    void Start()
+    {
+        transform.localScale = new Vector3(1, 0, 1);
+    }
+
     void Deactivate()
     {
         GetComponent<Animator>().SetTrigger("disabled");
