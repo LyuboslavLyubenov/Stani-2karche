@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using CielaSpike;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// LAN broadcast service.
@@ -26,6 +27,8 @@ public class LANBroadcastService : MonoBehaviour
     public EventHandler<IpEventArgs> OnFound = delegate
     {
     };
+
+    List<string> blacklist = new List<string>();
 
     UdpClient udpClient = null;
     IPEndPoint listenEndPoint = new IPEndPoint(IPAddress.Any, Port);
@@ -91,11 +94,19 @@ public class LANBroadcastService : MonoBehaviour
         {
             IPEndPoint ip = null;
             byte[] buffer = udpClient.Receive(ref ip);
-            var message = ConvertAndFilterBuffer(buffer);
-       
+            var message = System.Text.Encoding.UTF8.GetString(buffer);
+            var isMessageEmpty = string.IsNullOrEmpty(message) && message.Length <= 0;
+            var ipv4 = ip.Address.ToString();
+            string[] blacklistCopy = null;
+
+            lock (blacklist)
+            {
+                blacklist.CopyTo(blacklistCopy);
+            }
+
             yield return Ninja.JumpToUnity;
 
-            if (!string.IsNullOrEmpty(message) && message.Length > 0 && message.Equals(IAmServer))
+            if (!isMessageEmpty && message.Equals(IAmServer) && !blacklistCopy.Contains(ipv4))
             {
                 //TODO: TELL THE SERVER THAT YOU FOUND IT
                 OnFound(this, new IpEventArgs(ip.Address.ToString()));
@@ -155,32 +166,67 @@ public class LANBroadcastService : MonoBehaviour
         return output;
     }
 
-    //Filter unused part of the buffer and convert to string
-    string ConvertAndFilterBuffer(byte[] buffer)
+    void ValidateIpAddress(string ipAddress)
     {
-        if (buffer == null)
+        if (string.IsNullOrEmpty(ipAddress))
         {
-            return "";
+            throw new ArgumentNullException("ipAddress");
         }
 
-        var message = System.Text.Encoding.UTF8.GetString(buffer).ToCharArray();
-        var result = new System.Text.StringBuilder();
-
-        foreach (var c in message)
+        if (ipAddress.Split('.').Length != 4)
         {
-            if (c != '\0')
-            {
-                result.Append(c);
-            }
+            throw new ArgumentException("Invalid ipv4 address");
         }
 
-        return result.ToString();
     }
 
     public void RestartService()
     {
         Dispose();
         Initialize();
+    }
+
+    public void AddToBlackList(string ipAddress)
+    {
+        if (broadcastType == BroadcastType.Server)
+        {
+            throw new InvalidOperationException();
+        }
+
+        ValidateIpAddress(ipAddress);
+
+        lock (blacklist)
+        {
+            blacklist.Add(ipAddress);    
+        }
+    }
+
+    public void RemoveFromBlacklist(string ipAddress)
+    {
+        if (broadcastType == BroadcastType.Server)
+        {
+            throw new InvalidOperationException();
+        }
+
+        ValidateIpAddress(ipAddress);
+
+        lock (blacklist)
+        {
+            blacklist.Remove(ipAddress);
+        }
+    }
+
+    public void ClearBlackList()
+    {
+        if (broadcastType == BroadcastType.Server)
+        {
+            throw new InvalidOperationException();
+        }
+
+        lock (blacklist)
+        {
+            blacklist.Clear();
+        }
     }
 }
 
