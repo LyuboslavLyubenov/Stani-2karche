@@ -21,6 +21,7 @@ public class LANBroadcastService : MonoBehaviour
     const string IAmClient = "Stani2karcheClient";
     //what type i am
     public BroadcastType broadcastType = BroadcastType.Client;
+    public bool StopWhenFirstFound = true;
 
     public EventHandler<IpEventArgs> OnFound = delegate
     {
@@ -98,7 +99,11 @@ public class LANBroadcastService : MonoBehaviour
             {
                 //TODO: TELL THE SERVER THAT YOU FOUND IT
                 OnFound(this, new IpEventArgs(ip.Address.ToString()));
-                isRunning = false;       
+
+                if (StopWhenFirstFound)
+                {
+                    isRunning = false;    
+                }
             }
 
             yield return Ninja.JumpBack;

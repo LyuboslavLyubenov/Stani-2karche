@@ -3,13 +3,17 @@ using System;
 
 public class StartMenuUIController : MonoBehaviour
 {
-    public GameObject GameTypesUI;
+    public GameObject CreateOrJoinUI;
     public EnterNameUIController EnterNameUIController;
     public HomeScreenTutorialsSwitcher TutorialsSwitcher;
 
     void Start()
     {
-        if (GameTypesUI == null)
+        #if DEBUG
+        PlayerPrefs.DeleteKey("Username");
+        #endif
+
+        if (CreateOrJoinUI == null)
         {
             throw new NullReferenceException("GameTypesUI not found on StartMenuUIController");
         }
@@ -32,7 +36,6 @@ public class StartMenuUIController : MonoBehaviour
 
     void OnUsernameSet(object sender, System.EventArgs args)
     {
-        TutorialsSwitcher.ExplainGameTypes();
-        GameTypesUI.SetActive(true);
+        CreateOrJoinUI.SetActive(true);
     }
 }
