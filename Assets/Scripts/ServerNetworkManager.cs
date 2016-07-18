@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class ServerNetworkManager : MonoBehaviour, INetworkManager
 {
@@ -11,6 +12,18 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
     public int MaxConnections;
     public NotificationsController NotificationServiceController;
     public LANBroadcastService BroadcastService;
+
+    public EventHandler OnConnectedEvent = delegate
+    {
+    };
+
+    public EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate
+    {
+    };
+
+    public EventHandler OnDisconnectedEvent = delegate
+    {
+    };
 
     int genericHostId = 0;
 
@@ -22,8 +35,10 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
     bool isRunning = false;
     //Id of all connected clients
     List<int> connectedClientsId = new List<int>();
+    List<int> bannedConnections = new List<int>();
     //Their names
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
+    Dictionary<string, Action<NetworkData>> commands = new Dictionary<string, Action<NetworkData>>();
 
     public bool IsRunning
     {
@@ -49,24 +64,6 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
         }
     }
 
-    public EventHandler OnConnectedEvent
-    {
-        get;
-        set;
-    }
-
-    public EventHandler<DataSentEventArgs> OnReceivedDataEvent
-    {
-        get;
-        set;
-    }
-
-    public EventHandler OnDisconnectedEvent
-    {
-        get;
-        set;
-    }
-
     void Start()
     {
         ConfigureServer();
@@ -88,6 +85,11 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
         topology = new HostTopology(connectionConfig, MaxConnections);
     }
 
+    void InitializeCommands()
+    {
+        commands["SetUsername"] = SetUsernameCommand;
+    }
+
     void ShowNotification(Color color, string message)
     {
         if (NotificationServiceController != null)
@@ -102,101 +104,132 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
         {
             if (isRunning)
             {
-                NetworkData recieveNetworkData = null;
-                bool hasError = false;
-
-                try
-                {
-                    recieveNetworkData = NetworkTransportUtils.ReceiveMessage();
-                }
-                catch (NetworkException e)
-                {
-                    var error = (NetworkError)e.ErrorN;
-                    var errorMessage = NetworkErrorUtils.GetMessage(error);
-
-                    ShowNotification(Color.red, errorMessage);
-                    hasError = true;
-                }
-
-                if (!hasError)
-                {
-                    //client id
-                    var connectionId = recieveNetworkData.ConnectionId;
-
-                    switch (recieveNetworkData.NetworkEventType)
-                    {
-                        case NetworkEventType.ConnectEvent:
-                            connectedClientsId.Add(recieveNetworkData.ConnectionId);
-
-                            if (OnConnectedEvent != null)
-                            {
-                                OnConnectedEvent(this, EventArgs.Empty);    
-                            }
-
-                            break;
-
-                        case NetworkEventType.BroadcastEvent:
-                            break;
-
-                        case NetworkEventType.DataEvent:
-                            //if we received data from client
-                            var message = recieveNetworkData.Message;
-                            var usernameSetCommandIndex = message.IndexOf("UsernameSet");
-
-                            //is user trying to send username
-                            if (usernameSetCommandIndex > -1)
-                            {
-                                //yes!
-                                var usernameDelimeterIndex = message.IndexOf("=");
-
-                                if (usernameDelimeterIndex <= usernameSetCommandIndex)
-                                {
-                                    //empty username :(
-                                    connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
-                                }
-
-                                var username = message.Substring(usernameDelimeterIndex + 1, message.Length - usernameDelimeterIndex - 1);
-
-                                if (!string.IsNullOrEmpty(username) &&
-                                    username.Length >= 4)
-                                {
-                                    connectedClientsNames[connectionId] = username;
-                                }
-                                else
-                                {
-                                    connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
-                                }
-                            }
-                            else
-                            {
-                                //its not asking to set username
-                                var username = connectedClientsNames[connectionId];
-
-                                if (OnReceivedDataEvent != null)
-                                {
-                                    OnReceivedDataEvent(this, new DataSentEventArgs(recieveNetworkData.ConnectionId, username, message));    
-                                }
-                            }
-
-                            break;
-
-                        case NetworkEventType.DisconnectEvent:
-                            //if disconnected remove from connected clients list
-                            connectedClientsId.Remove(connectionId);
-                            connectedClientsNames.Remove(connectionId);
-
-                            if (OnDisconnectedEvent != null)
-                            {
-                                OnDisconnectedEvent(this, EventArgs.Empty);    
-                            }
-
-                            break;
-                    }    
-                }
+                UpdateServer();
             }
 
             yield return new WaitForEndOfFrame();
         }
+    }
+
+    void UpdateServer()
+    {
+        NetworkData recieveNetworkData = null;
+    
+        try
+        {
+            recieveNetworkData = NetworkTransportUtils.ReceiveMessage();
+        }
+        catch (NetworkException e)
+        {
+            var error = (NetworkError)e.ErrorN;
+            var errorMessage = NetworkErrorUtils.GetMessage(error);
+
+            ShowNotification(Color.red, errorMessage);
+            return;
+        }
+
+        switch (recieveNetworkData.NetworkEventType)
+        {
+            case NetworkEventType.ConnectEvent:
+                OnClientConnected(recieveNetworkData);
+                break;
+
+            case NetworkEventType.DataEvent:
+                OnClientSendData(recieveNetworkData);
+                break;
+
+            case NetworkEventType.DisconnectEvent:
+                OnClientDisconnect(recieveNetworkData);
+                break;
+        }    
+
+    }
+
+    void OnClientConnected(NetworkData networkData)
+    {
+        var connectionId = networkData.ConnectionId;
+        connectedClientsId.Add(connectionId);
+
+        var isBanned = bannedConnections.IndexOf(connectionId) > -1;
+
+        if (isBanned)
+        {
+            KickPlayer(connectionId, "Забранено ти е да влизаш във този сървър.");
+            return;
+        }
+
+        if (OnConnectedEvent != null)
+        {
+            OnConnectedEvent(this, EventArgs.Empty);    
+        }
+    }
+
+    void OnClientDisconnect(NetworkData networkData)
+    {
+        //if disconnected remove from connected clients list
+        var connectionId = networkData.ConnectionId;
+
+        connectedClientsId.Remove(connectionId);
+        connectedClientsNames.Remove(connectionId);
+
+        if (OnDisconnectedEvent != null)
+        {
+            OnDisconnectedEvent(this, EventArgs.Empty);    
+        }
+    }
+
+    void OnClientSendData(NetworkData receiveNetworkData)
+    {
+        //if we received data from client
+        var connectionId = receiveNetworkData.ConnectionId;
+        var message = receiveNetworkData.Message;
+        var commandAndParams = message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+        var commandName = commandAndParams[0];
+        var commandParams = commandAndParams.Skip(1).ToArray();
+        var isValidCommand = (!string.IsNullOrEmpty(commandName) && commands.ContainsKey(commandName));
+
+        if (isValidCommand)
+        {
+            var commandToExecute = commands[commandName];
+            commandToExecute.Invoke(receiveNetworkData);
+        }
+        else
+        {
+            var username = connectedClientsNames[connectionId];
+
+            if (OnReceivedDataEvent != null)
+            {
+                OnReceivedDataEvent(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, username, message));    
+            }
+        }
+    }
+
+    void SetUsernameCommand(NetworkData networkData)
+    {
+        var commandParams = networkData.Message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
+        var connectionId = networkData.ConnectionId;
+
+        if (commandParams.Length < 0 || string.IsNullOrEmpty(commandParams[0]))
+        {
+            //empty username :(
+            connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
+        }
+
+        var username = commandParams[0];
+
+        if (username.Length >= 4)
+        {
+            connectedClientsNames[connectionId] = username;
+        }
+        else
+        {
+            connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
+        }
+    }
+
+    bool IsClientConnected(int connectionId)
+    {
+        return connectedClientsId.IndexOf(connectionId) > -1;
     }
 
     public void StartServer()
@@ -247,5 +280,34 @@ public class ServerNetworkManager : MonoBehaviour, INetworkManager
             SendClientMessage(clientConnectionId, "AskAudience");
             SendClientMessage(clientConnectionId, questionJSON);
         }
+    }
+
+    public void KickPlayer(int connectionId, string message)
+    {
+        if (!IsClientConnected(connectionId))
+        {
+            return;    
+        }   
+
+        SendClientMessage(connectionId, "KickReason=" + message);
+
+        byte error;
+        NetworkTransport.Disconnect(genericHostId, connectionId, out error);
+    }
+
+    public void KickPlayer(int connectionId)
+    {
+        KickPlayer(connectionId, "Изгонен си от сървъра.");
+    }
+
+    public void BanPlayer(int connectionId)
+    {
+        if (bannedConnections.IndexOf(connectionId) > -1)
+        {
+            return;
+        }
+
+        bannedConnections.Add(connectionId);
+        KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
     }
 }
