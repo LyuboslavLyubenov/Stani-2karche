@@ -6,14 +6,26 @@ using System;
 /// <summary>
 /// Client network manager.
 /// </summary>
-public class ClientNetworkManager : MonoBehaviour, INetworkManager
+public class ClientNetworkManager : MonoBehaviour
 {
     const int Port = 7788;
 
-    public LANBroadcastService BroadcastService;
     public NotificationsController NotificationsController;
     //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
     public byte RetriesBeforeSearchingForAnotherServer = 3;
+
+    public EventHandler OnConnectedEvent = delegate
+    {
+    };
+
+    public EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate
+    {
+    };
+
+    public EventHandler OnDisconnectedEvent = delegate
+    {
+    };
+
 
     int connectionId = 0;
     int genericHostId = 0;
@@ -31,33 +43,9 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         }
     }
 
-    public EventHandler OnConnectedEvent
-    {
-        get;
-        set;
-    }
-
-    public EventHandler<DataSentEventArgs> OnReceivedDataEvent
-    {
-        get;
-        set;
-    }
-
-    public EventHandler OnDisconnectedEvent
-    {
-        get;
-        set;
-    }
-
     void Start()
     {
         ConfigureClient();
-
-        if (BroadcastService != null)
-        {
-            BroadcastService.OnFound += OnServerFoundCoroutine;
-        }
-
         StartCoroutine(UpdateCoroutine());
     }
 
@@ -69,12 +57,6 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         connectionConfig = new ConnectionConfig();
         connectionConfig.MaxConnectionAttempt = RetriesBeforeSearchingForAnotherServer; 
         communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced); //make sure messages are delivered and send in correct order
-    }
-
-    void OnServerFoundCoroutine(object sender, IpEventArgs args)
-    {
-        //if server found try to connect
-        StartCoroutine(OnServerFoundCoroutine(args.IPAddress));   
     }
 
     IEnumerator OnServerFoundCoroutine(string address)
@@ -95,108 +77,107 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
                 break;
             }
         }
-
-        if (!successfullyConnected)
-        {
-            //if we were unable to connect to the host, restart broadcast service and start searching for new server
-            BroadcastService.RestartService();
-        }
     }
 
-    //used for receiving messages from server
     IEnumerator UpdateCoroutine()
     {
         while (true)
         {
             if (isRunning)
             {
-                NetworkData receiveNetworkData = null;
-                var hasError = false;
-
-                try
-                {
-                    receiveNetworkData = NetworkTransportUtils.ReceiveMessage();
-                }
-                catch (NetworkException e)
-                {
-                    var error = (NetworkError)e.ErrorN;
-                    var errorMessage = NetworkErrorUtils.GetMessage(error);
-
-                    NotificationsController.AddNotification(Color.red, errorMessage);
-
-                    //if cannot connect to server
-                    if (error == NetworkError.Timeout)
-                    {
-                        //disconnect
-                        Disconnect();
-                    }
-           
-                    hasError = true;
-                }
-
-                if (!hasError)
-                {
-                    var username = "";
-
-                    if (PlayerPrefs.HasKey("Username"))
-                    {
-                        username = PlayerPrefs.GetString("Username");
-                    }
-
-                    switch (receiveNetworkData.NetworkEventType)
-                    {
-                        case NetworkEventType.Nothing:
-                            //nothing happend
-                            break;
-
-                        case NetworkEventType.ConnectEvent:
-                            //if connected to server
-                            //send our username
-                            SendMessage("UsernameSet=" + username);
-
-                            if (OnConnectedEvent != null)
-                            {
-                                OnConnectedEvent(this, EventArgs.Empty);    
-                            }
-
-                            break;
-
-                        case NetworkEventType.BroadcastEvent:
-                            break;
-
-                        case NetworkEventType.DataEvent:
-                            var message = receiveNetworkData.Message;
-
-                            if (OnReceivedDataEvent != null)
-                            {
-                                OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));    
-                            }
-
-                            break;
-
-                        case NetworkEventType.DisconnectEvent:                            
-                            NetworkTransport.Shutdown();
-                            isRunning = false;
-                            BroadcastService.RestartService();
-
-                            if (OnDisconnectedEvent != null)
-                            {
-                                OnDisconnectedEvent(this, EventArgs.Empty);    
-                            }
-
-                            break;
-                    }      
-                }
+                UpdateClient();
             }
 
             yield return new WaitForSeconds(0.5f);
         }
     }
 
-    /// <summary>
-    /// Connects to host.
-    /// </summary>
-    /// <param name="ip">Ip</param>
+    string GetUsername()
+    {
+        var username = "";
+
+        if (PlayerPrefs.HasKey("Username"))
+        {
+            username = PlayerPrefs.GetString("Username");
+        }
+
+        return username;
+    }
+
+    void UpdateClient()
+    {
+        NetworkData receiveNetworkData = null;
+
+        try
+        {
+            receiveNetworkData = NetworkTransportUtils.ReceiveMessage();
+        }
+        catch (NetworkException e)
+        {
+            var error = (NetworkError)e.ErrorN;
+            var errorMessage = NetworkErrorUtils.GetMessage(error);
+
+            NotificationsController.AddNotification(Color.red, errorMessage);
+
+            //if cannot connect to server
+            if (error == NetworkError.Timeout)
+            {
+                //disconnect
+                Disconnect();
+            }
+
+            return;
+        }
+
+        switch (receiveNetworkData.NetworkEventType)
+        {
+            case NetworkEventType.ConnectEvent:
+                OnConnectedToServer(receiveNetworkData);
+                break;
+
+            case NetworkEventType.DataEvent:
+                OnDataReceivedFromServer(receiveNetworkData);
+                break;
+
+            case NetworkEventType.DisconnectEvent:                            
+                DisconnectedFromServer(receiveNetworkData);
+                break;
+        }      
+    }
+
+    void OnConnectedToServer(NetworkData networkData)
+    {
+        var username = GetUsername();
+        SendMessage("UsernameSet=" + username);
+
+        if (OnConnectedEvent != null)
+        {
+            OnConnectedEvent(this, EventArgs.Empty);    
+        }
+    }
+
+    void OnDataReceivedFromServer(NetworkData networkData)
+    {
+        var message = networkData.Message;
+        var username = GetUsername();
+
+        if (OnReceivedDataEvent != null)
+        {
+            OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));    
+        }
+    }
+
+    void DisconnectedFromServer(NetworkData networkData)
+    {
+        NetworkTransport.Shutdown();
+        isRunning = false;
+
+        if (OnDisconnectedEvent != null)
+        {
+            OnDisconnectedEvent(this, EventArgs.Empty);    
+        }
+    }
+
     public void ConnectToHost(string ip)
     {
         if (string.IsNullOrEmpty(ip) && ip.Length < 4)
@@ -236,13 +217,14 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
         {
             isRunning = true;    
         }
-
     }
 
     public void Disconnect()
     {
         byte error;
+
         isRunning = false;
+
         NetworkTransport.Disconnect(genericHostId, connectionId, out error);
         NetworkTransport.RemoveHost(genericHostId);
         NetworkTransport.Shutdown();
@@ -254,8 +236,6 @@ public class ClientNetworkManager : MonoBehaviour, INetworkManager
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
             NotificationsController.AddNotification(Color.red, errorMessage);
         }
-
-        BroadcastService.RestartService();
 
         if (OnDisconnectedEvent != null)
         {

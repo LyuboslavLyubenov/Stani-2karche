@@ -36,6 +36,9 @@ public class NetworkErrorUtils
                 break;
         }
 
+        errorMessage += Environment.NewLine;
+        errorMessage += Enum.GetName(typeof(NetworkError), error);
+
         return errorMessage;
     }
 
@@ -65,6 +68,9 @@ public class NetworkErrorUtils
                     break;
             }
         }
+
+        errorMessage += Environment.NewLine;
+        errorMessage += Enum.GetName(typeof(NetworkConnectionError), error);
 
         return errorMessage;
     }

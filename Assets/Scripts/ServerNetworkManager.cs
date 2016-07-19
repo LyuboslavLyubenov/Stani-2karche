@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-public class ServerNetworkManager : MonoBehaviour, INetworkManager
+public class ServerNetworkManager : MonoBehaviour
 {
     const int Port = 7788;
     //how many clients can be connected to the server

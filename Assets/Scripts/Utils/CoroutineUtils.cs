@@ -36,6 +36,20 @@ public class CoroutineUtils
         instance.StartCoroutine(WaitUntilCoroutine(condition, callback));
     }
 
+    public void RepeatEverySeconds(float seconds, Action callback)
+    {
+        instance.StartCoroutine(RepeatEverySecondsCoroutine(seconds, callback));
+    }
+
+    IEnumerator RepeatEverySecondsCoroutine(float seconds, Action callback)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(seconds);
+            callback();
+        }
+    }
+
     IEnumerator WaitUntilCoroutine(Func<bool> condition, Action callback)
     {
         yield return new WaitUntil(condition);
