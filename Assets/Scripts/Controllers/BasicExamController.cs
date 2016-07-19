@@ -179,7 +179,7 @@ public class BasicExamController : ExtendedMonoBehaviour
                     audienceAnswerVoteCount[args.Message]++;
                 }
 
-                if (audienceVotedId.Count >= ServerNetworkManager.ConnectedClientsId.Count)
+                if (audienceVotedId.Count >= ServerNetworkManager.ConnectedClientsIds.Count)
                 {
                     //we got all audience votes
                     //show them to the user
@@ -246,7 +246,7 @@ public class BasicExamController : ExtendedMonoBehaviour
 
     public void ActivateRiskyTrustJoker()
     {
-        if (ServerNetworkManager.ConnectedClientsId.Count <= 0)
+        if (ServerNetworkManager.ConnectedClientsIds.Count <= 0)
         {
             throw new Exception("Жокера може да се изпозлва само когато си онлайн.");
         }
@@ -255,8 +255,8 @@ public class BasicExamController : ExtendedMonoBehaviour
 
         var random = new System.Random(DateTime.Now.Millisecond);
         var randomQuestionJSON = JsonUtility.ToJson(riskyTrustQuestion);
-        var friendConnectionIdIndex = random.Next(0, ServerNetworkManager.ConnectedClientsId.Count);
-        var friendConnectionId = ServerNetworkManager.ConnectedClientsId[friendConnectionIdIndex];
+        var friendConnectionIdIndex = random.Next(0, ServerNetworkManager.ConnectedClientsIds.Count);
+        var friendConnectionId = ServerNetworkManager.ConnectedClientsIds[friendConnectionIdIndex];
 
         ServerNetworkManager.SendClientMessage(friendConnectionId, "RiskyTrust");
         ServerNetworkManager.SendClientMessage(friendConnectionId, randomQuestionJSON);
@@ -300,9 +300,9 @@ public class BasicExamController : ExtendedMonoBehaviour
 
         disableAfterDelayComponent.OnTimePass += (sender, e) =>
         {
-            for (int i = 0; i < ServerNetworkManager.ConnectedClientsId.Count; i++)
+            for (int i = 0; i < ServerNetworkManager.ConnectedClientsIds.Count; i++)
             {
-                SentRemainingTimeToClient(ServerNetworkManager.ConnectedClientsId[i], e.Seconds);       
+                SentRemainingTimeToClient(ServerNetworkManager.ConnectedClientsIds[i], e.Seconds);       
             }        
         };
         

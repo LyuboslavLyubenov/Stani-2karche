@@ -110,8 +110,6 @@ public class BasicExamAndroidUIController : MonoBehaviour
         currentState = GameState.Playing;
         //hide loading bar
         ConnectingUI.SetActive(false);
-        //show successfull connection message
-        NotificationsController.AddNotification(Color.green, "Успешно свързан");
         //vibrate if mobile
         Vibrate();
     }

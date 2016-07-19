@@ -101,7 +101,7 @@ public class LANBroadcastService : MonoBehaviour
 
             lock (blacklist)
             {
-                blacklist.CopyTo(blacklistCopy);
+                blacklistCopy = blacklist.ToArray();
             }
 
             yield return Ninja.JumpToUnity;
