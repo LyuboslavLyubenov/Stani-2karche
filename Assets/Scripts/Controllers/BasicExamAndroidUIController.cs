@@ -13,7 +13,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
     public GameObject ConnectingUI;
 
     public ClientNetworkManager ClientNetworkManager;
-    public NotificationsController NotificationsController;
+    public NotificationsServiceController NotificationsController;
     public ConnectionSettingsUIController connectionSettingsUIController;
 
     public Animator QuestionPanelAnimator;
@@ -98,7 +98,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
         //send answer to the server
-        ClientNetworkManager.SendMessage(args.Answer);
+        ClientNetworkManager.SendServerMessage(args.Answer);
         //hide Question UI
         QuestionPanelUI.SetActive(false);
     }

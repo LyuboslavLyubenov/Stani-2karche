@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-public class ServerNetworkManager : MonoBehaviour
+public class ServerNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
     //how many clients can be connected to the server
     public int MaxConnections;
-    public NotificationsController NotificationServiceController;
+    public NotificationsServiceController NotificationServiceController;
     public LANBroadcastService BroadcastService;
 
     public EventHandler OnConnectedEvent = delegate
@@ -38,7 +38,7 @@ public class ServerNetworkManager : MonoBehaviour
     List<int> bannedConnections = new List<int>();
     //Their names
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
-    Dictionary<string, Action<NetworkData>> commands = new Dictionary<string, Action<NetworkData>>();
+    Dictionary<string, Action<NetworkData>> commandsFromClient = new Dictionary<string, Action<NetworkData>>();
 
     public bool IsRunning
     {
@@ -66,6 +66,7 @@ public class ServerNetworkManager : MonoBehaviour
 
     void Start()
     {
+        ConfigureCommands();
         ConfigureServer();
         StartServer();
 
@@ -85,9 +86,9 @@ public class ServerNetworkManager : MonoBehaviour
         topology = new HostTopology(connectionConfig, MaxConnections);
     }
 
-    void InitializeCommands()
+    void ConfigureCommands()
     {
-        commands["SetUsername"] = SetUsernameCommand;
+        commandsFromClient["SetUsername"] = SetUsernameCommand;
     }
 
     void ShowNotification(Color color, string message)
@@ -186,21 +187,35 @@ public class ServerNetworkManager : MonoBehaviour
         var commandAndParams = message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
         var commandName = commandAndParams[0];
         var commandParams = commandAndParams.Skip(1).ToArray();
-        var isValidCommand = (!string.IsNullOrEmpty(commandName) && commands.ContainsKey(commandName));
+        var isValidCommand = (!string.IsNullOrEmpty(commandName) && commandsFromClient.ContainsKey(commandName));
 
         if (isValidCommand)
         {
-            var commandToExecute = commands[commandName];
+            var commandToExecute = commandsFromClient[commandName];
             commandToExecute.Invoke(receiveNetworkData);
         }
         else
         {
-            var username = connectedClientsNames[connectionId];
+            var username = GetClientUsername(connectionId); 
 
             if (OnReceivedDataEvent != null)
             {
                 OnReceivedDataEvent(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, username, message));    
             }
+        }
+    }
+
+    string GetClientUsername(int connectionId)
+    {
+        var username = connectedClientsNames.FirstOrDefault(ci => ci.Key == connectionId);
+
+        if (username.Equals(new KeyValuePair<int, string>()))
+        {
+            return "Клиент номер " + connectionId;
+        }
+        else
+        {
+            return username.Value;    
         }
     }
 
@@ -246,7 +261,6 @@ public class ServerNetworkManager : MonoBehaviour
         isRunning = false;
     }
 
-    //useful if you want to send individual client a message
     public void SendClientMessage(int clientId, string message)
     {
         NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
@@ -289,10 +303,20 @@ public class ServerNetworkManager : MonoBehaviour
             return;    
         }   
 
-        SendClientMessage(connectionId, "KickReason=" + message);
+        try
+        {
+            SendClientMessage(connectionId, "KickReason=" + message);    
+        }
+        catch (NetworkException ex)
+        {
 
-        byte error;
-        NetworkTransport.Disconnect(genericHostId, connectionId, out error);
+        }
+
+        CoroutineUtils.WaitForFrames(1, () =>
+            {
+                byte error;
+                NetworkTransport.Disconnect(genericHostId, connectionId, out error);
+            });
     }
 
     public void KickPlayer(int connectionId)
@@ -309,5 +333,31 @@ public class ServerNetworkManager : MonoBehaviour
 
         bannedConnections.Add(connectionId);
         KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
+    }
+
+    void OnGUI()
+    {
+        GUI.Box(new Rect(0, 0, 315, 300), "ServerNetworkManager debug");
+
+        var connectedPlayersRect = new Rect(5, 30, 150, 30);
+        var banRandomPlayerButtonRect = new Rect(5, 55, 145, 30);
+        var kickRandomPlayerButtonRect = new Rect(160, 55, 145, 30);
+
+        var banRandomClientButton = GUI.Button(banRandomPlayerButtonRect, "Ban Random Client");
+        var kickRandomClientButton = GUI.Button(kickRandomPlayerButtonRect, "Kick Random Client");
+
+        GUI.Label(connectedPlayersRect, "Connected players " + connectedClientsId.Count + '/' + MaxConnections);
+
+        if (banRandomClientButton)
+        {
+            var randomClientId = connectedClientsId.GetRandomElement();
+            BanPlayer(randomClientId);
+        }
+
+        if (kickRandomClientButton)
+        {
+            var randomClientId = connectedClientsId.GetRandomElement();
+            KickPlayer(randomClientId);
+        }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class NotificationsController : MonoBehaviour
+public class NotificationsServiceController : MonoBehaviour
 {
     const int SpaceBetweenNotifications = 20;
     const int StartOffset = 10;

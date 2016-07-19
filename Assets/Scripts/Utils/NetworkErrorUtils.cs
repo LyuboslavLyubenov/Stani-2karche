@@ -1,10 +1,12 @@
 ﻿using UnityEngine.Networking;
 using System;
 using UnityEngine;
+using System.Text;
 
 public class NetworkErrorUtils
 {
     const string SuccessfullConnected = "Успешно свързан!";
+    const string SuccessfullySendOrReceiveMessage = "Успешно предадено/получено съобщение!";
     const string ConnectionProblem = "Проблем със свързването.";
     const string InvalidAddress = "Невалиден ип-адрес.";
     const string TooManyPlayers = "Домакинът няма свободни места.";
@@ -20,59 +22,60 @@ public class NetworkErrorUtils
     {
         if (error == NetworkError.Ok)
         {
-            return null;
+            return SuccessfullySendOrReceiveMessage;
         }
 
-        var errorMessage = ConnectionProblem;
+        var errorMessage = new StringBuilder();
+        var errorName = Enum.GetName(typeof(NetworkError), error);
+
+        errorMessage.AppendLine(errorName);
 
         switch (error)
         {
             case NetworkError.DNSFailure:
-                errorMessage += Environment.NewLine + InvalidAddress;
+                errorMessage.AppendLine(InvalidAddress);
                 break;
 
             case NetworkError.Timeout:
-                errorMessage += Environment.NewLine + ConnectionProblem;
+                errorMessage.AppendLine(ConnectionProblem);
                 break;
         }
-
-        errorMessage += Environment.NewLine;
-        errorMessage += Enum.GetName(typeof(NetworkError), error);
-
-        return errorMessage;
+         
+        return errorMessage.ToString();
     }
 
     public static string GetMessage(NetworkConnectionError error)
     {
-        var errorMessage = "";
+        var errorMessage = new StringBuilder();
 
         if (error == NetworkConnectionError.NoError)
         {
-            errorMessage = SuccessfullConnected;
+            errorMessage.AppendLine(SuccessfullConnected);
         }
         else
         {
+            var errorName = Enum.GetName(typeof(NetworkConnectionError), error);
+
+            errorMessage.AppendLine(errorName);
+
             switch (error)
             {
                 case NetworkConnectionError.TooManyConnectedPlayers:
-                    errorMessage += Environment.NewLine + TooManyPlayers;
+                    errorMessage.AppendLine(TooManyPlayers);
                     break;
 
                 case NetworkConnectionError.AlreadyConnectedToServer:
                 case NetworkConnectionError.AlreadyConnectedToAnotherServer:
-                    errorMessage += Environment.NewLine + AlreadyConnected;
+                    errorMessage.AppendLine(AlreadyConnected);
                     break;
 
                 case NetworkConnectionError.ConnectionBanned:
-                    errorMessage += Environment.NewLine + ConnectionBanned;
+                    errorMessage.AppendLine(ConnectionBanned);
                     break;
             }
         }
 
-        errorMessage += Environment.NewLine;
-        errorMessage += Enum.GetName(typeof(NetworkConnectionError), error);
-
-        return errorMessage;
+        return errorMessage.ToString();
     }
 }
 

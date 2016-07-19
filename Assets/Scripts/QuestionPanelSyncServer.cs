@@ -4,7 +4,7 @@ using System;
 public class QuestionPanelSyncServer : MonoBehaviour
 {
     public BasicPlayerPlayingUIController PlayingUIController;
-    public NotificationsController notificationsService;
+    public NotificationsServiceController notificationsService;
 
     ServerNetworkManager serverNetworkManager;
 

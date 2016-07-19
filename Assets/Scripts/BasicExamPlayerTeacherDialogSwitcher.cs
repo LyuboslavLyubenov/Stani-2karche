@@ -9,7 +9,7 @@ public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
 
     protected override void Start()
     {
-        string TeacherDialogsFilePath = Application.dataPath + "\\Tutorials Texts\\basicExamPlayerTeacherDialogs.txt";
+        string TeacherDialogsFilePath = "Tutorials Texts\\basicExamPlayerTeacherDialogs";
         base.DialogFilePath = TeacherDialogsFilePath;
         base.Start();
     }

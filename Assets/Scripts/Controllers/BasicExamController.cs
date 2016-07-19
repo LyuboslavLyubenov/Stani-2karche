@@ -24,7 +24,7 @@ public class BasicExamController : ExtendedMonoBehaviour
     public LeaderboardSerializer LeaderboardSerializer;
     public GameData GameData;
     public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
-    public NotificationsController NotificationService;
+    public NotificationsServiceController NotificationService;
     public CallAFriendUIController CallAFriendUIController;
     public ChooseThemeUIController ChooseThemeUIController;
     public BasicExamPlayerTutorialUIController TutorialUIController;
