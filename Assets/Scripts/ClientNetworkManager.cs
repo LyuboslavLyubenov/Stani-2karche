@@ -2,15 +2,17 @@
 using System.Collections;
 using UnityEngine.Networking;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// Client network manager.
 /// </summary>
-public class ClientNetworkManager : MonoBehaviour
+public class ClientNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
 
-    public NotificationsController NotificationsController;
+    public NotificationsServiceController NotificationsServiceController;
     //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
     public byte RetriesBeforeSearchingForAnotherServer = 3;
 
@@ -35,6 +37,8 @@ public class ClientNetworkManager : MonoBehaviour
 
     bool isRunning = false;
 
+    Dictionary<string, Action<NetworkData>> commands = new Dictionary<string, Action<NetworkData>>();
+
     public bool IsRunning
     {
         get
@@ -45,6 +49,7 @@ public class ClientNetworkManager : MonoBehaviour
 
     void Start()
     {
+        ConfigureCommands();
         ConfigureClient();
         StartCoroutine(UpdateCoroutine());
     }
@@ -57,6 +62,19 @@ public class ClientNetworkManager : MonoBehaviour
         connectionConfig = new ConnectionConfig();
         connectionConfig.MaxConnectionAttempt = RetriesBeforeSearchingForAnotherServer; 
         communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced); //make sure messages are delivered and send in correct order
+    }
+
+    void ConfigureCommands()
+    {
+        commands["KickReason"] = KickedFromServer;
+    }
+
+    void ShowNotification(Color color, string message)
+    {
+        if (NotificationsServiceController != null)
+        {
+            NotificationsServiceController.AddNotification(color, message);          
+        }
     }
 
     IEnumerator OnServerFoundCoroutine(string address)
@@ -117,7 +135,7 @@ public class ClientNetworkManager : MonoBehaviour
             var error = (NetworkError)e.ErrorN;
             var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-            NotificationsController.AddNotification(Color.red, errorMessage);
+            NotificationsServiceController.AddNotification(Color.red, errorMessage);
 
             //if cannot connect to server
             if (error == NetworkError.Timeout)
@@ -132,11 +150,11 @@ public class ClientNetworkManager : MonoBehaviour
         switch (receiveNetworkData.NetworkEventType)
         {
             case NetworkEventType.ConnectEvent:
-                OnConnectedToServer(receiveNetworkData);
+                ConnectedToServer(receiveNetworkData);
                 break;
 
             case NetworkEventType.DataEvent:
-                OnDataReceivedFromServer(receiveNetworkData);
+                DataReceivedFromServer(receiveNetworkData);
                 break;
 
             case NetworkEventType.DisconnectEvent:                            
@@ -145,10 +163,15 @@ public class ClientNetworkManager : MonoBehaviour
         }      
     }
 
-    void OnConnectedToServer(NetworkData networkData)
+    void ConnectedToServer(NetworkData networkData)
     {
         var username = GetUsername();
-        SendMessage("UsernameSet=" + username);
+        SendServerMessage("SetUsername=" + username);
+
+        CoroutineUtils.WaitForFrames(3, () =>
+            {
+                
+            });
 
         if (OnConnectedEvent != null)
         {
@@ -156,15 +179,47 @@ public class ClientNetworkManager : MonoBehaviour
         }
     }
 
-    void OnDataReceivedFromServer(NetworkData networkData)
+    bool IsValidCommand(string command)
+    {
+        return commands.ContainsKey(command);
+    }
+
+    void DataReceivedFromServer(NetworkData networkData)
     {
         var message = networkData.Message;
-        var username = GetUsername();
+        var commandName = message.Split('=')[0];
 
-        if (OnReceivedDataEvent != null)
+        if (IsValidCommand(commandName))
         {
-            OnReceivedDataEvent(this, new DataSentEventArgs(connectionId, username, message));    
+            var commandToExecute = commands[commandName];
+            commandToExecute.Invoke(networkData);
         }
+        else
+        {
+            var username = GetUsername();
+            var serverConnectionId = networkData.ConnectionId;
+
+            if (OnReceivedDataEvent != null)
+            {
+                OnReceivedDataEvent(this, new DataSentEventArgs(serverConnectionId, username, message));    
+            }    
+        }
+    }
+
+    void KickedFromServer(NetworkData networkData)
+    {
+        var message = networkData.Message;
+        var commandParams = message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)
+            .ToArray();
+
+        if (commandParams.Length < 1)
+        {
+            return;
+        }
+
+        var kickReason = commandParams.First();
+        ShowNotification(Color.red, kickReason);
     }
 
     void DisconnectedFromServer(NetworkData networkData)
@@ -210,7 +265,7 @@ public class ClientNetworkManager : MonoBehaviour
         if (networkError != NetworkConnectionError.NoError)
         {
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
-            NotificationsController.AddNotification(Color.red, errorMessage);
+            ShowNotification(Color.red, errorMessage);
             Disconnect();
         }
         else
@@ -234,7 +289,7 @@ public class ClientNetworkManager : MonoBehaviour
         if (networkError != NetworkError.Ok)
         {
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
-            NotificationsController.AddNotification(Color.red, errorMessage);
+            ShowNotification(Color.red, errorMessage);
         }
 
         if (OnDisconnectedEvent != null)
@@ -243,8 +298,39 @@ public class ClientNetworkManager : MonoBehaviour
         }
     }
 
-    public void SendMessage(string data)
+    public void SendServerMessage(string data)
     {
-        NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, data);
+        try
+        {
+            NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, data);    
+        }
+        catch (NetworkException ex)
+        {
+            var errorN = ex.ErrorN;
+            var error = (NetworkError)errorN;
+            var errorMessage = NetworkErrorUtils.GetMessage(error);
+
+            ShowNotification(Color.red, errorMessage);
+        }
+
+    }
+
+    string debug_connectIp = "";
+
+    void OnGUI()
+    {
+        GUI.Box(new Rect(0, 0, 300, 300), "ClientNetworkManager debug");
+
+        var connectButtonRect = new Rect(5, 80, 100, 30);
+        var connectIpRect = new Rect(5, 30, 100, 30); 
+
+        var connectButton = GUI.Button(connectButtonRect, "Connect");
+
+        debug_connectIp = GUI.TextField(connectIpRect, debug_connectIp);
+
+        if (connectButton)
+        {
+            ConnectToHost(debug_connectIp);
+        }
     }
 }
