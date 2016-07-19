@@ -17,5 +17,22 @@ public static class ListExtensions
             list[n] = value;  
         }
     }
+
+    public static T GetRandomElement<T>(this IList<T> list)
+    {
+        if (list.Count < 1)
+        {
+            throw new Exception("Cant get random item from empty list");
+        }
+        else if (list.Count == 1)
+        {
+            return list[0];
+        }
+      
+        var rnd = new System.Random(DateTime.Now.Millisecond);
+        var randomIndex = rnd.Next(0, list.Count);
+
+        return list[randomIndex];
+    }
 	
 }
