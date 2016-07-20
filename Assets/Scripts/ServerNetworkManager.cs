@@ -8,6 +8,8 @@ using System.Linq;
 public class ServerNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
+    const float CheckForDeadClientsDelayInSeconds = 3f;
+
     //how many clients can be connected to the server
     public int MaxConnections;
     public NotificationsServiceController NotificationServiceController;
@@ -34,8 +36,10 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     bool isRunning = false;
     //Id of all connected clients
-    List<int> connectedClientsId = new List<int>();
+    List<int> connectedClientsIds = new List<int>();
     List<int> bannedConnections = new List<int>();
+
+    HashSet<int> aliveClientsId = new HashSet<int>();
     //Their names
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
     Dictionary<string, Action<NetworkData>> commandsFromClient = new Dictionary<string, Action<NetworkData>>();
@@ -48,11 +52,12 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    public IList<int> ConnectedClientsId
+    public IList<int> ConnectedClientsIds
     {
         get
         {
-            return connectedClientsId;    
+            //create copy
+            return connectedClientsIds.ToList();    
         }
     }
 
@@ -69,6 +74,8 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         ConfigureCommands();
         ConfigureServer();
         StartServer();
+
+        CoroutineUtils.RepeatEverySeconds(CheckForDeadClientsDelayInSeconds, UpdateAliveClients);
 
         StartCoroutine(UpdateCoroutine());
     }
@@ -89,6 +96,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     void ConfigureCommands()
     {
         commandsFromClient["SetUsername"] = SetUsernameCommand;
+        commandsFromClient["KeepAlive"] = ClientKeepAliveCommand;
     }
 
     void ShowNotification(Color color, string message)
@@ -146,10 +154,38 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     }
 
+    void UpdateAliveClients()
+    {
+        if (!isRunning)
+        {
+            return;
+        }
+
+        var aliveClientsConnectionIds = aliveClientsId.ToList();
+        var deadClients = connectedClientsIds.Except(aliveClientsId);
+
+        foreach (var deadClientConnectionId in deadClients)
+        {
+            try
+            {
+                byte error;
+                NetworkTransport.Disconnect(genericHostId, deadClientConnectionId, out error);    
+            }
+            catch
+            {
+            }
+
+            connectedClientsNames.Remove(deadClientConnectionId);
+        }
+
+        connectedClientsIds = aliveClientsConnectionIds;
+        aliveClientsId.Clear();
+    }
+
     void OnClientConnected(NetworkData networkData)
     {
         var connectionId = networkData.ConnectionId;
-        connectedClientsId.Add(connectionId);
+        connectedClientsIds.Add(connectionId);
 
         var isBanned = bannedConnections.IndexOf(connectionId) > -1;
 
@@ -158,6 +194,10 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             KickPlayer(connectionId, "Забранено ти е да влизаш във този сървър.");
             return;
         }
+
+        SendClientMessage(connectionId, "AllowedToConnect");
+
+        aliveClientsId.Add(connectionId);
 
         if (OnConnectedEvent != null)
         {
@@ -170,7 +210,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         //if disconnected remove from connected clients list
         var connectionId = networkData.ConnectionId;
 
-        connectedClientsId.Remove(connectionId);
+        connectedClientsIds.Remove(connectionId);
         connectedClientsNames.Remove(connectionId);
 
         if (OnDisconnectedEvent != null)
@@ -224,10 +264,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         var commandParams = networkData.Message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
         var connectionId = networkData.ConnectionId;
 
-        if (commandParams.Length < 0 || string.IsNullOrEmpty(commandParams[0]))
+        if (commandParams.Length < 1 || string.IsNullOrEmpty(commandParams[0]))
         {
             //empty username :(
             connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
+            return;
         }
 
         var username = commandParams[0];
@@ -242,9 +283,14 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
     }
 
+    void ClientKeepAliveCommand(NetworkData networkData)
+    {
+        aliveClientsId.Add(networkData.ConnectionId);
+    }
+
     bool IsClientConnected(int connectionId)
     {
-        return connectedClientsId.IndexOf(connectionId) > -1;
+        return connectedClientsIds.IndexOf(connectionId) > -1;
     }
 
     public void StartServer()
@@ -263,36 +309,26 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     public void SendClientMessage(int clientId, string message)
     {
-        NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
+        try
+        {
+            NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
+        }
+        catch (NetworkException ex)
+        {
+            var errorN = ex.ErrorN;
+            var error = (NetworkError)errorN;
+            var errorMessage = NetworkErrorUtils.GetMessage(error);
+
+            NotificationServiceController.AddNotification(Color.red, errorMessage);
+        }
     }
 
     public void SendAllClientsMessage(string message)
     {
-        for (int i = 0; i < connectedClientsId.Count; i++)
+        for (int i = 0; i < connectedClientsIds.Count; i++)
         {
-            var clientId = connectedClientsId[i];
+            var clientId = connectedClientsIds[i];
             SendClientMessage(clientId, message);
-        }
-    }
-
-    public void CallFriend(Question question, int friendId)
-    {
-        var questionJSON = JsonUtility.ToJson(question);
-
-        SendClientMessage(friendId, "AskFriend");
-        SendClientMessage(friendId, questionJSON);
-    }
-
-    public void AskAudience(Question question)
-    {
-        var questionJSON = JsonUtility.ToJson(question);
-
-        for (int i = 0; i < connectedClientsId.Count; i++)
-        {
-            var clientConnectionId = connectedClientsId[i];
-
-            SendClientMessage(clientConnectionId, "AskAudience");
-            SendClientMessage(clientConnectionId, questionJSON);
         }
     }
 
@@ -346,17 +382,17 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         var banRandomClientButton = GUI.Button(banRandomPlayerButtonRect, "Ban Random Client");
         var kickRandomClientButton = GUI.Button(kickRandomPlayerButtonRect, "Kick Random Client");
 
-        GUI.Label(connectedPlayersRect, "Connected players " + connectedClientsId.Count + '/' + MaxConnections);
+        GUI.Label(connectedPlayersRect, "Connected players " + connectedClientsIds.Count + '/' + MaxConnections);
 
         if (banRandomClientButton)
         {
-            var randomClientId = connectedClientsId.GetRandomElement();
+            var randomClientId = connectedClientsIds.GetRandomElement();
             BanPlayer(randomClientId);
         }
 
         if (kickRandomClientButton)
         {
-            var randomClientId = connectedClientsId.GetRandomElement();
+            var randomClientId = connectedClientsIds.GetRandomElement();
             KickPlayer(randomClientId);
         }
     }

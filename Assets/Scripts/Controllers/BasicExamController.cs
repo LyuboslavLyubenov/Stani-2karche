@@ -269,8 +269,11 @@ public class BasicExamController : ExtendedMonoBehaviour
 
     public void AskFriend(Question question, int clientConnectionId)
     {
-        //tell to the serverNetworkManager to send request to the given client
-        ServerNetworkManager.CallFriend(question, clientConnectionId);
+        var questionJSON = JsonUtility.ToJson(question);
+
+        ServerNetworkManager.SendClientMessage(clientConnectionId, "AskFriend");
+        ServerNetworkManager.SendClientMessage(clientConnectionId, questionJSON);
+
         //tell the user that we wait for answer
         WaitingToAnswerUI.SetActive(true);
 
@@ -292,8 +295,11 @@ public class BasicExamController : ExtendedMonoBehaviour
             audienceAnswerVoteCount.Add(question.Answers[i], 0);
         }
 
-        ServerNetworkManager.AskAudience(question);
-        //user wait until all answers are collected
+        var questionJSON = JsonUtility.ToJson(question);
+
+        ServerNetworkManager.SendAllClientsMessage("AskAudience");
+        ServerNetworkManager.SendAllClientsMessage(questionJSON);
+
         WaitingToAnswerUI.SetActive(true);
 
         var disableAfterDelayComponent = WaitingToAnswerUI.GetComponent<DisableAfterDelay>();
