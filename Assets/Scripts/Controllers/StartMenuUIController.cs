@@ -9,10 +9,6 @@ public class StartMenuUIController : MonoBehaviour
 
     void Start()
     {
-        #if DEBUG
-        PlayerPrefs.DeleteKey("Username");
-        #endif
-
         if (CreateOrJoinUI == null)
         {
             throw new NullReferenceException("GameTypesUI not found on StartMenuUIController");

@@ -11,9 +11,11 @@ using System.Linq;
 public class ClientNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
+    const float ReceivePermissionToConnectTimeoutInSeconds = 3f;
+    const float SendKeepAliveRequestDelayInSeconds = 1f;
 
     public NotificationsServiceController NotificationsServiceController;
-    //how many times to try to connect to server before disconnecting and start searching for another (only if LANbroadcastService is present)
+    //how many times to try to connect to server before disconnecting and start searching for another
     public byte RetriesBeforeSearchingForAnotherServer = 3;
 
     public EventHandler OnConnectedEvent = delegate
@@ -35,15 +37,16 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     ConnectionConfig connectionConfig = null;
     byte communicationChannel = 0;
 
+    bool isConnected = false;
     bool isRunning = false;
 
     Dictionary<string, Action<NetworkData>> commands = new Dictionary<string, Action<NetworkData>>();
 
-    public bool IsRunning
+    public bool IsConnected
     {
         get
         {
-            return isRunning;
+            return isConnected;
         }
     }
 
@@ -51,12 +54,12 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     {
         ConfigureCommands();
         ConfigureClient();
+
+        CoroutineUtils.RepeatEverySeconds(SendKeepAliveRequestDelayInSeconds, SendKeepAliveRequest);
+
         StartCoroutine(UpdateCoroutine());
     }
 
-    /// <summary>
-    /// Configures the client connection settings.
-    /// </summary>
     void ConfigureClient()
     {
         connectionConfig = new ConnectionConfig();
@@ -67,6 +70,15 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     void ConfigureCommands()
     {
         commands["KickReason"] = KickedFromServer;
+        commands["AllowedToConnect"] = AllowedToConnectToServer;
+    }
+
+    void SendKeepAliveRequest()
+    {
+        if (isRunning && isConnected)
+        {
+            SendServerMessage("KeepAlive");
+        }
     }
 
     void ShowNotification(Color color, string message)
@@ -74,26 +86,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         if (NotificationsServiceController != null)
         {
             NotificationsServiceController.AddNotification(color, message);          
-        }
-    }
-
-    IEnumerator OnServerFoundCoroutine(string address)
-    {
-        bool successfullyConnected = false;
-
-        for (int i = 0; i < RetriesBeforeSearchingForAnotherServer; i++)
-        {
-            //try to connect
-            ConnectToHost(address);
-
-            yield return new WaitForSeconds(0.5f);
-
-            //if connected dont try again
-            if (isRunning)
-            {
-                successfullyConnected = true;
-                break;
-            }
         }
     }
 
@@ -124,7 +116,12 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void UpdateClient()
     {
-        NetworkData receiveNetworkData = null;
+        if (!isRunning)
+        {
+            return;
+        }
+
+        NetworkData receiveNetworkData = new NetworkData(0, null, NetworkEventType.Nothing);
 
         try
         {
@@ -149,10 +146,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
         switch (receiveNetworkData.NetworkEventType)
         {
-            case NetworkEventType.ConnectEvent:
-                ConnectedToServer(receiveNetworkData);
-                break;
-
             case NetworkEventType.DataEvent:
                 DataReceivedFromServer(receiveNetworkData);
                 break;
@@ -163,20 +156,17 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }      
     }
 
-    void ConnectedToServer(NetworkData networkData)
+    void ConnectedToServer()
     {
         var username = GetUsername();
         SendServerMessage("SetUsername=" + username);
-
-        CoroutineUtils.WaitForFrames(3, () =>
-            {
-                
-            });
 
         if (OnConnectedEvent != null)
         {
             OnConnectedEvent(this, EventArgs.Empty);    
         }
+
+        NotificationsServiceController.AddNotification(Color.green, "Успешно се свърза към сървъра!");
     }
 
     bool IsValidCommand(string command)
@@ -187,7 +177,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     void DataReceivedFromServer(NetworkData networkData)
     {
         var message = networkData.Message;
-        var commandName = message.Split('=')[0];
+        var commandName = message.Split('=').First();
 
         if (IsValidCommand(commandName))
         {
@@ -206,13 +196,18 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
     }
 
+    void AllowedToConnectToServer(NetworkData networkData)
+    {
+        isConnected = true;
+    }
+
     void KickedFromServer(NetworkData networkData)
     {
         var message = networkData.Message;
         var commandParams = message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)
             .Skip(1)
             .ToArray();
-
+        
         if (commandParams.Length < 1)
         {
             return;
@@ -224,8 +219,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void DisconnectedFromServer(NetworkData networkData)
     {
-        NetworkTransport.Shutdown();
-        isRunning = false;
+        Disconnect();
 
         if (OnDisconnectedEvent != null)
         {
@@ -248,7 +242,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
 
         //if currently connected, disconnect
-        if (isRunning)
+        if (isConnected)
         {
             Disconnect();
         }
@@ -270,17 +264,50 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
         else
         {
-            isRunning = true;    
+            isRunning = true;
+            StartCoroutine(CheckCommandAllowedToConnectReceivedCoroutine());    
+        }
+    }
+
+    IEnumerator CheckCommandAllowedToConnectReceivedCoroutine()
+    {
+        var time = 0f;
+
+        while (time < ReceivePermissionToConnectTimeoutInSeconds)
+        {
+            if (isConnected)
+            {
+                ConnectedToServer();
+                break;
+            }
+
+            time += Time.deltaTime;
+
+            yield return null;
+        }
+
+        if (!isConnected)
+        {
+            Disconnect();
         }
     }
 
     public void Disconnect()
     {
-        byte error;
+        byte error = 0;
 
+        isConnected = false;
         isRunning = false;
 
-        NetworkTransport.Disconnect(genericHostId, connectionId, out error);
+        try
+        {
+            NetworkTransport.Disconnect(genericHostId, connectionId, out error);    
+        }
+        catch (NetworkException ex)
+        {
+                
+        }
+
         NetworkTransport.RemoveHost(genericHostId);
         NetworkTransport.Shutdown();
 
@@ -300,6 +327,11 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     public void SendServerMessage(string data)
     {
+        if (!isConnected)
+        {
+            throw new InvalidOperationException("Not connected to server");
+        }
+
         try
         {
             NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, data);    
@@ -312,17 +344,19 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
             ShowNotification(Color.red, errorMessage);
         }
-
     }
 
-    string debug_connectIp = "";
+    #region DEBUG
+
+    #if DEBUG
+    string debug_connectIp = "(example 127.0.0.1)";
 
     void OnGUI()
     {
         GUI.Box(new Rect(0, 0, 300, 300), "ClientNetworkManager debug");
 
-        var connectButtonRect = new Rect(5, 80, 100, 30);
-        var connectIpRect = new Rect(5, 30, 100, 30); 
+        var connectIpRect = new Rect(5, 30, 130, 25); 
+        var connectButtonRect = new Rect(5, 65, 130, 30);
 
         var connectButton = GUI.Button(connectButtonRect, "Connect");
 
@@ -333,4 +367,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             ConnectToHost(debug_connectIp);
         }
     }
+
+    #endif
+    #endregion
 }
