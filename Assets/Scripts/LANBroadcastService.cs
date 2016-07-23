@@ -1,172 +1,54 @@
-﻿using UnityEngine;
+﻿using System;
+using CielaSpike;
 using System.Collections;
+using System.Security.Cryptography;
 using System.Net.Sockets;
 using System.Net;
-using System;
-using System.Net.NetworkInformation;
-using System.Threading;
-using CielaSpike;
-using System.Collections.Generic;
-using System.Linq;
 
-/// <summary>
-/// LAN broadcast service.
-/// </summary>
-public class LANBroadcastService : MonoBehaviour
+public abstract class LANBroadcastService : ExtendedMonoBehaviour
 {
-    const int Port = 7777;
-    //Only if server
-    const float TimeDelaySendBroadcastInSeconds = 0.5f;
-    //messages send
-    const string IAmServer = "Stani2karcheServer";
-    const string IAmClient = "Stani2karcheClient";
-    //what type i am
-    public BroadcastType broadcastType = BroadcastType.Client;
-    public bool StopWhenFirstFound = true;
+    const int Port = 7771;
+    const string ENCRYPTION_PASSWORD = "72a23c2e4152b09ca0b3cf2563c85eb2";
+    const string ENCRYPTION_SALT = "21a87b0b0eb48a341889bf1cb818db67";
 
-    public EventHandler<IpEventArgs> OnFound = delegate
-    {
-    };
+    public delegate void OnReceivedMessage(string ip,string message);
 
-    List<string> blacklist = new List<string>();
+    public delegate void OnSentMessage();
 
     UdpClient udpClient = null;
     IPEndPoint listenEndPoint = new IPEndPoint(IPAddress.Any, Port);
-
-    bool isRunning = false;
-
-    void Start()
-    {
-        Initialize();
-    }
-
-    void OnDisable()
-    {
-        Dispose();
-    }
-
-    void Initialize()
-    {
-        var endPoint = listenEndPoint;
-        ConfigUDPCLient(endPoint);
-
-        isRunning = true;
-
-        if (broadcastType == BroadcastType.Client)
-        {
-            StartUpdatingClient();
-        }
-        else if (broadcastType == BroadcastType.Server)
-        {
-            StartUpdatingServer();
-        }
-    }
 
     void ConfigUDPCLient(IPEndPoint endPoint)
     {
         udpClient = new UdpClient();
         //enable receiving and sending broadcast
-        udpClient.EnableBroadcast = true;
         udpClient.Client.EnableBroadcast = true;
         //lines below basically tell that we gonna receive from/ send to endpoint
         udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         udpClient.Client.Bind(endPoint);
     }
 
-    void Dispose()
+    IEnumerator BroadcastMessageCoroutine(string message, OnSentMessage onSentMessage)
     {
-        StopAllCoroutines();
-        isRunning = false;
-        udpClient.Close();
-        udpClient = null;
+        var messageEncrypted = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+        var buffer = System.Text.Encoding.UTF8.GetBytes(message);
+
+        udpClient.Send(buffer, buffer.Length, listenEndPoint);
+        onSentMessage();
     }
 
-    void StartUpdatingClient()
+    IEnumerator ReceiveMessageCoroutine(OnReceivedMessage onReceivedMessage)
     {
-        this.StartCoroutineAsync(UpdateClient());
+        IPEndPoint receivedEndPoint;
+        var buffer = udpClient.Receive(ref receivedEndPoint);
+        var messageEncrypted = System.Text.Encoding.UTF8.GetString(buffer);
+        var messageDecrypted = CipherUtility.Decrypt<RijndaelManaged>(messageEncrypted, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+
+        yield return Ninja.JumpToUnity;
+        onReceivedMessage(receivedEndPoint.Address.ToString(), messageDecrypted);
     }
 
-    IEnumerator UpdateClient()
-    {
-        yield return new WaitForEndOfFrame();
-        
-        while (isRunning)
-        {
-            IPEndPoint ip = null;
-            byte[] buffer = udpClient.Receive(ref ip);
-            var message = System.Text.Encoding.UTF8.GetString(buffer);
-            var isMessageEmpty = string.IsNullOrEmpty(message) && message.Length <= 0;
-            var ipv4 = ip.Address.ToString();
-            string[] blacklistCopy = null;
-
-            lock (blacklist)
-            {
-                blacklistCopy = blacklist.ToArray();
-            }
-
-            yield return Ninja.JumpToUnity;
-
-            if (!isMessageEmpty && message.Equals(IAmServer) && !blacklistCopy.Contains(ipv4))
-            {
-                //TODO: TELL THE SERVER THAT YOU FOUND IT
-                OnFound(this, new IpEventArgs(ip.Address.ToString()));
-
-                if (StopWhenFirstFound)
-                {
-                    isRunning = false;    
-                }
-            }
-
-            yield return Ninja.JumpBack;
-
-            Thread.Sleep(10);
-        }
-    }
-
-    void StartUpdatingServer()
-    {
-        this.StartCoroutineAsync(UpdateServer());
-    }
-
-    IEnumerator UpdateServer()
-    {
-        yield return new WaitForEndOfFrame();
-
-        while (isRunning)
-        {
-            var IAmServerMsgBytes = System.Text.Encoding.UTF8.GetBytes(IAmServer);
-            udpClient.Send(IAmServerMsgBytes, IAmServerMsgBytes.Length, "255.255.255.255", Port);
-            Thread.Sleep((int)(TimeDelaySendBroadcastInSeconds * 1000));
-        }
-    }
-
-    /// <summary>
-    /// Gets IPv4 addresses of all connected to network interfaces(LAN, WIFI, etc...).
-    /// </summary>
-    /// <returns>The all IPv4 addresses</returns>
-    List<string> GetAllIPv4Addresses()
-    {
-        List<string> output = new List<string>();
-
-        foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
-        {
-            if (item.OperationalStatus == OperationalStatus.Up)
-            {
-                foreach (UnicastIPAddressInformation ip in item.GetIPProperties()
-                    .UnicastAddresses)
-                {
-                    if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        output.Add(ip.Address.ToString());
-                    }
-                }
-            }
-        }
-
-        return output;
-    }
-
-    void ValidateIpAddress(string ipAddress)
+    protected void ValidateIpAddress(string ipAddress)
     {
         if (string.IsNullOrEmpty(ipAddress))
         {
@@ -177,56 +59,35 @@ public class LANBroadcastService : MonoBehaviour
         {
             throw new ArgumentException("Invalid ipv4 address");
         }
-
     }
 
-    public void RestartService()
+    protected virtual void Initialize()
     {
-        Dispose();
-        Initialize();
+        var endPoint = listenEndPoint;
+        ConfigUDPCLient(endPoint);
     }
 
-    public void AddToBlackList(string ipAddress)
+    protected virtual void Dispose()
     {
-        if (broadcastType == BroadcastType.Server)
-        {
-            throw new InvalidOperationException();
-        }
-
-        ValidateIpAddress(ipAddress);
-
-        lock (blacklist)
-        {
-            blacklist.Add(ipAddress);    
-        }
+        StopAllCoroutines();
+        udpClient.Close();
+        udpClient = null;
     }
 
-    public void RemoveFromBlacklist(string ipAddress)
+    protected void BroadcastMessageAsync(string message, OnSentMessage onSentMessage)
     {
-        if (broadcastType == BroadcastType.Server)
-        {
-            throw new InvalidOperationException();
-        }
-
-        ValidateIpAddress(ipAddress);
-
-        lock (blacklist)
-        {
-            blacklist.Remove(ipAddress);
-        }
+        this.StartCoroutineAsync(BroadcastMessageCoroutine(message, onSentMessage));
     }
 
-    public void ClearBlackList()
+    protected void BroadcastMessageAsync(string message)
     {
-        if (broadcastType == BroadcastType.Server)
-        {
-            throw new InvalidOperationException();
-        }
+        this.StartCoroutineAsync(BroadcastMessageCoroutine(message, delegate
+                {
+                }));
+    }
 
-        lock (blacklist)
-        {
-            blacklist.Clear();
-        }
+    protected void ReceiveBroadcastMessageAsync(OnReceivedMessage onReceivedMessage)
+    {
+        this.StartCoroutineAsync(ReceiveMessageCoroutine(onReceivedMessage));
     }
 }
-
