@@ -3,18 +3,20 @@ using UnityEngine.SceneManagement;
 
 public class NormalExamSelectModeUIController : MonoBehaviour
 {
-    void Start()
-    {
-        transform.localScale = new Vector3(1, 0, 1);
-    }
-
     public void OpenHostScene()
     {
-        SceneManager.LoadScene("BasicExamHost");    
+        PlayerPrefs.SetString("BasicExamConnectionType", "Player");
+        StartGame();
     }
 
     public void OpenGuestScene()
     {
-        SceneManager.LoadScene("BasicExamGuest");
+        PlayerPrefs.SetString("BasicExamConnectionType", "Audience");
+        StartGame();
+    }
+
+    void StartGame()
+    {
+        SceneManager.LoadScene("BasicExam");
     }
 }

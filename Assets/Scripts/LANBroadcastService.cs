@@ -21,7 +21,9 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
     void ConfigUDPCLient(IPEndPoint endPoint)
     {
         udpClient = new UdpClient();
+        udpClient.ExclusiveAddressUse = false;
         //enable receiving and sending broadcast
+        udpClient.EnableBroadcast = true;
         udpClient.Client.EnableBroadcast = true;
         //lines below basically tell that we gonna receive from/ send to endpoint
         udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -31,34 +33,22 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
     IEnumerator BroadcastMessageCoroutine(string message, OnSentMessage onSentMessage)
     {
         var messageEncrypted = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
-        var buffer = System.Text.Encoding.UTF8.GetBytes(message);
+        var buffer = System.Text.Encoding.UTF8.GetBytes(messageEncrypted);
 
-        udpClient.Send(buffer, buffer.Length, listenEndPoint);
+        udpClient.Send(buffer, buffer.Length, "255.255.255.255", Port);
+        yield return Ninja.JumpToUnity;
         onSentMessage();
     }
 
     IEnumerator ReceiveMessageCoroutine(OnReceivedMessage onReceivedMessage)
     {
-        IPEndPoint receivedEndPoint;
+        IPEndPoint receivedEndPoint = null;
         var buffer = udpClient.Receive(ref receivedEndPoint);
         var messageEncrypted = System.Text.Encoding.UTF8.GetString(buffer);
         var messageDecrypted = CipherUtility.Decrypt<RijndaelManaged>(messageEncrypted, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
 
         yield return Ninja.JumpToUnity;
         onReceivedMessage(receivedEndPoint.Address.ToString(), messageDecrypted);
-    }
-
-    protected void ValidateIpAddress(string ipAddress)
-    {
-        if (string.IsNullOrEmpty(ipAddress))
-        {
-            throw new ArgumentNullException("ipAddress");
-        }
-
-        if (ipAddress.Split('.').Length != 4)
-        {
-            throw new ArgumentException("Invalid ipv4 address");
-        }
     }
 
     protected virtual void Initialize()
@@ -81,9 +71,14 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
 
     protected void BroadcastMessageAsync(string message)
     {
-        this.StartCoroutineAsync(BroadcastMessageCoroutine(message, delegate
+        this.StartCoroutineAsync(
+            BroadcastMessageCoroutine(
+                message, 
+                delegate
                 {
-                }));
+                }
+            )
+        );
     }
 
     protected void ReceiveBroadcastMessageAsync(OnReceivedMessage onReceivedMessage)

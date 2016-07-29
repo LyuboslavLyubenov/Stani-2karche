@@ -13,7 +13,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     //how many clients can be connected to the server
     public int MaxConnections;
     public NotificationsServiceController NotificationServiceController;
-    public LANBroadcastService BroadcastService;
+    public LANServerOnlineBroadcastService LANServerOnlineBroadcastService;
 
     public EventHandler OnConnectedEvent = delegate
     {
@@ -75,8 +75,9 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         ConfigureServer();
         StartServer();
 
-        CoroutineUtils.RepeatEverySeconds(CheckForDeadClientsDelayInSeconds, UpdateAliveClients);
+        LANServerOnlineBroadcastService.Start();
 
+        CoroutineUtils.RepeatEverySeconds(CheckForDeadClientsDelayInSeconds, UpdateAliveClients);
         StartCoroutine(UpdateCoroutine());
     }
 
@@ -171,8 +172,9 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
                 byte error;
                 NetworkTransport.Disconnect(genericHostId, deadClientConnectionId, out error);    
             }
-            catch
+            catch (Exception e)
             {
+                Debug.Log("UpdateALiveClients - " + e.Message);
             }
 
             connectedClientsNames.Remove(deadClientConnectionId);

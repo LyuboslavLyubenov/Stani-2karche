@@ -9,7 +9,7 @@ public class LANServersDiscoveryBroadcastService : LANBroadcastService
     void Start()
     {
         base.Initialize();
-        ReceiveIsServerOnlineMessage();
+        CoroutineUtils.WaitForFrames(1, ReceiveIsServerOnlineMessage);
     }
 
     void ReceiveIsServerOnlineMessage()
@@ -24,7 +24,7 @@ public class LANServersDiscoveryBroadcastService : LANBroadcastService
             OnFound(this, new IpEventArgs(ip));
         }
 
-        ReceiveIsServerOnlineMessage();
+        CoroutineUtils.WaitForSeconds(1f, ReceiveIsServerOnlineMessage);
     }
 	
 }

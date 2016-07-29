@@ -229,16 +229,9 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     public void ConnectToHost(string ip)
     {
-        if (string.IsNullOrEmpty(ip) && ip.Length < 4)
+        if (!ip.IsValidIPV4())
         {
-            throw new ArgumentOutOfRangeException("ip", "Invalid ip address length");
-        }
-            
-        var ipDigits = ip.Split('.');
-       
-        if (ipDigits.Length != 4)
-        {
-            throw new ArgumentException("Invalid ip address");
+            throw new ArgumentException("Invalid ipv4 address");
         }
 
         //if currently connected, disconnect

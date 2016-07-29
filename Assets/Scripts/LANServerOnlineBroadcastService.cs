@@ -4,18 +4,18 @@
 
     const float TimeDelaySendServerIsOnlineInSeconds = 0.5f;
 
-    public void Initialize()
+    public void Start()
     {
         base.Initialize();
-        SendServerOnline();
+        CoroutineUtils.WaitForSeconds(1, SendServerOnline);
     }
 
     void SendServerOnline()
     {
-        base.BroadcastMessageAsync(MessageIAmServer, OnSentMessage);
+        base.BroadcastMessageAsync(MessageIAmServer, OnMessageSent);
     }
 
-    void OnSentMessage()
+    void OnMessageSent()
     {
         CoroutineUtils.WaitForSeconds(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
     }

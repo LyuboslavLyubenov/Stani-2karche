@@ -1,17 +1,13 @@
 ﻿using System;
+using System.Net;
 
 public class IpEventArgs : EventArgs
 {
     public IpEventArgs(string ip)
     {
-        if (string.IsNullOrEmpty(ip))
+        if (!ip.IsValidIPV4())
         {
-            throw new ArgumentNullException(ip);
-        }
-
-        if (ip.Split('.').Length != 4)
-        {
-            throw new ArgumentException("Invalid ip address");
+            throw new ArgumentException("Invalid ipv4 address");  
         }
 
         this.IPAddress = ip;
@@ -20,6 +16,6 @@ public class IpEventArgs : EventArgs
     public string IPAddress
     {
         get;
-        set;
+        private set;
     }
 }
