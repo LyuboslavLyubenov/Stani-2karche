@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 
 public class TESTBasicExamGameInfoSender : ExtendedMonoBehaviour
 {
@@ -21,34 +18,17 @@ public class TESTBasicExamGameInfoSender : ExtendedMonoBehaviour
             MaxConnectionsAllowed = 10
         };
         
-        var gameInfo = new CreatedGameInfo_Serializable()
+        var gameInfo = new BasicExamGameInfo_Serializable()
         {
             ServerInfo = serverInfo,
             GameType = GameType.BasicExam,
-            HostUsername = "Dead4y"
+            HostUsername = "Dead4y",
+            CanConnectAsAudience = true,
+            CanConnectAsMainPlayer = false
         };
         
-        Sender.SendGameInfo("192.168.0.101", gameInfo, delegate
+        Sender.SendGameInfo("192.168.0.101", (CreatedGameInfo_Serializable)gameInfo, delegate
             {
             });
-    }
-
-    string GetLocalIPv4(NetworkInterfaceType _type)
-    {
-        string output = "";
-        foreach (NetworkInterface item in NetworkInterface.GetAllNetworkInterfaces())
-        {
-            if (item.NetworkInterfaceType == _type && item.OperationalStatus == OperationalStatus.Up)
-            {
-                foreach (UnicastIPAddressInformation ip in item.GetIPProperties().UnicastAddresses)
-                {
-                    if (ip.Address.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        output = ip.Address.ToString();
-                    }
-                }
-            }
-        }
-        return output;
     }
 }
