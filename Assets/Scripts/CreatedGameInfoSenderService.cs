@@ -4,8 +4,8 @@ using System;
 using System.Net.Sockets;
 using CielaSpike;
 using System.Text;
-using System.Net;
 using System.Threading;
+using System.Security.Cryptography;
 
 public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
 {
@@ -50,6 +50,7 @@ public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
             }
 
             var gameInfoJSON = GameInfoTag + JsonUtility.ToJson(gameInfo);
+            var encrypted = CipherUtility.Encrypt<RijndaelManaged>(gameInfoJSON, SimpleTcpServer.ENCRYPTION_PASSWORD, SimpleTcpServer.ENCRYPTION_SALT);
             var buffer = Encoding.UTF8.GetBytes(gameInfoJSON);
             socket.Send(buffer);
             sent = true;
