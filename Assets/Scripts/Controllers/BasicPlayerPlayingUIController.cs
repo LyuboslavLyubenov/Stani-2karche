@@ -107,7 +107,7 @@ public class BasicPlayerPlayingUIController : ExtendedMonoBehaviour
 
         var chanceForJoker = Random.value;
 
-        if (ServerNetworkManager.ConnectedClientsIds.Count > 0 &&
+        if (ServerNetworkManager.ConnectedClientsIds.Length > 0 &&
             jokers.Count(j => !j.interactable) > 0 &&
             chanceForJoker >= ChanceToHaveLuckAfterAnswer)
         {
@@ -213,7 +213,7 @@ public class BasicPlayerPlayingUIController : ExtendedMonoBehaviour
         var currentQuestion = GameData.GetCurrentQuestion();
 
         //if we dont have any clients connected
-        if (ServerNetworkManager.ConnectedClientsIds.Count <= 0)
+        if (ServerNetworkManager.ConnectedClientsIds.Length <= 0)
         {
             //generate question
             var answers = currentQuestion.Answers;
@@ -249,7 +249,7 @@ public class BasicPlayerPlayingUIController : ExtendedMonoBehaviour
         #endif
 
         //if we have less than 4 connected clients
-        if (ServerNetworkManager.ConnectedClientsIds.Count < minForOnlineVote)
+        if (ServerNetworkManager.ConnectedClientsIds.Length < minForOnlineVote)
         {
             var generatedAudienceAnswersVotes = GenerateAudienceVotes(currentQuestion);
             var audienceVoteEventArgs = new AudienceVoteEventArgs(generatedAudienceAnswersVotes);

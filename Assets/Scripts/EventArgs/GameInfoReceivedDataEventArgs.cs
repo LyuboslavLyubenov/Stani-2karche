@@ -7,16 +7,16 @@ using System.Net;
 using System;
 using System.Text;
 
-public class GameInfoReceivedData
+public class GameInfoReceivedDataEventArgs : EventArgs
 {
-    public GameInfoReceivedData(string json)
+    public GameInfoReceivedDataEventArgs(string json)
     {
         if (string.IsNullOrEmpty(json))
         {
             throw new ArgumentNullException("json");
         }
 
-        this.GameInfo = JsonUtility.FromJson<CreatedGameInfo_Serializable>(json);
+        GameInfo = JsonUtility.FromJson<CreatedGameInfo_Serializable>(json);
     }
 
     public CreatedGameInfo_Serializable GameInfo

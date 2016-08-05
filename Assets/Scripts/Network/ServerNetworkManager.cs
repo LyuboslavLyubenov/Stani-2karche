@@ -52,21 +52,41 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    public IList<int> ConnectedClientsIds
+    public int[] BannedConnectionsIds
     {
         get
         {
-            //create copy
-            return connectedClientsIds.ToList();    
+            return bannedConnections.ToArray();
         }
     }
 
-    public Dictionary<int, string> ConnectedClientsNames
+    public int ConnectedClientsCount
     {
         get
         {
-            return connectedClientsNames;
+            return connectedClientsIds.Count;
         }
+    }
+
+    public int[] ConnectedClientsIds
+    {
+        get
+        {
+            return aliveClientsId.ToArray();
+        }
+    }
+
+    public Dictionary<int, string> ConnectedClientsIdsNames
+    {
+        get
+        {
+            return connectedClientsNames.ToDictionary(idUsername => idUsername.Key, idUsername => idUsername.Value);
+        }
+    }
+
+    public string[] GetAllClientsNames()
+    {
+        return connectedClientsNames.Select(c => c.Value).ToArray();
     }
 
     void Start()
@@ -117,7 +137,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
                 UpdateServer();
             }
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 
