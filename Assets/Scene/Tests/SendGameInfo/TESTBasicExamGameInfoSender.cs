@@ -1,34 +1,17 @@
 ﻿using UnityEngine;
+using System.Net.Sockets;
 
 public class TESTBasicExamGameInfoSender : ExtendedMonoBehaviour
 {
+    const int Port = 4444;
+
     public CreatedGameInfoSenderService Sender;
+    public ServerNetworkManager ServerNetworkManager;
+    public SimpleTcpServer TcpServer;
 
     void Start()
     {
-        CoroutineUtils.WaitForSeconds(1, TESTSend);
-    }
-
-    void TESTSend()
-    {
-        var serverInfo = new ServerInfo_Serializable()
-        {
-            IPAddress = "127.0.0.1",
-            ConnectedClients = 0,
-            MaxConnectionsAllowed = 10
-        };
-        
-        var gameInfo = new BasicExamGameInfo_Serializable()
-        {
-            ServerInfo = serverInfo,
-            GameType = GameType.BasicExam,
-            HostUsername = "Dead4y",
-            CanConnectAsAudience = true,
-            CanConnectAsMainPlayer = false
-        };
-        
-        Sender.SendGameInfo("192.168.0.101", (CreatedGameInfo_Serializable)gameInfo, delegate
-            {
-            });
+        ServerNetworkManager.StartServer();
+        TcpServer.Initialize(Port);
     }
 }
