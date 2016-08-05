@@ -3,7 +3,8 @@
 [Serializable]
 public class ServerInfo_Serializable
 {
-    public string IPAddress;
-    public int ConnectedClients;
+    public string ExternalIpAddress;
+    public string LocalIPAddress;
+    public int ConnectedClientsCount;
     public int MaxConnectionsAllowed;
 }

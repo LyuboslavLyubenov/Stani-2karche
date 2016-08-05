@@ -189,7 +189,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
     }
 
-    public void Initialize(int port)
+    public virtual void Initialize(int port)
     {
         this.port = port;
         acceptConnections.ExclusiveAddressUse = false;
