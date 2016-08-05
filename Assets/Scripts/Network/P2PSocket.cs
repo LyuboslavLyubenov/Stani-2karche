@@ -33,8 +33,10 @@ public class P2PSocket : SimpleTcpServer
     {
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        socket.SendTimeout = base.ReceiveMessageTimeoutInMiliseconds;
-        socket.ReceiveTimeout = base.SendMessageTimeoutInMiliseconds;
+        socket.SendTimeout = ReceiveMessageTimeoutInMiliseconds;
+        socket.ReceiveTimeout = SendMessageTimeoutInMiliseconds;
+
+        string exceptionMessage = string.Empty;
 
         try
         {
@@ -42,15 +44,18 @@ public class P2PSocket : SimpleTcpServer
         }
         catch (SocketException ex)
         {
+            exceptionMessage = ex.Message;
+            Debug.Log(ex.Message);
+        }
+
+        if (exceptionMessage != string.Empty)
+        {
             yield return Ninja.JumpToUnity;
 
             if (OnError != null)
             {
-                OnError(ex.Message);    
+                OnError(exceptionMessage);
             }
-
-            Debug.Log(ex.Message);
-            yield break;
         }
 
         var ipEventArgs = new IpEventArgs(ipAddress);

@@ -206,7 +206,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
     {
         try
         {
-            _SendMessage(ipAddress, message, OnSent, OnError);    
+            _SendMessage(ipAddress, message, OnSent);    
         }
         catch (Exception ex)
         {
