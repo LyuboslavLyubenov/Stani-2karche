@@ -1,17 +1,14 @@
-﻿using UnityEngine;
-using System.Net.Sockets;
-
-public class TESTBasicExamGameInfoSender : ExtendedMonoBehaviour
+﻿public class TESTBasicExamGameInfoSender : ExtendedMonoBehaviour
 {
     const int Port = 4444;
 
     public CreatedGameInfoSenderService Sender;
     public ServerNetworkManager ServerNetworkManager;
-    public SimpleTcpServer TcpServer;
+    public P2PSocket P2PSocket;
 
     void Start()
     {
         ServerNetworkManager.StartServer();
-        TcpServer.Initialize(Port);
+        P2PSocket.Initialize(Port);
     }
 }

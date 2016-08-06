@@ -6,12 +6,12 @@ public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
     const string GameInfoTag = "[CreatedGameInfo]";
     const string SendGameInfoTag = "[SendGameInfo]";
 
-    public SimpleTcpServer TcpServer;
+    public P2PSocket P2PSocket;
     public GameInfoFactory GameInfoFactory;
 
     void Start()
     {
-        TcpServer.OnReceivedMessage += OnReceivedMessage;
+        P2PSocket.OnReceivedMessage += OnReceivedMessage;
     }
 
     void OnReceivedMessage(object sender, MessageEventArgs args)
@@ -26,7 +26,7 @@ public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
         var gameInfoJSON = JsonUtility.ToJson(gameInfo);
         var messageToSend = GameInfoTag + gameInfoJSON;
 
-        TcpServer.Send(args.IPAddress, messageToSend);
+        P2PSocket.Send(args.IPAddress, messageToSend);
     }
 }
 

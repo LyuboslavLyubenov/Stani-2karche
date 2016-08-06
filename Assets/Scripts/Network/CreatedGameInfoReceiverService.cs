@@ -4,8 +4,7 @@ using System;
 
 public class CreatedGameInfoReceiverService : MonoBehaviour
 {
-    public const int Port = 7773;
-    public SimpleTcpServer TcpServer;
+    public P2PSocket P2PSocket;
 
     private readonly object MyLock = new object();
 
@@ -13,7 +12,7 @@ public class CreatedGameInfoReceiverService : MonoBehaviour
 
     void Start()
     {
-        TcpServer.OnReceivedMessage += OnReceivedDataFromClient;
+        P2PSocket.OnReceivedMessage += OnReceivedDataFromClient;
     }
 
     void OnReceivedDataFromClient(object sender, MessageEventArgs args)
@@ -47,12 +46,14 @@ public class CreatedGameInfoReceiverService : MonoBehaviour
         {
             if (!pendingIPReceiveDataJson.ContainsKey(ip))
             {
-                pendingIPReceiveDataJson.Add(ip, onReceived);
-
+                P2PSocket.ConnectTo(ip, P2PSocket.Port, (IpEventArgs args) => OnConnected(args, onReceived));
             }
         }
+    }
 
-        Debug.Log("ListeningAt " + ip);
+    void OnConnected(IpEventArgs args, Action<GameInfoReceivedDataEventArgs> onReceived)
+    {
+        pendingIPReceiveDataJson.Add(args.IPAddress, onReceived);
     }
 
     public void RemoveListener(string ip)
