@@ -1,4 +1,3 @@
-//
 using UnityEngine;
 using System.Net.Sockets;
 using System.Collections;
@@ -13,17 +12,16 @@ using System.Security.Cryptography;
 
 public class SimpleTcpServer : ExtendedMonoBehaviour
 {
-    const int AcceptNewConnectionDelayInMiliseconds = 60;
-    const int UpdateSocketsDelayInMiliseconds = 100;
-    const float UpdateAliveSocketsDelayInSeconds = 0.5f;
-    protected const int ReceiveMessageTimeoutInMiliseconds = 500;
-    protected const int SendMessageTimeoutInMiliseconds = 500;
+    const int AcceptNewConnectionDelayInMiliseconds = 100;
+    const float UpdateSocketsDelayInSeconds = 0.1f;
+    protected const int ReceiveMessageTimeoutInMiliseconds = 0;
+    protected const int SendMessageTimeoutInMiliseconds = 0;
 
     public const string ENCRYPTION_PASSWORD = "82144042ef1113d6abc9b58f469cf710";
     public const string ENCRYPTION_SALT = "21a87b0b0eb48a341889bf1cb818db67";
 
     public EventHandler<IpEventArgs> OnClientConnected = delegate
-    {  
+    {
     };
 
     public EventHandler<MessageEventArgs> OnReceivedMessage = delegate
@@ -35,9 +33,10 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
     int port;
     bool initialized = false;
 
-    Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+    readonly Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
     Dictionary<string, Socket> connectedIPClientsSocket = new Dictionary<string, Socket>();
+    Dictionary<Socket, ReceiveMessageState> socketsMessageState = new Dictionary<Socket, ReceiveMessageState>();
 
     public bool Initialized
     {
@@ -55,70 +54,17 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
     }
 
-    void UpdateClientsSockets()
+    void RemoveDisconnectedSockets()
     {
-        lock (MyLock)
+        if (Monitor.TryEnter(MyLock, 1000))
         {
-            connectedIPClientsSocket = connectedIPClientsSocket.Where(s => s.Value.Connected).ToDictionary(k => k.Key, v => v.Value);
-        }
-    }
-
-    IEnumerator UpdateGetDataFromSocketsCoroutine()
-    {
-        while (true)
-        {
-            Thread.Sleep(100);
-
-            lock (MyLock)
+            try
             {
-                for (int i = 0; i < connectedIPClientsSocket.Keys.Count; i++)
-                {
-                    Thread.Sleep(30);
-
-                    var ip = connectedIPClientsSocket.Keys.ElementAt(i);
-                    var socket = connectedIPClientsSocket[ip];
-
-                    if (!socket.Connected)
-                    {
-                        connectedIPClientsSocket.Remove(ip);
-                        continue;
-                    }
-
-                    var receivedBytes = new List<byte>();
-
-                    do
-                    {
-                        var buffer = new byte[2048];
-
-                        try
-                        {
-                            socket.Receive(buffer);
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.Log(ex.Message);
-                            break;
-                        }
-
-                        receivedBytes.AddRange(buffer);
-
-                    } while(socket.Available > 0);
-
-                    if (receivedBytes.Count <= 0)
-                    {
-                        continue;
-                    }
-
-                    var message = Encoding.UTF8.GetString(receivedBytes.ToArray());
-                    var filteredMessage = FilterReceivedMessage(message);
-                    var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(filteredMessage, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
-
-                    yield return Ninja.JumpToUnity;
-
-                    OnReceivedMessage(this, new MessageEventArgs(ip, encryptedMessage));
-
-                    yield return Ninja.JumpBack;
-                }
+                connectedIPClientsSocket = connectedIPClientsSocket.Where(s => s.Value.Connected).ToDictionary(k => k.Key, v => v.Value);    
+            }
+            finally
+            {
+                Monitor.Exit(MyLock);
             }
         }
     }
@@ -146,151 +92,233 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
     void EndAcceptConnections(IAsyncResult result)
     {
         var socket = (Socket)result.AsyncState;
-        var connectionSocket = socket.EndAccept(result);
-        var ip = (connectionSocket.RemoteEndPoint as IPEndPoint).ToString();
 
-        connectionSocket.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
-        connectionSocket.SendTimeout = SendMessageTimeoutInMiliseconds;
-
-        lock (MyLock)
+        try
         {
-            connectedIPClientsSocket.Add(ip, connectionSocket);    
-        }
+            var connectionSocket = socket.EndAccept(result);
+            var ip = (connectionSocket.RemoteEndPoint as IPEndPoint).Address.ToString().Split(':').First();
 
-        Thread.Sleep(AcceptNewConnectionDelayInMiliseconds);
-        BeginAcceptConnections();
+            connectionSocket.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
+            connectionSocket.SendTimeout = SendMessageTimeoutInMiliseconds;
+
+            connectedIPClientsSocket.Add(ip, connectionSocket);
+
+            Debug.Log("Accepted " + ip);
+
+            BeginReceiveMessage(ip);
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+        }
+        finally
+        {
+            Thread.Sleep(AcceptNewConnectionDelayInMiliseconds);
+            BeginAcceptConnections();
+        }
     }
 
-    void _SendMessage(string ipAddress, string message, Action OnSent = null)
+    void BeginSendMessageToClient(string ipAddress, string message)
     {
-        lock (MyLock)
+        if (!initialized)
         {
-            if (!connectedIPClientsSocket.ContainsKey(ipAddress))
-            {
-                throw new ArgumentException("Not connected to " + ipAddress, "ipAddress");
-            }
-
-            var socket = connectedIPClientsSocket[ipAddress];
-
-            if (!socket.Connected)
-            {
-                throw new Exception("Connection problem");
-            }
-
-            var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
-            var buffer = Encoding.UTF8.GetBytes(encryptedMessage);
-
-            socket.Send(buffer);        
+            throw new InvalidOperationException("Not initialized");
         }
 
-        if (OnSent != null)
+        if (!connectedIPClientsSocket.ContainsKey(ipAddress))
         {
-            OnSent();    
+            throw new ArgumentException("Not connected to " + ipAddress, "ipAddress");
+        }
+
+        var socket = connectedIPClientsSocket[ipAddress];
+
+        if (!socket.Connected)
+        {
+            throw new Exception("Connection problem");
+        }
+
+        var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+        var messageBuffer = Encoding.UTF8.GetBytes(encryptedMessage);
+        var prefix = BitConverter.GetBytes(messageBuffer.Length);
+        var state = new SendMessageState() { Client = socket, DataToSend = new byte[messageBuffer.Length + 4] };
+
+        Buffer.BlockCopy(prefix, 0, state.DataToSend, 0, prefix.Length);
+        Buffer.BlockCopy(messageBuffer, 0, state.DataToSend, prefix.Length, messageBuffer.Length);
+
+        socket.BeginSend(messageBuffer, 0, messageBuffer.Length, SocketFlags.None, new AsyncCallback(EndSendMessageToClient), state);
+    }
+
+    void EndSendMessageToClient(IAsyncResult result)
+    {
+        var state = (SendMessageState)result.AsyncState;
+        var socket = state.Client;
+
+        try
+        {
+            var sendBytes = socket.EndSend(result);
+            state.DataSentLength += sendBytes;
+
+            if (state.DataSentLength < state.DataToSend.Length)
+            {
+                var sendSize = state.DataToSend.Length - state.DataSentLength;
+                socket.BeginSend(state.DataToSend, state.DataSentLength, sendSize, SocketFlags.None, new AsyncCallback(EndSendMessageToClient), state);
+            }
+            else
+            {
+                Debug.Log("Sent " + Encoding.UTF8.GetString(state.DataToSend));
+                //TODO: ON SENT MESSAGE EVENT
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);    
+        }
+    }
+
+    void BeginReceiveMessage(string ipAddress)
+    {
+        if (!ipAddress.IsValidIPV4())
+        {
+            throw new ArgumentException("Invalid ipv4 address");
+        }
+
+        if (!connectedIPClientsSocket.ContainsKey(ipAddress))
+        {
+            throw new Exception("Not connected to " + ipAddress);
+        }
+
+        var socket = connectedIPClientsSocket[ipAddress];
+        ReceiveMessageState state;
+
+        if (socketsMessageState.ContainsKey(socket))
+        {
+            state = new ReceiveMessageState(socket);
+        }
+        else
+        {
+            state = new ReceiveMessageState(socket);
+            socketsMessageState.Add(socket, state);
+        }
+
+        socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
+    }
+
+    void EndReceiveMessage(IAsyncResult result)
+    {
+        var state = (ReceiveMessageState)result.AsyncState;
+        var socket = state.Socket;
+        var offset = 0;
+
+        SocketError socketState;
+        int bytesReceivedCount;
+
+        try
+        {
+            bytesReceivedCount = socket.EndReceive(result, out socketState);
+
+            if (socketState != SocketError.Success)
+            {
+                return;
+            }
+
+            Debug.Log("Received count " + bytesReceivedCount);
+
+            if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
+            {
+                state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
+                state.IsReceivedDataSize = true;
+                offset += 4;
+                bytesReceivedCount -= 4;
+            }
+
+            state.Data.Write(state.Buffer, offset, bytesReceivedCount);
+
+            if (state.Data.Length == state.DataSizeNeeded)
+            {
+                var buffer = state.Data.ToArray();
+                var message = Encoding.UTF8.GetString(buffer);
+                var filteredMessage = FilterReceivedMessage(message);
+                var args = new MessageEventArgs(state.IPAddress, filteredMessage);
+
+                Debug.Log(filteredMessage);
+
+                if (OnReceivedMessage != null)
+                {
+                    OnReceivedMessage(this, args);    
+                }
+
+                socketsMessageState[socket] = new ReceiveMessageState(socket);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+        }
+        finally
+        {
+            socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
         }
     }
 
     public virtual void Initialize(int port)
     {
+        if (Initialized)
+        {
+            throw new InvalidOperationException("Already initialized");
+        }
+
         this.port = port;
         acceptConnections.ExclusiveAddressUse = false;
+        acceptConnections.Blocking = false;
+        acceptConnections.SendTimeout = SendMessageTimeoutInMiliseconds;
+        acceptConnections.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
         acceptConnections.Bind(new IPEndPoint(IPAddress.Any, Port));
         acceptConnections.Listen(40);
 
-        CoroutineUtils.RepeatEverySeconds(UpdateAliveSocketsDelayInSeconds, UpdateClientsSockets);
         BeginAcceptConnections();
-        this.StartCoroutineAsync(UpdateGetDataFromSocketsCoroutine());
+
         initialized = true;
     }
 
-    IEnumerator SendMessageAsyncCoroutine(string ipAddress, string message, Action OnSent = null, Action<string> OnError = null)
+    public virtual void Send(string ipAddress, string message)
     {
-        try
-        {
-            _SendMessage(ipAddress, message, OnSent);    
-        }
-        catch (Exception ex)
-        {
-            if (OnError != null)
-            {
-                OnError(ex.Message);
-            }
-        }
-
-        yield return null;
+        BeginSendMessageToClient(ipAddress, message);
     }
 
-    public virtual void Send(string ipAddress, string message, Action OnSent = null, Action<string> OnError = null)
+    public virtual void SendToAll(string message)
     {
-        if (!initialized)
+        if (connectedIPClientsSocket.Count <= 0)
         {
-            if (OnError != null)
-            {
-                OnError("Not initialized");    
-            }
+            throw new Exception("0 connected clients");
+        }    
 
-            return;
-        }
-
-        this.StartCoroutineAsync(SendMessageAsyncCoroutine(ipAddress, message, OnSent, OnError));
+        connectedIPClientsSocket.Keys.ToList().ForEach(ip => Send(ip, message));
     }
 
-    public virtual void SendToAll(string message, Action<string> OnError)
-    {
-        if (!initialized)
-        {
-            if (OnError != null)
-            {
-                OnError("Not initialized");    
-            }
-
-            return;
-        }
-
-        lock (MyLock)
-        {
-            if (connectedIPClientsSocket.Count <= 0)
-            {
-                if (OnError != null)
-                {
-                    OnError("Not connected to anybody");
-                }
-
-                return;
-            }
-
-            connectedIPClientsSocket.Keys.ToList().ForEach(ip => Send(ip, message, null, OnError));
-        }
-    }
-
-    //returns true if successfully disconnected client
-    public virtual bool DisconnectFrom(string ipAddress)
+    public virtual void Disconnect(string ipAddress)
     {
         if (!initialized)
         {
             throw new Exception("Use initialize method first");
         }
 
-        lock (MyLock)
+        if (!connectedIPClientsSocket.ContainsKey(ipAddress))
         {
-            if (!connectedIPClientsSocket.ContainsKey(ipAddress))
-            {
-                return false;    
-            }
-
-            var socket = connectedIPClientsSocket[ipAddress];
-
-            try
-            {
-                socket.Disconnect(false);    
-            }
-            catch
-            {
-            }
-
-            connectedIPClientsSocket.Remove(ipAddress);
+            throw new ArgumentException("Not connected to " + ipAddress);
         }
 
-        return true;
+        var socket = connectedIPClientsSocket[ipAddress];
+        socket.Disconnect(false);
+        connectedIPClientsSocket.Remove(ipAddress);
+    }
+
+    public virtual void Dispose()
+    {
+        acceptConnections.Close();
+        connectedIPClientsSocket.Values.ToList().ForEach(s => s.Close());
+        connectedIPClientsSocket.Clear();
+
+        initialized = false;
     }
     //*/
 }

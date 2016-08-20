@@ -95,8 +95,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         ConfigureServer();
         StartServer();
 
-        LANServerOnlineBroadcastService.Start();
-
+        if (LANServerOnlineBroadcastService != null)
+        {
+            LANServerOnlineBroadcastService.Start();     
+        }
+       
         CoroutineUtils.RepeatEverySeconds(CheckForDeadClientsDelayInSeconds, UpdateAliveClients);
         StartCoroutine(UpdateCoroutine());
     }
