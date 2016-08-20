@@ -118,63 +118,6 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
     }
 
-    void BeginSendMessageToClient(string ipAddress, string message)
-    {
-        if (!initialized)
-        {
-            throw new InvalidOperationException("Not initialized");
-        }
-
-        if (!connectedIPClientsSocket.ContainsKey(ipAddress))
-        {
-            throw new ArgumentException("Not connected to " + ipAddress, "ipAddress");
-        }
-
-        var socket = connectedIPClientsSocket[ipAddress];
-
-        if (!socket.Connected)
-        {
-            throw new Exception("Connection problem");
-        }
-
-        var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
-        var messageBuffer = Encoding.UTF8.GetBytes(encryptedMessage);
-        var prefix = BitConverter.GetBytes(messageBuffer.Length);
-        var state = new SendMessageState() { Client = socket, DataToSend = new byte[messageBuffer.Length + 4] };
-
-        Buffer.BlockCopy(prefix, 0, state.DataToSend, 0, prefix.Length);
-        Buffer.BlockCopy(messageBuffer, 0, state.DataToSend, prefix.Length, messageBuffer.Length);
-
-        socket.BeginSend(messageBuffer, 0, messageBuffer.Length, SocketFlags.None, new AsyncCallback(EndSendMessageToClient), state);
-    }
-
-    void EndSendMessageToClient(IAsyncResult result)
-    {
-        var state = (SendMessageState)result.AsyncState;
-        var socket = state.Client;
-
-        try
-        {
-            var sendBytes = socket.EndSend(result);
-            state.DataSentLength += sendBytes;
-
-            if (state.DataSentLength < state.DataToSend.Length)
-            {
-                var sendSize = state.DataToSend.Length - state.DataSentLength;
-                socket.BeginSend(state.DataToSend, state.DataSentLength, sendSize, SocketFlags.None, new AsyncCallback(EndSendMessageToClient), state);
-            }
-            else
-            {
-                Debug.Log("Sent " + Encoding.UTF8.GetString(state.DataToSend));
-                //TODO: ON SENT MESSAGE EVENT
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.Log(ex.Message);    
-        }
-    }
-
     void BeginReceiveMessage(string ipAddress)
     {
         if (!ipAddress.IsValidIPV4())
@@ -221,8 +164,6 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
                 return;
             }
 
-            Debug.Log("Received count " + bytesReceivedCount);
-
             if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
             {
                 state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
@@ -238,9 +179,10 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
                 var buffer = state.Data.ToArray();
                 var message = Encoding.UTF8.GetString(buffer);
                 var filteredMessage = FilterReceivedMessage(message);
-                var args = new MessageEventArgs(state.IPAddress, filteredMessage);
+                var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+                var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
 
-                Debug.Log(filteredMessage);
+                Debug.Log("Received " + decryptedMessage + " from " + state.IPAddress);
 
                 if (OnReceivedMessage != null)
                 {
@@ -278,21 +220,6 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         BeginAcceptConnections();
 
         initialized = true;
-    }
-
-    public virtual void Send(string ipAddress, string message)
-    {
-        BeginSendMessageToClient(ipAddress, message);
-    }
-
-    public virtual void SendToAll(string message)
-    {
-        if (connectedIPClientsSocket.Count <= 0)
-        {
-            throw new Exception("0 connected clients");
-        }    
-
-        connectedIPClientsSocket.Keys.ToList().ForEach(ip => Send(ip, message));
     }
 
     public virtual void Disconnect(string ipAddress)
