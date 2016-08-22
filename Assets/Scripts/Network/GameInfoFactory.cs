@@ -9,23 +9,31 @@ public class GameInfoFactory : MonoBehaviour
     public CreatedGameInfo_Serializable Get()
     {
         var sceneName = SceneManager.GetActiveScene().name;
+        return Get(sceneName);
+    }
 
-        if (sceneName.Contains("BasicExam"))
+    public CreatedGameInfo_Serializable Get(string levelName)
+    {
+        var levelNameLower = levelName.ToLower();
+
+        if (levelNameLower.Contains("BasicExam"))
         {
             return GetBasicExamGameInfo();
         }
-        else if (sceneName.Contains("AudienceRevenge"))
+        else if (levelNameLower.Contains("AudienceRevenge"))
         {
             //TODO
             throw new NotImplementedException();
         }
-        else if (sceneName.Contains("FastestsWins"))
+        else if (levelNameLower.Contains("FastestsWins"))
         {
             //TODO
             throw new NotImplementedException();
         }
-
-        return null;
+        else
+        {
+            throw new NotImplementedException();
+        }
     }
 
     BasicExamGameInfo_Serializable GetBasicExamGameInfo()

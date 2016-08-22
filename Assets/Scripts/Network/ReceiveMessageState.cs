@@ -5,7 +5,6 @@ using System.Linq;
 
 public class ReceiveMessageState
 {
-    public string EndOfMessage = "[EndOfMessage]";
     public byte[] Buffer = new byte[1024];
     public bool IsReceivedDataSize = false;
     public int DataSizeNeeded = -1;

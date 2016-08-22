@@ -187,6 +187,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         {
             var endPointIp = (IPEndPoint)socket.RemoteEndPoint;
             socket.EndDisconnect(result);
+            socket.Close();
             connectedToServersIPsSockets.Remove(endPointIp.ToString().Split(':').First());
         }
         catch (Exception ex)

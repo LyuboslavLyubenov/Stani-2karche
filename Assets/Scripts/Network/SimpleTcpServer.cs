@@ -146,6 +146,20 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         {
             bytesReceivedCount = socket.EndReceive(result, out socketState);
 
+            if (bytesReceivedCount == 0)
+            {
+                try
+                {
+                    Disconnect(state.IPAddress);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log(ex.Message);   
+                }
+
+                return;
+            }
+
             if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
             {
                 state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
@@ -220,14 +234,39 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
 
         var socket = connectedIPClientsSocket[ipAddress];
-        socket.Disconnect(false);
-        connectedIPClientsSocket.Remove(ipAddress);
+        socket.BeginDisconnect(false, new AsyncCallback(EndDisconnect), socket);
+    }
+
+    void EndDisconnect(IAsyncResult result)
+    {
+        var socket = (Socket)result.AsyncState;
+
+        try
+        {
+            var endPointIp = (IPEndPoint)socket.RemoteEndPoint;
+            var ipAddress = endPointIp.Address.ToString().Split(':').First();
+            socket.EndDisconnect(result);
+            socket.Close();
+            connectedIPClientsSocket.Remove(ipAddress);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+        }
     }
 
     public virtual void Dispose()
     {
+        acceptConnections.Disconnect(false);
         acceptConnections.Close();
-        connectedIPClientsSocket.Values.ToList().ForEach(s => s.Close());
+
+        var connectedIPClientsSockets = connectedIPClientsSocket.ToList();
+
+        connectedIPClientsSockets.ForEach(ipSocket =>
+            {
+                var ip = ipSocket.Key;
+                Disconnect(ip);
+            });        
         connectedIPClientsSocket.Clear();
 
         initialized = false;
