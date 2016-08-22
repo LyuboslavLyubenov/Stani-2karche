@@ -16,16 +16,16 @@ public class GameInfoFactory : MonoBehaviour
     {
         var levelNameLower = levelName.ToLower();
 
-        if (levelNameLower.Contains("BasicExam"))
+        if (levelNameLower.Contains("basicexam"))
         {
             return GetBasicExamGameInfo();
         }
-        else if (levelNameLower.Contains("AudienceRevenge"))
+        else if (levelNameLower.Contains("audiencerevenge"))
         {
             //TODO
             throw new NotImplementedException();
         }
-        else if (levelNameLower.Contains("FastestsWins"))
+        else if (levelNameLower.Contains("fastetswins"))
         {
             //TODO
             throw new NotImplementedException();
