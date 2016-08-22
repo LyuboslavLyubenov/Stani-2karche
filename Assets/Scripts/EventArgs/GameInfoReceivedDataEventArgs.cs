@@ -16,10 +16,17 @@ public class GameInfoReceivedDataEventArgs : EventArgs
             throw new ArgumentNullException("json");
         }
 
-        GameInfo = JsonUtility.FromJson<CreatedGameInfo_Serializable>(json);
+        this.JSON = json;
+        this.GameInfo = JsonUtility.FromJson<CreatedGameInfo_Serializable>(json);
     }
 
     public CreatedGameInfo_Serializable GameInfo
+    {
+        get;
+        private set;
+    }
+
+    public string JSON
     {
         get;
         private set;

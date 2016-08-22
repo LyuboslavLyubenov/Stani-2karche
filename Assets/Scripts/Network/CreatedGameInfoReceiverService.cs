@@ -1,78 +1,41 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 public class CreatedGameInfoReceiverService : MonoBehaviour
 {
-    public P2PSocket P2PSocket;
+    public SimpleTcpClient TcpClient;
+    public SimpleTcpServer TcpServer;
 
-    private readonly object MyLock = new object();
+    public Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
 
-    Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingIPReceiveDataJson = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
-
+    // Use this for initialization
     void Start()
     {
-        P2PSocket.OnReceivedMessage += OnReceivedDataFromClient;
+        TcpServer.OnReceivedMessage += OnReceivedMessage;
     }
 
-    void OnReceivedDataFromClient(object sender, MessageEventArgs args)
+    void OnReceivedMessage(object sender, MessageEventArgs args)
     {
-        const string GameInfoTag = "[CreatedGameInfo]";
+        var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag);
 
-        if (!pendingIPReceiveDataJson.ContainsKey(args.IPAddress) ||
-            !args.Message.Contains(GameInfoTag))
+        if (!pendingRequests.ContainsKey(args.IPAddress) || gameInfoTagIndex < 0)
         {
             return;
         }
 
-        var filteredMessage = args.Message.Replace(GameInfoTag, ""); 
-        GameInfoReceivedDataEventArgs data = null;
+        var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSenderService.GameInfoTag.Length);
+        var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
 
-        try
-        {
-            data = new GameInfoReceivedDataEventArgs(filteredMessage);    
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.Message);
-        }
-
-        pendingIPReceiveDataJson[args.IPAddress](data);
+        pendingRequests[args.IPAddress](gameInfo);
     }
 
-    public void ListenAt(string ip, Action<GameInfoReceivedDataEventArgs> onReceived)
+    public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo)
     {
-        lock (MyLock)
-        {
-            if (!pendingIPReceiveDataJson.ContainsKey(ip))
+        TcpClient.ConnectTo(ipAddress, TcpServer.Port, () =>
             {
-                P2PSocket.ConnectTo(ip, P2PSocket.Port, (IpEventArgs args) => OnConnected(args, onReceived));
-            }
-        }
+                TcpClient.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag);
+                pendingRequests.Add(ipAddress, receivedGameInfo);
+            });
     }
-
-    void OnConnected(IpEventArgs args, Action<GameInfoReceivedDataEventArgs> onReceived)
-    {
-        pendingIPReceiveDataJson.Add(args.IPAddress, onReceived);
-    }
-
-    public void RemoveListener(string ip)
-    {
-        lock (MyLock)
-        {
-            if (pendingIPReceiveDataJson.ContainsKey(ip))
-            {
-                pendingIPReceiveDataJson.Remove(ip);
-            }
-        }
-    }
-
-    public bool IsListening(string ip)
-    {
-        lock (MyLock)
-        {
-            return pendingIPReceiveDataJson.ContainsKey(ip);
-        }
-    }
-    //*/
 }
