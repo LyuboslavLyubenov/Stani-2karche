@@ -1,22 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Collections;
 using System;
-using CielaSpike;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Net;
 
 public class SimpleTcpClient : ExtendedMonoBehaviour
 {
     protected const int ReceiveMessageTimeoutInMiliseconds = 4000;
     protected const int SendMessageTimeoutInMiliseconds = 4000;
-
-    protected const string ENCRYPTION_PASSWORD = "82144042ef1113d6abc9b58f469cf710";
-    protected const string ENCRYPTION_SALT = "21a87b0b0eb48a341889bf1cb818db67";
 
     Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
 
@@ -34,29 +28,53 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
     void UpdateConnectedSockets()
     {
-        connectedToServersIPsSockets = connectedToServersIPsSockets.Where(ipSocket => ipSocket.Value.Connected)
-            .ToDictionary(ipSocket => ipSocket.Key, ipSocket => ipSocket.Value);
+        var disconnectedSockets = connectedToServersIPsSockets.Where(ipSocket => !ipSocket.Value.Connected).ToList();
+        disconnectedSockets.ForEach(s =>
+            {
+                try
+                {
+                    DisconnectFrom(s.Key);    
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log(ex.Message);
+                }
+
+                connectedToServersIPsSockets.Remove(s.Key);
+            });
     }
 
-    void BeginConnectToServer(string ipAddress, int port)
+    void BeginConnectToServer(string ipAddress, int port, Action OnConnected)
     {
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        var state = new ClientConnectingState() { OnConnected = OnConnected, Client = socket };
 
         socket.SendTimeout = ReceiveMessageTimeoutInMiliseconds;
         socket.ReceiveTimeout = SendMessageTimeoutInMiliseconds;
 
-        socket.BeginConnect(ipAddress, port, new AsyncCallback(EndConnectToServer), socket);
+        socket.BeginConnect(ipAddress, port, new AsyncCallback(EndConnectToServer), state);
     }
 
     void EndConnectToServer(IAsyncResult result)
     {
-        var socket = (Socket)result.AsyncState;
-        socket.EndConnect(result);
+        var state = (ClientConnectingState)result.AsyncState;
+        var socket = state.Client;
 
-        var serverIpEndPoint = (IPEndPoint)socket.RemoteEndPoint;
-        var ipAddress = serverIpEndPoint.Address.ToString().Split(':').First();
+        try
+        {
+            socket.EndConnect(result);
 
-        connectedToServersIPsSockets.Add(ipAddress, socket);
+            var serverIpEndPoint = (IPEndPoint)socket.RemoteEndPoint;
+            var ipAddress = serverIpEndPoint.Address.ToString().Split(':').First();
+
+            connectedToServersIPsSockets.Add(ipAddress, socket);
+
+            ThreadUtils.Instance.RunOnMainThread(state.OnConnected);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);   
+        }
     }
 
     void BeginSendMessageToServer(string ipAddress, string message)
@@ -72,7 +90,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         }
 
         var socket = connectedToServersIPsSockets[ipAddress];
-        var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+        var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
         var messageBuffer = Encoding.UTF8.GetBytes(encryptedMessage);
         var prefix = BitConverter.GetBytes(messageBuffer.Length);
         var state = new SendMessageState() { Client = socket, DataToSend = new byte[messageBuffer.Length + 4] };
@@ -120,7 +138,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         BeginSendMessageToServer(ipAddress, message); 
     }
 
-    public void ConnectTo(string ipAddress, int port)
+    public void ConnectTo(string ipAddress, int port, Action OnConnected)
     {
         if (!initialized)
         {
@@ -147,7 +165,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
             throw new Exception("Already connected to " + ipAddress);
         }
 
-        BeginConnectToServer(ipAddress, port);
+        BeginConnectToServer(ipAddress, port, OnConnected);
     }
 
     public void DisconnectFrom(string ipAddress)
@@ -168,8 +186,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         try
         {
             var endPointIp = (IPEndPoint)socket.RemoteEndPoint;
-            connectedToServersIPsSockets.Remove(endPointIp.ToString().Split(':').First());
             socket.EndDisconnect(result);
+            connectedToServersIPsSockets.Remove(endPointIp.ToString().Split(':').First());
         }
         catch (Exception ex)
         {
@@ -183,6 +201,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         {
             throw new InvalidOperationException("Already intialzied");
         }
+
+        var threadUtils = ThreadUtils.Instance;//initialize
 
         CoroutineUtils.RepeatEverySeconds(0.2f, UpdateConnectedSockets);
         initialized = true;
@@ -200,5 +220,9 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
             });
         connectedToServersIPsSockets.Clear();
     }
-        
+
+    public bool IsConnectedTo(string ipAddress)
+    {
+        return connectedToServersIPsSockets.ContainsKey(ipAddress);
+    }
 }

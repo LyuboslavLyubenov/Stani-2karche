@@ -12,13 +12,10 @@ using System.Security.Cryptography;
 
 public class SimpleTcpServer : ExtendedMonoBehaviour
 {
-    const int AcceptNewConnectionDelayInMiliseconds = 100;
+    const int AcceptNewConnectionDelayInMiliseconds = 200;
     const float UpdateSocketsDelayInSeconds = 0.1f;
-    protected const int ReceiveMessageTimeoutInMiliseconds = 0;
-    protected const int SendMessageTimeoutInMiliseconds = 0;
-
-    public const string ENCRYPTION_PASSWORD = "82144042ef1113d6abc9b58f469cf710";
-    public const string ENCRYPTION_SALT = "21a87b0b0eb48a341889bf1cb818db67";
+    protected const int ReceiveMessageTimeoutInMiliseconds = 10000;
+    protected const int SendMessageTimeoutInMiliseconds = 10000;
 
     public EventHandler<IpEventArgs> OnClientConnected = delegate
     {
@@ -56,17 +53,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
     void RemoveDisconnectedSockets()
     {
-        if (Monitor.TryEnter(MyLock, 1000))
-        {
-            try
-            {
-                connectedIPClientsSocket = connectedIPClientsSocket.Where(s => s.Value.Connected).ToDictionary(k => k.Key, v => v.Value);    
-            }
-            finally
-            {
-                Monitor.Exit(MyLock);
-            }
-        }
+        connectedIPClientsSocket = connectedIPClientsSocket.Where(s => s.Value.Connected).ToDictionary(k => k.Key, v => v.Value);    
     }
 
     string FilterReceivedMessage(string message)
@@ -159,11 +146,6 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         {
             bytesReceivedCount = socket.EndReceive(result, out socketState);
 
-            if (socketState != SocketError.Success)
-            {
-                return;
-            }
-
             if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
             {
                 state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
@@ -179,14 +161,14 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
                 var buffer = state.Data.ToArray();
                 var message = Encoding.UTF8.GetString(buffer);
                 var filteredMessage = FilterReceivedMessage(message);
-                var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+                var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
                 var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
 
                 Debug.Log("Received " + decryptedMessage + " from " + state.IPAddress);
 
                 if (OnReceivedMessage != null)
                 {
-                    OnReceivedMessage(this, args);    
+                    ThreadUtils.Instance.RunOnMainThread(() => OnReceivedMessage(this, args));
                 }
 
                 socketsMessageState[socket] = new ReceiveMessageState(socket);
@@ -198,6 +180,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
         finally
         {
+            Thread.Sleep(30);
             socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
         }
     }
@@ -208,6 +191,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         {
             throw new InvalidOperationException("Already initialized");
         }
+
+        var threadUtils = ThreadUtils.Instance;//initialize
 
         this.port = port;
         acceptConnections.ExclusiveAddressUse = false;
@@ -246,6 +231,11 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         connectedIPClientsSocket.Clear();
 
         initialized = false;
+    }
+
+    public bool IsClientConnected(string ipAddress)
+    {
+        return connectedIPClientsSocket.ContainsKey(ipAddress);
     }
     //*/
 }
