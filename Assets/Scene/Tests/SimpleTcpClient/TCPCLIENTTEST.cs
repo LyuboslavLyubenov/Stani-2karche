@@ -7,9 +7,7 @@ public class TCPCLIENTTEST : ExtendedMonoBehaviour
     void InitializeAndSendMessageTest()
     {
         tcpClient.Initialize();
-        tcpClient.ConnectTo("127.0.0.1", TESTRECEIVE.Port);
-
-        CoroutineUtils.WaitForSeconds(1f, () => tcpClient.Send("127.0.0.1", "ivan e mnogo gotin"));
+        tcpClient.ConnectTo("127.0.0.1", TESTRECEIVE.Port, () => tcpClient.Send("127.0.0.1", "ivan e mnogo gotin"));
     }
 
     void OnGUI()

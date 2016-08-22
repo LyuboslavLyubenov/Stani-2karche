@@ -3,17 +3,14 @@ using System.Text;
 
 public class TESTReceiveGameInfo : ExtendedMonoBehaviour
 {
-    /*
-    const int Port = 4444;
+    public const int Port = 4444;
 
     public CreatedGameInfoReceiverService Receiver;
 
     void Start()
     {
-        CoroutineUtils.WaitForFrames(1, () =>
-            {
-                Receiver.Initialize();
-            });
+        Receiver.TcpClient.Initialize();
+        Receiver.TcpServer.Initialize(Port);
     }
 
     void OnReceived(GameInfoReceivedDataEventArgs data)
@@ -36,8 +33,8 @@ public class TESTReceiveGameInfo : ExtendedMonoBehaviour
 
         if (test)
         {
-            Receiver.ListenAt(DEBUG_ipToReceive, OnReceived);
+            Receiver.ReceiveFrom(DEBUG_ipToReceive, OnReceived);
         }
     }
-	*/
+
 }
