@@ -98,7 +98,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         Buffer.BlockCopy(prefix, 0, state.DataToSend, 0, prefix.Length);
         Buffer.BlockCopy(messageBuffer, 0, state.DataToSend, prefix.Length, messageBuffer.Length);
 
-        socket.BeginSend(state.DataToSend, 0, state.DataToSend.Length, SocketFlags.None, new AsyncCallback(EndSendMessageToServer), socket);
+        socket.BeginSend(state.DataToSend, 0, state.DataToSend.Length, SocketFlags.None, new AsyncCallback(EndSendMessageToServer), state);
     }
 
     void EndSendMessageToServer(IAsyncResult result)
@@ -205,7 +205,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
         var threadUtils = ThreadUtils.Instance;//initialize
 
-        CoroutineUtils.RepeatEverySeconds(0.2f, UpdateConnectedSockets);
+        CoroutineUtils.RepeatEverySeconds(0.5f, UpdateConnectedSockets);
         initialized = true;
     }
 

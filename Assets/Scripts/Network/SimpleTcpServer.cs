@@ -53,7 +53,19 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
     void RemoveDisconnectedSockets()
     {
-        connectedIPClientsSocket = connectedIPClientsSocket.Where(s => s.Value.Connected).ToDictionary(k => k.Key, v => v.Value);    
+        var disconnectedSockets = connectedIPClientsSocket.Where(s => !s.Value.Connected).ToList();
+
+        disconnectedSockets.ForEach(ipSocket =>
+            {
+                try
+                {
+                    Disconnect(ipSocket.Key);
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log(ex.Message);   
+                }
+            });
     }
 
     string FilterReceivedMessage(string message)
@@ -142,61 +154,53 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         SocketError socketState;
         int bytesReceivedCount;
 
-        try
+        bytesReceivedCount = socket.EndReceive(result, out socketState);
+
+        if (bytesReceivedCount == 0)
         {
-            bytesReceivedCount = socket.EndReceive(result, out socketState);
-
-            if (bytesReceivedCount == 0)
+            try
             {
-                try
-                {
-                    Disconnect(state.IPAddress);
-                }
-                catch (Exception ex)
-                {
-                    Debug.Log(ex.Message);   
-                }
-
-                return;
+                Disconnect(state.IPAddress);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log(ex.Message);   
             }
 
-            if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
+            return;
+        }
+
+        if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
+        {
+            state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
+            state.IsReceivedDataSize = true;
+            offset += 4;
+            bytesReceivedCount -= 4;
+        }
+
+        state.Data.Write(state.Buffer, offset, bytesReceivedCount);
+
+        if (state.Data.Length == state.DataSizeNeeded)
+        {
+            var buffer = state.Data.ToArray();
+            var message = Encoding.UTF8.GetString(buffer);
+            var filteredMessage = FilterReceivedMessage(message);
+            var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
+            var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
+
+            Debug.Log("Received " + decryptedMessage + " from " + state.IPAddress);
+
+            if (OnReceivedMessage != null)
             {
-                state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
-                state.IsReceivedDataSize = true;
-                offset += 4;
-                bytesReceivedCount -= 4;
+                ThreadUtils.Instance.RunOnMainThread(() => OnReceivedMessage(this, args));
             }
 
-            state.Data.Write(state.Buffer, offset, bytesReceivedCount);
-
-            if (state.Data.Length == state.DataSizeNeeded)
-            {
-                var buffer = state.Data.ToArray();
-                var message = Encoding.UTF8.GetString(buffer);
-                var filteredMessage = FilterReceivedMessage(message);
-                var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
-                var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
-
-                Debug.Log("Received " + decryptedMessage + " from " + state.IPAddress);
-
-                if (OnReceivedMessage != null)
-                {
-                    ThreadUtils.Instance.RunOnMainThread(() => OnReceivedMessage(this, args));
-                }
-
-                socketsMessageState[socket] = new ReceiveMessageState(socket);
-            }
+            socketsMessageState[socket] = new ReceiveMessageState(socket);
         }
-        catch (Exception ex)
-        {
-            Debug.Log(ex.Message);
-        }
-        finally
-        {
-            Thread.Sleep(30);
-            socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
-        }
+
+        Thread.Sleep(30);
+        socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
+
     }
 
     public virtual void Initialize(int port)
@@ -217,6 +221,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         acceptConnections.Listen(40);
 
         BeginAcceptConnections();
+
+        CoroutineUtils.RepeatEverySeconds(0.5f, RemoveDisconnectedSockets);
 
         initialized = true;
     }

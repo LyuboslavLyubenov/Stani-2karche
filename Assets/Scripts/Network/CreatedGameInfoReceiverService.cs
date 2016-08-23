@@ -12,6 +12,16 @@ public class CreatedGameInfoReceiverService : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        if (!TcpClient.Initialized)
+        {
+            TcpClient.Initialize();
+        }
+
+        if (!TcpServer.Initialized)
+        {
+            TcpServer.Initialize(7774);
+        }
+
         TcpServer.OnReceivedMessage += OnReceivedMessage;
     }
 

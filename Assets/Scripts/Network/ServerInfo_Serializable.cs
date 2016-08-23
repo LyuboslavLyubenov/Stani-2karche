@@ -7,4 +7,12 @@ public class ServerInfo_Serializable
     public string LocalIPAddress;
     public int ConnectedClientsCount;
     public int MaxConnectionsAllowed;
+
+    public bool IsFull
+    {
+        get
+        {
+            return ConnectedClientsCount >= MaxConnectionsAllowed;
+        }
+    }
 }
