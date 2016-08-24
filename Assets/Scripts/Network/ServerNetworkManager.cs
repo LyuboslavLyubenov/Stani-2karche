@@ -370,7 +370,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
         catch (NetworkException ex)
         {
-
+            Debug.Log(ex.Message);
         }
 
         CoroutineUtils.WaitForFrames(1, () =>

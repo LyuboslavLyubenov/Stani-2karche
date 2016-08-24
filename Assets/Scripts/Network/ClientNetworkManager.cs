@@ -30,7 +30,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     {
     };
 
-
     int connectionId = 0;
     int genericHostId = 0;
 
@@ -298,7 +297,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
         catch (NetworkException ex)
         {
-                
+            Debug.Log(ex.Message);
         }
 
         NetworkTransport.RemoveHost(genericHostId);

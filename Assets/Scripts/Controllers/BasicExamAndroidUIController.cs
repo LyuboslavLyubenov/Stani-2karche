@@ -27,6 +27,8 @@ public class BasicExamAndroidUIController : MonoBehaviour
 
     void Start()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         CheckDependecies();
         LoadControllers();
         AttachEventsHooks();
@@ -98,7 +100,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
         //send answer to the server
-        ClientNetworkManager.SendServerMessage(args.Answer);
+        ClientNetworkManager.SendServerMessage(args.Answer);//TODO: SendServerMessage("[AnswerSelected]" + args.Answer)
         //hide Question UI
         QuestionPanelUI.SetActive(false);
     }
@@ -116,72 +118,70 @@ public class BasicExamAndroidUIController : MonoBehaviour
 
     void OnDataRecievedFromServer(object sender, DataSentEventArgs args)
     {
-        if (currentState == GameState.Playing && args.Message == "AnswerTimeout")
+        if (currentState == GameState.Playing)
         {
-            QuestionPanelUI.SetActive(false);
-            NotificationsController.AddNotification(Color.blue, "Съжалявам, времето за отговаряне на въпроса свърши.");
+            if (args.Message == "AnswerTimeout")
+            {
+                QuestionPanelUI.SetActive(false);
+                NotificationsController.AddNotification(Color.blue, "Съжалявам, времето за отговаряне на въпроса свърши.");
+                return;
+            }
+
+            if (args.Message.IndexOf("RemainingTime") > -1)
+            {
+                var messageParams = args.Message.Split('=');
+
+                if (messageParams.Length != 2)
+                {
+                    return;
+                }
+
+                int remainingTime;
+                bool isValidNumber = int.TryParse(messageParams[1], out remainingTime);
+
+                if (!isValidNumber)
+                {
+                    return;
+                }
+
+                if (remainingTime > 0 && remainingTime <= 10 && remainingTime % 2 == 0)
+                {
+                    QuestionPanelAnimator.SetTrigger("shake");
+                }
+
+                return;
+            }
+
+            if (args.Message == "AskFriend")
+            {
+                currentState = GameState.AskingAFriend;
+                return;
+            }
+
+            if (args.Message == "AskAudience")
+            {
+                currentState = GameState.AskingAudience;
+                return;
+            }
+
+            if (args.Message == "RiskyTrust")
+            {
+                currentState = GameState.RiskyTrust;
+                return;
+            }
+
             return;
         }
 
-        if (currentState == GameState.Playing && args.Message.IndexOf("RemainingTime") > -1)
+        if (currentState == GameState.RiskyTrust || currentState == GameState.AskingAudience || currentState == GameState.AskingAFriend)
         {
-            var messageParams = args.Message.Split('=');
+            //TODO: RECEIVE FIRST "LOADQUESTION" then this
+            LoadQuestion(args.Message);
+            //Vibrate if mobile
+            Vibrate();
 
-            if (messageParams.Length != 2)
-            {
-                return;
-            }
-
-            int remainingTime;
-            bool isValidNumber = int.TryParse(messageParams[1], out remainingTime);
-
-            if (!isValidNumber)
-            {
-                return;
-            }
-
-            if (remainingTime > 0 && remainingTime <= 10 && remainingTime % 2 == 0)
-            {
-                QuestionPanelAnimator.SetTrigger("shake");
-            }
-        }
-
-        //if recieved something from the server
-        switch (currentState)
-        {
-            case GameState.Playing:
-                
-                //change our game state
-                if (args.Message == "AskFriend")
-                {
-                    currentState = GameState.AskingAFriend;
-                }
-                else if (args.Message == "AskAudience")
-                {
-                    currentState = GameState.AskingAudience;
-                }
-                else if (args.Message == "RiskyTrust")
-                {
-                    currentState = GameState.RiskyTrust;
-                }
-
-                break;
-
-            case GameState.RiskyTrust: 
-
-            case GameState.AskingAFriend:
-                
-            case GameState.AskingAudience:
-                //if you are choosed from "Ask friend" or "Help from Audience"
-                //Load question
-
-                LoadQuestion(args.Message);
-                //Vibrate if mobile
-                Vibrate();
-
-                currentState = GameState.Playing;
-
-                break;
+            currentState = GameState.Playing;
+            return;
         }
     }
 
