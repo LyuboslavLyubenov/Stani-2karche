@@ -34,6 +34,9 @@ public class BasicExamAndroidUIController : MonoBehaviour
         AttachEventsHooks();
 
         ConnectingUI.SetActive(true);
+
+        var ipToConnect = PlayerPrefs.GetString("ServerIP");
+        Connect(ipToConnect);
     }
 
     void CheckDependecies()

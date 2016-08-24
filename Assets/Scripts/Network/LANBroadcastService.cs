@@ -4,6 +4,7 @@ using System.Collections;
 using System.Security.Cryptography;
 using System.Net.Sockets;
 using System.Net;
+using System.Linq;
 
 public abstract class LANBroadcastService : ExtendedMonoBehaviour
 {
@@ -48,7 +49,7 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
         var messageDecrypted = CipherUtility.Decrypt<RijndaelManaged>(messageEncrypted, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
 
         yield return Ninja.JumpToUnity;
-        onReceivedMessage(receivedEndPoint.Address.ToString(), messageDecrypted);
+        onReceivedMessage(receivedEndPoint.Address.GetIPAddress(), messageDecrypted);
     }
 
     protected virtual void Initialize()

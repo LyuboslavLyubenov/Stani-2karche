@@ -13,10 +13,9 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     const int Port = 7788;
     const float ReceivePermissionToConnectTimeoutInSeconds = 3f;
     const float SendKeepAliveRequestDelayInSeconds = 1f;
+    const int MaxConnectionAttempts = 3;
 
     public NotificationsServiceController NotificationsServiceController;
-    //how many times to try to connect to server before disconnecting and start searching for another
-    public byte RetriesBeforeSearchingForAnotherServer = 3;
 
     public EventHandler OnConnectedEvent = delegate
     {
@@ -62,7 +61,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     void ConfigureClient()
     {
         connectionConfig = new ConnectionConfig();
-        connectionConfig.MaxConnectionAttempt = RetriesBeforeSearchingForAnotherServer; 
+        connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts; 
         communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced); //make sure messages are delivered and send in correct order
     }
 

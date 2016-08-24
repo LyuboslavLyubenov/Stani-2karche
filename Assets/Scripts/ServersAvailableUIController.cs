@@ -18,7 +18,6 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
 
     void Start()
     {
-        //CoroutineUtils.RepeatEverySeconds(5f, Refresh);
         ServerDiscoveryService.OnFound += OnLocalServerFound;
     }
 
@@ -79,10 +78,5 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
             var foundServer = Container.transform.GetChild(i);
             foundServer.gameObject.SetActive(false);
         }
-    }
-
-    public void Refresh()
-    {
-        ClearServerFoundList();
     }
 }

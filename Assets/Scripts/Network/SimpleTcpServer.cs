@@ -14,8 +14,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 {
     const int AcceptNewConnectionDelayInMiliseconds = 200;
     const float UpdateSocketsDelayInSeconds = 0.1f;
-    protected const int ReceiveMessageTimeoutInMiliseconds = 10000;
-    protected const int SendMessageTimeoutInMiliseconds = 10000;
+    protected const int ReceiveMessageTimeoutInMiliseconds = 4000;
+    protected const int SendMessageTimeoutInMiliseconds = 4000;
 
     public EventHandler<IpEventArgs> OnClientConnected = delegate
     {
@@ -49,6 +49,11 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         {
             return port;
         }
+    }
+
+    void OnDisable()
+    {
+        Dispose();
     }
 
     void RemoveDisconnectedSockets()
@@ -130,15 +135,10 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
 
         var socket = connectedIPClientsSocket[ipAddress];
-        ReceiveMessageState state;
+        var state = new ReceiveMessageState(socket);
 
-        if (socketsMessageState.ContainsKey(socket))
+        if (!socketsMessageState.ContainsKey(socket))
         {
-            state = new ReceiveMessageState(socket);
-        }
-        else
-        {
-            state = new ReceiveMessageState(socket);
             socketsMessageState.Add(socket, state);
         }
 
@@ -152,11 +152,9 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         var offset = 0;
 
         SocketError socketState;
-        int bytesReceivedCount;
+        var bytesReceivedCount = socket.EndReceive(result, out socketState);
 
-        bytesReceivedCount = socket.EndReceive(result, out socketState);
-
-        if (bytesReceivedCount == 0)
+        if (bytesReceivedCount == 0 || socketState != SocketError.Success)
         {
             try
             {
@@ -200,7 +198,6 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
         Thread.Sleep(30);
         socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
-
     }
 
     public virtual void Initialize(int port)
@@ -214,7 +211,6 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
         this.port = port;
         acceptConnections.ExclusiveAddressUse = false;
-        acceptConnections.Blocking = false;
         acceptConnections.SendTimeout = SendMessageTimeoutInMiliseconds;
         acceptConnections.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
         acceptConnections.Bind(new IPEndPoint(IPAddress.Any, Port));
@@ -240,20 +236,21 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
 
         var socket = connectedIPClientsSocket[ipAddress];
-        socket.BeginDisconnect(false, new AsyncCallback(EndDisconnect), socket);
+        var state = new DisconnectState(ipAddress, socket);
+
+        socket.BeginDisconnect(false, new AsyncCallback(EndDisconnect), state);
     }
 
     void EndDisconnect(IAsyncResult result)
     {
-        var socket = (Socket)result.AsyncState;
+        var state = (DisconnectState)result.AsyncState;
+        var socket = state.Socket;
 
         try
         {
-            var endPointIp = (IPEndPoint)socket.RemoteEndPoint;
-            var ipAddress = endPointIp.Address.ToString().Split(':').First();
+            connectedIPClientsSocket.Remove(state.IPAddress);
             socket.EndDisconnect(result);
             socket.Close();
-            connectedIPClientsSocket.Remove(ipAddress);
         }
         catch (Exception ex)
         {
@@ -263,9 +260,15 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
     public virtual void Dispose()
     {
-        acceptConnections.Disconnect(false);
-        acceptConnections.Close();
-
+        try
+        {
+            acceptConnections.Close();    
+        }
+        catch (Exception ex)
+        {
+            
+        }
+       
         var connectedIPClientsSockets = connectedIPClientsSocket.ToList();
 
         connectedIPClientsSockets.ForEach(ipSocket =>

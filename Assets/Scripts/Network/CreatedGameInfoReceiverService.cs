@@ -38,6 +38,7 @@ public class CreatedGameInfoReceiverService : MonoBehaviour
         var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
 
         pendingRequests[args.IPAddress](gameInfo);
+        pendingRequests.Remove(args.IPAddress);
     }
 
     public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo)

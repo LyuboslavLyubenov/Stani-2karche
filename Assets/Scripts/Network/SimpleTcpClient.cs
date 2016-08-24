@@ -26,21 +26,26 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         }
     }
 
+    void OnDisable()
+    {
+        Dispose();
+    }
+
     void UpdateConnectedSockets()
     {
         var disconnectedSockets = connectedToServersIPsSockets.Where(ipSocket => !ipSocket.Value.Connected).ToList();
-        disconnectedSockets.ForEach(s =>
+        disconnectedSockets.ForEach(ipSocket =>
             {
                 try
                 {
-                    DisconnectFrom(s.Key);    
+                    DisconnectFrom(ipSocket.Key);    
                 }
                 catch (Exception ex)
                 {
                     Debug.Log(ex.Message);
                 }
 
-                connectedToServersIPsSockets.Remove(s.Key);
+                connectedToServersIPsSockets.Remove(ipSocket.Key);
             });
     }
 
@@ -48,6 +53,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
     {
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         var state = new ClientConnectingState() { OnConnected = OnConnected, Client = socket };
+
+        //socket.ExclusiveAddressUse = false;
 
         socket.SendTimeout = ReceiveMessageTimeoutInMiliseconds;
         socket.ReceiveTimeout = SendMessageTimeoutInMiliseconds;
@@ -176,19 +183,26 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         }   
 
         var socket = connectedToServersIPsSockets[ipAddress];
-        socket.BeginDisconnect(false, EndDisconnect, socket);
+        var state = new DisconnectState(ipAddress, socket);
+
+        socket.BeginDisconnect(false, EndDisconnect, state);
     }
 
     void EndDisconnect(IAsyncResult result)
     {
-        var socket = (Socket)result.AsyncState;
+        var state = (DisconnectState)result.AsyncState;
+        var socket = state.Socket;
+
+        if (!socket.Connected)
+        {
+            return;
+        }
 
         try
         {
-            var endPointIp = (IPEndPoint)socket.RemoteEndPoint;
+            connectedToServersIPsSockets.Remove(state.IPAddress);
             socket.EndDisconnect(result);
             socket.Close();
-            connectedToServersIPsSockets.Remove(endPointIp.ToString().Split(':').First());
         }
         catch (Exception ex)
         {
@@ -213,12 +227,9 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
     {
         StopAllCoroutines();
 
-        connectedToServersIPsSockets.Values.ToList().ForEach(s =>
-            {
-                var ipEndPoint = (IPEndPoint)s.RemoteEndPoint;
-                var ip = ipEndPoint.Address.ToString().Split(':').First();
-                DisconnectFrom(ip);   
-            });
+        var connectedSockets = connectedToServersIPsSockets.ToList();
+        connectedSockets.ForEach(ipSocket => DisconnectFrom(ipSocket.Key));
+
         connectedToServersIPsSockets.Clear();
     }
 
@@ -227,3 +238,4 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         return connectedToServersIPsSockets.ContainsKey(ipAddress);
     }
 }
+
