@@ -4,6 +4,7 @@ using UnityEngine.Networking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 /// <summary>
 /// Client network manager.
@@ -35,16 +36,16 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     ConnectionConfig connectionConfig = null;
     byte communicationChannel = 0;
 
-    bool isConnected = false;
+    ValueWrapper<bool> isConnected = new ValueWrapper<bool>(false);
     bool isRunning = false;
-
-    Dictionary<string, Action<NetworkData>> commands = new Dictionary<string, Action<NetworkData>>();
+   
+    CommandsManager commandManager = new CommandsManager();
 
     public bool IsConnected
     {
         get
         {
-            return isConnected;
+            return isConnected.Value;
         }
     }
 
@@ -67,15 +68,16 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void ConfigureCommands()
     {
-        commands["KickReason"] = KickedFromServer;
-        commands["AllowedToConnect"] = AllowedToConnectToServer;
+        commandManager.AddCommand("ShowNotification", new ShowNotificationFromServerCommand(NotificationsServiceController));
+        commandManager.AddCommand("AllowedToConnect", new AllowToConnectToServerCommand(isConnected));
     }
 
     void SendKeepAliveRequest()
     {
-        if (isRunning && isConnected)
+        if (isRunning && IsConnected)
         {
-            SendServerMessage("KeepAlive");
+            var commandLine = new NetworkCommandData("KeepAlive");
+            SendServerCommand(commandLine);
         }
     }
 
@@ -157,7 +159,10 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     void ConnectedToServer()
     {
         var username = GetUsername();
-        SendServerMessage("SetUsername=" + username);
+        var commandLine = new NetworkCommandData("SetUsername");
+
+        commandLine.AddOption("Username", username);
+        SendServerCommand(commandLine);
 
         if (OnConnectedEvent != null)
         {
@@ -167,20 +172,23 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         NotificationsServiceController.AddNotification(Color.green, "Успешно се свърза към сървъра!");
     }
 
-    bool IsValidCommand(string command)
-    {
-        return commands.ContainsKey(command);
-    }
-
     void DataReceivedFromServer(NetworkData networkData)
     {
         var message = networkData.Message;
-        var commandName = message.Split('=').First();
+        NetworkCommandData commandLine = null;
 
-        if (IsValidCommand(commandName))
+        try
         {
-            var commandToExecute = commands[commandName];
-            commandToExecute.Invoke(networkData);
+            commandLine = NetworkCommandData.Parse(message);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+        }
+
+        if (commandLine != null)
+        {
+            commandManager.Execute(commandLine);
         }
         else
         {
@@ -192,27 +200,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
                 OnReceivedDataEvent(this, new DataSentEventArgs(serverConnectionId, username, message));    
             }    
         }
-    }
-
-    void AllowedToConnectToServer(NetworkData networkData)
-    {
-        isConnected = true;
-    }
-
-    void KickedFromServer(NetworkData networkData)
-    {
-        var message = networkData.Message;
-        var commandParams = message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries)
-            .Skip(1)
-            .ToArray();
-        
-        if (commandParams.Length < 1)
-        {
-            return;
-        }
-
-        var kickReason = commandParams.First();
-        ShowNotification(Color.red, kickReason);
     }
 
     void DisconnectedFromServer(NetworkData networkData)
@@ -233,7 +220,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
 
         //if currently connected, disconnect
-        if (isConnected)
+        if (IsConnected)
         {
             Disconnect();
         }
@@ -266,7 +253,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
         while (time < ReceivePermissionToConnectTimeoutInSeconds)
         {
-            if (isConnected)
+            if (IsConnected)
             {
                 ConnectedToServer();
                 break;
@@ -277,7 +264,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             yield return null;
         }
 
-        if (!isConnected)
+        if (!IsConnected)
         {
             Disconnect();
         }
@@ -287,7 +274,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     {
         byte error = 0;
 
-        isConnected = false;
+        isConnected.Value = false;
         isRunning = false;
 
         try
@@ -316,6 +303,11 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
     }
 
+    public void SendServerCommand(NetworkCommandData commandLine)
+    {
+        SendServerMessage(commandLine.ToString());
+    }
+
     public void SendServerMessage(string data)
     {
         if (!isConnected)
@@ -333,7 +325,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             var error = (NetworkError)errorN;
             var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-            ShowNotification(Color.red, errorMessage);
+            Debug.Log(ex.Message);
         }
     }
 

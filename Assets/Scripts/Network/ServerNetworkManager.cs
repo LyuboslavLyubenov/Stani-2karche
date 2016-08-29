@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.ComponentModel.Design;
 
 public class ServerNetworkManager : ExtendedMonoBehaviour
 {
@@ -42,7 +45,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     HashSet<int> aliveClientsId = new HashSet<int>();
     //Their names
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
-    Dictionary<string, Action<NetworkData>> commandsFromClient = new Dictionary<string, Action<NetworkData>>();
+    CommandsManager commandManager = new CommandsManager();
 
     public bool IsRunning
     {
@@ -52,35 +55,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    public int[] BannedConnectionsIds
-    {
-        get
-        {
-            return bannedConnections.ToArray();
-        }
-    }
-
     public int ConnectedClientsCount
     {
         get
         {
             return connectedClientsIds.Count;
-        }
-    }
-
-    public int[] ConnectedClientsIds
-    {
-        get
-        {
-            return aliveClientsId.ToArray();
-        }
-    }
-
-    public Dictionary<int, string> ConnectedClientsIdsNames
-    {
-        get
-        {
-            return connectedClientsNames.ToDictionary(idUsername => idUsername.Key, idUsername => idUsername.Value);
         }
     }
 
@@ -119,8 +98,8 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     void ConfigureCommands()
     {
-        commandsFromClient["SetUsername"] = SetUsernameCommand;
-        commandsFromClient["KeepAlive"] = ClientKeepAliveCommand;
+        commandManager.AddCommand("SetUsername", new SetUsernameCommand(this));
+        commandManager.AddCommand("KeepAlive", new KeepAliveCommand(aliveClientsId));
     }
 
     void ShowNotification(Color color, string message)
@@ -185,11 +164,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             return;
         }
 
-        var aliveClientsConnectionIds = aliveClientsId.ToList();
         var deadClients = connectedClientsIds.Except(aliveClientsId);
 
         foreach (var deadClientConnectionId in deadClients)
         {
+            //better safe than sorry
             try
             {
                 byte error;
@@ -197,13 +176,13 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log("UpdateALiveClients - " + e.Message);
+                Debug.Log(e.Message);
             }
 
             connectedClientsNames.Remove(deadClientConnectionId);
         }
 
-        connectedClientsIds = aliveClientsConnectionIds;
+        connectedClientsIds.RemoveAll(cId => deadClients.Contains(cId));
         aliveClientsId.Clear();
     }
 
@@ -220,7 +199,8 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             return;
         }
 
-        SendClientMessage(connectionId, "AllowedToConnect");
+        var commandLine = new NetworkCommandData("AllowedToConnect");
+        SendClientCommand(connectionId, commandLine);
 
         aliveClientsId.Add(connectionId);
 
@@ -235,8 +215,16 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         //if disconnected remove from connected clients list
         var connectionId = networkData.ConnectionId;
 
-        connectedClientsIds.Remove(connectionId);
-        connectedClientsNames.Remove(connectionId);
+        try
+        {
+            connectedClientsIds.Remove(connectionId);
+            connectedClientsNames.Remove(connectionId);    
+        }
+        catch (Exception ex)
+        {
+            
+        }
+
 
         if (OnDisconnectedEvent != null)
         {
@@ -244,20 +232,35 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
     }
 
+    void FilterCommandLineOptions(NetworkCommandData command)
+    {
+        command.Options.ToList()
+            .Where(o => o.Key == "ConnectionId")
+            .ToList()
+            .ForEach(o => command.RemoveOption(o.Key));
+    }
+
     void OnClientSendData(NetworkData receiveNetworkData)
     {
         //if we received data from client
         var connectionId = receiveNetworkData.ConnectionId;
         var message = receiveNetworkData.Message;
-        var commandAndParams = message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-        var commandName = commandAndParams[0];
-        var commandParams = commandAndParams.Skip(1).ToArray();
-        var isValidCommand = (!string.IsNullOrEmpty(commandName) && commandsFromClient.ContainsKey(commandName));
+        NetworkCommandData commmandData = null;
 
-        if (isValidCommand)
+        try
         {
-            var commandToExecute = commandsFromClient[commandName];
-            commandToExecute.Invoke(receiveNetworkData);
+            commmandData = NetworkCommandData.Parse(message);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+        }
+
+        if (commmandData != null)
+        {
+            FilterCommandLineOptions(commmandData);
+            commmandData.AddOption("ConnectionId", connectionId.ToString());
+            commandManager.Execute(commmandData);
         }
         else
         {
@@ -270,7 +273,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    string GetClientUsername(int connectionId)
+    public string GetClientUsername(int connectionId)
     {
         var username = connectedClientsNames.FirstOrDefault(ci => ci.Key == connectionId);
 
@@ -282,35 +285,6 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         {
             return username.Value;    
         }
-    }
-
-    void SetUsernameCommand(NetworkData networkData)
-    {
-        var commandParams = networkData.Message.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries).Skip(1).ToArray();
-        var connectionId = networkData.ConnectionId;
-
-        if (commandParams.Length < 1 || string.IsNullOrEmpty(commandParams[0]))
-        {
-            //empty username :(
-            connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
-            return;
-        }
-
-        var username = commandParams[0];
-
-        if (username.Length >= 4)
-        {
-            connectedClientsNames[connectionId] = username;
-        }
-        else
-        {
-            connectedClientsNames[connectionId] = "Играч Номер " + connectionId;
-        }
-    }
-
-    void ClientKeepAliveCommand(NetworkData networkData)
-    {
-        aliveClientsId.Add(networkData.ConnectionId);
     }
 
     bool IsClientConnected(int connectionId)
@@ -332,11 +306,26 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         isRunning = false;
     }
 
-    public void SendClientMessage(int clientId, string message)
+    public void SetClientName(int connectionId, string name)
+    {
+        if (!connectedClientsIds.Contains(connectionId))
+        {
+            throw new ArgumentException("Client with id " + connectionId + " is not connected");
+        } 
+
+        connectedClientsNames.Add(connectionId, name);
+    }
+
+    public void SendClientCommand(int connectionId, NetworkCommandData command)
+    {
+        SendClientMessage(connectionId, command.ToString());
+    }
+
+    public void SendClientMessage(int connectionId, string message)
     {
         try
         {
-            NetworkTransportUtils.SendMessage(genericHostId, clientId, communicationChannel, message);
+            NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, message);
         }
         catch (NetworkException ex)
         {
@@ -346,6 +335,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
             NotificationServiceController.AddNotification(Color.red, errorMessage);
         }
+    }
+
+    public void SendAllClientsCommand(NetworkCommandData command)
+    {
+        SendAllClientsMessage(command.ToString());
     }
 
     public void SendAllClientsMessage(string message)
@@ -361,12 +355,16 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     {
         if (!IsClientConnected(connectionId))
         {
-            return;    
+            throw new Exception("Client with id " + connectionId + " not connected"); 
         }   
 
         try
         {
-            SendClientMessage(connectionId, "KickReason=" + message);    
+            var commandLine = new NetworkCommandData("ShowNotification");
+            commandLine.AddOption("Color", "red");
+            commandLine.AddOption("Message", message);
+
+            SendClientCommand(connectionId, commandLine);    
         }
         catch (NetworkException ex)
         {
@@ -387,7 +385,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     public void BanPlayer(int connectionId)
     {
-        if (bannedConnections.IndexOf(connectionId) > -1)
+        if (bannedConnections.Contains(connectionId))
         {
             return;
         }
@@ -395,6 +393,8 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         bannedConnections.Add(connectionId);
         KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
     }
+
+    #region DEBUG
 
     void OnGUI()
     {
@@ -420,5 +420,22 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             var randomClientId = connectedClientsIds.GetRandomElement();
             KickPlayer(randomClientId);
         }
+
+        var allClientsIdsNames = connectedClientsNames.ToList();
+
+        for (int i = 0; i < allClientsIdsNames.Count; i++)
+        {
+            var clientId = allClientsIdsNames[i].Key;
+            var clientUsername = allClientsIdsNames[i].Value;
+            var width = 100;
+            var height = 30;
+            var x = connectedPlayersRect.position.x + 5;
+            var y = kickRandomPlayerButtonRect.position.y + kickRandomPlayerButtonRect.height + 5 + ((i * height) + 5);
+            var rect = new Rect(x, y, width, height);
+
+            GUI.Label(rect, string.Format("{0} {1}", clientId, clientUsername));
+        }
     }
+
+    #endregion
 }
