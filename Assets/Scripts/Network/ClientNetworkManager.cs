@@ -38,8 +38,10 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     ValueWrapper<bool> isConnected = new ValueWrapper<bool>(false);
     bool isRunning = false;
-   
-    CommandsManager commandManager = new CommandsManager();
+
+    CommandsManager commandsManager = new CommandsManager();
+
+    ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
 
     public bool IsConnected
     {
@@ -49,12 +51,38 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
     }
 
+    public CommandsManager CommandsManager
+    {
+        get
+        {
+            return this.commandsManager; 
+        }
+    }
+
+    public int ServerConnectedClientsCount
+    {
+        get
+        {
+            return serverConnectedClientsCount.Value;
+        }
+    }
+
     void Start()
     {
         ConfigureCommands();
         ConfigureClient();
 
         CoroutineUtils.RepeatEverySeconds(SendKeepAliveRequestDelayInSeconds, SendKeepAliveRequest);
+        CoroutineUtils.RepeatEverySeconds(1f, () =>
+            {
+                if (!IsConnected)
+                {
+                    return;    
+                }
+
+                var commandData = new NetworkCommandData("ConnectedClientsCount");
+                SendServerCommand(commandData);
+            });
 
         StartCoroutine(UpdateCoroutine());
     }
@@ -68,8 +96,9 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void ConfigureCommands()
     {
-        commandManager.AddCommand("ShowNotification", new ShowNotificationFromServerCommand(NotificationsServiceController));
-        commandManager.AddCommand("AllowedToConnect", new AllowToConnectToServerCommand(isConnected));
+        commandsManager.AddCommand("ShowNotification", new ShowNotificationFromServerCommand(NotificationsServiceController));
+        commandsManager.AddCommand("AllowedToConnect", new AllowToConnectToServerCommand(isConnected));
+        commandsManager.AddCommand("ConnectedClientsCount", new ClientReceiveConnectedClientsCountCommand(serverConnectedClientsCount));
     }
 
     void SendKeepAliveRequest()
@@ -188,7 +217,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
         if (commandLine != null)
         {
-            commandManager.Execute(commandLine);
+            commandsManager.Execute(commandLine);
         }
         else
         {
@@ -325,7 +354,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             var error = (NetworkError)errorN;
             var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-            Debug.Log(ex.Message);
+            Debug.LogError(ex.Message);
         }
     }
 

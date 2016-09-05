@@ -45,7 +45,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     HashSet<int> aliveClientsId = new HashSet<int>();
     //Their names
     Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
-    CommandsManager commandManager = new CommandsManager();
+    CommandsManager commandsManager = new CommandsManager();
 
     public bool IsRunning
     {
@@ -66,6 +66,14 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     public string[] GetAllClientsNames()
     {
         return connectedClientsNames.Select(c => c.Value).ToArray();
+    }
+
+    public CommandsManager CommandsManager
+    {
+        get
+        {
+            return commandsManager;
+        }
     }
 
     void Start()
@@ -98,8 +106,9 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     void ConfigureCommands()
     {
-        commandManager.AddCommand("SetUsername", new SetUsernameCommand(this));
-        commandManager.AddCommand("KeepAlive", new KeepAliveCommand(aliveClientsId));
+        commandsManager.AddCommand("SetUsername", new SetUsernameCommand(this));
+        commandsManager.AddCommand("KeepAlive", new KeepAliveCommand(aliveClientsId));
+        commandsManager.AddCommand("ConnectedClientsCount", new ServerSendConnectedClientsCountCommand(this));
     }
 
     void ShowNotification(Color color, string message)
@@ -260,7 +269,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         {
             FilterCommandLineOptions(commmandData);
             commmandData.AddOption("ConnectionId", connectionId.ToString());
-            commandManager.Execute(commmandData);
+            commandsManager.Execute(commmandData);
         }
         else
         {
