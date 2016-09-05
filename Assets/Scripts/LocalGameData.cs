@@ -8,7 +8,7 @@ using CSharpJExcel.Jxl;
 using CielaSpike;
 using System.Threading;
 
-public class GameData : MonoBehaviour
+public class LocalGameData : MonoBehaviour
 {
     const string LevelPath = "LevelData\\теми\\";
     const int MarkMin = 3;
@@ -69,7 +69,6 @@ public class GameData : MonoBehaviour
         }
     }
 
-
     bool loaded = false;
 
     int currentQuestionIndex = 0;
@@ -92,7 +91,7 @@ public class GameData : MonoBehaviour
     void SerializeLevelData()
     {
         var levelPath = Directory.GetCurrentDirectory() + '\\' + LevelPath + LevelCategory;
-        var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.Contains(".xls")).ToArray();
+        var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
 
         for (int i = 0; i < questionFilesPath.Length; i++)
         {
