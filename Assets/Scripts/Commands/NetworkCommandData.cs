@@ -5,13 +5,17 @@ using System;
 
 public class NetworkCommandData
 {
+    //TODO: Move in external class
+    public const int CODE_OptionClientConnectionIdValueAll = -1;
+    public const int CODE_OptionClientConnectionIdValueRandom = -2;
+
     const int MinCommandNameLength = 3;
     const int MinOptionNameLength = 3;
     const int MinOptionValueLength = 1;
     const string CommandTag = "[COMMAND]";
-    const char OptionsDelitemer = ';';
-    const char OptionsBeginDelitemer = '-';
-    const char OptionValueDelitemer = '=';
+    const char OptionsDelitemerSymbol = ';';
+    const char OptionsBeginDelitemerSymbol = '-';
+    const char OptionValueDelitemerSymbol = '=';
 
     readonly string commandName;
     readonly Dictionary<string, string> commandOptions;
@@ -39,7 +43,7 @@ public class NetworkCommandData
     {
         get
         {
-            return new char[] { OptionsDelitemer, OptionsBeginDelitemer, OptionValueDelitemer };
+            return new char[] { OptionsDelitemerSymbol, OptionsBeginDelitemerSymbol, OptionValueDelitemerSymbol };
         }
     }
 
@@ -110,7 +114,7 @@ public class NetworkCommandData
         }
 
         var commandWithoutTag = command.Substring(CommandTag.Length);
-        var optionsBeginDelitemerIndex = commandWithoutTag.IndexOf(OptionsBeginDelitemer);
+        var optionsBeginDelitemerIndex = commandWithoutTag.IndexOf(OptionsBeginDelitemerSymbol);
 
         if (optionsBeginDelitemerIndex < 0)
         {
@@ -126,7 +130,7 @@ public class NetworkCommandData
 
         var commandOptionsValues = new Dictionary<string, string>();
         var options = commandWithoutTag.Substring(optionsBeginDelitemerIndex + 1)
-            .Split(new char[] { OptionsDelitemer }, StringSplitOptions.RemoveEmptyEntries);
+            .Split(new char[] { OptionsDelitemerSymbol }, StringSplitOptions.RemoveEmptyEntries);
 
         if (options.Length < 1)
         {
@@ -135,14 +139,14 @@ public class NetworkCommandData
 
         foreach (var option in options)
         {
-            var optionNameValueDelitemerIndex = option.IndexOf(OptionValueDelitemer);
+            var optionNameValueDelitemerIndex = option.IndexOf(OptionValueDelitemerSymbol);
 
             if (optionNameValueDelitemerIndex < 0)
             {
                 throw new ArgumentException("Option must have value");
             }
 
-            var optionNameValue = option.Split(new char[] { OptionValueDelitemer }, StringSplitOptions.RemoveEmptyEntries);
+            var optionNameValue = option.Split(new char[] { OptionValueDelitemerSymbol }, StringSplitOptions.RemoveEmptyEntries);
 
             if (optionNameValue.Length != 2)
             {
@@ -192,7 +196,7 @@ public class NetworkCommandData
 
         if (Options.Count > 0)
         {
-            command.Append(OptionsBeginDelitemer);
+            command.Append(OptionsBeginDelitemerSymbol);
         }
         
         foreach (var parameter in Options.ToList())
@@ -209,9 +213,9 @@ public class NetworkCommandData
             }
 
             command.Append(parameterName)
-                .Append(OptionValueDelitemer)
+                .Append(OptionValueDelitemerSymbol)
                 .Append(parameterValue)
-                .Append(OptionsDelitemer);
+                .Append(OptionsDelitemerSymbol);
         }
 
         return command.ToString();
