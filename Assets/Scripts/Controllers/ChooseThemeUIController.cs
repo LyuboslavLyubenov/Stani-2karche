@@ -13,7 +13,7 @@ public class ChooseThemeUIController : MonoBehaviour
     readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
     public Transform ContentPanel;
-    public GameData GameData;
+    public LocalGameData GameData;
     public LeaderboardSerializer LeaderboardSerializer;
 
     public EventHandler OnChoosedTheme = delegate
