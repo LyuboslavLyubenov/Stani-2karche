@@ -54,6 +54,13 @@ public class CommandsManager
         {
             var commandToExecute = commandsToExecute[i];
             commandToExecute.Execute(command.Options);    
+
+            var oneTimeExecuteCommand = commandToExecute as IOneTimeExecuteCommand;
+
+            if (oneTimeExecuteCommand != null && oneTimeExecuteCommand.FinishedExecution)
+            {
+                commands[commandName].Remove(oneTimeExecuteCommand);
+            }
         }
     }
 }
