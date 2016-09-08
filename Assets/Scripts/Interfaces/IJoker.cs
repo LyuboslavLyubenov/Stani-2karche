@@ -8,10 +8,15 @@ public interface IJoker
         get;
     }
 
-    EventHandler OnSuccessfullyActivated
+    EventHandler OnActivated
     {
         get;
         set;
+    }
+
+    bool Activated
+    {
+        get;
     }
 
     void Activate();

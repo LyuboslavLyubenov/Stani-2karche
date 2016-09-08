@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
+/*
 public class QuestionPanelSyncServer : MonoBehaviour
 {
     public BasicPlayerPlayingUIController PlayingUIController;
@@ -39,3 +40,4 @@ public class QuestionPanelSyncServer : MonoBehaviour
         serverNetworkManager.SendAllClientsMessage("SelectAnswer:" + args.Answer);
     }
 }
+*/
