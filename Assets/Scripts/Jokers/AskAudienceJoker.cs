@@ -31,8 +31,6 @@ public class AskAudienceJoker : IJoker
 
     AudienceAnswerUIController audienceAnswerUIController;
 
-    Timer audienceAnswerTimeoutTimer = new Timer();
-
     public Sprite Image
     {
         get;
@@ -79,11 +77,6 @@ public class AskAudienceJoker : IJoker
         this.audienceAnswerUI = audienceAnswerUI;
         this.audienceAnswerUIController = audienceAnswerUI.GetComponent<AudienceAnswerUIController>();
         this.loadingUI = GameObject.FindWithTag("LoadingUI");
-
-        audienceAnswerTimeoutTimer.AutoReset = false;
-        audienceAnswerTimeoutTimer.Interval = 10000;
-        audienceAnswerTimeoutTimer.Elapsed += (sender, e) => StopReceivingAnswer(NetworkCommandData.CODE_OptionClientConnectionIdValueAll);
-        audienceAnswerTimeoutTimer.Start();
 
         Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
     }
@@ -144,9 +137,6 @@ public class AskAudienceJoker : IJoker
 
         audienceVotedId.Add(connectionId);
         audienceAnswerVoteCount[answer]++;
-
-        audienceAnswerTimeoutTimer.Stop();
-        audienceAnswerTimeoutTimer.Start();
 
         //TODO: CHECK AFTER TIMEOUT
         if (audienceVotedId.Count >= connectedClients)
