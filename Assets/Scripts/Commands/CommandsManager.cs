@@ -6,7 +6,7 @@ using System.Linq;
 
 public class CommandsManager
 {
-    Dictionary<string, INetworkManagerCommand> commandsToExecute = new Dictionary<string, INetworkManagerCommand>();
+    Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
 
     public void AddCommand(string commandName, INetworkManagerCommand commandToExecute)
     {
@@ -20,19 +20,40 @@ public class CommandsManager
             throw new ArgumentNullException("commandToExecute");
         }
 
-        commandsToExecute.Add(commandName, commandToExecute);
+        if (!commands.ContainsKey(commandName))
+        {
+            var commandsToExecute = new List<INetworkManagerCommand>();
+            commands.Add(commandName, commandsToExecute);
+        }
+
+        commands[commandName].Add(commandToExecute);
+    }
+
+    public void RemoveCommand(string commandName)
+    {
+        if (!commands.ContainsKey(commandName))
+        {
+            throw new ArgumentException("Command " + commandName + " cannot be found");
+        }
+
+        commands.Remove(commandName);
     }
 
     public void Execute(NetworkCommandData command)
     {
         var commandName = command.Name;
 
-        if (!commandsToExecute.ContainsKey(commandName))
+        if (!commands.ContainsKey(commandName))
         {
             throw new ArgumentException("Command not found");
         }
 
-        var commandToExecute = commandsToExecute[commandName];
-        commandToExecute.Execute(command.Options);
+        var commandsToExecute = commands[commandName];
+
+        for (int i = 0; i < commandsToExecute.Count; i++)
+        {
+            var commandToExecute = commandsToExecute[i];
+            commandToExecute.Execute(command.Options);    
+        }
     }
 }

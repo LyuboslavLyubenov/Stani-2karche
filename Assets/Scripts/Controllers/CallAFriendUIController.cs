@@ -9,7 +9,7 @@ using CielaSpike;
 /// <summary>
 /// Call A friend user interface controller.
 /// </summary>
-public class CallAFriendUIController : MonoBehaviour
+public class CallAFriendUIController : ExtendedMonoBehaviour
 {
     public Button NextButton;
     public Button PrevButton;
@@ -126,29 +126,25 @@ public class CallAFriendUIController : MonoBehaviour
         }
     }
 
-    IEnumerator SetContactsCoroutine(Dictionary<int, string> playersConnectionIdName)
-    {
-        yield return null;
-
-        currentPageIndex = 0;
-        pages.Clear();
-
-        for (int i = 0; i < playersConnectionIdName.Count; i += 4)
-        {
-            var page = playersConnectionIdName.Skip(i)
-                .Take(4)
-                .Select(d => new CallFriendPageElement(d.Key, d.Value))
-                .ToArray();
-
-            pages.Add(page);
-        }
-
-        ReloadContacts();
-    }
-
     public void SetContacts(Dictionary<int, string> playersConnectionIdName)
     {
-        this.StartCoroutine(SetContactsCoroutine(playersConnectionIdName));
+        CoroutineUtils.WaitForFrames(1, () =>
+            {
+                currentPageIndex = 0;
+                pages.Clear();
+
+                for (int i = 0; i < playersConnectionIdName.Count; i += 4)
+                {
+                    var page = playersConnectionIdName.Skip(i)
+                    .Take(4)
+                    .Select(d => new CallFriendPageElement(d.Key, d.Value))
+                    .ToArray();
+
+                    pages.Add(page);
+                }
+
+                ReloadContacts();
+            });
     }
 
 }
