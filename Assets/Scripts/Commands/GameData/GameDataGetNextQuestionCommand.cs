@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameDataGetNextQuestionCommand : GameDataGetQuestionAbstractCommand
 {
@@ -10,8 +11,12 @@ public class GameDataGetNextQuestionCommand : GameDataGetQuestionAbstractCommand
     public override void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-        var question = base.GameData.GetNextQuestion();
-        var requestType = QuestionRequestType.Next;
-        base.SendQuestion(connectionId, question, requestType);
+
+        base.GameData.GetNextQuestion((question) =>
+            {
+                var requestType = QuestionRequestType.Next;
+                base.SendQuestion(connectionId, question, requestType);    
+            }, 
+            Debug.LogException);
     }
 }

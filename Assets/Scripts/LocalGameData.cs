@@ -8,7 +8,7 @@ using CSharpJExcel.Jxl;
 using CielaSpike;
 using System.Threading;
 
-public class LocalGameData : MonoBehaviour
+public class LocalGameData : MonoBehaviour, IGameData
 {
     const string LevelPath = "LevelData\\теми\\";
     const int MarkMin = 3;
@@ -25,16 +25,18 @@ public class LocalGameData : MonoBehaviour
 
     public string LevelCategory = "философия";
 
-    public EventHandler<MarkEventArgs> MarkIncrease = delegate
-    {
-    };
-
     public bool Loaded
     {
         get
         {
             return loaded; 
         }
+    }
+
+    public EventHandler<MarkEventArgs> OnMarkIncrease
+    {
+        get;
+        set;
     }
 
     public List<int> QuestionsToTakePerMark
@@ -168,11 +170,7 @@ public class LocalGameData : MonoBehaviour
         this.StartCoroutineAsync(SerializeLevelDataAsync());
     }
 
-    /// <summary>
-    /// Gets the current question.
-    /// </summary>
-    /// <returns>The current question.</returns>
-    public Question GetCurrentQuestion()
+    Question _GetCurrentQuestion()
     {
         if (!loaded)
         {
@@ -189,11 +187,7 @@ public class LocalGameData : MonoBehaviour
         return questions[index];
     }
 
-    /// <summary>
-    /// Gets the next question.
-    /// </summary>
-    /// <returns>The next question.</returns>
-    public Question GetNextQuestion()
+    Question _GetNextQuestion()
     {
         if (!loaded)
         {
@@ -218,9 +212,13 @@ public class LocalGameData : MonoBehaviour
         {
             currentMarkIndex++;
             currentQuestionIndex = 0;
-            MarkIncrease(this, new MarkEventArgs(currentMarkIndex + 2));
 
-            return GetCurrentQuestion();
+            if (OnMarkIncrease != null)
+            {
+                OnMarkIncrease(this, new MarkEventArgs(currentMarkIndex + 2));
+            }
+
+            return _GetCurrentQuestion();
         }
         else
         {
@@ -231,10 +229,49 @@ public class LocalGameData : MonoBehaviour
         }
     }
 
-    public Question GetRandomQuestion()
+    Question _GetRandomQuestion()
     {
         var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Count);
         return marksQuestions[currentMarkIndex][questionIndex];
+    }
+
+    public void GetCurrentQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    {
+        try
+        {
+            var question = _GetCurrentQuestion();
+            onSuccessfullyLoaded(question);
+        }
+        catch (Exception ex)
+        {
+            onError(ex);
+        }
+    }
+
+    public void GetNextQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    {        
+        try
+        {
+            var question = _GetNextQuestion();
+            onSuccessfullyLoaded(question);
+        }
+        catch (Exception ex)
+        {
+            onError(ex);
+        }
+    }
+
+    public void GetRandomQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    {
+        try
+        {
+            var question = _GetRandomQuestion();
+            onSuccessfullyLoaded(question);
+        }
+        catch (Exception ex)
+        {
+            onError(ex);
+        }
     }
 }
 

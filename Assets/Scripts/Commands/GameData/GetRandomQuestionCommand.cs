@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class GameDataGetRandomQuestionCommand : GameDataGetQuestionAbstractCommand
 {
@@ -10,8 +11,13 @@ public class GameDataGetRandomQuestionCommand : GameDataGetQuestionAbstractComma
     public override void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-        var question = base.GameData.GetRandomQuestion();
-        var requestType = QuestionRequestType.Random;
-        base.SendQuestion(connectionId, question, requestType);
+
+        base.GameData.GetRandomQuestion((question) =>
+            {
+                var requestType = QuestionRequestType.Random;
+                base.SendQuestion(connectionId, question, requestType);    
+            },
+            Debug.LogException);
+        
     }
 }
