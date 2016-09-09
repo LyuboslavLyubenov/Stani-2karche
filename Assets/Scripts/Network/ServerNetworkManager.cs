@@ -18,15 +18,15 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     public NotificationsServiceController NotificationServiceController;
     public LANServerOnlineBroadcastService LANServerOnlineBroadcastService;
 
-    public EventHandler OnConnectedEvent = delegate
+    public EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
     {
     };
 
-    public EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate
+    public EventHandler<DataSentEventArgs> OnReceivedData = delegate
     {
     };
 
-    public EventHandler OnDisconnectedEvent = delegate
+    public EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected = delegate
     {
     };
 
@@ -109,6 +109,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         commandsManager.AddCommand("SetUsername", new SetUsernameCommand(this));
         commandsManager.AddCommand("KeepAlive", new KeepAliveCommand(aliveClientsId));
         commandsManager.AddCommand("ConnectedClientsCount", new ServerSendConnectedClientsCountCommand(this));
+        commandsManager.AddCommand("ConnectedClientsIdsNames", new ServerSendConnectedClientsIdsNamesCommand(this, connectedClientsNames));
     }
 
     void ShowNotification(Color color, string message)
@@ -152,7 +153,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         switch (recieveNetworkData.NetworkEventType)
         {
             case NetworkEventType.ConnectEvent:
-                OnClientConnected(recieveNetworkData);
+                OnConnectedClient(recieveNetworkData);
                 break;
 
             case NetworkEventType.DataEvent:
@@ -195,7 +196,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         aliveClientsId.Clear();
     }
 
-    void OnClientConnected(NetworkData networkData)
+    void OnConnectedClient(NetworkData networkData)
     {
         var connectionId = networkData.ConnectionId;
         connectedClientsIds.Add(connectionId);
@@ -208,14 +209,14 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             return;
         }
 
-        var commandLine = new NetworkCommandData("AllowedToConnect");
-        SendClientCommand(connectionId, commandLine);
+        var commandData = new NetworkCommandData("AllowedToConnect");
+        SendClientCommand(connectionId, commandData);
 
         aliveClientsId.Add(connectionId);
 
-        if (OnConnectedEvent != null)
+        if (OnClientConnected != null)
         {
-            OnConnectedEvent(this, EventArgs.Empty);    
+            OnClientConnected(this, new ClientConnectionDataEventArgs(connectionId));    
         }
     }
 
@@ -234,10 +235,9 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             
         }
 
-
-        if (OnDisconnectedEvent != null)
+        if (OnClientDisconnected != null)
         {
-            OnDisconnectedEvent(this, EventArgs.Empty);    
+            OnClientDisconnected(this, new ClientConnectionDataEventArgs(connectionId));    
         }
     }
 
@@ -275,9 +275,9 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         {
             var username = GetClientUsername(connectionId); 
 
-            if (OnReceivedDataEvent != null)
+            if (OnReceivedData != null)
             {
-                OnReceivedDataEvent(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, username, message));    
+                OnReceivedData(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, username, message));    
             }
         }
     }
@@ -448,3 +448,5 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     #endregion
 }
+
+
