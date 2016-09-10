@@ -6,4 +6,9 @@ public class NoMoreQuestionsException : Exception
         : base(message)
     {
     }
+
+    public NoMoreQuestionsException()
+    {
+        
+    }
 }

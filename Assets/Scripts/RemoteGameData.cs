@@ -38,13 +38,22 @@ public class RemoteGameData : MonoBehaviour, IGameData
     void Start()
     {
         InitializeCommands();
-        LoadDataFromServer();
     }
 
     void InitializeCommands()
     {
         NetworkManager.CommandsManager.AddCommand("GameDataQuestion", new ReceivedQuestionCommand(OnReceivedQuestion));
         NetworkManager.CommandsManager.AddCommand("GameDataMark", new ReceivedMarkCommand(OnReceivedMark));
+        NetworkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ClientGameDataNoMoreQuestionsCommand(OnNoMoreQuestions));
+    }
+
+    void OnNoMoreQuestions()
+    {
+        for (int i = 0; i < nextQuestionRequests.Count; i++)
+        {
+            var questionRequest = nextQuestionRequests.Pop();
+            questionRequest.OnException(new NoMoreQuestionsException());
+        }
     }
 
     void InititalizeGameDataCallback(Question firstQuestion, int questionsRemainingToNextMark)
@@ -59,11 +68,8 @@ public class RemoteGameData : MonoBehaviour, IGameData
         GetCurrentQuestion((question) =>
             {
                 currentQuestionCache = question;
-            }, (exception) =>
-            {
-                DebugUtils.LogException(exception);
-                //TODO:
-            });
+            }, 
+            Debug.LogException);
     }
 
     void OnReceivedMark(int mark)
@@ -96,14 +102,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
             Debug.LogWarning("Received question from server but cant find request source.");
             return;
         }
-
-        if (question == null)
-        {
-            var exception = new NoMoreQuestionsException("Cant load question");
-            questionRequest.OnException(exception);
-            return;
-        }
-
+          
         if (requestType != QuestionRequestType.Random)
         {
             currentQuestionCache = question;

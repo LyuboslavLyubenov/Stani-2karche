@@ -354,7 +354,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             var error = (NetworkError)errorN;
             var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-            Debug.LogError(ex.Message);
+            Debug.LogException(ex);
         }
     }
 

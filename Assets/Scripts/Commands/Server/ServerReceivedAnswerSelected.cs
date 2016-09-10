@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class ServerReceivedAnswerSelected : INetworkManagerCommand
 {
+    public delegate void OnReceivedAnswerDelegate(int clientId,string answer);
+
     IGameData gameData;
     ServerNetworkManager networkManager;
+    OnReceivedAnswerDelegate onReceivedAnswer;
 
-    public ServerReceivedAnswerSelected(IGameData gameData, ServerNetworkManager networkManager)
+    public ServerReceivedAnswerSelected(IGameData gameData, ServerNetworkManager networkManager, OnReceivedAnswerDelegate onReceivedAnswer)
     {
         if (gameData == null)
         {
@@ -18,24 +21,23 @@ public class ServerReceivedAnswerSelected : INetworkManagerCommand
         {
             throw new ArgumentNullException("networkManager");
         }
+
+        if (onReceivedAnswer == null)
+        {
+            throw new ArgumentNullException("onReceivedAnswer");
+        }
             
         this.gameData = gameData;
         this.networkManager = networkManager;
+        this.onReceivedAnswer = onReceivedAnswer;
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
-        var connectionId = int.Parse(commandsOptionsValues["ClientToSendConnectionId"]);
+        var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
         var answerSelected = commandsOptionsValues["Answer"];
 
-        gameData.GetCurrentQuestion((question) => SendAnswerCorrectStatus(question, connectionId, answerSelected), Debug.LogException);
-    }
-
-    void SendAnswerCorrectStatus(Question currentQuestion, int connectionId, string answerSelected)
-    {
-        var correctAnswer = currentQuestion.Answers[currentQuestion.CorrectAnswerIndex];
-        var commandData = new NetworkCommandData("AnswerSelected");
-        commandData.AddOption("IsCorrect", (answerSelected == correctAnswer).ToString());
-        networkManager.SendClientCommand(connectionId, commandData);
+        onReceivedAnswer(connectionId, answerSelected);
+        //TODO:
     }
 }

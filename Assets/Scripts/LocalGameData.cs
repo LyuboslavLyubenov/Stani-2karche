@@ -39,22 +39,6 @@ public class LocalGameData : MonoBehaviour, IGameData
         set;
     }
 
-    public List<int> QuestionsToTakePerMark
-    {
-        get
-        {
-            return questionsToTakePerMark;
-        }
-    }
-
-    public int CurrentMarkIndex
-    {
-        get
-        {
-            return currentMarkIndex;
-        }
-    }
-
     public int RemainingQuestionsToNextMark
     {
         get
@@ -68,6 +52,14 @@ public class LocalGameData : MonoBehaviour, IGameData
         get
         {
             return (currentMarkIndex < marksQuestions.Count) && ((currentQuestionIndex + 1) >= marksQuestions[currentMarkIndex].Count);
+        }
+    }
+
+    public int CurrentMark
+    {
+        get
+        {
+            return currentMarkIndex + (MarkMin - 1);
         }
     }
 
