@@ -151,39 +151,24 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             return;
         }
 
-        NetworkData receiveNetworkData = new NetworkData(0, null, NetworkEventType.Nothing);
-
-        try
-        {
-            receiveNetworkData = NetworkTransportUtils.ReceiveMessage();
-        }
-        catch (NetworkException e)
-        {
-            var error = (NetworkError)e.ErrorN;
-            var errorMessage = NetworkErrorUtils.GetMessage(error);
-
-            NotificationsServiceController.AddNotification(Color.red, errorMessage);
-
-            //if cannot connect to server
-            if (error == NetworkError.Timeout)
+        NetworkTransportUtils.ReceiveMessageAsync(ReceivedMessageFromClientAsync, (exception) =>
             {
-                //disconnect
-                Disconnect();
-            }
+                
+            });
+    }
 
-            return;
-        }
-
-        switch (receiveNetworkData.NetworkEventType)
+    void ReceivedMessageFromClientAsync(NetworkData networkData)
+    {
+        switch (networkData.NetworkEventType)
         {
             case NetworkEventType.DataEvent:
-                DataReceivedFromServer(receiveNetworkData);
+                DataReceivedFromServer(networkData);
                 break;
 
             case NetworkEventType.DisconnectEvent:                            
-                DisconnectedFromServer(receiveNetworkData);
+                DisconnectedFromServer(networkData);
                 break;
-        }      
+        } 
     }
 
     void ConnectedToServer()
@@ -346,18 +331,13 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             throw new InvalidOperationException("Not connected to server");
         }
 
-        try
-        {
-            NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, data);    
-        }
-        catch (NetworkException ex)
-        {
-            var errorN = ex.ErrorN;
-            var error = (NetworkError)errorN;
-            var errorMessage = NetworkErrorUtils.GetMessage(error);
-
-            Debug.LogException(ex);
-        }
+        NetworkTransportUtils.SendMessageAsync(genericHostId, connectionId, communicationChannel, data, (exception) =>
+            {
+                var errorN = exception.ErrorN;
+                var error = (NetworkError)errorN;
+                var errorMessage = NetworkErrorUtils.GetMessage(error);
+                Debug.LogException(new Exception(errorMessage));
+            });
     }
 
     #region DEBUG

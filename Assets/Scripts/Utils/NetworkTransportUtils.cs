@@ -36,7 +36,7 @@ public class NetworkTransportUtils
         return new NetworkData(connectionId, message, recData);
     }
 
-    public static void ReceiveMessageAsync(Action<NetworkData> onReceivedMessage, Action<Exception> onError)
+    public static void ReceiveMessageAsync(Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
     {
         if (onReceivedMessage == null)
         {
@@ -51,26 +51,30 @@ public class NetworkTransportUtils
         NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(ReceiveMessageAsyncCoroutine(onReceivedMessage, onError));
     }
 
-    static IEnumerator ReceiveMessageAsyncCoroutine(Action<NetworkData> onReceivedMessage, Action<Exception> onError)
+    static IEnumerator ReceiveMessageAsyncCoroutine(Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
     {
         yield return null;
 
         NetworkData networkData = new NetworkData(-1, string.Empty, NetworkEventType.Nothing);
-        Exception exception = null;
+        NetworkException exception = null;
 
         try
         {
             networkData = ReceiveMessage();    
         }
-        catch (Exception ex)
+        catch (NetworkException ex)
         {
             exception = ex;
         }
 
         if (exception != null)
         {
-            yield return Ninja.JumpToUnity;
-            onError(exception);
+            if (onError != null)
+            {
+                yield return Ninja.JumpToUnity;
+                onError(exception);
+            }
+
             yield break;
         }
 
@@ -93,22 +97,22 @@ public class NetworkTransportUtils
         ValidateNetworkOperation(error);
     }
 
-    public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<Exception> onError = null)
+    public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null)
     {
         NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(SendMessageAsyncCoroutine(hostId, connectionId, channelId, message, onError));
     }
 
-    static IEnumerator SendMessageAsyncCoroutine(int hostId, int connectionId, int channelId, string message, Action<Exception> onError = null)
+    static IEnumerator SendMessageAsyncCoroutine(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null)
     {
         yield return null;
 
-        Exception exception = null;
+        NetworkException exception = null;
 
         try
         {
             SendMessage(hostId, connectionId, channelId, message);
         }
-        catch (Exception ex)
+        catch (NetworkException ex)
         {
             exception = ex;
         }

@@ -167,6 +167,23 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     }
 
+    IList<int> GetDeadClientsIds(ICollection<int> aliveClientsIds)
+    {
+        var result = new List<int>();
+
+        for (int i = 0; i < connectedClientsIds.Count; i++)
+        {
+            var clientId = connectedClientsIds[i];
+
+            if (!aliveClientsId.Contains(clientId))
+            {
+                result.Add(clientId);
+            }
+        }
+
+        return result;
+    }
+
     void UpdateAliveClients()
     {
         if (!isRunning)
@@ -174,10 +191,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             return;
         }
 
-        var deadClients = connectedClientsIds.Except(aliveClientsId);
+        var deadClientsIds = GetDeadClientsIds(aliveClientsId);
 
-        foreach (var deadClientConnectionId in deadClients)
+        for (int i = 0; i < deadClientsIds.Count; i++)
         {
+            var deadClientConnectionId = deadClientsIds[i];
             //better safe than sorry
             try
             {
@@ -192,7 +210,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             connectedClientsNames.Remove(deadClientConnectionId);
         }
 
-        connectedClientsIds.RemoveAll(cId => deadClients.Contains(cId));
+        connectedClientsIds.RemoveAll(deadClientsIds.Contains);
         aliveClientsId.Clear();
     }
 
@@ -332,18 +350,14 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     public void SendClientMessage(int connectionId, string message)
     {
-        try
-        {
-            NetworkTransportUtils.SendMessage(genericHostId, connectionId, communicationChannel, message);
-        }
-        catch (NetworkException ex)
-        {
-            var errorN = ex.ErrorN;
-            var error = (NetworkError)errorN;
-            var errorMessage = NetworkErrorUtils.GetMessage(error);
+        NetworkTransportUtils.SendMessageAsync(genericHostId, connectionId, communicationChannel, message, (exception) =>
+            {
+                var errorN = exception.ErrorN;
+                var error = (NetworkError)errorN;
+                var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-            NotificationServiceController.AddNotification(Color.red, errorMessage);
-        }
+                NotificationServiceController.AddNotification(Color.red, errorMessage);
+            });
     }
 
     public void SendAllClientsCommand(NetworkCommandData command)
