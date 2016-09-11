@@ -100,7 +100,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     void ConfigureServer()
     {
         connectionConfig = new ConnectionConfig();
-        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);//make sure all messages are in order and received
+        communicationChannel = connectionConfig.AddChannel(QosType.ReliableFragmented);
         topology = new HostTopology(connectionConfig, MaxConnections);
     }
 

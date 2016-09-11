@@ -17,6 +17,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     const int MaxConnectionAttempts = 3;
 
     public NotificationsServiceController NotificationsServiceController;
+    public bool ShowDebugMenu = false;
 
     public EventHandler OnConnectedEvent = delegate
     {
@@ -91,7 +92,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     {
         connectionConfig = new ConnectionConfig();
         connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts; 
-        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced); //make sure messages are delivered and send in correct order
+        communicationChannel = connectionConfig.AddChannel(QosType.ReliableFragmented);
     }
 
     void ConfigureCommands()
@@ -332,9 +333,10 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    public void SendServerCommand(NetworkCommandData commandLine)
+    public void SendServerCommand(NetworkCommandData commandData)
     {
-        SendServerMessage(commandLine.ToString());
+        var commandString = commandData.ToString();
+        SendServerMessage(commandString);
     }
 
     public void SendServerMessage(string data)
@@ -360,15 +362,19 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     #region DEBUG
 
-    #if DEBUG
     string debug_connectIp = "(example 127.0.0.1)";
 
     void OnGUI()
     {
-        GUI.Box(new Rect(0, 0, 300, 300), "ClientNetworkManager debug");
+        if (!ShowDebugMenu)
+        {
+            return;
+        }
 
-        var connectIpRect = new Rect(5, 30, 130, 25); 
-        var connectButtonRect = new Rect(5, 65, 130, 30);
+        GUI.Box(new Rect(200, 0, 300, 300), "ClientNetworkManager debug");
+
+        var connectIpRect = new Rect(205, 30, 130, 25); 
+        var connectButtonRect = new Rect(205, 65, 130, 30);
 
         var connectButton = GUI.Button(connectButtonRect, "Connect");
 
@@ -380,6 +386,5 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    #endif
     #endregion
 }

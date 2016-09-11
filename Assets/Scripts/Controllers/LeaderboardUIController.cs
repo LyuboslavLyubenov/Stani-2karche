@@ -9,7 +9,6 @@ public class LeaderboardUIController : MonoBehaviour
     const int SpaceBetweenScore = 10;
     
     public GameObject ContentPanel;
-    public LeaderboardSerializer LeaderboardSerializer;
 
     GameObject PlayerScorePrefab;
 
@@ -21,23 +20,21 @@ public class LeaderboardUIController : MonoBehaviour
         {
             throw new Exception("ContentPanel is null on LeaderboardUIController obj");
         }
-             
-        Populate(LeaderboardSerializer.Leaderboard);
     }
 
-    public void Populate(IList<PlayerScore> playersScore)
+    public void Populate(PlayerScore[] playersScore)
     {
         StartCoroutine(PopulateCoroutine(playersScore));
     }
 
-    IEnumerator PopulateCoroutine(IList<PlayerScore> playersScore)
+    IEnumerator PopulateCoroutine(PlayerScore[] playersScore)
     {
         yield return null;
 
         var defaultRect = PlayerScorePrefab.GetComponent<RectTransform>();
         var height = defaultRect.sizeDelta.y;
 
-        for (int i = 0; i < playersScore.Count; i++)
+        for (int i = 0; i < playersScore.Length; i++)
         {
             //create Score object
             //fill the data (playerName and score(mark))

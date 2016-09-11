@@ -137,8 +137,9 @@ public class NetworkCommandData
             throw new ArgumentException("Invalid command");
         }
 
-        foreach (var option in options)
+        for (int i = 0; i < options.Length; i++)
         {
+            var option = options[i];
             var optionNameValueDelitemerIndex = option.IndexOf(OptionValueDelitemerSymbol);
 
             if (optionNameValueDelitemerIndex < 0)
@@ -162,7 +163,6 @@ public class NetworkCommandData
             }
 
             ValidateOption(optionName, optionValue);
-
             commandOptionsValues.Add(optionName, optionValue);
         }
 
