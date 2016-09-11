@@ -135,36 +135,31 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     void UpdateServer()
     {
-        NetworkData recieveNetworkData = null;
-    
-        try
-        {
-            recieveNetworkData = NetworkTransportUtils.ReceiveMessage();
-        }
-        catch (NetworkException e)
-        {
-            var error = (NetworkError)e.ErrorN;
-            var errorMessage = NetworkErrorUtils.GetMessage(error);
+        NetworkTransportUtils.ReceiveMessageAsync(ReceivedDataFromClientAsync, (exception) =>
+            {
+                var error = (NetworkError)exception.ErrorN;
+                var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-            ShowNotification(Color.red, errorMessage);
-            return;
-        }
+                ShowNotification(Color.red, errorMessage);
+            });
+    }
 
-        switch (recieveNetworkData.NetworkEventType)
+    void ReceivedDataFromClientAsync(NetworkData networkData)
+    {
+        switch (networkData.NetworkEventType)
         {
             case NetworkEventType.ConnectEvent:
-                OnConnectedClient(recieveNetworkData);
+                OnConnectedClient(networkData);
                 break;
 
             case NetworkEventType.DataEvent:
-                OnClientSendData(recieveNetworkData);
+                OnClientSendData(networkData);
                 break;
 
             case NetworkEventType.DisconnectEvent:
-                OnClientDisconnect(recieveNetworkData);
+                OnClientDisconnect(networkData);
                 break;
         }    
-
     }
 
     IList<int> GetDeadClientsIds(ICollection<int> aliveClientsIds)
