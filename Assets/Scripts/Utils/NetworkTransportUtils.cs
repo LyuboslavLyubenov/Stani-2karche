@@ -54,15 +54,16 @@ public class NetworkTransportUtils
     }
 
     static void DecryptMessageAsync(string message, Action<string> onDecrypted)
-    {
-        if (string.IsNullOrEmpty(message))
-        {
-            throw new ArgumentNullException("message");
-        }
-            
+    {   
         if (onDecrypted == null)
         {
             throw new ArgumentNullException("onDecrypted");
+        }
+
+        if (string.IsNullOrEmpty(message))
+        {
+            onDecrypted(message);
+            return;
         }
 
         NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(DecryptMessageAsyncCoroutine(message, onDecrypted));
@@ -118,7 +119,7 @@ public class NetworkTransportUtils
             throw new ArgumentNullException("onEncrypted");
         }
 
-        NetworkTransportUtilsDummyClass.Instance.StartCoroutine(EncryptMessageAsyncCoroutine(message, onEncrypted));
+        NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(EncryptMessageAsyncCoroutine(message, onEncrypted));
     }
 
     static IEnumerator EncryptMessageAsyncCoroutine(string message, Action<byte[]> onEncrypted)

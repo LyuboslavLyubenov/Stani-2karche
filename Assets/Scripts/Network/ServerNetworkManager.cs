@@ -11,7 +11,7 @@ using System.ComponentModel.Design;
 public class ServerNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
-    const float CheckForDeadClientsDelayInSeconds = 3f;
+    const float CheckForDeadClientsDelayInSeconds = 6f;
 
     //how many clients can be connected to the server
     public int MaxConnections;

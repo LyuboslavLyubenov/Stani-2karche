@@ -12,8 +12,8 @@ using System.Text;
 public class ClientNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
-    const float ReceivePermissionToConnectTimeoutInSeconds = 3f;
-    const float SendKeepAliveRequestDelayInSeconds = 1f;
+    const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
+    const float SendKeepAliveRequestDelayInSeconds = 3f;
     const int MaxConnectionAttempts = 3;
 
     public NotificationsServiceController NotificationsServiceController;
@@ -74,7 +74,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         ConfigureClient();
 
         CoroutineUtils.RepeatEverySeconds(SendKeepAliveRequestDelayInSeconds, SendKeepAliveRequest);
-        CoroutineUtils.RepeatEverySeconds(1f, () =>
+        CoroutineUtils.RepeatEverySeconds(3f, () =>
             {
                 if (!IsConnected)
                 {
@@ -153,7 +153,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
         NetworkTransportUtils.ReceiveMessageAsync(ReceivedMessageFromClientAsync, (exception) =>
             {
-                
+                Debug.LogException(exception);
             });
     }
 
