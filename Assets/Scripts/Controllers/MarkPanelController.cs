@@ -14,15 +14,6 @@ public class MarkPanelController : ExtendedMonoBehaviour
         {
             return MarkText.text;
         }
-        set
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentNullException("value", "Mark cannot be null");
-            }
-
-            SetMark(value);
-        }
     }
 
     void Start()
@@ -36,8 +27,13 @@ public class MarkPanelController : ExtendedMonoBehaviour
         }
     }
 
-    void SetMark(string mark)
+    public void SetMark(string mark)
     {
+        if (string.IsNullOrEmpty(mark))
+        {
+            throw new ArgumentNullException("mark", "Mark cannot be null");
+        }
+
         MarkText.text = mark;
         animator.SetTrigger("MarkIncreased");
     }

@@ -49,7 +49,8 @@ public class AvailableJokersUIController : MonoBehaviour
 
         availableJokers.Add(joker);
 
-        containerRectTransform.sizeDelta = new Vector2(containerRectTransform.sizeDelta.x, y + jokerButtonSize.y);
+        var contentHeight = -jokerStartPosition.y + (availableJokers.Count * jokerButtonSize.y); 
+        containerRectTransform.sizeDelta = new Vector2(containerRectTransform.sizeDelta.x, contentHeight);
     }
 
     void OnJokerClick(GameObject jokerObj, IJoker joker)
