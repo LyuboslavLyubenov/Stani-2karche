@@ -29,8 +29,10 @@ public class ServerSendConnectedClientsIdsNamesCommand : INetworkManagerCommand
     {
         var clientConnectionId = int.Parse(commandsParamsValues["ConnectionId"]);
         var commandData = new NetworkCommandData("ConnectedClientsIdsNames");
-        var connectedClientsData = connectedClientsIdsNames.Select(a => new ConnectedClientData(a.Key, a.Value)).ToArray();
-        var connectedClientsDataJSON = JsonUtility.ToJson(connectedClientsData);
+        var clientsData = connectedClientsIdsNames.Select(a => new ClientData_Serializable() { ConnectionId = a.Key, Username = a.Value })
+            .ToArray();
+        var onlineClientsData = new OnlineClientsData_Serializable() { OnlinePlayers = clientsData };
+        var connectedClientsDataJSON = JsonUtility.ToJson(onlineClientsData);
 
         commandData.AddOption("ConnectedClientsDataJSON", connectedClientsDataJSON);
         networkManager.SendClientCommand(clientConnectionId, commandData);

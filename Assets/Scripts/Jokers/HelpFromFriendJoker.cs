@@ -49,7 +49,8 @@ public class HelpFromFriendJoker : IJoker
                                ClientNetworkManager networkManager, 
                                GameObject callAFriendUI, 
                                GameObject friendAnswerUI, 
-                               GameObject waitingToAnswerUI)
+                               GameObject waitingToAnswerUI,
+                               GameObject loadingUI)
     {
         if (gameData == null)
         {
@@ -76,18 +77,20 @@ public class HelpFromFriendJoker : IJoker
             throw new ArgumentNullException("waitingToAnswerUI");
         }
 
+        if (loadingUI == null)
+        {
+            throw new ArgumentNullException("loadingUI");
+        }
+
         this.gameData = gameData;
         this.networkManager = networkManager;
         this.callAFriendUI = callAFriendUI;
         this.friendAnswerUI = friendAnswerUI;
         this.waitingToAnswerUI = waitingToAnswerUI;
-        this.loadingUI = GameObject.FindWithTag("LoadingUI");
+        this.loadingUI = loadingUI;
 
         callAFriendUIController = callAFriendUI.GetComponent<CallAFriendUIController>();
         friendAnswerUIController = friendAnswerUI.GetComponent<FriendAnswerUIController>();
-
-        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new AskAFriendResponseCommand(OnReceivedAskAFriendResponse));
-        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ClientReceiveConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
 
         Image = Resources.Load<Sprite>("Images/Buttons/Jokers/HelpFromFriend");
     }
@@ -106,11 +109,6 @@ public class HelpFromFriendJoker : IJoker
 
     void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
     {
-        if (!activated)
-        {
-            return;
-        }
-
         loadingUI.SetActive(false);
 
         var connectedClientsIdsNames = connectedClientsData.OnlinePlayers.ToDictionary(c => c.ConnectionId, c => c.Username);
@@ -159,6 +157,9 @@ public class HelpFromFriendJoker : IJoker
 
     public void Activate()
     {
+        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new AskAFriendResponseCommand(OnReceivedAskAFriendResponse));
+        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ClientReceiveConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
+
         gameData.GetCurrentQuestion(ActivateCallAFriendJoker, Debug.LogException);
     }
 
