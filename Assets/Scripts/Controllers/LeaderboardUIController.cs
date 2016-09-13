@@ -36,27 +36,33 @@ public class LeaderboardUIController : MonoBehaviour
 
         for (int i = 0; i < playersScore.Length; i++)
         {
-            //create Score object
-            //fill the data (playerName and score(mark))
-            //set its parent to ContentPanel
-            //move its y below previous sibling element
             var playerScoreData = playersScore[i];
-            var score = Instantiate(PlayerScorePrefab);
-            var scoreRect = score.GetComponent<RectTransform>();
-            var playerNameTextObj = score.transform.GetChild(0);
-            var scoreTextObj = score.transform.GetChild(1);
+            var scoreObj = Instantiate(PlayerScorePrefab);
+            var propertyInfos = playerScoreData.GetType().GetProperties();
 
-            //SET TEXT
-            playerNameTextObj.GetComponent<Text>().text = playerScoreData.PlayerName;
-            scoreTextObj.GetComponent<Text>().text = playerScoreData.Score.ToString();
+            for (int j = 0; j < propertyInfos.Length; j++)
+            {
+                var propertyName = propertyInfos[j].Name;
+                var propertyValue = propertyInfos[j].GetValue(playerScoreData, null);
 
-            //SET POSITION AND PARENT
-            score.transform.SetParent(ContentPanel.transform, false);
+                var propObj = scoreObj.transform.FindChild(propertyName);
 
+                if (propObj == null || propertyValue == null)
+                {
+                    continue;
+                }
+
+                propObj.GetComponent<Text>().text = propertyValue.ToString();
+            }
+
+            scoreObj.transform.SetParent(ContentPanel.transform, false);
+
+            var scoreRect = scoreObj.GetComponent<RectTransform>();
             var nextY = ((scoreRect.sizeDelta.y + SpaceBetweenScore) * (i + 1));
             scoreRect.anchoredPosition = new Vector2(0, -nextY);
                 
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(0.05f);
+            yield return null;
         }
 
         ResizeContentPanel();

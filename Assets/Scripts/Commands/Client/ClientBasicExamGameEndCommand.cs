@@ -34,7 +34,7 @@ public class ClientBasicExamGameEndCommand : INetworkManagerCommand
         var mark = int.Parse(commandsOptionsValues["Mark"]);
         var leaderboardDataJSON = commandsOptionsValues["LeaderboardDataJSON"];
         var leaderboardData = JsonUtility.FromJson<LeaderboardData_Serializable>(leaderboardDataJSON);
-        var playersScores = leaderboardData.PlayerScore.Select(d => new PlayerScore(d.PlayerName, d.Score)).ToArray();
+        var playersScores = leaderboardData.PlayerScore.Select(d => PlayerScore.CreateFrom(d)).ToArray();
 
         endGameUI.SetActive(true);
         endGameUIController.SetMark(mark);

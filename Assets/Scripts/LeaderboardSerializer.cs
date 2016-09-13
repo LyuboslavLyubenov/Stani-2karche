@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Collections;
 using CielaSpike;
 using System.Threading;
+using System.Text;
 
 /// <summary>
 /// Used to load leaderboard file data
@@ -69,7 +70,17 @@ public class LeaderboardSerializer : MonoBehaviour
             var playerScoreData = line.Split(',');
             var name = playerScoreData[0];
             var score = int.Parse(playerScoreData[1]);
-            var playerScore = new PlayerScore(name, score);
+            PlayerScore playerScore;
+
+            if (playerScoreData.Length == 3)
+            {
+                var creationDate = DateTime.Parse(playerScoreData[2]);
+                playerScore = new PlayerScore(name, score, creationDate);
+            }
+            else
+            {
+                playerScore = new PlayerScore(name, score);
+            }
 
             leaderboard.Add(playerScore);
         }
@@ -86,8 +97,7 @@ public class LeaderboardSerializer : MonoBehaviour
         {
             throw new Exception("Still loading score");
         }
-
-        //TODO:
+            
         var path = GetEndPath();
         var scores = File.ReadAllLines(path).ToList();
 
@@ -97,9 +107,9 @@ public class LeaderboardSerializer : MonoBehaviour
         {
             for (int i = 0; i < scores.Count; i++)
             {
-                var scoreParams = scores[i].Split(',');
+                var scoreData = scores[i].Split(',');
 
-                if (scoreParams[0] == playerScore.PlayerName)
+                if (scoreData[0] == playerScore.PlayerName)
                 {
                     playerIndex = i;
                     break;
@@ -107,15 +117,25 @@ public class LeaderboardSerializer : MonoBehaviour
             }    
         }
 
-        var scoreDataLine = string.Format("{0},{1}", playerScore.PlayerName, playerScore.Score);
+        var data = new List<string>();
+        var propertyInfos = playerScore.GetType().GetProperties();
+
+        for (int i = 0; i < propertyInfos.Length; i++)
+        {
+            var propertyName = propertyInfos[i].Name;
+            var propertyValue = propertyInfos[i].GetValue(playerScore, null);
+            data.Add(propertyValue.ToString());
+        }
+
+        var score = string.Join(",", data.ToArray());
 
         if (playerIndex > -1)
         {
-            scores[playerIndex] = scoreDataLine;
+            scores[playerIndex] = score;
         }
         else
         {
-            scores.Add(scoreDataLine);
+            scores.Add(score);
         }
 
         File.WriteAllLines(path, scores.ToArray());
