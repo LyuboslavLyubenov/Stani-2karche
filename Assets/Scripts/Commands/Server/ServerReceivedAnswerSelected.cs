@@ -32,12 +32,33 @@ public class ServerReceivedAnswerSelected : INetworkManagerCommand
         this.onReceivedAnswer = onReceivedAnswer;
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
+    public virtual void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
         var answerSelected = commandsOptionsValues["Answer"];
 
         onReceivedAnswer(connectionId, answerSelected);
         //TODO:
+    }
+}
+
+public class ServerReceivedAnswerSelectedOneTime : ServerReceivedAnswerSelected, IOneTimeExecuteCommand
+{
+    public bool FinishedExecution
+    {
+        get;
+        private set;
+    }
+
+    public ServerReceivedAnswerSelectedOneTime(IGameData gameData, ServerNetworkManager networkManager, OnReceivedAnswerDelegate onReceivedAnswer)
+        : base(gameData, networkManager, onReceivedAnswer)
+    {
+        FinishedExecution = false;
+    }
+
+    public override void Execute(Dictionary<string, string> commandsOptionsValues)
+    {
+        base.Execute(commandsOptionsValues);
+        FinishedExecution = true;
     }
 }

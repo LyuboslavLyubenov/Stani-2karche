@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -9,11 +8,9 @@ public class OnAnswerTimeoutCommand : INetworkManagerCommand
 
     GameObject questionPanelUI;
 
-    GameState currentGameState;
-
     NotificationsServiceController notificationService;
 
-    public OnAnswerTimeoutCommand(GameObject questionPanelUI, GameState currentGameState, NotificationsServiceController notificationService)
+    public OnAnswerTimeoutCommand(GameObject questionPanelUI, NotificationsServiceController notificationService)
     {
         if (notificationService == null)
         {
@@ -26,17 +23,11 @@ public class OnAnswerTimeoutCommand : INetworkManagerCommand
         }
             
         this.questionPanelUI = questionPanelUI;
-        this.currentGameState = currentGameState; 
         this.notificationService = notificationService;
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
-        if (currentGameState != GameState.Idle)
-        {
-            throw new Exception("Cant use this command now");
-        }
-
         questionPanelUI.SetActive(false);
         notificationService.AddNotification(Color.blue, AnsweTimeoutMessage);
     }

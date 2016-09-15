@@ -45,17 +45,12 @@ public class HelpFromFriendJoker : IJoker
 
     bool activated = false;
 
-    public HelpFromFriendJoker(IGameData gameData, 
-                               ClientNetworkManager networkManager, 
+    public HelpFromFriendJoker(ClientNetworkManager networkManager, 
                                GameObject callAFriendUI, 
                                GameObject friendAnswerUI, 
                                GameObject waitingToAnswerUI,
                                GameObject loadingUI)
     {
-        if (gameData == null)
-        {
-            throw new ArgumentNullException("gameData");
-        }
             
         if (networkManager == null)
         {
@@ -82,7 +77,6 @@ public class HelpFromFriendJoker : IJoker
             throw new ArgumentNullException("loadingUI");
         }
 
-        this.gameData = gameData;
         this.networkManager = networkManager;
         this.callAFriendUI = callAFriendUI;
         this.friendAnswerUI = friendAnswerUI;
@@ -107,6 +101,28 @@ public class HelpFromFriendJoker : IJoker
         friendAnswerUIController.SetResponse(username, answer);
     }
 
+    void OnAppliedAskFriendJokerSettings()
+    {
+        waitingToAnswerUI.SetActive(true);
+        loadingUI.SetActive(false);
+    }
+
+    void AskFriendOnline(int clientConnectionId)
+    {
+        var selectedAskAFriendJokerCommand = new NetworkCommandData("SelectedAskAFriendJoker");
+        selectedAskAFriendJokerCommand.AddOption("SendClientId", clientConnectionId.ToString());
+
+        networkManager.SendServerCommand(selectedAskAFriendJokerCommand);
+
+        waitingToAnswerUI.SetActive(true);
+
+        var disableAfterDelay = waitingToAnswerUI.GetComponent<DisableAfterDelay>();
+        networkManager.CommandsManager.AddCommand("AskFriendJokerSettings", new MainPlayerApplyAskFriendJokerSettingsCommand(disableAfterDelay, OnAppliedAskFriendJokerSettings));
+
+        waitingToAnswerUI.SetActive(false);
+        loadingUI.SetActive(true);
+    }
+
     void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
     {
         loadingUI.SetActive(false);
@@ -123,49 +139,9 @@ public class HelpFromFriendJoker : IJoker
         loadingUI.SetActive(true);
     }
 
-    void AskFriendOnline(Question question, int clientConnectionId)
+    void ActivateCallAFriendJoker()
     {
-        var commandData = new NetworkCommandData("SelectedAskAFriendJoker");
-        var questionJSON = JsonUtility.ToJson(question);
-        commandData.AddOption("QuestionJSON", questionJSON);
-        commandData.AddOption("ClientConnectionId", clientConnectionId.ToString());
-
-        networkManager.SendServerCommand(commandData);
-
-        waitingToAnswerUI.SetActive(true);
-
-        var disableAfterDelayComponent = waitingToAnswerUI.GetComponent<DisableAfterDelay>();
-
-        disableAfterDelayComponent.OnTimePass += (sender, args) => SendRemainingTimeToClient(clientConnectionId, args.Seconds);
-        disableAfterDelayComponent.OnTimeEnd += (sender, args) => StopReceivingAnswer(clientConnectionId);
-    }
-
-    void StopReceivingAnswer(int clientConnectionId)
-    {
-        var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
-        answerTimeoutCommandData.AddOption("ClientConnectionId", clientConnectionId.ToString());
-        networkManager.SendServerCommand(answerTimeoutCommandData);
-    }
-
-    void SendRemainingTimeToClient(int clientConnectionId, int remainingTimeInSeconds)
-    {
-        var commandData = new NetworkCommandData("RemainingTimeToAnswer");
-        commandData.AddOption("TimeInSeconds", remainingTimeInSeconds.ToString());
-        commandData.AddOption("ClientConnectionId", clientConnectionId.ToString());
-        networkManager.SendServerCommand(commandData);
-    }
-
-    public void Activate()
-    {
-        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new AskAFriendResponseCommand(OnReceivedAskAFriendResponse));
-        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ClientReceiveConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
-
-        gameData.GetCurrentQuestion(ActivateCallAFriendJoker, Debug.LogException);
-    }
-
-    void ActivateCallAFriendJoker(Question currentQuestion)
-    {
-        callAFriendUIController.OnCalledPlayer += (sender, args) => AskFriendOnline(currentQuestion, args.PlayerConnectionId);
+        callAFriendUIController.OnCalledPlayer += (sender, args) => AskFriendOnline(args.PlayerConnectionId);
         BeginReceiveConnectedClientsIdsNames();
 
         if (OnActivated != null)
@@ -175,4 +151,13 @@ public class HelpFromFriendJoker : IJoker
 
         activated = true;
     }
+
+    public void Activate()
+    {
+        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new AskAFriendResponseCommand(OnReceivedAskAFriendResponse));
+        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ClientReceiveConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
+
+        ActivateCallAFriendJoker();
+    }
 }
+

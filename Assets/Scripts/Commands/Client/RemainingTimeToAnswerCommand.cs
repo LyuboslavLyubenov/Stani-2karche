@@ -8,7 +8,7 @@ public class RemainingTimeToAnswerCommand : INetworkManagerCommand
 
     GameState currentGameState;
 
-    public RemainingTimeToAnswerCommand(Action<RemainingTimeEventArgs> onReceivedRemainingTime, GameState currentGameState)
+    public RemainingTimeToAnswerCommand(Action<RemainingTimeEventArgs> onReceivedRemainingTime)
     { 
         if (onReceivedRemainingTime == null)
         {
@@ -16,17 +16,11 @@ public class RemainingTimeToAnswerCommand : INetworkManagerCommand
         }
 
         this.onReceivedRemainingTime = onReceivedRemainingTime;
-        this.currentGameState = currentGameState;
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
-        if (currentGameState == GameState.Idle)
-        {
-            throw new Exception("Cant execute this command while in this gameState");
-        }
-
-        var secondsRemaining = int.Parse(commandsOptionsValues["SecondsRemaining"]);
+        var secondsRemaining = int.Parse(commandsOptionsValues["TimeInSeconds"]);
         var remainingTimeEventArgs = new RemainingTimeEventArgs(secondsRemaining);
 
         onReceivedRemainingTime(remainingTimeEventArgs);
