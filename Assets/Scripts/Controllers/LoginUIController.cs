@@ -40,15 +40,15 @@ public class LoginUIController : MonoBehaviour
 
                 yield return Ninja.JumpToUnity;
 
-                var retrieveData = JsonUtility.FromJson<_UserRetrievedData>(returnDataJSON);
-                OnLoggedIn(retrieveData);
+                var Receivedata = JsonUtility.FromJson<_UserReceivedData>(returnDataJSON);
+                OnLoggedIn(Receivedata);
 
                 yield return Ninja.JumpBack;
             }
         }
     }
 
-    void OnLoggedIn(_UserRetrievedData userData)
+    void OnLoggedIn(_UserReceivedData userData)
     {
         Debug.Log("Logged in successfuly ");
     }

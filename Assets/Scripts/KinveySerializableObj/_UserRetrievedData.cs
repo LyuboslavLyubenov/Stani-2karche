@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public class _UserRetrievedData
+public class _UserReceivedData
 {
     public string _id;
     public string username;
