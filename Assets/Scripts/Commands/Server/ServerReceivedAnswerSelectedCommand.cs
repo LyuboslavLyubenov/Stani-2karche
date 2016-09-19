@@ -2,33 +2,19 @@
 using System;
 using UnityEngine;
 
-public class ServerReceivedAnswerSelected : INetworkManagerCommand
+public class ServerReceivedAnswerSelectedCommand : INetworkManagerCommand
 {
     public delegate void OnReceivedAnswerDelegate(int clientId,string answer);
 
-    IGameData gameData;
-    ServerNetworkManager networkManager;
     OnReceivedAnswerDelegate onReceivedAnswer;
 
-    public ServerReceivedAnswerSelected(IGameData gameData, ServerNetworkManager networkManager, OnReceivedAnswerDelegate onReceivedAnswer)
+    public ServerReceivedAnswerSelectedCommand(OnReceivedAnswerDelegate onReceivedAnswer)
     {
-        if (gameData == null)
-        {
-            throw new ArgumentNullException("gameData");
-        }
-            
-        if (networkManager == null)
-        {
-            throw new ArgumentNullException("networkManager");
-        }
-
         if (onReceivedAnswer == null)
         {
             throw new ArgumentNullException("onReceivedAnswer");
         }
-            
-        this.gameData = gameData;
-        this.networkManager = networkManager;
+
         this.onReceivedAnswer = onReceivedAnswer;
     }
 
@@ -42,7 +28,7 @@ public class ServerReceivedAnswerSelected : INetworkManagerCommand
     }
 }
 
-public class ServerReceivedAnswerSelectedOneTime : ServerReceivedAnswerSelected, IOneTimeExecuteCommand
+public class ServerReceivedAnswerSelectedOneTimeCommand : ServerReceivedAnswerSelectedCommand, IOneTimeExecuteCommand
 {
     public bool FinishedExecution
     {
@@ -50,8 +36,14 @@ public class ServerReceivedAnswerSelectedOneTime : ServerReceivedAnswerSelected,
         private set;
     }
 
-    public ServerReceivedAnswerSelectedOneTime(IGameData gameData, ServerNetworkManager networkManager, OnReceivedAnswerDelegate onReceivedAnswer)
-        : base(gameData, networkManager, onReceivedAnswer)
+    public EventHandler OnFinishedExecution
+    {
+        get;
+        set;
+    }
+
+    public ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedAnswerDelegate onReceivedAnswer)
+        : base(onReceivedAnswer)
     {
         FinishedExecution = false;
     }
@@ -60,5 +52,10 @@ public class ServerReceivedAnswerSelectedOneTime : ServerReceivedAnswerSelected,
     {
         base.Execute(commandsOptionsValues);
         FinishedExecution = true;
+
+        if (OnFinishedExecution != null)
+        {
+            OnFinishedExecution(this, EventArgs.Empty);
+        }
     }
 }

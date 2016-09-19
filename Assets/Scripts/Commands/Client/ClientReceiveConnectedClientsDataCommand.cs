@@ -13,6 +13,12 @@ public class ClientReceiveConnectedClientsDataCommand : IOneTimeExecuteCommand
         private set;
     }
 
+    public EventHandler OnFinishedExecution
+    {
+        get;
+        set;
+    }
+
     public ClientReceiveConnectedClientsDataCommand(Action<OnlineClientsData_Serializable> onReceivedOnlineClientsData)
     {
         if (onReceivedOnlineClientsData == null)
@@ -30,5 +36,10 @@ public class ClientReceiveConnectedClientsDataCommand : IOneTimeExecuteCommand
         var onlineClientsData = JsonUtility.FromJson<OnlineClientsData_Serializable>(connectedClientsDataJSON);
         onReceivedOnlineClients(onlineClientsData);
         FinishedExecution = true;
+
+        if (OnFinishedExecution != null)
+        {
+            OnFinishedExecution(this, EventArgs.Empty);
+        }
     }
 }

@@ -25,6 +25,12 @@ public class RemoteGameData : MonoBehaviour, IGameData
         private set;
     }
 
+    public int CurrentMark
+    {
+        get;
+        private set;
+    }
+
     public ClientNetworkManager NetworkManager;
 
     bool loaded = false;
@@ -56,13 +62,6 @@ public class RemoteGameData : MonoBehaviour, IGameData
         }
     }
 
-    void InititalizeGameDataCallback(Question firstQuestion, int questionsRemainingToNextMark)
-    {
-        currentQuestionCache = firstQuestion;
-        RemainingQuestionsToNextMark = questionsRemainingToNextMark;
-        loaded = true;
-    }
-
     void LoadDataFromServer()
     {
         GetCurrentQuestion((question) =>
@@ -74,6 +73,8 @@ public class RemoteGameData : MonoBehaviour, IGameData
 
     void OnReceivedMark(int mark)
     {
+        CurrentMark = mark;
+
         if (OnMarkIncrease != null)
         {
             OnMarkIncrease(this, new MarkEventArgs(mark));    

@@ -42,7 +42,7 @@ public class CommandsManager
 
         if (!commands.ContainsKey(commandName))
         {
-            throw new ArgumentException("Command not found");
+            throw new ArgumentException("Command with name " + command.Name + " not found");
         }
 
         var commandsToExecute = commands[commandName];

@@ -15,6 +15,12 @@ public class MainPlayerApplyAskFriendJokerSettingsCommand : IOneTimeExecuteComma
         private set;
     }
 
+    public EventHandler OnFinishedExecution
+    {
+        get;
+        set;
+    }
+
     public MainPlayerApplyAskFriendJokerSettingsCommand(DisableAfterDelay disableAfterDelay, Action onAppliedSettings)
     {
         if (disableAfterDelay == null)
@@ -37,5 +43,10 @@ public class MainPlayerApplyAskFriendJokerSettingsCommand : IOneTimeExecuteComma
         disableAfterDelay.DelayInSeconds = timeToAnswerInSeconds;
         onAppliedSettings();
         FinishedExecution = true;
+
+        if (OnFinishedExecution != null)
+        {
+            OnFinishedExecution(this, EventArgs.Empty);
+        }
     }
 }

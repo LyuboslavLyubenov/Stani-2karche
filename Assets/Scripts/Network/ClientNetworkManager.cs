@@ -203,7 +203,14 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
         if (commandLine != null)
         {
-            commandsManager.Execute(commandLine);
+            try
+            {
+                commandsManager.Execute(commandLine);    
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
         else
         {

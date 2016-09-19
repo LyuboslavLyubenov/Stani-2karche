@@ -1,9 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Timers;
-using System.Collections;
 
 public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
 {
@@ -58,7 +54,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
                 Deactivate();
             });
 
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedOneTime(LocalGameData, NetworkManager, OnReceivedAskAFriendResponse));
+        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedAskAFriendResponse));
 
         base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
 
@@ -100,12 +96,12 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
         }
         else
         {   
+            Deactivate();
+
             var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
 
             NetworkManager.SendClientCommand(senderConnectionId, answerTimeoutCommandData);
             NetworkManager.SendClientCommand(friendConnectionId, answerTimeoutCommandData);
-       
-            Deactivate();
         }
     }
 

@@ -1,4 +1,6 @@
-﻿public class AskAFriendResponseCommand : IOneTimeExecuteCommand
+﻿using System;
+
+public class AskAFriendResponseCommand : IOneTimeExecuteCommand
 {
     public delegate void OnReceivedResponde(string username,string answer);
 
@@ -10,11 +12,17 @@
         private set;
     }
 
+    public EventHandler OnFinishedExecution
+    {
+        get;
+        set;
+    }
+
     public AskAFriendResponseCommand(OnReceivedResponde onReceivedResponde)
     {
         if (onReceivedResponde == null)
         {
-            throw new System.ArgumentNullException("onReceivedResponde");
+            throw new ArgumentNullException("onReceivedResponde");
         }
             
         this.onReceivedResponde = onReceivedResponde;
@@ -28,5 +36,10 @@
 
         onReceivedResponde(username, answer);
         FinishedExecution = true;
+
+        if (OnFinishedExecution != null)
+        {
+            OnFinishedExecution(this, EventArgs.Empty);
+        }
     }
 }

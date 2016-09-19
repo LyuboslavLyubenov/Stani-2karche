@@ -18,6 +18,11 @@ public interface IGameData
         get;
     }
 
+    int CurrentMark
+    {
+        get;
+    }
+
     void GetCurrentQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null);
 
     void GetNextQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null);

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// When executed is destroyed from commandsmanager class
@@ -8,5 +9,11 @@ public interface IOneTimeExecuteCommand : INetworkManagerCommand
     bool FinishedExecution
     {
         get;
+    }
+
+    EventHandler OnFinishedExecution
+    {
+        get;
+        set;
     }
 }

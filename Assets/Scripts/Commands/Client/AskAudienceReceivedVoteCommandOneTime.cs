@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using System;
 
-public class AskAudienceVoteCommand : IOneTimeExecuteCommand
+public class AskAudienceReceivedVoteCommandOneTime : IOneTimeExecuteCommand
 {
     public delegate void OnReceivedVote(int connectionId,string answer);
 
@@ -12,11 +13,17 @@ public class AskAudienceVoteCommand : IOneTimeExecuteCommand
         private set;
     }
 
-    public AskAudienceVoteCommand(OnReceivedVote onReceivedVote)
+    public EventHandler OnFinishedExecution
+    {
+        get;
+        set;
+    }
+
+    public AskAudienceReceivedVoteCommandOneTime(OnReceivedVote onReceivedVote)
     {
         if (onReceivedVote == null)
         {
-            throw new System.ArgumentNullException("onReceivedVote");
+            throw new ArgumentNullException("onReceivedVote");
         }
             
         this.onReceivedVote = onReceivedVote;
@@ -24,10 +31,15 @@ public class AskAudienceVoteCommand : IOneTimeExecuteCommand
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
-        var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+        var connectionId = int.Parse(commandsOptionsValues["ClientConnectionId"]);
         var answer = commandsOptionsValues["Answer"];
         onReceivedVote(connectionId, answer);
 
         FinishedExecution = true;
+
+        if (OnFinishedExecution != null)
+        {
+            OnFinishedExecution(this, EventArgs.Empty);
+        }
     }
 }

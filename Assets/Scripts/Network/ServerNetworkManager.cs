@@ -282,7 +282,15 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         {
             FilterCommandLineOptions(commmandData);
             commmandData.AddOption("ConnectionId", connectionId.ToString());
-            commandsManager.Execute(commmandData);
+
+            try
+            {
+                commandsManager.Execute(commmandData);    
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
         }
         else
         {
@@ -360,11 +368,31 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         SendAllClientsMessage(command.ToString());
     }
 
+    public void SendAllClientsCommand(NetworkCommandData command, int exceptConnectionId)
+    {
+        SendAllClientsMessage(command.ToString(), exceptConnectionId);
+    }
+
     public void SendAllClientsMessage(string message)
     {
         for (int i = 0; i < connectedClientsIds.Count; i++)
         {
             var clientId = connectedClientsIds[i];
+            SendClientMessage(clientId, message);
+        }
+    }
+
+    public void SendAllClientsMessage(string message, int exceptConnectionId)
+    {
+        for (int i = 0; i < connectedClientsIds.Count; i++)
+        {
+            var clientId = connectedClientsIds[i];
+
+            if (clientId == exceptConnectionId)
+            {
+                continue;
+            }
+
             SendClientMessage(clientId, message);
         }
     }
