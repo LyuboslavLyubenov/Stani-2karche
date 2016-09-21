@@ -36,8 +36,6 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
         this.senderConnectionId = senderConnectionId;
         this.friendConnectionId = friendConnectionId;
 
-        elapsedTime = 0;
-
         var settingsCommandData = new NetworkCommandData("AskFriendJokerSettings");
         settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
         NetworkManager.SendClientCommand(senderConnectionId, settingsCommandData);
@@ -63,7 +61,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
 
     void OnReceivedAskAFriendResponse(int connectionId, string answer)
     {
-        if (elapsedTime >= timeToAnswerInSeconds)
+        if (elapsedTime >= timeToAnswerInSeconds || !NetworkManager.IsConnected(senderConnectionId))
         {
             return;
         }
@@ -108,11 +106,12 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
     public void Deactivate()
     {
         StopAllCoroutines();
-        activated = false;
 
         timeToAnswerInSeconds = 0;
         senderConnectionId = 0;
         friendConnectionId = 0;
         elapsedTime = 0;
+
+        activated = false;
     }
 }

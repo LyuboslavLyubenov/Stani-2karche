@@ -22,18 +22,19 @@ public class AskAudienceJoker : IJoker
 
     ClientNetworkManager networkManager;
 
-    Dictionary<string, int> audienceAnswerVoteCount = new Dictionary<string, int>();
-    List<int> audienceVotedId = new List<int>();
-
-    int connectedClients = 0;
-
     GameObject waitingToAnswerUI;
     GameObject loadingUI;
     GameObject audienceAnswerUI;
 
     AudienceAnswerUIController audienceAnswerUIController;
+    DisableAfterDelay waitingToAnswerUIDelayController;
 
-    Timer receivePermissionTimeoutTimer = new Timer(PermissionReceiveTimeoutInSeconds * 1000);
+    Dictionary<string, int> audienceAnswerVoteCount = new Dictionary<string, int>();
+    List<int> audienceVotedId = new List<int>();
+
+    int connectedClients = 0;
+
+    Timer receiveSettingsTimeoutTimer;
 
     public Sprite Image
     {
@@ -84,43 +85,30 @@ public class AskAudienceJoker : IJoker
         this.networkManager = networkManager;
         this.waitingToAnswerUI = waitingToAnswerUI;
         this.audienceAnswerUI = audienceAnswerUI;
-
-        audienceAnswerUI.SetActive(true);//STUPID HACK
-        this.audienceAnswerUIController = audienceAnswerUI.GetComponent<AudienceAnswerUIController>();
-        audienceAnswerUI.SetActive(false);
-
         this.loadingUI = loadingUI;
+
+        this.waitingToAnswerUIDelayController = this.waitingToAnswerUI.GetComponent<DisableAfterDelay>();
+        this.audienceAnswerUIController = audienceAnswerUI.GetComponent<AudienceAnswerUIController>();
 
         Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
     }
 
-    void OnReceivePermissionTimeout(object sender, ElapsedEventArgs args)
+    void OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
     {
-        networkManager.CommandsManager.RemoveCommand("AllowedToActivateAskAudienceJoker");
-        receivePermissionTimeoutTimer.Dispose();
+        ThreadUtils.Instance.RunOnMainThread(() =>
+            {
+                receiveSettingsTimeoutTimer.Dispose();
+                networkManager.CommandsManager.RemoveCommand("AskAudienceJokerSettings");
+            });
     }
 
-    public void Activate()
+    void OnReceivedJokerSettings(int timeToAnswerInSeconds)
     {
+        loadingUI.SetActive(false);
         waitingToAnswerUI.SetActive(true);
-        waitingToAnswerUI.GetComponent<WaitingToAnswerUIController>();
+        waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = timeToAnswerInSeconds;
 
-        var selectedAskAudienceJokerCommand = new NetworkCommandData("SelectedAskAudienceJoker");
-        networkManager.SendServerCommand(selectedAskAudienceJokerCommand);
-
-        var receivePermissionToActivateCommand = new ClientAllowedToActivateAskAudienceJokerCommand();
-        receivePermissionToActivateCommand.OnFinishedExecution += (sender, args) => OnReceivedPremissionToActivate();
-
-        networkManager.CommandsManager.AddCommand("AllowedToActivateAskAudienceJoker", receivePermissionToActivateCommand);
-
-        receivePermissionTimeoutTimer = new Timer(PermissionReceiveTimeoutInSeconds * 1000);
-        receivePermissionTimeoutTimer.AutoReset = false;
-        receivePermissionTimeoutTimer.Elapsed += OnReceivePermissionTimeout;
-    }
-
-    void OnReceivedPremissionToActivate()
-    {
-        receivePermissionTimeoutTimer.Stop();
+        receiveSettingsTimeoutTimer.Stop();
         ActivateAskAudienceJoker();
     }
 
@@ -131,10 +119,10 @@ public class AskAudienceJoker : IJoker
         loadingUI.SetActive(false);
         waitingToAnswerUI.SetActive(true);
 
-        var receivedAskAudienceVoteResultCommand = new ReceivedAskAudienceVoteResult(audienceAnswerUI);
+        var receivedAskAudienceVoteResultCommand = new ReceivedAskAudienceVoteResultCommand(audienceAnswerUI);
         receivedAskAudienceVoteResultCommand.OnFinishedExecution += (sender, args) => waitingToAnswerUI.SetActive(false);
 
-        networkManager.CommandsManager.AddCommand("AskAudienceVoteResult", receivedAskAudienceVoteResultCommand);
+        networkManager.CommandsManager.AddCommand("AskAudienceJokerSettings", receivedAskAudienceVoteResultCommand);
 
         Activated = true;
 
@@ -143,59 +131,21 @@ public class AskAudienceJoker : IJoker
             OnActivated(this, EventArgs.Empty);
         }
     }
-}
 
-public class ReceivedAskAudienceVoteResult : IOneTimeExecuteCommand
-{
-    public EventHandler OnFinishedExecution
+    public void Activate()
     {
-        get;
-        set;
+        loadingUI.SetActive(true);
+
+        var selectedAskAudienceJokerCommand = new NetworkCommandData("SelectedAskAudienceJoker");
+        networkManager.SendServerCommand(selectedAskAudienceJokerCommand);
+
+        var receiveJokerSettingsCommand = new ClientReceiveAskAudienceJokerSettingsCommand(OnReceivedJokerSettings);
+
+        networkManager.CommandsManager.AddCommand("AskAudienceJokerSettings", receiveJokerSettingsCommand);
+
+        receiveSettingsTimeoutTimer = new Timer(PermissionReceiveTimeoutInSeconds * 1000);
+        receiveSettingsTimeoutTimer.AutoReset = false;
+        receiveSettingsTimeoutTimer.Elapsed += OnReceiveSettingsTimeout;
     }
 
-    public bool FinishedExecution
-    {
-        get;
-        private set;
-    }
-
-    AudienceAnswerUIController audienceAnswerUIController;
-
-    GameObject audienceAnswerUI;
-
-    public ReceivedAskAudienceVoteResult(GameObject audienceAnswerUI)
-    {
-        if (audienceAnswerUI == null)
-        {
-            throw new ArgumentNullException("audienceAnswerUI");
-        }
-         
-        this.audienceAnswerUI = audienceAnswerUI;
-        this.audienceAnswerUIController = audienceAnswerUI.GetComponent<AudienceAnswerUIController>();
-    }
-
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var answersVotes = commandsOptionsValues.Where(optionValue => optionValue.Key != "ConnectionId")
-            .ToArray();
-
-        var answersVotesData = new Dictionary<string, int>();
-
-        for (int i = 0; i < answersVotes.Length; i++)
-        {
-            var answer = answersVotes[i].Key;
-            var voteCount = int.Parse(answersVotes[i].Value);
-            answersVotesData.Add(answer, voteCount);
-        }
-
-        audienceAnswerUI.SetActive(true);
-        audienceAnswerUIController.SetVoteCount(answersVotesData, true);
-
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
-        {
-            OnFinishedExecution(this, EventArgs.Empty);
-        }
-    }
 }

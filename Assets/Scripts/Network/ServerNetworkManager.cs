@@ -11,7 +11,7 @@ using System.ComponentModel.Design;
 public class ServerNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
-    const float CheckForDeadClientsDelayInSeconds = 6f;
+    const float CheckForDeadClientsDelayInSeconds = 5f;
 
     //how many clients can be connected to the server
     public int MaxConnections;
@@ -60,6 +60,14 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         get
         {
             return connectedClientsIds.Count;
+        }
+    }
+
+    public int[] ConnectedClientsConnectionId
+    {
+        get
+        {
+            return connectedClientsIds.ToArray();
         }
     }
 
@@ -438,6 +446,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
         bannedConnections.Add(connectionId);
         KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
+    }
+
+    public bool IsConnected(int connectionId)
+    {
+        return connectedClientsIds.Contains(connectionId);
     }
 
     #region DEBUG

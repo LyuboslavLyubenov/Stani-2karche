@@ -15,47 +15,16 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
     int senderConnectionId;
     int elapsedTime;
 
-    MainPlayerData mainPlayerData;
-
+    List<int> clientsThatMustVote = new List<int>();
     List<int> votedClientsConnectionId = new List<int>();
     Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+
+    MainPlayerData mainPlayerData;
 
     public bool Activated
     {
         get;
         private set;
-    }
-
-    void OnReceivedVote(int connectionId, string answer)
-    {
-        if (elapsedTime >= timeToAnswerInSeconds)
-        {
-            NoMoreTimeToAnswer();
-            SendMainPlayerVoteResult();
-            return;
-        }
-
-        if (votedClientsConnectionId.Contains(connectionId) || senderConnectionId == connectionId)
-        {
-            BeginReceiveVote();
-            return;
-        }
-
-        answersVotes[answer]++;
-        votedClientsConnectionId.Add(connectionId);
-
-        if (votedClientsConnectionId.Count >= NetworkManager.ConnectedClientsCount - 1)
-        {
-            SendMainPlayerVoteResult();
-            return;
-        }
-
-        BeginReceiveVote();
-    }
-
-    void BeginReceiveVote()
-    {
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedVote));
     }
 
     void UpdateTimer()
@@ -67,17 +36,15 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         elapsedTime++;
 
-        if (elapsedTime < timeToAnswerInSeconds)
+        if (AreFinishedVoting())
         {
-            var remainingTimeInSeconds = timeToAnswerInSeconds - elapsedTime;
-            SendRemainingTimeToAnswerToAudience(remainingTimeInSeconds);
-        }
-        else
-        {   
-            Deactivate();
-            NoMoreTimeToAnswer();
+            TellClientsThatJokerIsDeactivated();
             SendMainPlayerVoteResult();
+            return;
         }
+
+        var remainingTimeInSeconds = timeToAnswerInSeconds - elapsedTime;
+        SendRemainingTimeToAnswerToAudience(remainingTimeInSeconds);
     }
 
     void SendRemainingTimeToAnswerToAudience(int remainingTimeInSeconds)
@@ -90,7 +57,6 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
     void NoMoreTimeToAnswer()
     {
         var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
-        NetworkManager.SendClientCommand(senderConnectionId, answerTimeoutCommandData);
         NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, senderConnectionId);
     }
 
@@ -107,6 +73,12 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     void SendVoteResult(Question currentQuestion)
     {
+        if (!NetworkManager.IsConnected(senderConnectionId))
+        {
+            Debug.LogError("[AskAudienceJokerRouter] Main Player not connected");
+            return;
+        }
+
         var voteResultCommandData = new NetworkCommandData("AskAudienceVoteResult");
         var answersVotesPairs = answersVotes.ToArray();
 
@@ -121,17 +93,107 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         Deactivate();
     }
 
+    void BeginReceiveVote()
+    {
+        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedVote));
+    }
+
+    void OnReceivedVote(int connectionId, string answer)
+    {
+        if (!Activated)
+        {
+            return;
+        }
+
+        answersVotes[answer]++;
+        votedClientsConnectionId.Add(connectionId);
+
+        if (AreFinishedVoting())
+        {
+            NoMoreTimeToAnswer();
+            SendMainPlayerVoteResult();
+            return;
+        }
+
+        BeginReceiveVote();
+    }
+
+    bool AreFinishedVoting()
+    {
+        if (elapsedTime >= timeToAnswerInSeconds)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < clientsThatMustVote.Count; i++)
+        {
+            var connectionId = clientsThatMustVote[i];
+            
+            if (!votedClientsConnectionId.Contains(connectionId))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    void SendJokerSettings()
+    {
+        var setAskAudienceJokerSettingsCommand = new NetworkCommandData("AskAudienceJokerSettings");
+        setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
+
+        NetworkManager.SendClientCommand(senderConnectionId, setAskAudienceJokerSettingsCommand);
+    }
+
+    void SendQuestionToAudience(Question question)
+    {
+        var sendQuestionCommand = new NetworkCommandData("LoadQuestion");
+        var questionJSON = JsonUtility.ToJson(question);
+        sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
+        NetworkManager.SendAllClientsCommand(sendQuestionCommand, senderConnectionId);
+    }
+
+    void TellClientsThatJokerIsDeactivated()
+    {
+        var clients = clientsThatMustVote.ToList();
+        clients.Add(senderConnectionId);
+
+        var notificationCommand = new NetworkCommandData("ShowNotification");
+        notificationCommand.AddOption("Color", "red");
+        notificationCommand.AddOption("Message", "Voting is over!");
+
+        for (int i = 0; i < clients.Count; i++)
+        {
+            var connectionId = clients[i];
+            NetworkManager.SendClientCommand(connectionId, notificationCommand);
+        }
+    }
+
+    void ResetAnswerVotes(Question question)
+    {
+        for (int i = 0; i < question.Answers.Length; i++)
+        {
+            var answer = question.Answers[i];
+            answersVotes.Add(answer, 0);
+        }
+    }
+
     public void Deactivate()
     {
+        TellClientsThatJokerIsDeactivated();
+
         StopAllCoroutines();
-        Activated = false;
+
+        clientsThatMustVote.Clear();
+        votedClientsConnectionId.Clear();
+        answersVotes.Clear();
 
         timeToAnswerInSeconds = 0;
         senderConnectionId = 0;
         elapsedTime = 0;
 
-        votedClientsConnectionId.Clear();
-        answersVotes.Clear();
+        Activated = false;
     }
 
     public void Activate(int timeToAnswerInSeconds, int senderConnectionId, MainPlayerData mainPlayerData)
@@ -152,22 +214,19 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         elapsedTime = 0;
 
+        var audienceConnectionIds = NetworkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
+        clientsThatMustVote.AddRange(audienceConnectionIds);
+
+        CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
+
         LocalGameData.GetCurrentQuestion((question) =>
             {
-                var sendQuestionToFriend = new NetworkCommandData("LoadQuestion");
-                var questionJSON = JsonUtility.ToJson(question);
-                sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
-                NetworkManager.SendAllClientsCommand(sendQuestionToFriend, senderConnectionId);
-
-                CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
-
-                for (int i = 0; i < question.Answers.Length; i++)
-                {
-                    var answer = question.Answers[i];
-                    answersVotes.Add(answer, 0);
-                }
-
+                ResetAnswerVotes(question);
+                SendJokerSettings();
+                SendQuestionToAudience(question);
                 BeginReceiveVote();
+                Activated = true;
+
             }, (exception) =>
             {
                 Debug.LogException(exception);

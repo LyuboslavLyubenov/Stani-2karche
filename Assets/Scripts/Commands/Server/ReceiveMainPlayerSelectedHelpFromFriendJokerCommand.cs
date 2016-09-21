@@ -7,14 +7,21 @@ using System.Collections;
 
 public class ReceiveMainPlayerSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
 {
+    ServerNetworkManager networkManager;
+
     MainPlayerData mainPlayerData;
     HelpFromFriendJokerRouter jokerServerRouter;
     int timeToAnswerInSeconds;
 
     Type helpFromFriendJokerType;
 
-    public ReceiveMainPlayerSelectedHelpFromFriendJokerCommand(MainPlayerData mainPlayerData, HelpFromFriendJokerRouter jokerServerRouter, int timeToAnswerInSeconds)
+    public ReceiveMainPlayerSelectedHelpFromFriendJokerCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, HelpFromFriendJokerRouter jokerServerRouter, int timeToAnswerInSeconds)
     {
+        if (networkManager == null)
+        {
+            throw new ArgumentNullException("networkManager");
+        }
+            
         if (mainPlayerData == null)
         {
             throw new ArgumentNullException("mainPlayerData");
@@ -24,7 +31,8 @@ public class ReceiveMainPlayerSelectedHelpFromFriendJokerCommand : INetworkManag
         {
             throw new ArgumentNullException("jokerServerRouter");
         }
-            
+
+        this.networkManager = networkManager;
         this.mainPlayerData = mainPlayerData;
         this.jokerServerRouter = jokerServerRouter;
         this.timeToAnswerInSeconds = timeToAnswerInSeconds;
@@ -36,7 +44,7 @@ public class ReceiveMainPlayerSelectedHelpFromFriendJokerCommand : INetworkManag
         var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
         var sendClientId = int.Parse(commandsOptionsValues["SendClientId"]);
 
-        if (!mainPlayerData.JokersData.AvailableJokers.Contains(helpFromFriendJokerType))
+        if (!mainPlayerData.JokersData.AvailableJokers.Contains(helpFromFriendJokerType) || !networkManager.IsConnected(senderConnectionId))
         {
             return;
         }
