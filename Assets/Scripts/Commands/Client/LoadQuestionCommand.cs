@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class LoadQuestionCommand : INetworkManagerCommand
 {
-    Action<Question> OnReceivedQuestion;
+    Action<ISimpleQuestion> OnReceivedQuestion;
 
-    public LoadQuestionCommand(Action<Question> OnReceivedQuestion)
+    public LoadQuestionCommand(Action<ISimpleQuestion> OnReceivedQuestion)
     {
         if (OnReceivedQuestion == null)
         {
@@ -19,7 +19,7 @@ public class LoadQuestionCommand : INetworkManagerCommand
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var questionJSON = commandsOptionsValues["QuestionJSON"];
-        var question = JsonUtility.FromJson<Question>(questionJSON);
-        OnReceivedQuestion(question);
+        var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
+        OnReceivedQuestion(question.Deserialize());
     }
 }

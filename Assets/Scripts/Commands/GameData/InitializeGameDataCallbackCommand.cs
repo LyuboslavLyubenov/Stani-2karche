@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InitializeGameDataCallbackCommand : INetworkManagerCommand
 {
-    public delegate void InitializeCallbackDelegate(Question firstQuestion,int questionsRemainingToNextMark);
+    public delegate void InitializeCallbackDelegate(ISimpleQuestion firstQuestion,int questionsRemainingToNextMark);
 
     InitializeCallbackDelegate initializaCallback;
 
@@ -21,10 +21,10 @@ public class InitializeGameDataCallbackCommand : INetworkManagerCommand
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var questionJSON = commandsOptionsValues["QuestionJSON"];
-        var question = JsonUtility.FromJson<Question>(questionJSON);
+        var question = JsonUtility.FromJson<ISimpleQuestion_Serializable>(questionJSON);
         var questionsRemainingToNextMark = int.Parse(commandsOptionsValues["RemainingQuestionsToNextMark"]);
 
-        initializaCallback(question, questionsRemainingToNextMark);
+        initializaCallback(question.Deserialize(), questionsRemainingToNextMark);
     }
 
 }

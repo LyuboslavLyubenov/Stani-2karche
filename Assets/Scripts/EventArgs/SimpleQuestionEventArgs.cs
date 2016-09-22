@@ -1,9 +1,9 @@
 ﻿using System;
 
 
-public class QuestionEventArgs : EventArgs
+public class SimpleQuestionEventArgs : EventArgs
 {
-    public QuestionEventArgs(Question question)
+    public SimpleQuestionEventArgs(ISimpleQuestion question)
     {
         if (question == null)
         {
@@ -13,7 +13,7 @@ public class QuestionEventArgs : EventArgs
         this.Question = question;
     }
 
-    public Question Question
+    public ISimpleQuestion Question
     {
         get;
         set;

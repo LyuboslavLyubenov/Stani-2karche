@@ -2,7 +2,7 @@
 
 public class PendingQuestionRequestData
 {
-    public delegate void OnSuccessfullyLoadedDelegate(Question question);
+    public delegate void OnSuccessfullyLoadedDelegate(ISimpleQuestion question);
 
     public delegate void OnExceptionDelegate(Exception exception);
 

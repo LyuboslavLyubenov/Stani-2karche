@@ -70,7 +70,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
             });
     }
 
-    void SendVoteResult(Question currentQuestion)
+    void SendVoteResult(ISimpleQuestion currentQuestion)
     {
         if (!NetworkManager.IsConnected(senderConnectionId))
         {
@@ -145,10 +145,10 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         NetworkManager.SendClientCommand(senderConnectionId, setAskAudienceJokerSettingsCommand);
     }
 
-    void SendQuestionToAudience(Question question)
+    void SendQuestionToAudience(ISimpleQuestion question)
     {
         var sendQuestionCommand = new NetworkCommandData("LoadQuestion");
-        var questionJSON = JsonUtility.ToJson(question);
+        var questionJSON = JsonUtility.ToJson(question.Serialize());
         sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
         NetworkManager.SendAllClientsCommand(sendQuestionCommand, senderConnectionId);
     }
@@ -169,7 +169,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         }
     }
 
-    void ResetAnswerVotes(Question question)
+    void ResetAnswerVotes(ISimpleQuestion question)
     {
         for (int i = 0; i < question.Answers.Length; i++)
         {

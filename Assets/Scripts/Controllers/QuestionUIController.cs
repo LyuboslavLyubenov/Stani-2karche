@@ -23,7 +23,7 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         set;
     }
 
-    public EventHandler<QuestionEventArgs> OnQuestionLoaded
+    public EventHandler<SimpleQuestionEventArgs> OnQuestionLoaded
     {
         get;
         set;
@@ -94,7 +94,7 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         initialized = true;
     }
 
-    IEnumerator LoadQuestionCoroutine(Question question)
+    IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
     {
         yield return new WaitUntil(() => initialized);
         yield return new WaitForEndOfFrame();
@@ -135,7 +135,7 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
 
         if (OnQuestionLoaded != null)
         {
-            OnQuestionLoaded(this, new QuestionEventArgs(question));    
+            OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));    
         }
     }
 
@@ -218,7 +218,7 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         }
     }
 
-    public void LoadQuestion(Question question)
+    public void LoadQuestion(ISimpleQuestion question)
     {
         StartCoroutine(LoadQuestionCoroutine(question));
     }

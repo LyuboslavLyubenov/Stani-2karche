@@ -39,7 +39,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
     Stack<PendingQuestionRequestData> nextQuestionRequests = new Stack<PendingQuestionRequestData>();
     Stack<PendingQuestionRequestData> randomQuestionRequests = new Stack<PendingQuestionRequestData>();
 
-    Question currentQuestionCache = null;
+    ISimpleQuestion currentQuestionCache = null;
 
     void Start()
     {
@@ -81,7 +81,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         }
     }
 
-    void OnReceivedQuestion(QuestionRequestType requestType, Question question, int remainingQuestionsToNextMark)
+    void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark)
     {
         PendingQuestionRequestData questionRequest = null;
 
@@ -114,7 +114,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         questionRequest.OnLoaded(question);
     }
 
-    public void GetCurrentQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {
         if (currentQuestionCache != null)
         {
@@ -142,7 +142,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         }
     }
 
-    public void GetNextQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    public void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {
         try
         {
@@ -164,7 +164,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         }
     }
 
-    public void GetRandomQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    public void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {
         try
         {

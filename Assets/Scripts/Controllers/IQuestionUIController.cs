@@ -12,7 +12,7 @@ public interface IQuestionUIController
         set;
     }
 
-    EventHandler<QuestionEventArgs> OnQuestionLoaded
+    EventHandler<SimpleQuestionEventArgs> OnQuestionLoaded
     {
         get;
         set;
@@ -24,6 +24,6 @@ public interface IQuestionUIController
 
     void ShowAllAnswers();
 
-    void LoadQuestion(Question question);
+    void LoadQuestion(ISimpleQuestion question);
 
 }

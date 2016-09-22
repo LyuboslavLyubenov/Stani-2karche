@@ -68,7 +68,7 @@ public class LocalGameData : MonoBehaviour, IGameData
     int currentQuestionIndex = 0;
     int currentMarkIndex = 0;
 
-    List<List<Question>> marksQuestions = new List<List<Question>>();
+    List<List<ISimpleQuestion>> marksQuestions = new List<List<ISimpleQuestion>>();
     List<int> questionsToTakePerMark = new List<int>();
 
     IEnumerator SerializeLevelDataAsync()
@@ -89,7 +89,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
         for (int i = 0; i < questionFilesPath.Length; i++)
         {
-            var questions = new List<Question>();
+            var questions = new List<ISimpleQuestion>();
             var markQuestionsDataPath = questionFilesPath[i];
             var workbook = Workbook.getWorkbook(new FileInfo(markQuestionsDataPath));
             var sheet = workbook.getSheet(0);
@@ -143,7 +143,7 @@ public class LocalGameData : MonoBehaviour, IGameData
                 }
 
                 var correctAnswerIndex = answers.IndexOf(correctAnswer);
-                var question = new Question(questionText, answers.ToArray(), correctAnswerIndex);
+                var question = new ISimpleQuestion(questionText, answers.ToArray(), correctAnswerIndex);
 
                 questions.Add(question);
             }
@@ -162,7 +162,7 @@ public class LocalGameData : MonoBehaviour, IGameData
         this.StartCoroutineAsync(SerializeLevelDataAsync());
     }
 
-    Question _GetCurrentQuestion()
+    ISimpleQuestion _GetCurrentQuestion()
     {
         if (!loaded)
         {
@@ -179,7 +179,7 @@ public class LocalGameData : MonoBehaviour, IGameData
         return questions[index];
     }
 
-    Question _GetNextQuestion()
+    ISimpleQuestion _GetNextQuestion()
     {
         if (!loaded)
         {
@@ -221,13 +221,13 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
     }
 
-    Question _GetRandomQuestion()
+    ISimpleQuestion _GetRandomQuestion()
     {
         var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Count);
         return marksQuestions[currentMarkIndex][questionIndex];
     }
 
-    public void GetCurrentQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {
         try
         {
@@ -240,7 +240,7 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
     }
 
-    public void GetNextQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    public void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {        
         try
         {
@@ -253,7 +253,7 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
     }
 
-    public void GetRandomQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null)
+    public void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {
         try
         {

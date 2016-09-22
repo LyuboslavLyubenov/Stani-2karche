@@ -32,9 +32,9 @@ public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerComman
         this.GameData = gameData;
     }
 
-    protected void SendQuestion(int connectionId, Question question, QuestionRequestType requestType)
+    protected void SendQuestion(int connectionId, ISimpleQuestion question, QuestionRequestType requestType)
     {
-        var questionJSON = JsonUtility.ToJson(question);
+        var questionJSON = JsonUtility.ToJson(question.Serialize());
         var commandData = new NetworkCommandData("GameDataQuestion");
         var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
         commandData.AddOption("QuestionJSON", questionJSON);

@@ -23,9 +23,9 @@ public interface IGameData
         get;
     }
 
-    void GetCurrentQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null);
+    void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 
-    void GetNextQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null);
+    void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 
-    void GetRandomQuestion(Action<Question> onSuccessfullyLoaded, Action<Exception> onError = null);
+    void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 }
