@@ -59,6 +59,15 @@ public class MainPlayerData : IPlayerData
 
         networkManager.OnClientDisconnected += OnClientDisconnected;
         networkManager.CommandsManager.AddCommand("MainPlayerConnecting", new MainPlayerConnectingCommand(OnMainPlayerConnecting));
+
+        //lazy motherf*cker
+        OnConnected = delegate
+        {
+        };
+
+        OnDisconnected = delegate
+        {
+        };
     }
 
     void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)

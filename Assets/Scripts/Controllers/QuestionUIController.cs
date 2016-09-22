@@ -4,17 +4,9 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 
-public class QuestionUIController : MonoBehaviour
+public class QuestionUIController : MonoBehaviour, IQuestionUIController
 {
     const int AnswersCount = 4;
-   
-    public EventHandler<AnswerEventArgs> OnAnswerClick = delegate
-    {
-    };
-
-    public EventHandler<QuestionEventArgs> OnQuestionLoaded = delegate
-    {
-    };
 
     public bool ShouldPlayButtonAnimation = true;
 
@@ -25,8 +17,28 @@ public class QuestionUIController : MonoBehaviour
     Button[] answersButtons = new Button[AnswersCount];
     Animator[] answersAnimators = new Animator[AnswersCount];
 
+    public EventHandler<AnswerEventArgs> OnAnswerClick
+    {
+        get;
+        set;
+    }
+
+    public EventHandler<QuestionEventArgs> OnQuestionLoaded
+    {
+        get;
+        set;
+    }
+
     void Start()
     {
+        OnAnswerClick = delegate
+        {
+        };
+
+        OnQuestionLoaded = delegate
+        {
+        };
+        
         StartCoroutine(InitializeCoroutine());
     }
 
@@ -127,7 +139,6 @@ public class QuestionUIController : MonoBehaviour
         }
     }
 
-   
     void AttachButtonListener(int buttonIndex, bool isCorrect)
     {
         var button = answersButtons[buttonIndex];
