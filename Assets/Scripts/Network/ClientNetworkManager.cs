@@ -97,9 +97,9 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void ConfigureCommands()
     {
-        commandsManager.AddCommand("ShowNotification", new ShowNotificationFromServerCommand(NotificationsServiceController));
-        commandsManager.AddCommand("AllowedToConnect", new AllowToConnectToServerCommand(isConnected));
-        commandsManager.AddCommand("ConnectedClientsCount", new ClientReceiveConnectedClientsCountCommand(serverConnectedClientsCount));
+        commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(NotificationsServiceController));
+        commandsManager.AddCommand("AllowedToConnect", new ReceivedAllowToConnectToServerCommand(isConnected));
+        commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(serverConnectedClientsCount));
     }
 
     void SendKeepAliveRequest()

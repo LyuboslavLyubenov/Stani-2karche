@@ -21,9 +21,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
         mainPlayerData.OnConnected += OnMainPlayerConnected;
         mainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
 
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedCommand(OnReceivedSelectedAnswer));
-        NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", new ReceiveMainPlayerSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 60));
-        NetworkManager.CommandsManager.AddCommand("SelectedAskAudienceJoker", new ReceiveMainPlayerSelectedAskAudienceJokerCommand(mainPlayerData, AskAudienceJokerRouter, NetworkManager, 60));
+        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerAnswerSelectedCommand(OnReceivedSelectedAnswer));
+        NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 60));
+        NetworkManager.CommandsManager.AddCommand("SelectedAskAudienceJoker", new ReceivedSelectedAskAudienceJokerCommand(mainPlayerData, AskAudienceJokerRouter, NetworkManager, 60));
 
         GameData.LoadDataAsync();
 

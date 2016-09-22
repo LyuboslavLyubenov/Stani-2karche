@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LoadQuestionCommand : INetworkManagerCommand
+public class ReceivedLoadQuestionCommand : INetworkManagerCommand
 {
     Action<ISimpleQuestion> OnReceivedQuestion;
 
-    public LoadQuestionCommand(Action<ISimpleQuestion> OnReceivedQuestion)
+    public ReceivedLoadQuestionCommand(Action<ISimpleQuestion> OnReceivedQuestion)
     {
         if (OnReceivedQuestion == null)
         {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-public class AskAudienceReceivedVoteCommandOneTime : IOneTimeExecuteCommand
+public class ReceivedAskAudienceVoteOneTimeCommand : IOneTimeExecuteCommand
 {
     public delegate void OnReceivedVote(int connectionId,string answer);
 
@@ -19,7 +19,7 @@ public class AskAudienceReceivedVoteCommandOneTime : IOneTimeExecuteCommand
         set;
     }
 
-    public AskAudienceReceivedVoteCommandOneTime(OnReceivedVote onReceivedVote)
+    public ReceivedAskAudienceVoteOneTimeCommand(OnReceivedVote onReceivedVote)
     {
         if (onReceivedVote == null)
         {

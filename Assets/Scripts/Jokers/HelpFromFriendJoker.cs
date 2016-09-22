@@ -117,7 +117,7 @@ public class HelpFromFriendJoker : IJoker
         waitingToAnswerUI.SetActive(true);
 
         var disableAfterDelay = waitingToAnswerUI.GetComponent<DisableAfterDelay>();
-        networkManager.CommandsManager.AddCommand("AskFriendJokerSettings", new MainPlayerApplyAskFriendJokerSettingsCommand(disableAfterDelay, OnAppliedAskFriendJokerSettings));
+        networkManager.CommandsManager.AddCommand("AskFriendJokerSettings", new ReceivedAskFriendJokerSettingsCommand(disableAfterDelay, OnAppliedAskFriendJokerSettings));
 
         waitingToAnswerUI.SetActive(false);
         loadingUI.SetActive(true);
@@ -154,8 +154,8 @@ public class HelpFromFriendJoker : IJoker
 
     public void Activate()
     {
-        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new AskAFriendResponseCommand(OnReceivedAskAFriendResponse));
-        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ClientReceiveConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
+        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new ReceivedAskAFriendResponseCommand(OnReceivedAskAFriendResponse));
+        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
 
         ActivateCallAFriendJoker();
     }

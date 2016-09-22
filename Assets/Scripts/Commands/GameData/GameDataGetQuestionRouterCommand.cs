@@ -48,11 +48,12 @@ public class GameDataGetQuestionRouterCommand : INetworkManagerCommand
 
     void MapOptionsToCommand(NetworkCommandData commandData, Dictionary<string, string> options)
     {
-        var optionsList = options.ToList();
+        var optionsList = options.ToArray();
 
-        foreach (var optionNameValue in optionsList)
+        for (int i = 0; i < optionsList.Length; i++)
         {
-            commandData.AddOption(optionNameValue.Key, optionNameValue.Value);
+            var optionData = optionsList[i];
+            commandData.AddOption(optionData.Key, optionData.Value);
         }
     }
 }

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class SetUsernameCommand : INetworkManagerCommand
+public class ReceivedSetUsernameCommand : INetworkManagerCommand
 {
     ServerNetworkManager networkManager;
 
-    public SetUsernameCommand(ServerNetworkManager networkManager)
+    public ReceivedSetUsernameCommand(ServerNetworkManager networkManager)
     {
         if (networkManager == null)
         {

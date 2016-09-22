@@ -139,7 +139,7 @@ public class AskAudienceJoker : IJoker
         var selectedAskAudienceJokerCommand = new NetworkCommandData("SelectedAskAudienceJoker");
         networkManager.SendServerCommand(selectedAskAudienceJokerCommand);
 
-        var receiveJokerSettingsCommand = new ClientReceiveAskAudienceJokerSettingsCommand(OnReceivedJokerSettings);
+        var receiveJokerSettingsCommand = new ReceivedAskAudienceJokerSettingsCommand(OnReceivedJokerSettings);
 
         networkManager.CommandsManager.AddCommand("AskAudienceJokerSettings", receiveJokerSettingsCommand);
 

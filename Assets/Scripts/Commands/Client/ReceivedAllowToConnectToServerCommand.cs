@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class AllowToConnectToServerCommand : INetworkManagerCommand
+public class ReceivedAllowToConnectToServerCommand : INetworkManagerCommand
 {
     ValueWrapper<bool> isConnected;
 
-    public AllowToConnectToServerCommand(ValueWrapper<bool> isConnected)
+    public ReceivedAllowToConnectToServerCommand(ValueWrapper<bool> isConnected)
     {
         if (isConnected == null)
         {

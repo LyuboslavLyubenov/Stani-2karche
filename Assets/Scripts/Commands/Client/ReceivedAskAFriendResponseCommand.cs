@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class AskAFriendResponseCommand : IOneTimeExecuteCommand
+public class ReceivedAskAFriendResponseCommand : IOneTimeExecuteCommand
 {
     public delegate void OnReceivedResponde(string username,string answer);
 
@@ -18,7 +18,7 @@ public class AskAFriendResponseCommand : IOneTimeExecuteCommand
         set;
     }
 
-    public AskAFriendResponseCommand(OnReceivedResponde onReceivedResponde)
+    public ReceivedAskAFriendResponseCommand(OnReceivedResponde onReceivedResponde)
     {
         if (onReceivedResponde == null)
         {

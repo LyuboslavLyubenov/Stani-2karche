@@ -50,7 +50,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
     {
         NetworkManager.CommandsManager.AddCommand("GameDataQuestion", new ReceivedQuestionCommand(OnReceivedQuestion));
         NetworkManager.CommandsManager.AddCommand("GameDataMark", new ReceivedMarkCommand(OnReceivedMark));
-        NetworkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ClientGameDataNoMoreQuestionsCommand(OnNoMoreQuestions));
+        NetworkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ReceivedNoMoreQuestionsCommand(OnNoMoreQuestions));
     }
 
     void OnNoMoreQuestions()

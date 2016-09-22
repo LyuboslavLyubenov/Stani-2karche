@@ -78,9 +78,9 @@ public class BasicExamAndroidUIController : MonoBehaviour
 
     void LoadCommands()
     {
-        NetworkManager.CommandsManager.AddCommand("AnswerTimeout", new OnAnswerTimeoutCommand(QuestionPanelUI, NotificationsController));
-        NetworkManager.CommandsManager.AddCommand("RemainingTimeToAnswer", new RemainingTimeToAnswerCommand(OnReceivedRemainingTime));
-        NetworkManager.CommandsManager.AddCommand("LoadQuestion", new LoadQuestionCommand(LoadQuestion));
+        NetworkManager.CommandsManager.AddCommand("AnswerTimeout", new ReceivedAnswerTimeoutCommand(QuestionPanelUI, NotificationsController));
+        NetworkManager.CommandsManager.AddCommand("RemainingTimeToAnswer", new ReceivedRemainingTimeToAnswerCommand(OnReceivedRemainingTime));
+        NetworkManager.CommandsManager.AddCommand("LoadQuestion", new ReceivedLoadQuestionCommand(LoadQuestion));
     }
 
     void AttachEventsHooks()

@@ -114,10 +114,10 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     void ConfigureCommands()
     {
-        commandsManager.AddCommand("SetUsername", new SetUsernameCommand(this));
-        commandsManager.AddCommand("KeepAlive", new KeepAliveCommand(aliveClientsId));
-        commandsManager.AddCommand("ConnectedClientsCount", new ServerSendConnectedClientsCountCommand(this));
-        commandsManager.AddCommand("ConnectedClientsIdsNames", new ServerSendConnectedClientsIdsNamesCommand(this, connectedClientsNames));
+        commandsManager.AddCommand("SetUsername", new ReceivedSetUsernameCommand(this));
+        commandsManager.AddCommand("KeepAlive", new ReceivedKeepAliveCommand(aliveClientsId));
+        commandsManager.AddCommand("ConnectedClientsCount", new ReceivedSendConnectedClientsCountCommand(this));
+        commandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedSendConnectedClientsIdsNamesCommand(this, connectedClientsNames));
     }
 
     void ShowNotification(Color color, string message)

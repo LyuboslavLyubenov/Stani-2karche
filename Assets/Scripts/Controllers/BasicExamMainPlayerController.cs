@@ -33,10 +33,10 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void Start()
     {
-        NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ClientBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
-        NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new AddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new AddAskAudienceJokerCommand(AvailableJokersUIController, GameData, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new AddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
+        NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
+        NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
+        NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, GameData, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
+        NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new ReceivedAddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
 
         NetworkManager.OnConnectedEvent += OnConnectedToServer;
 

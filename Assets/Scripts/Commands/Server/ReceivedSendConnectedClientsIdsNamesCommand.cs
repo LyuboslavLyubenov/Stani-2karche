@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class ServerSendConnectedClientsIdsNamesCommand : INetworkManagerCommand
+public class ReceivedSendConnectedClientsIdsNamesCommand : INetworkManagerCommand
 {
     ServerNetworkManager networkManager;
 
     Dictionary<int, string> connectedClientsIdsNames;
 
-    public ServerSendConnectedClientsIdsNamesCommand(ServerNetworkManager networkManager, Dictionary<int, string> connectedClientsIdsNames)
+    public ReceivedSendConnectedClientsIdsNamesCommand(ServerNetworkManager networkManager, Dictionary<int, string> connectedClientsIdsNames)
     {       
         if (networkManager == null)
         {

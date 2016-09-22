@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ShowNotificationFromServerCommand : INetworkManagerCommand
+public class ReceivedNotificationFromServerCommand : INetworkManagerCommand
 {
     readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
     {
@@ -29,7 +29,7 @@ public class ShowNotificationFromServerCommand : INetworkManagerCommand
 
     NotificationsServiceController notificationsService;
 
-    public ShowNotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
+    public ReceivedNotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
     {
         if (notificationsServiceController == null)
         {

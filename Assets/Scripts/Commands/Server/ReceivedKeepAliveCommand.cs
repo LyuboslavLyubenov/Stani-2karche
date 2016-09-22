@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-public class KeepAliveCommand : INetworkManagerCommand
+public class ReceivedKeepAliveCommand : INetworkManagerCommand
 {
     ICollection<int> aliveClientsIds;
 
-    public KeepAliveCommand(ICollection<int> aliveClientsIds)
+    public ReceivedKeepAliveCommand(ICollection<int> aliveClientsIds)
     {
         if (aliveClientsIds == null)
         {

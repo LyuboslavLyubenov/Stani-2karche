@@ -5,7 +5,7 @@ using System.Linq;
 using System.Timers;
 using System.Collections;
 
-public class ReceiveMainPlayerSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
+public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
 {
     ServerNetworkManager networkManager;
 
@@ -15,7 +15,7 @@ public class ReceiveMainPlayerSelectedHelpFromFriendJokerCommand : INetworkManag
 
     Type helpFromFriendJokerType;
 
-    public ReceiveMainPlayerSelectedHelpFromFriendJokerCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, HelpFromFriendJokerRouter jokerServerRouter, int timeToAnswerInSeconds)
+    public ReceivedSelectedHelpFromFriendJokerCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, HelpFromFriendJokerRouter jokerServerRouter, int timeToAnswerInSeconds)
     {
         if (networkManager == null)
         {

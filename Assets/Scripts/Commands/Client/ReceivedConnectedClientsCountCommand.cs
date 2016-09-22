@@ -2,11 +2,11 @@
 using System.Collections;
 using System;
 
-public class ClientReceiveConnectedClientsCountCommand : INetworkManagerCommand
+public class ReceivedConnectedClientsCountCommand : INetworkManagerCommand
 {
     ValueWrapper<int> serverConnectedClientsCount;
 
-    public ClientReceiveConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
+    public ReceivedConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
     {
         if (serverConnectedClientsCount == null)
         {

@@ -9,8 +9,8 @@ public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
 
     protected override void Start()
     {
-        string TeacherDialogsFilePath = "Tutorials Texts\\basicExamPlayerTeacherDialogs";
-        base.DialogFilePath = TeacherDialogsFilePath;
+        string teacherDialogsFilePath = "Tutorials Texts\\basicExamPlayerTeacherDialogs";
+        base.DialogFilePath = teacherDialogsFilePath;
         base.Start();
     }
 

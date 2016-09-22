@@ -19,9 +19,9 @@ public class GameDataSender : MonoBehaviour
         };
 
         NetworkManager.CommandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetCurrentQuestion", new GameDataGetCurrentQuestionCommand(LocalGameData, NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetRandomQuestion", new GameDataGetRandomQuestionCommand(LocalGameData, NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", new GameDataGetNextQuestionCommand(LocalGameData, NetworkManager));
+        NetworkManager.CommandsManager.AddCommand("GameDataGetCurrentQuestion", new ReceivedGetCurrentQuestionCommand(LocalGameData, NetworkManager));
+        NetworkManager.CommandsManager.AddCommand("GameDataGetRandomQuestion", new ReceivedGetRandomQuestionCommand(LocalGameData, NetworkManager));
+        NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", new ReceivedGetNextQuestionCommand(LocalGameData, NetworkManager));
     }
 }
 

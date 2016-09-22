@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ClientBasicExamGameEndCommand : INetworkManagerCommand
+public class ReceivedBasicExamGameEndCommand : INetworkManagerCommand
 {
     GameObject endGameUI;
     GameObject leaderboardUI;
@@ -11,7 +11,7 @@ public class ClientBasicExamGameEndCommand : INetworkManagerCommand
     EndGameUIController endGameUIController;
     LeaderboardUIController leaderboardUIController;
 
-    public ClientBasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
+    public ReceivedBasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
     {
         if (endGameUI == null)
         {

@@ -2,13 +2,13 @@
 using System;
 using UnityEngine;
 
-public class ServerReceivedAnswerSelectedCommand : INetworkManagerCommand
+public class ReceivedServerAnswerSelectedCommand : INetworkManagerCommand
 {
     public delegate void OnReceivedAnswerDelegate(int clientId,string answer);
 
     OnReceivedAnswerDelegate onReceivedAnswer;
 
-    public ServerReceivedAnswerSelectedCommand(OnReceivedAnswerDelegate onReceivedAnswer)
+    public ReceivedServerAnswerSelectedCommand(OnReceivedAnswerDelegate onReceivedAnswer)
     {
         if (onReceivedAnswer == null)
         {
@@ -28,7 +28,7 @@ public class ServerReceivedAnswerSelectedCommand : INetworkManagerCommand
     }
 }
 
-public class ServerReceivedAnswerSelectedOneTimeCommand : ServerReceivedAnswerSelectedCommand, IOneTimeExecuteCommand
+public class ServerReceivedAnswerSelectedOneTimeCommand : ReceivedServerAnswerSelectedCommand, IOneTimeExecuteCommand
 {
     public bool FinishedExecution
     {

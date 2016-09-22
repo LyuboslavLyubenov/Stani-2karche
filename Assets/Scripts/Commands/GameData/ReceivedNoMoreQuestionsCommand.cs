@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class ClientGameDataNoMoreQuestionsCommand : INetworkManagerCommand
+public class ReceivedNoMoreQuestionsCommand : INetworkManagerCommand
 {
     Action onNoMoreQuestionsCommand;
 
-    public ClientGameDataNoMoreQuestionsCommand(Action onNoMoreQuestionsCommand)
+    public ReceivedNoMoreQuestionsCommand(Action onNoMoreQuestionsCommand)
     {
         if (onNoMoreQuestionsCommand == null)
         {

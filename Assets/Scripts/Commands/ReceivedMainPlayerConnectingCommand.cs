@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class MainPlayerConnectingCommand : INetworkManagerCommand
+public class ReceivedMainPlayerConnectingCommand : INetworkManagerCommand
 {
     public delegate void MainPlayerConnectingDelegate(int connectionId);
 
     MainPlayerConnectingDelegate onMainPlayerConnecting;
 
-    public MainPlayerConnectingCommand(MainPlayerConnectingDelegate onMainPlayerConnecting)
+    public ReceivedMainPlayerConnectingCommand(MainPlayerConnectingDelegate onMainPlayerConnecting)
     {
         if (onMainPlayerConnecting == null)
         {

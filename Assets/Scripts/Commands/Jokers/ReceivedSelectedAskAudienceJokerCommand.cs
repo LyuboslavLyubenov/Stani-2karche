@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class ReceiveMainPlayerSelectedAskAudienceJokerCommand : INetworkManagerCommand
+public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand
 {
     MainPlayerData mainPlayerData;
     AskAudienceJokerRouter askAudienceJokerRouter;
@@ -11,7 +11,7 @@ public class ReceiveMainPlayerSelectedAskAudienceJokerCommand : INetworkManagerC
     Type askAudienceJokerType;
     int timeToAnswerInSeconds;
 
-    public ReceiveMainPlayerSelectedAskAudienceJokerCommand(MainPlayerData mainPlayerData, AskAudienceJokerRouter askAudienceJokerRouter, ServerNetworkManager networkManager, int timeToAnswerInSeconds)
+    public ReceivedSelectedAskAudienceJokerCommand(MainPlayerData mainPlayerData, AskAudienceJokerRouter askAudienceJokerRouter, ServerNetworkManager networkManager, int timeToAnswerInSeconds)
     {
         if (mainPlayerData == null)
         {

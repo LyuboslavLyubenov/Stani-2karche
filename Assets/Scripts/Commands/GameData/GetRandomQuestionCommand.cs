@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameDataGetRandomQuestionCommand : GameDataGetQuestionAbstractCommand
+public class ReceivedGetRandomQuestionCommand : GameDataGetQuestionAbstractCommand
 {
-    public GameDataGetRandomQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
+    public ReceivedGetRandomQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
         : base(gameData, networkManager)
     {       
     }

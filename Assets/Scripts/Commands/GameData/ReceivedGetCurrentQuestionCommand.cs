@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GameDataGetCurrentQuestionCommand : GameDataGetQuestionAbstractCommand
+public class ReceivedGetCurrentQuestionCommand : GameDataGetQuestionAbstractCommand
 {
-    public GameDataGetCurrentQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
+    public ReceivedGetCurrentQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
         : base(gameData, networkManager)
     {       
     }

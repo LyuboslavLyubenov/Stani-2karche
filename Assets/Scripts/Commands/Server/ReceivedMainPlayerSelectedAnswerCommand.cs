@@ -3,11 +3,11 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public class ReceiveMainPlayerClickedAnswerCommand : INetworkManagerCommand
+public class ReceivedMainPlayerSelectedAnswerCommand : INetworkManagerCommand
 {
     Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer;
 
-    public ReceiveMainPlayerClickedAnswerCommand(Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer)
+    public ReceivedMainPlayerSelectedAnswerCommand(Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer)
     {
         if (onReceivedClickedAnswer == null)
         {

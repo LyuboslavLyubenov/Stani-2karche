@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class MainPlayerApplyAskFriendJokerSettingsCommand : IOneTimeExecuteCommand
+public class ReceivedAskFriendJokerSettingsCommand : IOneTimeExecuteCommand
 {
     DisableAfterDelay disableAfterDelay;
 
@@ -21,7 +21,7 @@ public class MainPlayerApplyAskFriendJokerSettingsCommand : IOneTimeExecuteComma
         set;
     }
 
-    public MainPlayerApplyAskFriendJokerSettingsCommand(DisableAfterDelay disableAfterDelay, Action onAppliedSettings)
+    public ReceivedAskFriendJokerSettingsCommand(DisableAfterDelay disableAfterDelay, Action onAppliedSettings)
     {
         if (disableAfterDelay == null)
         {

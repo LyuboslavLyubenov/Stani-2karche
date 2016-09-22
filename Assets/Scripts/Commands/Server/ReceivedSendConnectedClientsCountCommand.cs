@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class ServerSendConnectedClientsCountCommand : INetworkManagerCommand
+public class ReceivedSendConnectedClientsCountCommand : INetworkManagerCommand
 {
     ServerNetworkManager networkManager;
 
-    public ServerSendConnectedClientsCountCommand(ServerNetworkManager networkManager)
+    public ReceivedSendConnectedClientsCountCommand(ServerNetworkManager networkManager)
     {
         if (networkManager == null)
         {
