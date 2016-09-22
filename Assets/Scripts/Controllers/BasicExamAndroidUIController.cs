@@ -3,16 +3,14 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 
-/// <summary>
-/// Responsible for voting (call a friend and audience vote) and showing error dialogs
-/// </summary>
+//Mediator
 public class BasicExamAndroidUIController : MonoBehaviour
 {
     public GameObject QuestionPanelUI;
     public GameObject ConnectionSettingsUI;
     public GameObject ConnectingUI;
 
-    public ClientNetworkManager ClientNetworkManager;
+    public ClientNetworkManager NetworkManager;
     public NotificationsServiceController NotificationsController;
     public ConnectionSettingsUIController connectionSettingsUIController;
 
@@ -20,17 +18,13 @@ public class BasicExamAndroidUIController : MonoBehaviour
 
     QuestionUIController questionUIController = null;
 
-    Text ipText = null;
-   
-    //shows if currently is answering as friend or as audience
-    GameState currentState = GameState.Playing;
-
     void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
         CheckDependecies();
         LoadControllers();
+        LoadCommands();
         AttachEventsHooks();
 
         ConnectingUI.SetActive(true);
@@ -56,7 +50,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
             throw new Exception("ConnectingUI is null on AndroidUIController obj");
         }
 
-        if (ClientNetworkManager == null)
+        if (NetworkManager == null)
         {
             throw new Exception("ClientNetworkManager is null on AndroidUIController obj");
         }
@@ -72,9 +66,6 @@ public class BasicExamAndroidUIController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Loads needed UI controllers
-    /// </summary>
     void LoadControllers()
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
@@ -85,106 +76,46 @@ public class BasicExamAndroidUIController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Attachs the events hooks.
-    /// </summary>
+    void LoadCommands()
+    {
+        NetworkManager.CommandsManager.AddCommand("AnswerTimeout", new OnAnswerTimeoutCommand(QuestionPanelUI, NotificationsController));
+        NetworkManager.CommandsManager.AddCommand("RemainingTimeToAnswer", new RemainingTimeToAnswerCommand(OnReceivedRemainingTime));
+        NetworkManager.CommandsManager.AddCommand("LoadQuestion", new LoadQuestionCommand(LoadQuestion));
+    }
+
     void AttachEventsHooks()
     {
-        ClientNetworkManager.OnConnectedEvent += OnConnected;
-        ClientNetworkManager.OnReceivedDataEvent += OnDataRecievedFromServer;
-        ClientNetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
+        NetworkManager.OnConnectedEvent += OnConnected;
+        NetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
 
         questionUIController.OnAnswerClick += OnAnswerClick;
 
         connectionSettingsUIController.OnConnectToServer += ((sender, e) => Connect(e.IPAddress));
     }
 
-    //if clicked on any answer
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
-        //send answer to the server
-        ClientNetworkManager.SendServerMessage(args.Answer);//TODO: SendServerMessage("[AnswerSelected]" + args.Answer)
-        //hide Question UI
+        var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+        answerSelectedCommand.AddOption("Answer", args.Answer);
+        NetworkManager.SendServerCommand(answerSelectedCommand);
         QuestionPanelUI.SetActive(false);
     }
 
     void OnConnected(object sender, EventArgs args)
     {
-        //if connected
-        //reset game state
-        currentState = GameState.Playing;
         //hide loading bar
         ConnectingUI.SetActive(false);
         //vibrate if mobile
         Vibrate();
     }
 
-    void OnDataRecievedFromServer(object sender, DataSentEventArgs args)
+    void OnReceivedRemainingTime(RemainingTimeEventArgs remainingTime)
     {
-        if (currentState == GameState.Playing)
+        var timeInSeconds = remainingTime.Seconds;
+
+        if (timeInSeconds > 0 && timeInSeconds <= 10 && timeInSeconds % 2 == 0)
         {
-            if (args.Message == "AnswerTimeout")
-            {
-                QuestionPanelUI.SetActive(false);
-                NotificationsController.AddNotification(Color.blue, "Съжалявам, времето за отговаряне на въпроса свърши.");
-                return;
-            }
-
-            if (args.Message.IndexOf("RemainingTime") > -1)
-            {
-                var messageParams = args.Message.Split('=');
-
-                if (messageParams.Length != 2)
-                {
-                    return;
-                }
-
-                int remainingTime;
-                bool isValidNumber = int.TryParse(messageParams[1], out remainingTime);
-
-                if (!isValidNumber)
-                {
-                    return;
-                }
-
-                if (remainingTime > 0 && remainingTime <= 10 && remainingTime % 2 == 0)
-                {
-                    QuestionPanelAnimator.SetTrigger("shake");
-                }
-
-                return;
-            }
-
-            if (args.Message == "AskFriend")
-            {
-                currentState = GameState.AskingAFriend;
-                return;
-            }
-
-            if (args.Message == "AskAudience")
-            {
-                currentState = GameState.AskingAudience;
-                return;
-            }
-
-            if (args.Message == "RiskyTrust")
-            {
-                currentState = GameState.RiskyTrust;
-                return;
-            }
-
-            return;
-        }
-
-        if (currentState == GameState.RiskyTrust || currentState == GameState.AskingAudience || currentState == GameState.AskingAFriend)
-        {
-            //TODO: RECEIVE FIRST "LOADQUESTION" then this
-            LoadQuestion(args.Message);
-            //Vibrate if mobile
-            Vibrate();
-
-            currentState = GameState.Playing;
-            return;
+            QuestionPanelAnimator.SetTrigger("shake");
         }
     }
 
@@ -198,45 +129,24 @@ public class BasicExamAndroidUIController : MonoBehaviour
         #endif
     }
 
-    void OnDisconnectFromServer(object sender, System.EventArgs args)
+    void OnDisconnectFromServer(object sender, EventArgs args)
     {
-        //if dissconnected from server
-        //reset game state
-        currentState = GameState.Playing;
-        //show loading bar
+        //TODO: show ui asking if you want to reconnect or to return to main menu
         ConnectingUI.SetActive(true);
     }
 
-    void LoadQuestion(string questionJSON)
+    void LoadQuestion(ISimpleQuestion question)
     {
-        StartCoroutine(LoadQuestionCoroutine(questionJSON));
-    }
-
-    IEnumerator LoadQuestionCoroutine(string questionJSON)
-    {
-        //deserialize received question
-        var question = JsonUtility.FromJson<Question>(questionJSON);
-        //activate question panel
         QuestionPanelUI.SetActive(true);
-
-        yield return null;
-        //populate question data
         questionUIController.LoadQuestion(question);
-
-        yield return null;
-
         NotificationsController.AddNotification(Color.gray, "Имаш 30 секунди за отговор. Кликни на мен за да ме махнеш");
     }
 
-    /// <summary>
-    /// Connect the specified ip.
-    /// </summary>
-    /// <param name="ip">Ip</param>
     public void Connect(string ip)
     {
         try
         {
-            ClientNetworkManager.ConnectToHost(ip);    
+            NetworkManager.ConnectToHost(ip);    
         }
         catch (NetworkException e)
         {
@@ -246,14 +156,11 @@ public class BasicExamAndroidUIController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Disconnect from server.
-    /// </summary>
     public void Disconnect()
     {
         try
         {
-            ClientNetworkManager.Disconnect();
+            NetworkManager.Disconnect();
         }
         catch (NetworkException e)
         {

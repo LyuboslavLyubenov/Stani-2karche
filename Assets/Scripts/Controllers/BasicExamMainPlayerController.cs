@@ -1,26 +1,71 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using System.Linq;
+using System;
+using System.Collections;
 
-/// <summary>
-/// Basic exam controller. Used to controll UI for "Standart play mode" or "Нормално изпитване" 
-/// </summary>
+//Mediator
+using System.Collections.Generic;
+
+
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 {
     public GameObject LeaderboardUI;
     public GameObject LoadingUI;
     public GameObject EndGameUI;
+    public GameObject CallAFriendUI;
+    public GameObject FriendAnswerUI;
+    public GameObject WaitingToAnswerUI;
+    public GameObject AudienceAnswerUI;
 
     public ClientNetworkManager NetworkManager;
+
     public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
-    public NotificationsServiceController NotificationService;
     public BasicExamPlayerTutorialUIController TutorialUIController;
+
+    public NotificationsServiceController NotificationService;
+
     public AvailableJokersUIController AvailableJokersUIController;
     public QuestionUIController QuestionUIController;
+    public MarkPanelController MarkPanelController;
+    public QuestionsRemainingUIController QuestionsRemainingUIController;
+
+    public RemoteGameData GameData;
+
 
     void Start()
-    { 
+    {
+        NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ClientBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
+        NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new AddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
+        NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new AddAskAudienceJokerCommand(AvailableJokersUIController, GameData, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
+        NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new AddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
+
+        NetworkManager.OnConnectedEvent += OnConnectedToServer;
+
         QuestionUIController.OnAnswerClick += OnAnswerClick;
+        QuestionUIController.OnQuestionLoaded += (sender, args) =>
+            QuestionsRemainingUIController.SetRemainingQuestions(GameData.RemainingQuestionsToNextMark);
+
+        GameData.OnMarkIncrease += (sender, args) => MarkPanelController.SetMark(args.Mark.ToString());
+
+        LoadingUI.SetActive(true);
+
+        CoroutineUtils.WaitForFrames(1, () =>
+            {
+                var ip = PlayerPrefs.GetString("ServerIP");
+                NetworkManager.ConnectToHost(ip);
+
+                NetworkManager.OnConnectedEvent += OnConnectedToServer;
+            });
+
+    }
+
+    void OnConnectedToServer(object sender, EventArgs args)
+    {
+        LoadingUI.SetActive(false);
+
+        var commandData = new NetworkCommandData("MainPlayerConnecting");
+        NetworkManager.SendServerCommand(commandData);
+
+        GameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
     }
 
     void ShowNotification(Color color, string message)
@@ -33,15 +78,23 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void OnAnswerClick(object sender, AnswerEventArgs args)
     {
-        var commandData = new NetworkCommandData("AnswerClicked");
-        commandData.AddOption("Answer", args.Answer);
-        NetworkManager.SendServerCommand(commandData);
+        StartCoroutine(OnAnswerClickCoroutine(args.Answer, args.IsCorrect));
     }
 
-    void OnGameEnd(object sender, MarkEventArgs args)
+    IEnumerator OnAnswerClickCoroutine(string answer, bool isCorrect)
     {
-        EndGameUI.SetActive(true);
-        var endGameUIController = EndGameUI.GetComponent<EndGameUIController>();
-        CoroutineUtils.WaitForFrames(0, () => endGameUIController.SetMark(args.Mark));
+        var commandData = new NetworkCommandData("AnswerSelected");
+        commandData.AddOption("Answer", answer);
+
+        yield return null;
+
+        NetworkManager.SendServerCommand(commandData);
+
+        yield return null;
+
+        if (isCorrect)
+        {
+            GameData.GetNextQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+        }
     }
 }
