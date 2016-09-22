@@ -6,7 +6,7 @@ using System.Linq;
 
 public class AskAudienceJoker : IJoker
 {
-    const int PermissionReceiveTimeoutInSeconds = 10;
+    const int SettingsReceiveTimeoutInSeconds = 10;
 
     const int MinCorrectAnswerChance = 40;
     const int MaxCorrectAnswerChance = 85;
@@ -143,7 +143,7 @@ public class AskAudienceJoker : IJoker
 
         networkManager.CommandsManager.AddCommand("AskAudienceJokerSettings", receiveJokerSettingsCommand);
 
-        receiveSettingsTimeoutTimer = new Timer(PermissionReceiveTimeoutInSeconds * 1000);
+        receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
         receiveSettingsTimeoutTimer.AutoReset = false;
         receiveSettingsTimeoutTimer.Elapsed += OnReceiveSettingsTimeout;
     }
