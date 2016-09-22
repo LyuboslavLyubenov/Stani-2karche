@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class ReceivedQuestionCommand : INetworkManagerCommand
 {
     public delegate void ReceivedQuestionDelegate(QuestionRequestType requestType,ISimpleQuestion question,int questionsRemainingToNextMark);
@@ -22,7 +21,7 @@ public class ReceivedQuestionCommand : INetworkManagerCommand
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var questionJSON = commandsOptionsValues["QuestionJSON"];
-        var question = JsonUtility.FromJson<ISimpleQuestion_Serializable>(questionJSON);
+        var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
         var questionsRemaining = int.Parse(commandsOptionsValues["RemainingQuestionsToNextMark"]);
         var requestType = (QuestionRequestType)Enum.Parse(typeof(QuestionRequestType), commandsOptionsValues["RequestType"]);
 

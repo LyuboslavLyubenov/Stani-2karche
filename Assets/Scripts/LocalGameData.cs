@@ -143,7 +143,7 @@ public class LocalGameData : MonoBehaviour, IGameData
                 }
 
                 var correctAnswerIndex = answers.IndexOf(correctAnswer);
-                var question = new ISimpleQuestion(questionText, answers.ToArray(), correctAnswerIndex);
+                var question = new SimpleQuestion(questionText, answers.ToArray(), correctAnswerIndex);
 
                 questions.Add(question);
             }

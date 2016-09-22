@@ -6,8 +6,6 @@ public class RemainingTimeToAnswerCommand : INetworkManagerCommand
 {
     Action<RemainingTimeEventArgs> onReceivedRemainingTime;
 
-    GameState currentGameState;
-
     public RemainingTimeToAnswerCommand(Action<RemainingTimeEventArgs> onReceivedRemainingTime)
     { 
         if (onReceivedRemainingTime == null)

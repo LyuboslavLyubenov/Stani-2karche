@@ -21,7 +21,7 @@ public class InitializeGameDataCallbackCommand : INetworkManagerCommand
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var questionJSON = commandsOptionsValues["QuestionJSON"];
-        var question = JsonUtility.FromJson<ISimpleQuestion_Serializable>(questionJSON);
+        var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
         var questionsRemainingToNextMark = int.Parse(commandsOptionsValues["RemainingQuestionsToNextMark"]);
 
         initializaCallback(question.Deserialize(), questionsRemainingToNextMark);

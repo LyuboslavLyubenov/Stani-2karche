@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class ISimpleQuestion : ISimpleQuestion
+public class SimpleQuestion : ISimpleQuestion
 {
     public string Text
     {
@@ -30,7 +30,7 @@ public class ISimpleQuestion : ISimpleQuestion
     string[] answers;
     int correctAnswerIndex;
 
-    public ISimpleQuestion(string text, string[] answers, int correctAnswerIndex)
+    public SimpleQuestion(string text, string[] answers, int correctAnswerIndex)
     {
         if (string.IsNullOrEmpty(text))
         {
@@ -63,30 +63,5 @@ public class ISimpleQuestion : ISimpleQuestion
     public SimpleQuestion_Serializable Serialize()
     {
         return new SimpleQuestion_Serializable(this);
-    }
-}
-
-[Serializable]
-public class SimpleQuestion_Serializable
-{
-    public string Text;
-    public string[] Answers;
-    public int CorrectAnswerIndex;
-
-    public SimpleQuestion_Serializable(ISimpleQuestion question)
-    {
-        this.Text = question.Text;
-        this.Answers = question.Answers;
-        this.CorrectAnswerIndex = question.CorrectAnswerIndex;
-    }
-
-    public SimpleQuestion_Serializable()
-    {
-        
-    }
-
-    public ISimpleQuestion Deserialize()
-    {
-        return new ISimpleQuestion(this.Text, this.Answers, this.CorrectAnswerIndex);
     }
 }

@@ -77,7 +77,7 @@ public class DisableRandomAnswersJoker : IJoker
 
     void OnReceivedJokerSettings(int answersToDisableCount)
     {
-        gameData.GetCurrentQuestion(ActivateJoker, Debug.LogException);
+        gameData.GetCurrentQuestion((question) => ActivateJoker(question, answersToDisableCount), Debug.LogException);
 
         Activated = true;
 
@@ -89,7 +89,7 @@ public class DisableRandomAnswersJoker : IJoker
 
     void ActivateJoker(ISimpleQuestion currentQuestion, int answersToDisableCount)
     {
-        if (currentQuestion.Answers >= answersToDisableCount)
+        if (currentQuestion.Answers.Length >= answersToDisableCount)
         {
             throw new ArgumentException("Cannot disable all answers");
         }
