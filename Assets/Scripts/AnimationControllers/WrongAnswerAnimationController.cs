@@ -7,7 +7,6 @@ public class WrongAnswerAnimationController : StateMachineBehaviour
     {
         var questionPanel = GameObject.FindWithTag("QuestionPanel");
         var answerText = animator.gameObject.GetComponentInChildren<Text>().text;
-        var questionUIController = questionPanel.GetComponent<QuestionUIController>();
         questionPanel.GetComponent<QuestionUIController>()._OnIncorrectAnswerAnimEnd(answerText);
     }
 }

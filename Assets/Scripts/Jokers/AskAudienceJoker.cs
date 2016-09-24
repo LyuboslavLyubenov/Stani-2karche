@@ -18,21 +18,11 @@ public class AskAudienceJoker : IJoker
     {
     };
 
-    IGameData gameData;
-
     ClientNetworkManager networkManager;
 
     GameObject waitingToAnswerUI;
     GameObject loadingUI;
     GameObject audienceAnswerUI;
-
-    AudienceAnswerUIController audienceAnswerUIController;
-    DisableAfterDelay waitingToAnswerUIDelayController;
-
-    Dictionary<string, int> audienceAnswerVoteCount = new Dictionary<string, int>();
-    List<int> audienceVotedId = new List<int>();
-
-    int connectedClients = 0;
 
     Timer receiveSettingsTimeoutTimer;
 
@@ -54,13 +44,8 @@ public class AskAudienceJoker : IJoker
         private set;
     }
 
-    public AskAudienceJoker(IGameData gameData, ClientNetworkManager networkManager, GameObject waitingToAnswerUI, GameObject audienceAnswerUI, GameObject loadingUI)
+    public AskAudienceJoker(ClientNetworkManager networkManager, GameObject waitingToAnswerUI, GameObject audienceAnswerUI, GameObject loadingUI)
     {
-        if (gameData == null)
-        {
-            throw new ArgumentNullException("gameData");
-        }
-
         if (networkManager == null)
         {
             throw new ArgumentNullException("networkManager");
@@ -81,14 +66,10 @@ public class AskAudienceJoker : IJoker
             throw new ArgumentNullException("loadingUI");
         }
             
-        this.gameData = gameData;
         this.networkManager = networkManager;
         this.waitingToAnswerUI = waitingToAnswerUI;
         this.audienceAnswerUI = audienceAnswerUI;
         this.loadingUI = loadingUI;
-
-        this.waitingToAnswerUIDelayController = this.waitingToAnswerUI.GetComponent<DisableAfterDelay>();
-        this.audienceAnswerUIController = audienceAnswerUI.GetComponent<AudienceAnswerUIController>();
 
         Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
     }
@@ -114,8 +95,6 @@ public class AskAudienceJoker : IJoker
 
     void ActivateAskAudienceJoker()
     {
-        connectedClients = networkManager.ServerConnectedClientsCount;
-
         loadingUI.SetActive(false);
         waitingToAnswerUI.SetActive(true);
 
@@ -147,5 +126,4 @@ public class AskAudienceJoker : IJoker
         receiveSettingsTimeoutTimer.AutoReset = false;
         receiveSettingsTimeoutTimer.Elapsed += OnReceiveSettingsTimeout;
     }
-
 }

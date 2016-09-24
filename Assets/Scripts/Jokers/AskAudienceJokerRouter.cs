@@ -18,7 +18,6 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
     List<int> votedClientsConnectionId = new List<int>();
     Dictionary<string, int> answersVotes = new Dictionary<string, int>();
 
-    MainPlayerData mainPlayerData;
 
     public bool Activated
     {
@@ -94,7 +93,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     void BeginReceiveVote()
     {
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedVote));
+        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedVote));
     }
 
     void OnReceivedVote(int connectionId, string answer)
@@ -209,7 +208,6 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         this.timeToAnswerInSeconds = timeToAnswerInSeconds;
         this.senderConnectionId = senderConnectionId;
-        this.mainPlayerData = mainPlayerData;
 
         elapsedTime = 0;
 

@@ -25,7 +25,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
     {
     };
 
-    readonly object MyLock = new object();
+    //readonly object MyLock = new object();
 
     int port;
     bool initialized = false;

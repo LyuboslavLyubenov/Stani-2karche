@@ -332,6 +332,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     public void StartServer()
     {
+        if (IsRunning)
+        {
+            throw new InvalidOperationException("Already running");
+        }
+
         NetworkTransport.Init();
         genericHostId = NetworkTransport.AddHost(topology, Port, null);
         isRunning = true;
@@ -339,6 +344,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     public void StopServer()
     {
+        if (!IsRunning)
+        {
+            throw new InvalidOperationException("Not running");
+        }
+
         NetworkTransport.RemoveHost(genericHostId);
         NetworkTransport.Shutdown();
         isRunning = false;

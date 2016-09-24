@@ -102,10 +102,10 @@ public class CallAFriendUIController : ExtendedMonoBehaviour
 
         DisableAllButtons();
 
-        for (int i = 0; i < pages[currentPageIndex].Length; i++)
+        for (int i = 0; i < page.Length; i++)
         {
             //reload
-            var friendData = pages[currentPageIndex][i];
+            var friendData = page[i];
             var friendConnectionId = friendData.ConnectionId;
             var eventArgs = new PlayerCalledEventArgs(friendConnectionId);
 

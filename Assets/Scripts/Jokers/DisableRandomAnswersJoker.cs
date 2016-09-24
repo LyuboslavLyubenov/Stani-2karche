@@ -6,7 +6,7 @@ using System.Timers;
 
 public class DisableRandomAnswersJoker : IJoker
 {
-    const int SettingsReceiveTimeoutInSeconds = 10;
+    const int SettingsReceiveTimeoutInSeconds = 5;
 
     ClientNetworkManager networkManager;
     IQuestionUIController questionUIController;

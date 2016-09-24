@@ -122,7 +122,6 @@ public class LeaderboardSerializer : MonoBehaviour
 
         for (int i = 0; i < propertyInfos.Length; i++)
         {
-            var propertyName = propertyInfos[i].Name;
             var propertyValue = propertyInfos[i].GetValue(playerScore, null);
             data.Add(propertyValue.ToString());
         }

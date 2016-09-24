@@ -14,7 +14,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
     Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
 
-    readonly object MyLock = new object();
+    //readonly object MyLock = new object();
 
     bool initialized = false;
 

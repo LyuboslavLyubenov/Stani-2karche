@@ -36,7 +36,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
         this.senderConnectionId = senderConnectionId;
         this.friendConnectionId = friendConnectionId;
 
-        var settingsCommandData = new NetworkCommandData("AskFriendJokerSettings");
+        var settingsCommandData = new NetworkCommandData("HelpFromFriendJokerSettings");
         settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
         NetworkManager.SendClientCommand(senderConnectionId, settingsCommandData);
 
@@ -45,28 +45,34 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
                 var sendQuestionToFriend = new NetworkCommandData("LoadQuestion");
                 var questionJSON = JsonUtility.ToJson(question);
                 sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
+
                 NetworkManager.SendClientCommand(friendConnectionId, sendQuestionToFriend);
+                NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
+
+                base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
             }, (exception) =>
             {
                 Debug.LogException(exception);
                 Deactivate();
             });
 
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedAskAFriendResponse));
-
-        base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
-
         activated = true;
     }
 
-    void OnReceivedAskAFriendResponse(int connectionId, string answer)
+    void OnReceivedFriendResponse(int connectionId, string answer)
     {
+        if (connectionId != friendConnectionId)
+        {
+            NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
+            return;
+        }
+
         if (elapsedTime >= timeToAnswerInSeconds || !NetworkManager.IsConnected(senderConnectionId))
         {
             return;
         }
 
-        var sendFriendResponseCommand = new NetworkCommandData("AskAFriendResponse");
+        var sendFriendResponseCommand = new NetworkCommandData("HelpFromFriendJokerResponse");
         var friendUsername = NetworkManager.GetClientUsername(connectionId);
         sendFriendResponseCommand.AddOption("Username", friendUsername);
         sendFriendResponseCommand.AddOption("Answer", answer);

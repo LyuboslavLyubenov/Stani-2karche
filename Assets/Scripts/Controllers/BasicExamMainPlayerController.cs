@@ -35,7 +35,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, GameData, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
+        NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new ReceivedAddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
 
         NetworkManager.OnConnectedEvent += OnConnectedToServer;

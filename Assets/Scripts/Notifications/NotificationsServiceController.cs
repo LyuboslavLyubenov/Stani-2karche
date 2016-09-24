@@ -13,15 +13,10 @@ public class NotificationsServiceController : MonoBehaviour, INotificationServic
     HashSet<GameObject> allNotifications = new HashSet<GameObject>();
 
     Transform notificationElementPrefab;
-    float notificationElementSizeY;
-    RectTransform rect;
 
     void Start()
     {
         notificationElementPrefab = Resources.Load<Transform>("Prefabs/NotificationElement");
-        rect = GetComponent<RectTransform>();
-
-        notificationElementSizeY = notificationElementPrefab.GetComponent<RectTransform>().sizeDelta.y;
     }
 
     int GetNotificationCount()

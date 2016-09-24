@@ -260,6 +260,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         {
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
             ShowNotification(Color.red, errorMessage);
+            Debug.LogError(errorMessage);
             Disconnect();
         }
         else

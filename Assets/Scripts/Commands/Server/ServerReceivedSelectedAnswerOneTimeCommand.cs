@@ -28,7 +28,7 @@ public class ReceivedServerAnswerSelectedCommand : INetworkManagerCommand
     }
 }
 
-public class ServerReceivedAnswerSelectedOneTimeCommand : ReceivedServerAnswerSelectedCommand, IOneTimeExecuteCommand
+public class ServerReceivedSelectedAnswerOneTimeCommand : ReceivedServerAnswerSelectedCommand, IOneTimeExecuteCommand
 {
     public bool FinishedExecution
     {
@@ -42,7 +42,7 @@ public class ServerReceivedAnswerSelectedOneTimeCommand : ReceivedServerAnswerSe
         set;
     }
 
-    public ServerReceivedAnswerSelectedOneTimeCommand(OnReceivedAnswerDelegate onReceivedAnswer)
+    public ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedAnswerDelegate onReceivedAnswer)
         : base(onReceivedAnswer)
     {
         FinishedExecution = false;

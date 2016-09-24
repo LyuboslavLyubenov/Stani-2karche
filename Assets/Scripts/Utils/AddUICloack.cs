@@ -7,7 +7,6 @@ public class AddUICloack : MonoBehaviour
 
     void Start()
     {
-        var canvas = GameObject.Find("Canvas");
         var prefab = Resources.Load<Transform>("Prefabs/Cloack");
         var cloack = Instantiate(prefab);
 

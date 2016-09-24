@@ -27,6 +27,9 @@ public class AddRandomJokerJoker : IJoker
 
     public AddRandomJokerJoker(IJoker[] jokersToChooseFrom, AvailableJokersUIController availableJokersUIController)
     {
+        throw new NotImplementedException();
+
+
         if (jokersToChooseFrom == null || jokersToChooseFrom.Length <= 0)
         {
             throw new ArgumentException("There must be at least 1 joker in collection");

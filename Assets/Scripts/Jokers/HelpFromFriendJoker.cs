@@ -2,9 +2,11 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Timers;
 
 public class HelpFromFriendJoker : IJoker
 {
+    const int SettingsReceiveTimeoutInSeconds = 5;
     //0% = 0f, 100% = 1f
     const float ChanceForGeneratingCorrectAnswer = 0.85f;
 
@@ -12,16 +14,16 @@ public class HelpFromFriendJoker : IJoker
     {
     };
 
-    IGameData gameData;
     ClientNetworkManager networkManager;
 
     CallAFriendUIController callAFriendUIController;
-    FriendAnswerUIController friendAnswerUIController;
 
     GameObject callAFriendUI;
     GameObject friendAnswerUI;
     GameObject waitingToAnswerUI;
     GameObject loadingUI;
+
+    Timer receiveSettingsTimeoutTimer;
 
     public Sprite Image
     {
@@ -84,80 +86,65 @@ public class HelpFromFriendJoker : IJoker
         this.loadingUI = loadingUI;
 
         callAFriendUIController = callAFriendUI.GetComponent<CallAFriendUIController>();
-        friendAnswerUIController = friendAnswerUI.GetComponent<FriendAnswerUIController>();
 
         Image = Resources.Load<Sprite>("Images/Buttons/Jokers/HelpFromFriend");
     }
 
-    void OnReceivedAskAFriendResponse(string username, string answer)
-    {
-        if (!activated)
-        {
-            return;
-        }
-
-        waitingToAnswerUI.SetActive(false);
-        friendAnswerUI.SetActive(true);
-        friendAnswerUIController.SetResponse(username, answer);
-    }
-
-    void OnAppliedAskFriendJokerSettings()
-    {
-        waitingToAnswerUI.SetActive(true);
-        loadingUI.SetActive(false);
-    }
-
-    void AskFriendOnline(int clientConnectionId)
-    {
-        var selectedAskAFriendJokerCommand = new NetworkCommandData("SelectedAskAFriendJoker");
-        selectedAskAFriendJokerCommand.AddOption("SendClientId", clientConnectionId.ToString());
-
-        networkManager.SendServerCommand(selectedAskAFriendJokerCommand);
-
-        waitingToAnswerUI.SetActive(true);
-
-        var disableAfterDelay = waitingToAnswerUI.GetComponent<DisableAfterDelay>();
-        networkManager.CommandsManager.AddCommand("AskFriendJokerSettings", new ReceivedAskFriendJokerSettingsCommand(disableAfterDelay, OnAppliedAskFriendJokerSettings));
-
-        waitingToAnswerUI.SetActive(false);
-        loadingUI.SetActive(true);
-    }
-
     void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
     {
-        loadingUI.SetActive(false);
-
         var connectedClientsIdsNames = connectedClientsData.OnlinePlayers.ToDictionary(c => c.ConnectionId, c => c.Username);
+
+        loadingUI.SetActive(false);
         callAFriendUI.SetActive(true);
+
         callAFriendUIController.SetContacts(connectedClientsIdsNames);
+        callAFriendUIController.OnCalledPlayer += (sender, args) =>
+        {
+            var selectedJokerCommand = new NetworkCommandData("SelectedHelpFromFriendJoker");
+            selectedJokerCommand.AddOption("SendClientId", args.PlayerConnectionId.ToString());
+            networkManager.SendServerCommand(selectedJokerCommand);
+            
+            loadingUI.SetActive(true);
+
+            var receivedSettingsCommand = new ReceivedHelpFromFriendJokerSettingsCommand(networkManager, loadingUI, waitingToAnswerUI, friendAnswerUI);
+            receivedSettingsCommand.OnFinishedExecution += (s, a) => OnReceivedSettings();
+
+            networkManager.CommandsManager.AddCommand("HelpFromFriendJokerSettings", receivedSettingsCommand);
+
+            receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
+            receiveSettingsTimeoutTimer.AutoReset = false;
+            receiveSettingsTimeoutTimer.Elapsed += (s, e) => OnReceiveSettingsTimeout();
+        };
     }
 
     void BeginReceiveConnectedClientsIdsNames()
     {
         var commandData = new NetworkCommandData("ConnectedClientsIdsNames");
         networkManager.SendServerCommand(commandData);
-        loadingUI.SetActive(true);
+
+        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
     }
 
-    void ActivateCallAFriendJoker()
+    void OnReceiveSettingsTimeout()
     {
-        callAFriendUIController.OnCalledPlayer += (sender, args) => AskFriendOnline(args.PlayerConnectionId);
-        BeginReceiveConnectedClientsIdsNames();
+        ThreadUtils.Instance.RunOnMainThread(() =>
+            {
+                activated = false;
+                loadingUI.SetActive(false);
+                receiveSettingsTimeoutTimer.Dispose();
+                networkManager.CommandsManager.RemoveCommand("HelpFromFriendJokerSettings");
+            });
+    }
 
-        if (OnActivated != null)
-        {
-            OnActivated(this, EventArgs.Empty);
-        }
-
-        activated = true;
+    void OnReceivedSettings()
+    {
+        receiveSettingsTimeoutTimer.Stop();
+        receiveSettingsTimeoutTimer.Dispose();
     }
 
     public void Activate()
     {
-        networkManager.CommandsManager.AddCommand("AskAFriendResponse", new ReceivedAskAFriendResponseCommand(OnReceivedAskAFriendResponse));
-        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
-
-        ActivateCallAFriendJoker();
+        loadingUI.SetActive(true);
+        BeginReceiveConnectedClientsIdsNames();
     }
 }
-

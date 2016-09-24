@@ -32,7 +32,7 @@ public class LeaderboardUIController : MonoBehaviour
         yield return null;
 
         var defaultRect = PlayerScorePrefab.GetComponent<RectTransform>();
-        var height = defaultRect.sizeDelta.y;
+        var rectHeight = defaultRect.sizeDelta.y;
 
         for (int i = 0; i < playersScore.Length; i++)
         {
@@ -58,7 +58,7 @@ public class LeaderboardUIController : MonoBehaviour
             scoreObj.transform.SetParent(ContentPanel.transform, false);
 
             var scoreRect = scoreObj.GetComponent<RectTransform>();
-            var nextY = ((scoreRect.sizeDelta.y + SpaceBetweenScore) * (i + 1));
+            var nextY = ((rectHeight + SpaceBetweenScore) * (i + 1));
             scoreRect.anchoredPosition = new Vector2(0, -nextY);
                 
             yield return new WaitForSeconds(0.05f);
