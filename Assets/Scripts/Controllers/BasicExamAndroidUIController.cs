@@ -29,7 +29,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
 
         ConnectingUI.SetActive(true);
 
-        var ipToConnect = PlayerPrefs.GetString("ServerIP");
+        var ipToConnect = PlayerPrefsEncryptionUtils.GetString("ServerIP");
         Connect(ipToConnect);
     }
 

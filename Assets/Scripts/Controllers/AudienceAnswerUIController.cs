@@ -19,7 +19,7 @@ public class AudienceAnswerUIController : MonoBehaviour
 
         if (answers.Length != 4)
         {
-            throw new Exception("Answers must be exactly 4. AudienceAnswerUIController obj");
+            throw new Exception("Answers must be exactly 4");
         }
 
         answersText = new Text[answers.Length];
@@ -41,7 +41,6 @@ public class AudienceAnswerUIController : MonoBehaviour
     {
         var answersVotes = answersVoteCount.Shuffled();
         var votedCountValues = answersVotes.Select(a => a.Value).ToArray();
-        //all votes count
         var chancesSum = votedCountValues.Sum();
         var answerIndex = 0;
 
@@ -63,6 +62,4 @@ public class AudienceAnswerUIController : MonoBehaviour
             answerIndex++;
         }
     }
-
-
 }

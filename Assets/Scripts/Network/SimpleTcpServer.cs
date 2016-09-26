@@ -200,7 +200,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
     }
 
-    public virtual void Initialize(int port)
+    public void Initialize(int port)
     {
         if (Initialized)
         {
@@ -221,9 +221,11 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         CoroutineUtils.RepeatEverySeconds(0.5f, RemoveDisconnectedSockets);
 
         initialized = true;
+
+        Debug.Log("Initiazed SimpleTcp Server ");
     }
 
-    public virtual void Disconnect(string ipAddress)
+    public void Disconnect(string ipAddress)
     {
         if (!initialized)
         {

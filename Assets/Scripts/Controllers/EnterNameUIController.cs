@@ -6,7 +6,7 @@ using System.Collections;
 public class EnterNameUIController : ExtendedMonoBehaviour
 {
     public GameObject UsernameTextField;
-    public EventHandler OnUsernameSet = delegate
+    public EventHandler<UserNameEventArgs> OnUsernameSet = delegate
     {
 
     };
@@ -25,9 +25,10 @@ public class EnterNameUIController : ExtendedMonoBehaviour
 
     void Initialize()
     {
-        if (PlayerPrefs.HasKey("Username"))
+        if (PlayerPrefsEncryptionUtils.HasKey("Username"))
         {
-            OnUsernameSet(this, EventArgs.Empty);
+            var username = PlayerPrefsEncryptionUtils.GetString("Username");
+            OnUsernameSet(this, new UserNameEventArgs(username));
             Deactivate();
         }
     }
@@ -40,8 +41,8 @@ public class EnterNameUIController : ExtendedMonoBehaviour
     public void SaveUsername()
     {
         var usernameText = UsernameTextField.GetComponent<Text>();
-        PlayerPrefs.SetString("Username", usernameText.text);
-        OnUsernameSet(this, EventArgs.Empty);
+        PlayerPrefsEncryptionUtils.SetString("Username", usernameText.text);
+        OnUsernameSet(this, new UserNameEventArgs(usernameText.text));
         Deactivate();
     }
 }
