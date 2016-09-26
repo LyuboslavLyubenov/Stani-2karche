@@ -7,9 +7,17 @@ using System.Collections;
 
 public class JokersData
 {
+    public EventHandler<JokerEventArgs> OnAddedJoker = delegate
+    {
+    };
+
+    public EventHandler<JokerEventArgs> OnRemovedJoker = delegate
+    {
+    };
+
     List<Type> availableJokers = new List<Type>();
 
-    public IEnumerable<Type> AvailableJokers
+    public ICollection<Type> AvailableJokers
     {
         get
         {
@@ -17,20 +25,11 @@ public class JokersData
         }
     }
 
-    void ValidateJoker(Type joker)
-    {
-        var isJoker = joker.GetInterfaces().Contains(typeof(IJoker));
-
-        if (!isJoker)
-        {
-            throw new ArgumentException("Invalid joker");
-        }
-    }
-
     public void AddJoker(Type joker)
     {
-        ValidateJoker(joker);
+        JokerUtils.ValidateJokerType(joker);
         availableJokers.Add(joker);
+        OnAddedJoker(this, new JokerEventArgs(joker));
     }
 
     public void RemoveJoker(Type joker)
@@ -41,5 +40,6 @@ public class JokersData
         }
 
         availableJokers.Remove(joker);
+        OnRemovedJoker(this, new JokerEventArgs(joker));
     }
 }

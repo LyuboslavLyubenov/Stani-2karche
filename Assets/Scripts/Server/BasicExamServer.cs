@@ -12,13 +12,14 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public AskAudienceJokerRouter AskAudienceJokerRouter;
 
     MainPlayerData mainPlayerData;
+    MainPlayerDataSynchronizer mainPlayerDataSynchronizer;
 
     // Use this for initialization
     void Start()
     {
         mainPlayerData = new MainPlayerData(NetworkManager);
+        mainPlayerDataSynchronizer = new MainPlayerDataSynchronizer(NetworkManager, mainPlayerData);
 
-        mainPlayerData.OnConnected += OnMainPlayerConnected;
         mainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
 
         NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerAnswerSelectedCommand(OnReceivedSelectedAnswer));
@@ -29,19 +30,15 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
         LeaderboardSerializer.LevelCategory = GameData.LevelCategory;
         LeaderboardSerializer.LoadDataAsync();
+
+        mainPlayerData.JokersData.AddJoker(typeof(HelpFromFriendJoker));
+        mainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
     }
 
     void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
     {
         HelpFromFriendJokerRouter.Deactivate();
         AskAudienceJokerRouter.Deactivate();
-    }
-
-    void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
-    {
-        var testSendAskAudienceJoker = new NetworkCommandData("AddAskAudienceJoker");
-        NetworkManager.SendClientCommand(args.ConnectionId, testSendAskAudienceJoker);
-        mainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
     }
 
     void OnReceivedSelectedAnswer(int clientId, string answer)

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 public class MainPlayerData : IPlayerData
 {
@@ -54,12 +55,16 @@ public class MainPlayerData : IPlayerData
             throw new ArgumentNullException("networkManager");
         }
 
-        JokersData = new JokersData();
         this.networkManager = networkManager;
+        JokersData = new JokersData();
 
         networkManager.OnClientDisconnected += OnClientDisconnected;
         networkManager.CommandsManager.AddCommand("MainPlayerConnecting", new ReceivedMainPlayerConnectingCommand(OnMainPlayerConnecting));
 
+        JokersData.OnAddedJoker += (sender, args) =>
+        {
+        };
+        
         //lazy motherf*cker
         OnConnected = delegate
         {
