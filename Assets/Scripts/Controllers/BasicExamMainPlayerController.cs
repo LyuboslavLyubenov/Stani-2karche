@@ -50,13 +50,15 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
         CoroutineUtils.WaitForFrames(1, () =>
             {
-                var ip = PlayerPrefs.GetString("ServerIP");
+                var ip = PlayerPrefsEncryptionUtils.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
 
                 NetworkManager.OnConnectedEvent += OnConnectedToServer;
             });
-
+        
     }
+
+
 
     void OnConnectedToServer(object sender, EventArgs args)
     {

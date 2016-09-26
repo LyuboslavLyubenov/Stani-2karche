@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System;
 
 public class AvailableJokersUIController : MonoBehaviour
 {
@@ -55,9 +56,17 @@ public class AvailableJokersUIController : MonoBehaviour
 
     void OnJokerClick(GameObject jokerObj, IJoker joker)
     {
-        joker.Activate();
+        try
+        {
+            joker.Activate();  
+        }
+        catch (InvalidOperationException ex)
+        {
+            Debug.LogException(ex);
+        }
+
         availableJokers.Remove(joker);
-        Destroy(jokerObj);//TODO: EXIT ANIMATION?
+        Destroy(jokerObj);//TODO: EXIT ANIMATION?  
     }
 }
 

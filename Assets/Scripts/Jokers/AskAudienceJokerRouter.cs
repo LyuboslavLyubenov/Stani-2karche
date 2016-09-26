@@ -103,6 +103,12 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
             return;
         }
 
+        if (!clientsThatMustVote.Contains(connectionId))
+        {
+            BeginReceiveVote();
+            return;
+        }
+
         answersVotes[answer]++;
         votedClientsConnectionId.Add(connectionId);
 
@@ -204,6 +210,22 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         if (mainPlayerData == null)
         {
             throw new ArgumentNullException("mainPlayerData");
+        }
+
+        var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
+
+        #if DEVELOPMENT_BUILD
+        minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
+        #endif
+
+        if (NetworkManager.ConnectedClientsCount < minClients)
+        {
+            var cannotActivateNotificationCommand = new NetworkCommandData("ShowNotification");
+            cannotActivateNotificationCommand.AddOption("Color", "Red");
+            cannotActivateNotificationCommand.AddOption("Message", "Cannot activate Ask Audience Joker because there arent enough players in audience");
+
+            NetworkManager.SendClientCommand(senderConnectionId, cannotActivateNotificationCommand);
+            return;
         }
 
         this.timeToAnswerInSeconds = timeToAnswerInSeconds;

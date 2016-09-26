@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Timers;
-using System.Linq;
 
 public class AskAudienceJoker : IJoker
 {
@@ -11,8 +9,8 @@ public class AskAudienceJoker : IJoker
     const int MinCorrectAnswerChance = 40;
     const int MaxCorrectAnswerChance = 85;
 
-    const int MinClientsForOnlineVote_Release = 4;
-    const int MinClientsForOnlineVote_Development = 1;
+    public const int MinClientsForOnlineVote_Release = 4;
+    public const int MinClientsForOnlineVote_Development = 1;
 
     public EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
     {
@@ -114,6 +112,17 @@ public class AskAudienceJoker : IJoker
     public void Activate()
     {
         loadingUI.SetActive(true);
+
+        var minClients = MinClientsForOnlineVote_Release;
+
+        #if DEVELOPMENT_BUILD
+        minClients = MinClientsForOnlineVote_Development;
+        #endif
+
+        if (networkManager.ServerConnectedClientsCount < minClients)
+        {
+            throw new InvalidOperationException("There must be at least " + minClients + " clients to activate this joker.");
+        }
 
         var selectedAskAudienceJokerCommand = new NetworkCommandData("SelectedAskAudienceJoker");
         networkManager.SendServerCommand(selectedAskAudienceJokerCommand);

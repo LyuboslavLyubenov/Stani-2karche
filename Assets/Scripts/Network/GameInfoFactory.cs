@@ -38,10 +38,10 @@ public class GameInfoFactory : MonoBehaviour
 
     BasicExamGameInfo_Serializable GetBasicExamGameInfo()
     {
-        var canConnectAsMainPlayer = PlayerPrefs.HasKey("CanConnectAsMainPlayer");
-        var canConnectAsAudience = PlayerPrefs.HasKey("CanConnectAsAudience");
+        var canConnectAsMainPlayer = PlayerPrefsEncryptionUtils.HasKey("CanConnectAsMainPlayer");
+        var canConnectAsAudience = PlayerPrefsEncryptionUtils.HasKey("CanConnectAsAudience");
         var gameType = GameType.BasicExam;
-        var hostUsername = PlayerPrefs.GetString("Username");
+        var hostUsername = PlayerPrefsEncryptionUtils.GetString("Username");
         var serverInfo = GetServerInfo();
 
         var gameInfo = new BasicExamGameInfo_Serializable()

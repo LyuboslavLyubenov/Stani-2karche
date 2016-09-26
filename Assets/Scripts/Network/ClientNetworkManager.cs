@@ -74,16 +74,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         ConfigureClient();
 
         CoroutineUtils.RepeatEverySeconds(SendKeepAliveRequestDelayInSeconds, SendKeepAliveRequest);
-        CoroutineUtils.RepeatEverySeconds(3f, () =>
-            {
-                if (!IsConnected)
-                {
-                    return;    
-                }
-
-                var commandData = new NetworkCommandData("ConnectedClientsCount");
-                SendServerCommand(commandData);
-            });
+        CoroutineUtils.RepeatEverySeconds(3f, BeginReceiveConnectedClientsCount);
 
         StartCoroutine(UpdateCoroutine());
     }
@@ -102,13 +93,26 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(serverConnectedClientsCount));
     }
 
+    void BeginReceiveConnectedClientsCount()
+    {
+        if (!isRunning || !IsConnected)
+        {
+            return;
+        }
+
+        var commandData = new NetworkCommandData("ConnectedClientsCount");
+        SendServerCommand(commandData);
+    }
+
     void SendKeepAliveRequest()
     {
-        if (isRunning && IsConnected)
+        if (!isRunning || !IsConnected)
         {
-            var commandLine = new NetworkCommandData("KeepAlive");
-            SendServerCommand(commandLine);
+            return;
         }
+            
+        var commandLine = new NetworkCommandData("KeepAlive");
+        SendServerCommand(commandLine);
     }
 
     void ShowNotification(Color color, string message)
@@ -125,7 +129,10 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         {
             if (isRunning)
             {
-                UpdateClient();
+                NetworkTransportUtils.ReceiveMessageAsync(ReceivedMessageFromClientAsync, (exception) =>
+                    {
+                        Debug.LogException(exception);
+                    });
             }
 
             yield return new WaitForSeconds(0.5f);
@@ -134,27 +141,14 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     string GetUsername()
     {
-        var username = "";
+        var username = "Anonymous";
 
-        if (PlayerPrefs.HasKey("Username"))
+        if (PlayerPrefsEncryptionUtils.HasKey("Username"))
         {
-            username = PlayerPrefs.GetString("Username");
+            username = PlayerPrefsEncryptionUtils.GetString("Username");
         }
 
         return username;
-    }
-
-    void UpdateClient()
-    {
-        if (!isRunning)
-        {
-            return;
-        }
-
-        NetworkTransportUtils.ReceiveMessageAsync(ReceivedMessageFromClientAsync, (exception) =>
-            {
-                Debug.LogException(exception);
-            });
     }
 
     void ReceivedMessageFromClientAsync(NetworkData networkData)
