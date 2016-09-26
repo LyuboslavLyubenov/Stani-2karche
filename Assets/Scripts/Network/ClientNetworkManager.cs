@@ -12,9 +12,14 @@ using System.Text;
 public class ClientNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
+
     const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
     const float SendKeepAliveRequestDelayInSeconds = 3f;
+
     const int MaxConnectionAttempts = 3;
+
+    const int MaxServerReactionTimeInSeconds = 6;
+    const int MaxNetworkErrorsBeforeDisconnect = 5;
 
     public NotificationsServiceController NotificationsServiceController;
     public bool ShowDebugMenu = false;
@@ -43,6 +48,9 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     CommandsManager commandsManager = new CommandsManager();
 
     ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
+
+    float elapsedTimeSinceFirstNetworkError = 0;
+    int networkErrorsCount = 0;
 
     public bool IsConnected
     {
@@ -79,6 +87,22 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         StartCoroutine(UpdateCoroutine());
     }
 
+    void Update()
+    {
+        if (networkErrorsCount >= MaxNetworkErrorsBeforeDisconnect)
+        {
+            if (elapsedTimeSinceFirstNetworkError >= MaxServerReactionTimeInSeconds)
+            {
+                Disconnect();
+            }
+
+            elapsedTimeSinceFirstNetworkError = 0;
+            networkErrorsCount = 0;
+        }
+
+        elapsedTimeSinceFirstNetworkError += Time.deltaTime;
+    }
+
     void ConfigureClient()
     {
         connectionConfig = new ConnectionConfig();
@@ -91,6 +115,16 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(NotificationsServiceController));
         commandsManager.AddCommand("AllowedToConnect", new ReceivedAllowToConnectToServerCommand(isConnected));
         commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(serverConnectedClientsCount));
+    }
+
+    void OnNetworkError()
+    {
+        if (networkErrorsCount == 0)
+        {
+            elapsedTimeSinceFirstNetworkError = 0;    
+        }
+
+        networkErrorsCount++;
     }
 
     void BeginReceiveConnectedClientsCount()
@@ -339,6 +373,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
                 var error = (NetworkError)errorN;
                 var errorMessage = NetworkErrorUtils.GetMessage(error);
                 Debug.LogException(new Exception(errorMessage));
+
+                OnNetworkError();
             });
     }
 
