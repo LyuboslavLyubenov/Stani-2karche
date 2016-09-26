@@ -45,9 +45,6 @@ public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand
         }
 
         mainPlayerData.JokersData.RemoveJoker(askAudienceJokerType);
-
-        var commandData = new NetworkCommandData("AllowedToActivateAskAudienceJoker");
-        networkManager.SendClientCommand(senderConnectionId, commandData);
         askAudienceJokerRouter.Activate(timeToAnswerInSeconds, senderConnectionId, mainPlayerData);
     }
 }

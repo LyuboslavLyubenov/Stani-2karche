@@ -71,13 +71,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     void SendVoteResult(ISimpleQuestion currentQuestion)
     {
-        if (!NetworkManager.IsConnected(senderConnectionId))
-        {
-            Debug.LogError("[AskAudienceJokerRouter] Main Player not connected");
-            return;
-        }
-
-        var voteResultCommandData = new NetworkCommandData("AskAudienceVoteResult");
+        var voteResultCommandData = new NetworkCommandData("AskAudienceJokerVoteResult");
         var answersVotesPairs = answersVotes.ToArray();
 
         for (int i = 0; i < answersVotesPairs.Length; i++)
@@ -195,7 +189,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         timeToAnswerInSeconds = 0;
         senderConnectionId = 0;
-        elapsedTime = 0;
+        elapsedTime = -1;
 
         Activated = false;
     }
@@ -212,7 +206,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
             throw new ArgumentNullException("mainPlayerData");
         }
 
-        var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
+        var minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
 
         #if DEVELOPMENT_BUILD
         minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
@@ -231,12 +225,10 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         this.timeToAnswerInSeconds = timeToAnswerInSeconds;
         this.senderConnectionId = senderConnectionId;
 
-        elapsedTime = 0;
+        elapsedTime = 1;
 
         var audienceConnectionIds = NetworkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
         clientsThatMustVote.AddRange(audienceConnectionIds);
-
-        CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
 
         LocalGameData.GetCurrentQuestion((question) =>
             {
@@ -246,6 +238,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
                 BeginReceiveVote();
                 Activated = true;
 
+                CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
             }, (exception) =>
             {
                 Debug.LogException(exception);

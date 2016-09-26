@@ -6,9 +6,6 @@ public class AskAudienceJoker : IJoker
 {
     const int SettingsReceiveTimeoutInSeconds = 10;
 
-    const int MinCorrectAnswerChance = 40;
-    const int MaxCorrectAnswerChance = 85;
-
     public const int MinClientsForOnlineVote_Release = 4;
     public const int MinClientsForOnlineVote_Development = 1;
 
@@ -88,18 +85,14 @@ public class AskAudienceJoker : IJoker
         waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = timeToAnswerInSeconds;
 
         receiveSettingsTimeoutTimer.Stop();
-        ActivateAskAudienceJoker();
-    }
 
-    void ActivateAskAudienceJoker()
-    {
         loadingUI.SetActive(false);
         waitingToAnswerUI.SetActive(true);
 
         var receivedAskAudienceVoteResultCommand = new ReceivedAskAudienceVoteResultCommand(audienceAnswerUI);
         receivedAskAudienceVoteResultCommand.OnFinishedExecution += (sender, args) => waitingToAnswerUI.SetActive(false);
 
-        networkManager.CommandsManager.AddCommand("AskAudienceJokerSettings", receivedAskAudienceVoteResultCommand);
+        networkManager.CommandsManager.AddCommand("AskAudienceJokerVoteResult", receivedAskAudienceVoteResultCommand);
 
         Activated = true;
 

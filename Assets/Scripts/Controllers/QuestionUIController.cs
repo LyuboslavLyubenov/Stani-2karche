@@ -29,7 +29,7 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         set;
     }
 
-    void Start()
+    public QuestionUIController()
     {
         OnAnswerClick = delegate
         {
@@ -38,7 +38,10 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         OnQuestionLoaded = delegate
         {
         };
-        
+    }
+
+    void Start()
+    {
         StartCoroutine(InitializeCoroutine());
     }
 
