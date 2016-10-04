@@ -5,11 +5,15 @@ using System.Linq;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
-    public bool GameOver
+    public bool IsGameOver
     {
         get;
         private set;
     }
+
+    public EventHandler OnGameOver = delegate
+    {
+    };
 
     public ServerNetworkManager NetworkManager;
     public LocalGameData GameData;
@@ -31,6 +35,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerAnswerSelectedCommand(OnReceivedSelectedAnswer));
         NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 10));
         NetworkManager.CommandsManager.AddCommand("SelectedAskAudienceJoker", new ReceivedSelectedAskAudienceJokerCommand(mainPlayerData, AskAudienceJokerRouter, NetworkManager, 10));
+        NetworkManager.CommandsManager.AddCommand("Surrender", new ReceivedSurrenderBasicExamOneTimeCommand(mainPlayerData, OnMainPlayerSurrender));
 
         GameData.LoadDataAsync();
 
@@ -41,6 +46,11 @@ public class BasicExamServer : ExtendedMonoBehaviour
         mainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
     }
 
+    void OnMainPlayerSurrender()
+    {
+        EndGame();
+    }
+
     void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
     {
         HelpFromFriendJokerRouter.Deactivate();
@@ -49,7 +59,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void OnReceivedSelectedAnswer(int clientId, string answer)
     {
-        if (!mainPlayerData.IsConnected || clientId != mainPlayerData.ConnectionId)
+        if (IsGameOver || !mainPlayerData.IsConnected || clientId != mainPlayerData.ConnectionId)
         {
             return;
         }
@@ -63,13 +73,21 @@ public class BasicExamServer : ExtendedMonoBehaviour
                     return;
                 }
 
-                CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () =>
-                    {
-                        SendEndGameInfo();
-                        SavePlayerScoreToLeaderboard();
-                    });
+                EndGame();
             }, 
             Debug.LogException);
+    }
+
+    void EndGame()
+    {
+        CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () =>
+            {
+                SendEndGameInfo();
+                SavePlayerScoreToLeaderboard();
+                IsGameOver = true;
+                OnGameOver(this, EventArgs.Empty);
+                NetworkManager.StopServer();
+            });
     }
 
     void SendEndGameInfo()
@@ -95,3 +113,4 @@ public class BasicExamServer : ExtendedMonoBehaviour
         LeaderboardSerializer.SetPlayerScore(playerScore);
     }
 }
+

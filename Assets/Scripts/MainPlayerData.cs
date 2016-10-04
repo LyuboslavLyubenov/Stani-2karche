@@ -5,12 +5,6 @@ public class MainPlayerData : IPlayerData
 {
     ServerNetworkManager networkManager;
 
-    public JokersData JokersData
-    {
-        get;
-        private set;
-    }
-
     public EventHandler<ClientConnectionDataEventArgs> OnConnected
     {
         get;
@@ -21,6 +15,12 @@ public class MainPlayerData : IPlayerData
     {
         get;
         set;
+    }
+
+    public JokersData JokersData
+    {
+        get;
+        private set;
     }
 
     public bool IsConnected

@@ -52,7 +52,7 @@ public class LanguagesManager : MonoBehaviour
 
     void Awake()
     {
-        languagePath = Application.dataPath + "/Languages/";
+        languagePath = Environment.CurrentDirectory + "/Languages/";
         CollectLanguages();
     }
 
