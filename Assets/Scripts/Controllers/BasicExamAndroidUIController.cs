@@ -9,6 +9,9 @@ public class BasicExamAndroidUIController : MonoBehaviour
     public GameObject QuestionPanelUI;
     public GameObject ConnectionSettingsUI;
     public GameObject ConnectingUI;
+    public GameObject EndGameUI;
+    public GameObject LeaderboardUI;
+    public GameObject UnableToConnectUI;
 
     public ClientNetworkManager NetworkManager;
     public NotificationsServiceController NotificationsController;
@@ -17,12 +20,12 @@ public class BasicExamAndroidUIController : MonoBehaviour
     public Animator QuestionPanelAnimator;
 
     QuestionUIController questionUIController = null;
+    UnableToConnectUIController unableToConnectController = null;
 
     void Start()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        CheckDependecies();
         LoadControllers();
         LoadCommands();
         AttachEventsHooks();
@@ -30,45 +33,13 @@ public class BasicExamAndroidUIController : MonoBehaviour
         ConnectingUI.SetActive(true);
 
         var ipToConnect = PlayerPrefsEncryptionUtils.GetString("ServerIP");
-        Connect(ipToConnect);
-    }
-
-    void CheckDependecies()
-    {
-        if (QuestionPanelUI == null)
-        {
-            throw new Exception("QuestionPanelUI is null on AndroidUIController obj");
-        }
-
-        if (ConnectionSettingsUI == null)
-        {
-            throw new Exception("ConnectionSettingsUI is null on AndroidUIController obj");
-        }
-
-        if (ConnectingUI == null)
-        {
-            throw new Exception("ConnectingUI is null on AndroidUIController obj");
-        }
-
-        if (NetworkManager == null)
-        {
-            throw new Exception("ClientNetworkManager is null on AndroidUIController obj");
-        }
-
-        if (NotificationsController == null)
-        {
-            throw new Exception("NotificationsController is null on AndroidUIController obj");
-        }
-
-        if (QuestionPanelAnimator == null)
-        {
-            throw new Exception("QuestionPanelAnimator is null on AndroidUIController obj");
-        }
+        ConnectTo(ipToConnect);
     }
 
     void LoadControllers()
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
+        unableToConnectController = unableToConnectController.GetComponent<UnableToConnectUIController>();
 
         if (questionUIController == null)
         {
@@ -81,16 +52,16 @@ public class BasicExamAndroidUIController : MonoBehaviour
         NetworkManager.CommandsManager.AddCommand("AnswerTimeout", new ReceivedAnswerTimeoutCommand(QuestionPanelUI, NotificationsController));
         NetworkManager.CommandsManager.AddCommand("RemainingTimeToAnswer", new ReceivedRemainingTimeToAnswerCommand(OnReceivedRemainingTime));
         NetworkManager.CommandsManager.AddCommand("LoadQuestion", new ReceivedLoadQuestionCommand(LoadQuestion));
+        NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
     }
 
     void AttachEventsHooks()
     {
         NetworkManager.OnConnectedEvent += OnConnected;
         NetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
-
         questionUIController.OnAnswerClick += OnAnswerClick;
-
-        connectionSettingsUIController.OnConnectToServer += ((sender, e) => Connect(e.IPAddress));
+        connectionSettingsUIController.OnConnectToServer += ((sender, e) => ConnectTo(e.IPAddress));
+        unableToConnectController.OnTryingAgainToConnectToServer += (sender, args) => ConnectTo(args.IPAddress);
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)
@@ -131,8 +102,9 @@ public class BasicExamAndroidUIController : MonoBehaviour
 
     void OnDisconnectFromServer(object sender, EventArgs args)
     {
+        ConnectingUI.SetActive(false);
+        UnableToConnectUI.SetActive(true);
         //TODO: show ui asking if you want to reconnect or to return to main menu
-        ConnectingUI.SetActive(true);
     }
 
     void LoadQuestion(ISimpleQuestion question)
@@ -142,8 +114,10 @@ public class BasicExamAndroidUIController : MonoBehaviour
         NotificationsController.AddNotification(Color.gray, "Имаш 30 секунди за отговор. Кликни на мен за да ме махнеш");
     }
 
-    public void Connect(string ip)
+    public void ConnectTo(string ip)
     {
+        ConnectingUI.SetActive(true);
+
         try
         {
             NetworkManager.ConnectToHost(ip);    
