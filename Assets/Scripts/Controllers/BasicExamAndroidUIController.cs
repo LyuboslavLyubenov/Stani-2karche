@@ -30,9 +30,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
         LoadCommands();
         AttachEventsHooks();
 
-        ConnectingUI.SetActive(true);
-
-        var ipToConnect = PlayerPrefsEncryptionUtils.GetString("ServerIP");
+        var ipToConnect = PlayerPrefs.GetString("ServerIP");
         ConnectTo(ipToConnect);
     }
 
@@ -104,7 +102,6 @@ public class BasicExamAndroidUIController : MonoBehaviour
     {
         ConnectingUI.SetActive(false);
         UnableToConnectUI.SetActive(true);
-        //TODO: show ui asking if you want to reconnect or to return to main menu
     }
 
     void LoadQuestion(ISimpleQuestion question)

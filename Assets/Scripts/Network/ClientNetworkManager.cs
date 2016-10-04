@@ -78,6 +78,10 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void Start()
     {
+        #if UNITY_EDITOR
+        PlayerPrefs.SetString("ServerIP", "127.0.0.1");
+        #endif
+
         ConfigureCommands();
         ConfigureClient();
 

@@ -15,6 +15,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     public GameObject FriendAnswerUI;
     public GameObject WaitingToAnswerUI;
     public GameObject AudienceAnswerUI;
+    public GameObject UnableToConnectUI;
 
     public ClientNetworkManager NetworkManager;
 
@@ -30,6 +31,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     public RemoteGameData GameData;
 
+    UnableToConnectUIController unableToConnectUIController;
 
     void Start()
     {
@@ -38,7 +40,20 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new ReceivedAddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
 
+        unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
+
+        unableToConnectUIController.OnTryingAgainToConnectToServer += (sender, args) =>
+        {
+            LoadingUI.SetActive(true);
+            NetworkManager.ConnectToHost(args.IPAddress);
+        };
+
         NetworkManager.OnConnectedEvent += OnConnectedToServer;
+        NetworkManager.OnDisconnectedEvent += (sender, args) =>
+        {
+            LoadingUI.SetActive(false);
+            UnableToConnectUI.SetActive(true);   
+        };
 
         QuestionUIController.OnAnswerClick += OnAnswerClick;
         QuestionUIController.OnQuestionLoaded += (sender, args) =>
@@ -50,12 +65,11 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
         CoroutineUtils.WaitForFrames(1, () =>
             {
-                var ip = PlayerPrefsEncryptionUtils.GetString("ServerIP");
+                var ip = PlayerPrefs.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
 
-                NetworkManager.OnConnectedEvent += OnConnectedToServer;
+
             });
-        
     }
 
     void OnConnectedToServer(object sender, EventArgs args)
