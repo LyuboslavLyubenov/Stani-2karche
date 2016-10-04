@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Stani2karche>
+	<Mark>Оценка</Mark>
+	<QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>
+	<Leaderboard>Класация</Leaderboard>
+	<RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
+	<CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
+	<Loading>Зареждане</Loading>
+	<ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
+	<UnableToConnect>
+		<Text>Неуспешно свързване към сървъра.</Text>
+		<TryAgainToConnect>Опитай да се свържеш пак</TryAgainToConnect>
+		<ReturnToLobby>Върни се към лобито</ReturnToLobby>
+	</UnableToConnect>
+	
+	
+	<ConnectSettings>
+		<ConnectToServerIP>Въведи адрес към който искаш да се свържеш</ConnectToServerIP>
+	</ConnectSettings>
+	
+	<Surrender>
+		<Text>Найстина ли искаш да се откажеш?</Text>
+		<Text1>(Ако се откажеш ще получиш оценката на която си в момента)</Text1>
+		<Confirm>Да :(</Confirm>
+		<Decline>Не</Decline>
+	</Surrender>
+	
+	<Jokers>
+		<RiskyTrust>
+			<Text>
+				Здравей!
+
+				Имаш възможността да се възползваш от бонус жокера "Рисково доверие".
+
+				Жокера ти дава възможността да зададеш въпрос на случаен човек от публиката.
+				Ако отговори правилно ще ти се възстанови един от изгубените жокери.
+				Отговори ли грешно пътят до следващата оценка ще стане още по дълъг.
+				Какво ще кажеш?
+			</Text>
+			<Use>Ще рискувам</Use>
+			<Discard>Следващият път ще пробвам</Discard>
+		</RiskyTrust>
+	</Jokers>
+	
+</Stani2karche>

@@ -5,6 +5,12 @@ using System.Linq;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
+    public bool GameOver
+    {
+        get;
+        private set;
+    }
+
     public ServerNetworkManager NetworkManager;
     public LocalGameData GameData;
     public LeaderboardSerializer LeaderboardSerializer;
@@ -59,24 +65,33 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
                 CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () =>
                     {
-                        var playersScores = LeaderboardSerializer.Leaderboard.Select(ps => new PlayerScore_Serializable(ps))
-                             .ToArray();
-                        var leaderboardData = new LeaderboardData_Serializable() { PlayerScore = playersScores };
-                        var leaderboardDataJSON = JsonUtility.ToJson(leaderboardData);
-                        var commandData = new NetworkCommandData("BasicExamGameEnd");
-
-                        commandData.AddOption("Mark", GameData.CurrentMark.ToString());
-                        commandData.AddOption("LeaderboardDataJSON", leaderboardDataJSON);
-
-                        NetworkManager.SendClientCommand(clientId, commandData);
-
-                        var currentMark = GameData.CurrentMark;
-                        var mainPlayerName = mainPlayerData.Username;
-                        var playerScore = new PlayerScore(mainPlayerName, currentMark, DateTime.Now);
-
-                        LeaderboardSerializer.SetPlayerScore(playerScore);
+                        SendEndGameInfo();
+                        SavePlayerScoreToLeaderboard();
                     });
             }, 
             Debug.LogException);
+    }
+
+    void SendEndGameInfo()
+    {
+        var playersScores = LeaderboardSerializer.Leaderboard.Select(ps => new PlayerScore_Serializable(ps))
+            .ToArray();
+        var leaderboardData = new LeaderboardData_Serializable() { PlayerScore = playersScores };
+        var leaderboardDataJSON = JsonUtility.ToJson(leaderboardData);
+        var commandData = new NetworkCommandData("BasicExamGameEnd");
+
+        commandData.AddOption("Mark", GameData.CurrentMark.ToString());
+        commandData.AddOption("LeaderboardDataJSON", leaderboardDataJSON);
+
+        NetworkManager.SendAllClientsCommand(commandData);
+    }
+
+    void SavePlayerScoreToLeaderboard()
+    {
+        var currentMark = GameData.CurrentMark;
+        var mainPlayerName = mainPlayerData.Username;
+        var playerScore = new PlayerScore(mainPlayerName, currentMark, DateTime.Now);
+
+        LeaderboardSerializer.SetPlayerScore(playerScore);
     }
 }

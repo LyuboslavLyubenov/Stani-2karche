@@ -58,8 +58,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         
     }
 
-
-
     void OnConnectedToServer(object sender, EventArgs args)
     {
         LoadingUI.SetActive(false);

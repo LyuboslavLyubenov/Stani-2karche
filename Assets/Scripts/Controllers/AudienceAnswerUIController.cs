@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-/// <summary>
-/// Ask audience user interface controller.
-/// </summary>
 public class AudienceAnswerUIController : MonoBehaviour
 {
     GameObject[] answers;
@@ -32,11 +29,6 @@ public class AudienceAnswerUIController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Sets the vote count and shows 
-    /// </summary>
-    /// <param name="answersVoteCount">Votes count for every answer</param>
-    /// <param name="inProcentage">If set to <c>true</c> will show procentage instead of voted count.</param>
     public void SetVoteCount(Dictionary<string, int> answersVoteCount, bool inProcentage)
     {
         var answersVotes = answersVoteCount.Shuffled();
