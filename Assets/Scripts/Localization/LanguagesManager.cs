@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml;
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 public class LanguagesManager : MonoBehaviour
 {
@@ -62,6 +63,8 @@ public class LanguagesManager : MonoBehaviour
         root = null;
     }
 
+    #if UNITY_STANDALONE
+    
     void CollectLanguages()
     {
         try
@@ -81,6 +84,24 @@ public class LanguagesManager : MonoBehaviour
         }
     }
 
+
+#else
+
+    Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
+
+    void CollectLanguages()
+    {
+        var allLanguages = Resources.LoadAll<TextAsset>("Languages");
+        languageFiles = new string[allLanguages.Length];
+
+        for (int i = 0; i < allLanguages.Length; i++)
+        {
+            mobileLanguages.Add(allLanguages[i].name, allLanguages[i].text);
+        }
+    }
+
+    #endif
+
     string GetLanguageFile(string language)
     {
         var languageLower = language.ToLower();
@@ -93,6 +114,10 @@ public class LanguagesManager : MonoBehaviour
 
         try
         {
+            mainDoc = new XmlDocument();
+
+            #if UNITY_STANDALONE
+
             var loadFile = GetLanguageFile(language);
 
             if (string.IsNullOrEmpty(loadFile))
@@ -101,10 +126,22 @@ public class LanguagesManager : MonoBehaviour
             }
 
             var reader = new StreamReader(loadFile);
-            mainDoc = new XmlDocument();
             mainDoc.Load(reader);
-            root = mainDoc.DocumentElement;
             reader.Close();
+           
+            #else
+
+            if (string.IsNullOrEmpty(language))
+            {
+                language = DefaultLanguage;
+            }
+
+            var xml = mobileLanguages[language];
+            mainDoc.LoadXml(xml);
+
+            #endif
+
+            root = mainDoc.DocumentElement;
 
             IsLoadedLanguage = true;
 
@@ -139,4 +176,3 @@ public class LanguagesManager : MonoBehaviour
         }
     }
 }
-
