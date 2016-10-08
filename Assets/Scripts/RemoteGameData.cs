@@ -31,6 +31,12 @@ public class RemoteGameData : MonoBehaviour, IGameData
         private set;
     }
 
+    public int SecondsForAnswerQuestion
+    {
+        get;
+        private set;
+    }
+
     public ClientNetworkManager NetworkManager;
 
     bool loaded = false;
@@ -81,7 +87,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         }
     }
 
-    void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark)
+    void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
     {
         PendingQuestionRequestData questionRequest = null;
 
@@ -110,8 +116,17 @@ public class RemoteGameData : MonoBehaviour, IGameData
         }
 
         RemainingQuestionsToNextMark = remainingQuestionsToNextMark;
+        SecondsForAnswerQuestion = secondsForAnswerQuestion;
 
         questionRequest.OnLoaded(question);
+    }
+
+    void SendGetQuestionRequest(QuestionRequestType requestType)
+    {
+        var commandData = new NetworkCommandData("GameDataGetQuestion");
+        var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
+        commandData.AddOption("RequestType", requestTypeStr);
+        NetworkManager.SendServerCommand(commandData);
     }
 
     public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
@@ -184,14 +199,6 @@ public class RemoteGameData : MonoBehaviour, IGameData
                 throw;
             }
         }
-    }
-
-    void SendGetQuestionRequest(QuestionRequestType requestType)
-    {
-        var commandData = new NetworkCommandData("GameDataGetQuestion");
-        var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
-        commandData.AddOption("RequestType", requestTypeStr);
-        NetworkManager.SendServerCommand(commandData);
     }
 }
 

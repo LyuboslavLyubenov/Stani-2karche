@@ -11,6 +11,8 @@ using System.Threading;
 public class LocalGameData : MonoBehaviour, IGameData
 {
     const string LevelPath = "LevelData\\теми\\";
+    const int DefaultSecondsForAnswerQuestion = 60;
+    const int DefaultQuestionToTakePerMark = int.MaxValue;
     const int MarkMin = 3;
     const int MarkMax = 6;
 
@@ -51,7 +53,7 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         get
         {
-            return (currentMarkIndex < marksQuestions.Count) && ((currentQuestionIndex + 1) >= marksQuestions[currentMarkIndex].Count);
+            return (currentMarkIndex < marksQuestions.Count) && ((currentQuestionIndex + 1) >= marksQuestions[currentMarkIndex].Length);
         }
     }
 
@@ -63,13 +65,22 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
     }
 
+    public int SecondsForAnswerQuestion
+    {
+        get
+        {
+            return secondsForAnswerQuestionPerMark[currentMarkIndex];
+        }
+    }
+
     bool loaded = false;
 
     int currentQuestionIndex = 0;
     int currentMarkIndex = 0;
 
-    List<List<ISimpleQuestion>> marksQuestions = new List<List<ISimpleQuestion>>();
+    List<ISimpleQuestion[]> marksQuestions = new List<ISimpleQuestion[]>();
     List<int> questionsToTakePerMark = new List<int>();
+    List<int> secondsForAnswerQuestionPerMark = new List<int>();
 
     IEnumerator SerializeLevelDataAsync()
     {
@@ -89,72 +100,101 @@ public class LocalGameData : MonoBehaviour, IGameData
 
         for (int i = 0; i < questionFilesPath.Length; i++)
         {
-            var questions = new List<ISimpleQuestion>();
             var markQuestionsDataPath = questionFilesPath[i];
             var workbook = Workbook.getWorkbook(new FileInfo(markQuestionsDataPath));
             var sheet = workbook.getSheet(0);
-            var questionsToTake = sheet.getCell(1, 0).getContents();
+            int questionsToTake = DefaultQuestionToTakePerMark;
+            int secondsForAnswerQuestion = DefaultSecondsForAnswerQuestion;
+            var allQuestionForMark = ExtractQuestionsFromWorksheet(sheet, i);
 
-            questionsToTakePerMark.Add(int.Parse(questionsToTake));
-
-            for (int rowi = 2; rowi < sheet.getRows() - 6; rowi += 6)
+            try
             {
-                var questionText = sheet.getCell(0, rowi).getContents();
-
-                if (string.IsNullOrEmpty(questionText))
-                {
-                    throw new Exception("Празен въпрос. Във файл " + (MarkMin + i) + ".xls на ред " + (rowi + 1));    
-                }
-
-                var answers = new List<string>();
-                var correctAnswer = "";
-
-                for (int answersRowI = rowi + 1; answersRowI < rowi + 5; answersRowI++)
-                {   
-                    var answerText = sheet.getCell(0, answersRowI).getContents();
-                    var isCorrect = sheet.getCell(1, answersRowI).getContents().ToLower() == "верен";
-
-                    if (string.IsNullOrEmpty(answerText))
-                    {
-                        throw new Exception("Не може да има празен отговор. Файл " + (MarkMin + i) + ".xls на ред " + (answersRowI + 1));
-                    }
-
-                    answers.Add(answerText);
-
-                    if (isCorrect)
-                    {
-                        if (!string.IsNullOrEmpty(correctAnswer))
-                        {
-                            throw new Exception("Не може да има 2 верни отговора на 1 въпрос. Файл " + (MarkMin + i) + ".xls на ред " + (answersRowI + 1));    
-                        }
-
-                        correctAnswer = answerText;
-                    }
-                }
-
-                if (string.IsNullOrEmpty(correctAnswer))
-                {
-                    throw new Exception("Няма правилен отговор. Файл " + MarkMin + i + ".xls на въпрос на ред " + rowi + 1);
-                }
-
-                if (ShuffleAnswers)
-                {
-                    answers.Shuffle();
-                }
-
-                var correctAnswerIndex = answers.IndexOf(correctAnswer);
-                var question = new SimpleQuestion(questionText, answers.ToArray(), correctAnswerIndex);
-
-                questions.Add(question);
+                questionsToTake = int.Parse(sheet.getCell(1, 0).getContents());
             }
+            catch (Exception ex)
+            {
+                var fileName = markQuestionsDataPath.Split('/').Last();
+                Debug.Log("Cant extract how many question to take per mark. File: " + fileName);
+            }
+
+            try
+            {
+                secondsForAnswerQuestion = int.Parse(sheet.getCell(3, 0).getContents());    
+            }
+            catch (Exception ex)
+            {
+                var fileName = markQuestionsDataPath.Split('/').Last();
+                Debug.Log("Cant extract how many seconds are. File: " + fileName);
+            }
+
+            secondsForAnswerQuestionPerMark.Add(secondsForAnswerQuestion);
+            questionsToTakePerMark.Add(questionsToTake);
 
             if (ShuffleQuestions)
             {
-                questions.Shuffle();
+                allQuestionForMark.Shuffle();
             }
 
-            marksQuestions.Add(questions);
+            marksQuestions.Add(allQuestionForMark);
         }
+    }
+
+    ISimpleQuestion[] ExtractQuestionsFromWorksheet(Sheet sheet, int workbookMarkIndex)
+    {
+        var questions = new List<ISimpleQuestion>();
+
+        for (int rowi = 2; rowi < sheet.getRows() - 6; rowi += 6)
+        {
+            var questionText = sheet.getCell(0, rowi).getContents();
+
+            if (string.IsNullOrEmpty(questionText))
+            {
+                throw new Exception("Празен въпрос. Във файл " + (MarkMin + workbookMarkIndex) + ".xls на ред " + (rowi + 1));    
+            }
+
+            var answers = new List<string>();
+            var correctAnswer = "";
+
+            for (int answersRowI = rowi + 1; answersRowI < rowi + 5; answersRowI++)
+            {   
+                var answerText = sheet.getCell(0, answersRowI).getContents();
+                var isCorrect = sheet.getCell(1, answersRowI).getContents().ToLower() == "верен";
+
+                if (string.IsNullOrEmpty(answerText))
+                {
+                    throw new Exception("Не може да има празен отговор. Файл " + (MarkMin + workbookMarkIndex) + ".xls на ред " + (answersRowI + 1));
+                }
+
+                answers.Add(answerText);
+
+                if (isCorrect)
+                {
+                    if (!string.IsNullOrEmpty(correctAnswer))
+                    {
+                        throw new Exception("Не може да има 2 верни отговора на 1 въпрос. Файл " + (MarkMin + workbookMarkIndex) + ".xls на ред " + (answersRowI + 1));    
+                    }
+
+                    correctAnswer = answerText;
+                }
+            }
+
+            if (string.IsNullOrEmpty(correctAnswer))
+            {
+                throw new Exception("Няма правилен отговор. Файл " + MarkMin + workbookMarkIndex + ".xls на въпрос на ред " + rowi + 1);
+            }
+
+            if (ShuffleAnswers)
+            {
+                answers.Shuffle();
+            }
+
+            var correctAnswerIndex = answers.IndexOf(correctAnswer);
+            var question = new SimpleQuestion(questionText, answers.ToArray(), correctAnswerIndex);
+
+            questions.Add(question);
+        }
+
+        return questions.ToArray();
     }
 
     public void LoadDataAsync()
@@ -175,7 +215,7 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
 
         var questions = marksQuestions[currentMarkIndex];
-        var index = Mathf.Min(questions.Count - 1, currentQuestionIndex);
+        var index = Mathf.Min(questions.Length - 1, currentQuestionIndex);
         return questions[index];
     }
 
@@ -195,9 +235,9 @@ public class LocalGameData : MonoBehaviour, IGameData
         var questions = marksQuestions[currentMarkIndex];
         var questionsToTake = questionsToTakePerMark[currentMarkIndex];
 
-        if (questionsToTake > questions.Count)
+        if (questionsToTake > questions.Length)
         {
-            questionsToTake = questions.Count;
+            questionsToTake = questions.Length;
         }
 
         if (nextQuestionIndex >= questionsToTake)
@@ -223,7 +263,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     ISimpleQuestion _GetRandomQuestion()
     {
-        var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Count);
+        var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Length);
         return marksQuestions[currentMarkIndex][questionIndex];
     }
 

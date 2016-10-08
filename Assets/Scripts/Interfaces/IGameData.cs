@@ -23,6 +23,11 @@ public interface IGameData
         get;
     }
 
+    int SecondsForAnswerQuestion
+    {
+        get;    
+    }
+
     void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 
     void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);

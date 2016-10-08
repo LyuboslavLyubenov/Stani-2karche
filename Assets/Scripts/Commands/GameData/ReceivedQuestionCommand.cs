@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ReceivedQuestionCommand : INetworkManagerCommand
 {
-    public delegate void ReceivedQuestionDelegate(QuestionRequestType requestType,ISimpleQuestion question,int questionsRemainingToNextMark);
+    public delegate void ReceivedQuestionDelegate(QuestionRequestType requestType,ISimpleQuestion question,int questionsRemainingToNextMark,int secondsForAnswerQuestion);
 
     ReceivedQuestionDelegate receivedQuestion;
 
@@ -23,8 +23,9 @@ public class ReceivedQuestionCommand : INetworkManagerCommand
         var questionJSON = commandsOptionsValues["QuestionJSON"];
         var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
         var questionsRemaining = int.Parse(commandsOptionsValues["RemainingQuestionsToNextMark"]);
+        var secondsForAnswerQuestion = int.Parse(commandsOptionsValues["SecondsForAnswerQuestion"]);
         var requestType = (QuestionRequestType)Enum.Parse(typeof(QuestionRequestType), commandsOptionsValues["RequestType"]);
 
-        receivedQuestion(requestType, question.Deserialize(), questionsRemaining);
+        receivedQuestion(requestType, question.Deserialize(), questionsRemaining, secondsForAnswerQuestion);
     }
 }

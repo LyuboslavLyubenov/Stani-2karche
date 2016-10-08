@@ -39,6 +39,7 @@ public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerComman
         var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
         commandData.AddOption("QuestionJSON", questionJSON);
         commandData.AddOption("RemainingQuestionsToNextMark", GameData.RemainingQuestionsToNextMark.ToString());
+        commandData.AddOption("SecondsForAnswerQuestion", GameData.SecondsForAnswerQuestion.ToString());
         commandData.AddOption("RequestType", requestTypeStr);
         NetworkManager.SendClientCommand(connectionId, commandData);
     }
