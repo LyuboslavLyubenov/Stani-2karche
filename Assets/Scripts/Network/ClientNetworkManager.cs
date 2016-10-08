@@ -169,6 +169,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             {
                 NetworkTransportUtils.ReceiveMessageAsync(ReceivedMessageFromClientAsync, (exception) =>
                     {
+                        Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
                         Debug.LogException(exception);
                     });
             }

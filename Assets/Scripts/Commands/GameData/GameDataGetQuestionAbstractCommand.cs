@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerCommand
 {
+    public EventHandler<ServerSentQuestionEventArgs> OnSentQuestion = delegate
+    {
+    };
+
     protected ServerNetworkManager NetworkManager
     {
         get;
@@ -42,6 +46,7 @@ public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerComman
         commandData.AddOption("SecondsForAnswerQuestion", GameData.SecondsForAnswerQuestion.ToString());
         commandData.AddOption("RequestType", requestTypeStr);
         NetworkManager.SendClientCommand(connectionId, commandData);
+        OnSentQuestion(this, new ServerSentQuestionEventArgs(question, requestType, connectionId));
     }
 
     public abstract void Execute(Dictionary<string, string> commandsOptionsValues);

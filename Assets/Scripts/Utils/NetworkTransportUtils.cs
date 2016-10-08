@@ -22,8 +22,8 @@ public class NetworkTransportUtils
         int recHostId; 
         int connectionId; 
         int channelId; 
-        byte[] recBuffer = new byte[1024]; 
-        int bufferSize = 1024;
+        int bufferSize = 4096;
+        byte[] recBuffer = new byte[bufferSize]; 
         int dataSize;
         byte error;
 

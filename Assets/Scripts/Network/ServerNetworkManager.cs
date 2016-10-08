@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.ComponentModel.Design;
 
 public class ServerNetworkManager : ExtendedMonoBehaviour
 {
@@ -508,5 +505,3 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     #endregion
 }
-
-

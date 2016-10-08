@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using System;
-using System.Linq;
 
 public class GameDataSender : MonoBehaviour
 {
+    public EventHandler<ServerSentQuestionEventArgs> OnSentQuestion = delegate
+    {
+    };
+    
     public LocalGameData LocalGameData;
     public ServerNetworkManager NetworkManager;
 
@@ -17,11 +19,24 @@ public class GameDataSender : MonoBehaviour
 
             NetworkManager.SendAllClientsCommand(commandData);
         };
-                
-        NetworkManager.CommandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetCurrentQuestion", new ReceivedGetCurrentQuestionCommand(LocalGameData, NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetRandomQuestion", new ReceivedGetRandomQuestionCommand(LocalGameData, NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", new ReceivedGetNextQuestionCommand(LocalGameData, NetworkManager));
-    }
-}
 
+        var getCurrentQuestionCommand = new ReceivedGetCurrentQuestionCommand(LocalGameData, NetworkManager);
+        var getRandomQuestionCommand = new ReceivedGetRandomQuestionCommand(LocalGameData, NetworkManager);
+        var getNextQuestionCommand = new ReceivedGetNextQuestionCommand(LocalGameData, NetworkManager);
+                
+        getCurrentQuestionCommand.OnSentQuestion += (sender, args) => OnSentQuestionToClient(args);
+        getRandomQuestionCommand.OnSentQuestion += (sender, args) => OnSentQuestionToClient(args);
+        getNextQuestionCommand.OnSentQuestion += (sender, args) => OnSentQuestionToClient(args);
+
+        NetworkManager.CommandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(NetworkManager));
+        NetworkManager.CommandsManager.AddCommand("GameDataGetCurrentQuestion", getCurrentQuestionCommand);
+        NetworkManager.CommandsManager.AddCommand("GameDataGetRandomQuestion", getRandomQuestionCommand);
+        NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
+    }
+
+    void OnSentQuestionToClient(ServerSentQuestionEventArgs args)
+    {
+        OnSentQuestion(this, args);
+    }
+
+}

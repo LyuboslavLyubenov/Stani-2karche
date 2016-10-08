@@ -67,8 +67,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             {
                 var ip = PlayerPrefs.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
-
-
             });
     }
 

@@ -22,8 +22,18 @@ public class MainPlayerDataSynchronizer
         this.networkManager = networkManager;
         this.mainPlayerData = mainPlayerData;
 
-        mainPlayerData.OnConnected += (sender, args) => SendAvailableJokersToMainPlayer(args.ConnectionId);
-        mainPlayerData.JokersData.OnAddedJoker += (sender, args) => SendJokerToPlayer(args.JokerType, mainPlayerData.ConnectionId);
+        mainPlayerData.OnConnected += OnMainPlayerConnected;
+        mainPlayerData.JokersData.OnAddedJoker += OnAddedJoker;
+    }
+
+    void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+    {
+        SendAvailableJokersToMainPlayer(args.ConnectionId);
+    }
+
+    void OnAddedJoker(object sender, JokerEventArgs args)
+    {
+        SendJokerToPlayer(args.JokerType, mainPlayerData.ConnectionId);
     }
 
     void SendAvailableJokersToMainPlayer(int connectionId)

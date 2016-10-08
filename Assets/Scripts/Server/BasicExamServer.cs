@@ -17,6 +17,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     public ServerNetworkManager NetworkManager;
     public LocalGameData GameData;
+    public GameDataSender GameDataSender;
     public LeaderboardSerializer LeaderboardSerializer;
     public HelpFromFriendJokerRouter HelpFromFriendJokerRouter;
     public AskAudienceJokerRouter AskAudienceJokerRouter;
@@ -24,6 +25,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     MainPlayerData mainPlayerData;
     MainPlayerDataSynchronizer mainPlayerDataSynchronizer;
 
+    float remainingTimeToAnswer;
     // Use this for initialization
     void Start()
     {
@@ -31,6 +33,20 @@ public class BasicExamServer : ExtendedMonoBehaviour
         mainPlayerDataSynchronizer = new MainPlayerDataSynchronizer(NetworkManager, mainPlayerData);
 
         mainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
+        GameDataSender.OnSentQuestion += (sender, args) =>
+        {
+            if (args.QuestionType == QuestionRequestType.Next)
+            {
+                remainingTimeToAnswer = GameData.SecondsForAnswerQuestion;
+            }
+        };
+        NetworkManager.OnClientConnected += (sender, args) =>
+        {
+            if (IsGameOver)
+            {
+                SendEndGameInfo();
+            }
+        };
 
         NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerAnswerSelectedCommand(OnReceivedSelectedAnswer));
         NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 10));
@@ -44,6 +60,41 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
         mainPlayerData.JokersData.AddJoker(typeof(HelpFromFriendJoker));
         mainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
+
+        CoroutineUtils.WaitUntil(() => GameData.Loaded, () => remainingTimeToAnswer = GameData.SecondsForAnswerQuestion);
+    }
+
+    void Cleanup()
+    {
+        mainPlayerDataSynchronizer = null;
+        NetworkManager.CommandsManager.RemoveCommand("SelectedHelpFromFriendJoker");
+        NetworkManager.CommandsManager.RemoveCommand("SelectedAskAudienceJoker");
+        NetworkManager.CommandsManager.RemoveCommand("Surrender");
+    }
+
+    void Update()
+    {
+        if (!NetworkManager.IsRunning || IsGameOver)
+        {
+            return;
+        }
+
+        UpdateRemainingTime();
+    }
+
+    void UpdateRemainingTime()
+    {
+        if (!mainPlayerData.IsConnected)
+        {
+            return;
+        }
+
+        remainingTimeToAnswer -= Time.deltaTime;
+
+        if (remainingTimeToAnswer <= 0)
+        {
+            EndGame();
+        }
     }
 
     void OnMainPlayerSurrender()
@@ -80,14 +131,11 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void EndGame()
     {
-        CoroutineUtils.WaitUntil(() => LeaderboardSerializer.Loaded, () =>
-            {
-                SendEndGameInfo();
-                SavePlayerScoreToLeaderboard();
-                IsGameOver = true;
-                OnGameOver(this, EventArgs.Empty);
-                NetworkManager.StopServer();
-            });
+        SendEndGameInfo();
+        SavePlayerScoreToLeaderboard();
+        IsGameOver = true;
+        OnGameOver(this, EventArgs.Empty);
+        Cleanup();
     }
 
     void SendEndGameInfo()
