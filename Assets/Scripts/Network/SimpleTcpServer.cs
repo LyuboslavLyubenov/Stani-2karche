@@ -107,7 +107,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
             connectedIPClientsSocket.Add(ip, connectionSocket);
 
-            Debug.Log("Accepted " + ip);
+            Debug.Log("SimpleTcpServer Accepted " + ip);
 
             BeginReceiveMessage(ip);
         }
@@ -143,6 +143,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         }
 
         socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(EndReceiveMessage), state);
+    
+        Debug.Log("SimpleTcpServer BeginReceiveMessage from " + ipAddress);
     }
 
     void EndReceiveMessage(IAsyncResult result)
@@ -186,7 +188,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
             var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
             var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
 
-            Debug.Log("Received " + decryptedMessage + " from " + state.IPAddress);
+            Debug.Log("SimpleTcpServer Received " + decryptedMessage + " from " + state.IPAddress);
 
             if (OnReceivedMessage != null)
             {
@@ -222,7 +224,7 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
 
         initialized = true;
 
-        Debug.Log("Initiazed SimpleTcp Server ");
+        Debug.Log("SimpleTcpServer initialized");
     }
 
     public void Disconnect(string ipAddress)
@@ -241,6 +243,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         var state = new DisconnectState(ipAddress, socket);
 
         socket.BeginDisconnect(false, new AsyncCallback(EndDisconnect), state);
+
+        Debug.Log("SimpleTcpServer begin disconnect " + ipAddress);
     }
 
     void EndDisconnect(IAsyncResult result)
@@ -258,6 +262,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         {
             Debug.Log(ex.Message);
         }
+
+        Debug.Log("SimpleTcpServer disconnected " + state.IPAddress);
     }
 
     public virtual void Dispose()
@@ -281,6 +287,8 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         connectedIPClientsSocket.Clear();
 
         initialized = false;
+
+        Debug.Log("SimpleTcpServer disposed");
     }
 
     public bool IsClientConnected(string ipAddress)

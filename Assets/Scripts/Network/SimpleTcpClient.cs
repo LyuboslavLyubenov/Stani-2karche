@@ -77,6 +77,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
             connectedToServersIPsSockets.Add(ipAddress, socket);
 
             ThreadUtils.Instance.RunOnMainThread(state.OnConnected);
+
+            Debug.Log("SimpleTcpClient Connected to " + ipAddress);
         }
         catch (Exception ex)
         {
@@ -125,7 +127,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
             }
             else
             {
-                Debug.Log("Sent " + Encoding.UTF8.GetString(state.DataToSend));
+                Debug.Log("SimpleTcpClient Sent " + Encoding.UTF8.GetString(state.DataToSend));
                 //TODO: ON SENT MESSAGE EVENT
             }
         }
@@ -141,6 +143,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         {
             throw new Exception("Not connected to " + ipAddress);
         }
+
+        Debug.Log("SimpleTcpClient sending " + message + " to " + ipAddress);
 
         BeginSendMessageToServer(ipAddress, message); 
     }
@@ -172,6 +176,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
             throw new Exception("Already connected to " + ipAddress);
         }
 
+        Debug.Log("SimpleTcpClient connecting to " + ipAddress + ':' + port.ToString());
+
         BeginConnectToServer(ipAddress, port, OnConnected);
     }
 
@@ -184,6 +190,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
         var socket = connectedToServersIPsSockets[ipAddress];
         var state = new DisconnectState(ipAddress, socket);
+
+        Debug.Log("SimpleTcpClient disconnecting to " + ipAddress);
 
         socket.BeginDisconnect(false, EndDisconnect, state);
     }
@@ -208,6 +216,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         {
             Debug.Log(ex.Message);
         }
+
+        Debug.Log("SimpleTcpClient disconnected from " + state.IPAddress);
     }
 
     public void Initialize()
@@ -221,6 +231,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
         CoroutineUtils.RepeatEverySeconds(0.5f, UpdateConnectedSockets);
         initialized = true;
+
+        Debug.Log("SimpleTcpClient initialized");
     }
 
     public void Dispose()
@@ -231,6 +243,8 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         connectedSockets.ForEach(ipSocket => DisconnectFrom(ipSocket.Key));
 
         connectedToServersIPsSockets.Clear();
+
+        Debug.Log("SimpleTcpClient disposed");
     }
 
     public bool IsConnectedTo(string ipAddress)
