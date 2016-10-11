@@ -4,22 +4,18 @@ using System;
 
 public class GameTypesUIController : MonoBehaviour
 {
-    public GameObject NormalExamSelectModeUI;
-
     void Start()
     {
         transform.localScale = new Vector3(1, 0, 1);
     }
 
-    void Deactivate()
-    {
-        GetComponent<Animator>().SetTrigger("disabled");
-    }
-
     public void LoadNormalGame()
     {
-        Deactivate();
-        NormalExamSelectModeUI.SetActive(true);
+//TODO:
+	throw new NotImplementedException();
+        PlayerPrefs.SetString("MainPlayerHost", "true");
+        PlayerPrefs.SetString("ServerIP", "127.0.0.1");
+        SceneManager.LoadScene("BasicExamMainPlayer", LoadSceneMode.Single);
     }
 
     public void LoadAudienceRevenge()
