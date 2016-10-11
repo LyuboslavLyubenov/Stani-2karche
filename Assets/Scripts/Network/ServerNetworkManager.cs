@@ -10,9 +10,9 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     const int Port = 7788;
     const float CheckForDeadClientsDelayInSeconds = 5f;
 
+    public bool AutoStart = true;
     //how many clients can be connected to the server
     public int MaxConnections;
-    public NotificationsServiceController NotificationServiceController;
     public LANServerOnlineBroadcastService LANServerOnlineBroadcastService;
 
     public EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
@@ -85,7 +85,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     {
         ConfigureCommands();
         ConfigureServer();
-        StartServer();
+
+        if (AutoStart)
+        {
+            StartServer();    
+        }
 
         if (LANServerOnlineBroadcastService != null)
         {
@@ -117,14 +121,6 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         commandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedSendConnectedClientsIdsNamesCommand(this, connectedClientsNames));
     }
 
-    void ShowNotification(Color color, string message)
-    {
-        if (NotificationServiceController != null)
-        {
-            NotificationServiceController.AddNotification(color, message);          
-        }
-    }
-
     IEnumerator UpdateCoroutine()
     {
         while (true)
@@ -145,7 +141,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
                 var error = (NetworkError)exception.ErrorN;
                 var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-                ShowNotification(Color.red, errorMessage);
+                Debug.LogError(errorMessage);
             });
     }
 
@@ -248,7 +244,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             connectedClientsIds.Remove(connectionId);
             connectedClientsNames.Remove(connectionId);    
         }
-        catch (Exception ex)
+        catch
         {
             
         }
@@ -374,7 +370,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
                 var error = (NetworkError)errorN;
                 var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-                NotificationServiceController.AddNotification(Color.red, errorMessage);
+                Debug.LogError(errorMessage);
             });
     }
 
@@ -460,11 +456,11 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         return connectedClientsIds.Contains(connectionId);
     }
 
-    #region DEBUG
+    #region DEBUG_MENU
 
     void OnGUI()
     {
-        GUI.Box(new Rect(0, 0, 315, 300), "ServerNetworkManager debug");
+        GUI.Box(new Rect(0, 0, 315, 300), "ServerNetworkManager");
 
         var connectedPlayersRect = new Rect(5, 30, 150, 30);
         var banRandomPlayerButtonRect = new Rect(5, 55, 145, 30);
