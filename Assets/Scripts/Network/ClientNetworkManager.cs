@@ -2,14 +2,8 @@
 using System.Collections;
 using UnityEngine.Networking;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-/// <summary>
-/// Client network manager.
-/// </summary>
-public class ClientNetworkManager : ExtendedMonoBehaviour
+public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
 {
     const int Port = 7788;
 
@@ -23,18 +17,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     public NotificationsServiceController NotificationsServiceController;
     public bool ShowDebugMenu = false;
-
-    public EventHandler OnConnectedEvent = delegate
-    {
-    };
-
-    public EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate
-    {
-    };
-
-    public EventHandler OnDisconnectedEvent = delegate
-    {
-    };
 
     int connectionId = 0;
     int genericHostId = 0;
@@ -51,6 +33,25 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     float elapsedTimeSinceFirstNetworkError = 0;
     int networkErrorsCount = 0;
+
+
+    public EventHandler OnConnectedEvent
+    {
+        get;
+        set;
+    }
+
+    public EventHandler<DataSentEventArgs> OnReceivedDataEvent
+    {
+        get;
+        set;
+    }
+
+    public EventHandler OnDisconnectedEvent
+    {
+        get;
+        set;
+    }
 
     public bool IsConnected
     {
@@ -81,6 +82,18 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         #if UNITY_EDITOR
         PlayerPrefs.SetString("ServerIP", "127.0.0.1");
         #endif
+
+        OnConnectedEvent = delegate
+        {
+        };
+
+        OnReceivedDataEvent = delegate
+        {
+        };
+
+        OnDisconnectedEvent = delegate
+        {
+        };
 
         ConfigureCommands();
         ConfigureClient();
