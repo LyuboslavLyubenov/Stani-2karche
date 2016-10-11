@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Net.Sockets;
 using System.Net;
 using System.Linq;
+using System.Diagnostics;
 
 public abstract class LANBroadcastService : ExtendedMonoBehaviour
 {
@@ -25,7 +26,6 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
         udpClient.ExclusiveAddressUse = false;
         //enable receiving and sending broadcast
         udpClient.EnableBroadcast = true;
-        udpClient.Client.EnableBroadcast = true;
         //lines below basically tell that we gonna receive from/ send to endpoint
         udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         udpClient.Client.Bind(endPoint);
@@ -35,10 +35,12 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
     {
         var messageEncrypted = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
         var buffer = System.Text.Encoding.UTF8.GetBytes(messageEncrypted);
-
-        udpClient.Send(buffer, buffer.Length, "255.255.255.255", Port);
+        var ip = IPAddress.Broadcast.GetIPAddress();
+        udpClient.Send(buffer, buffer.Length, ip, Port);
         yield return Ninja.JumpToUnity;
         onSentMessage();
+
+        UnityEngine.Debug.Log("LANBroadcast BroadcastMessage " + message);
     }
 
     IEnumerator ReceiveMessageCoroutine(OnReceivedMessage onReceivedMessage)
@@ -50,12 +52,16 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
 
         yield return Ninja.JumpToUnity;
         onReceivedMessage(receivedEndPoint.Address.GetIPAddress(), messageDecrypted);
+
+        UnityEngine.Debug.Log("LANBroadcast ReceivedMessageAsync - message " + messageDecrypted);
     }
 
     protected virtual void Initialize()
     {
         var endPoint = listenEndPoint;
         ConfigUDPCLient(endPoint);
+
+        UnityEngine.Debug.Log("LANBroadcast intiialized");
     }
 
     protected virtual void Dispose()
@@ -63,6 +69,7 @@ public abstract class LANBroadcastService : ExtendedMonoBehaviour
         StopAllCoroutines();
         udpClient.Close();
         udpClient = null;
+        UnityEngine.Debug.Log("LANBroadcast disposed");
     }
 
     protected void BroadcastMessageAsync(string message, OnSentMessage onSentMessage)

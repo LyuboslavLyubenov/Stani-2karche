@@ -49,4 +49,14 @@ public class CreatedGameInfoReceiverService : MonoBehaviour
                 pendingRequests.Add(ipAddress, receivedGameInfo);
             });
     }
+
+    public void StopReceivingFrom(string ipAddress)
+    {
+        if (!pendingRequests.ContainsKey(ipAddress))
+        {
+            throw new InvalidOperationException("Not listening to this ipAddress");
+        }
+
+        pendingRequests.Remove(ipAddress);
+    }
 }

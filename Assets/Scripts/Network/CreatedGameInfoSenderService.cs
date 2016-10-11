@@ -23,6 +23,8 @@ public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
         }
 
         TcpServer.OnReceivedMessage += OnReceivedMessage;
+
+        Debug.Log("Created game info inizialized");
     }
 
     void OnReceivedMessage(object sender, MessageEventArgs args)
@@ -36,8 +38,9 @@ public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
         var gameInfoJSON = JsonUtility.ToJson(gameInfo);
         var messageToSend = GameInfoTag + gameInfoJSON;
 
-        Debug.Log(gameInfoJSON);
         TcpClient.ConnectTo(args.IPAddress, TcpServer.Port, () => TcpClient.Send(args.IPAddress, messageToSend));
+
+        Debug.Log("Sending game info to " + args.IPAddress);
     }
 }
 
