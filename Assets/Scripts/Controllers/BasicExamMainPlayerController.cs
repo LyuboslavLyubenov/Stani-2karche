@@ -35,6 +35,13 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void Start()
     {
+        if (PlayerPrefs.HasKey("MainPlayerHost"))
+        {
+            var server = Resources.Load<GameObject>("Prefabs/BasicExamServer");
+            var serverObj = Instantiate(server);
+            PlayerPrefs.DeleteKey("MainPlayerHost");
+        }
+
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
