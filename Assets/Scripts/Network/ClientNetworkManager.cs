@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System;
 
-public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
+public class ClientNetworkManager : ExtendedMonoBehaviour
 {
     const int Port = 7788;
 
@@ -31,9 +31,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
 
     ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
 
-    float elapsedTimeSinceFirstNetworkError = 0;
+    float elapsedTimeSinceNetworkError = 0;
     int networkErrorsCount = 0;
-
 
     public EventHandler OnConnectedEvent
     {
@@ -108,16 +107,16 @@ public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
     {
         if (networkErrorsCount >= MaxNetworkErrorsBeforeDisconnect)
         {
-            if (elapsedTimeSinceFirstNetworkError >= MaxServerReactionTimeInSeconds)
+            if (elapsedTimeSinceNetworkError >= MaxServerReactionTimeInSeconds)
             {
                 Disconnect();
             }
 
-            elapsedTimeSinceFirstNetworkError = 0;
+            elapsedTimeSinceNetworkError = 0;
             networkErrorsCount = 0;
         }
 
-        elapsedTimeSinceFirstNetworkError += Time.deltaTime;
+        elapsedTimeSinceNetworkError += Time.deltaTime;
     }
 
     void ConfigureClient()
@@ -132,16 +131,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
         commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(NotificationsServiceController));
         commandsManager.AddCommand("AllowedToConnect", new ReceivedAllowToConnectToServerCommand(isConnected));
         commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(serverConnectedClientsCount));
-    }
-
-    void OnNetworkError()
-    {
-        if (networkErrorsCount == 0)
-        {
-            elapsedTimeSinceFirstNetworkError = 0;    
-        }
-
-        networkErrorsCount++;
     }
 
     void BeginReceiveConnectedClientsCount()
@@ -184,6 +173,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
                     {
                         Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
                         Debug.LogException(exception);
+                        networkErrorsCount++;
                     });
             }
 
@@ -287,7 +277,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
             throw new ArgumentException("Invalid ipv4 address");
         }
 
-        //if currently connected, disconnect
         if (IsConnected)
         {
             Disconnect();
@@ -392,7 +381,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour, IClientNetworkManager
                 var errorMessage = NetworkErrorUtils.GetMessage(error);
                 Debug.LogException(new Exception(errorMessage));
 
-                OnNetworkError();
+                networkErrorsCount++;
             });
     }
 
