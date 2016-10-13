@@ -3,7 +3,8 @@ using System;
 using System.Collections;
 
 //Mediator
-using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
 
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
@@ -37,9 +38,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
         if (PlayerPrefs.HasKey("MainPlayerHost"))
         {
-            var server = Resources.Load<GameObject>("Prefabs/BasicExamServer");
-            var serverObj = Instantiate(server);
-            PlayerPrefs.DeleteKey("MainPlayerHost");
+            System.Diagnostics.Process.Start("Server\\start server nogui.bat");
         }
 
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
@@ -75,6 +74,21 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
                 var ip = PlayerPrefs.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
             });
+    }
+
+    void OnDisable()
+    {
+        if (PlayerPrefs.HasKey("MainPlayerHost"))
+        {
+            var serverProcesses = System.Diagnostics.Process.GetProcessesByName("stani2karcheserver");
+
+            for (int i = 0; i < serverProcesses.Length; i++)
+            {
+                serverProcesses[i].Kill();
+            }
+
+            PlayerPrefs.DeleteKey("MainPlayerHost");
+        }
     }
 
     void OnConnectedToServer(object sender, EventArgs args)
