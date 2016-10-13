@@ -18,6 +18,11 @@ public interface IQuestionUIController
         set;
     }
 
+    ISimpleQuestion CurrentlyLoadedQuestion
+    {
+        get;
+    }
+
     void HideAnswer(int index);
 
     void HideAllAnswers();

@@ -4,7 +4,7 @@ using System;
 public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
 {
     public const string GameInfoTag = "[CreatedGameInfo]";
-    public const string SendGameInfoCommandTag = "[Command:SendGameInfo]";
+    public const string SendGameInfoCommandTag = "[SendGameInfo]";
 
     public SimpleTcpClient TcpClient;
     public SimpleTcpServer TcpServer;
@@ -34,7 +34,7 @@ public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
             return;
         }
 
-        var gameInfo = GameInfoFactory.Get("BasicExam");
+        var gameInfo = GameInfoFactory.Get();
         var gameInfoJSON = JsonUtility.ToJson(gameInfo);
         var messageToSend = GameInfoTag + gameInfoJSON;
 

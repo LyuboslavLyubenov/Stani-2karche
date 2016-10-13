@@ -11,7 +11,12 @@ public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand
     Type askAudienceJokerType;
     int timeToAnswerInSeconds;
 
-    public ReceivedSelectedAskAudienceJokerCommand(MainPlayerData mainPlayerData, AskAudienceJokerRouter askAudienceJokerRouter, ServerNetworkManager networkManager, int timeToAnswerInSeconds)
+    public ReceivedSelectedAskAudienceJokerCommand(
+        MainPlayerData mainPlayerData, 
+        AskAudienceJokerRouter askAudienceJokerRouter, 
+        ServerNetworkManager networkManager, 
+        int timeToAnswerInSeconds
+    )
     {
         if (mainPlayerData == null)
         {
@@ -39,7 +44,9 @@ public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand
     {
         var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
 
-        if (!mainPlayerData.JokersData.AvailableJokers.Contains(askAudienceJokerType))
+        if (!mainPlayerData.IsConnected ||
+            mainPlayerData.ConnectionId != senderConnectionId ||
+            !mainPlayerData.JokersData.AvailableJokers.Contains(askAudienceJokerType))
         {
             return;
         }

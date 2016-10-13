@@ -21,6 +21,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public LeaderboardSerializer LeaderboardSerializer;
     public HelpFromFriendJokerRouter HelpFromFriendJokerRouter;
     public AskAudienceJokerRouter AskAudienceJokerRouter;
+    public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
 
     MainPlayerData mainPlayerData;
     MainPlayerDataSynchronizer mainPlayerDataSynchronizer;
@@ -29,9 +30,46 @@ public class BasicExamServer : ExtendedMonoBehaviour
     // Use this for initialization
     void Start()
     {
-        mainPlayerData = new MainPlayerData(NetworkManager);
-        mainPlayerDataSynchronizer = new MainPlayerDataSynchronizer(NetworkManager, mainPlayerData);
+        LoadServerSettings();
 
+        InitializeCommands();
+        InitializeMainPlayerData();
+
+        AttachEventHandlers();
+
+        GameData.LoadDataAsync();
+        LeaderboardSerializer.LoadDataAsync();
+
+        mainPlayerData.JokersData.AddJoker(typeof(HelpFromFriendJoker));
+        mainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
+        mainPlayerData.JokersData.AddJoker(typeof(DisableRandomAnswersJoker));
+
+        CoroutineUtils.WaitUntil(() => GameData.Loaded, () => remainingTimeToAnswer = GameData.SecondsForAnswerQuestion);
+    }
+
+    void LoadServerSettings()
+    {
+        var levelCategory = PlayerPrefsEncryptionUtils.GetString("ServerLevelCategory");
+        var serverMaxPlayers = PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers");
+
+        if (string.IsNullOrEmpty(levelCategory))
+        {
+            throw new Exception("Cant load server level category");
+        }
+
+        if (string.IsNullOrEmpty(serverMaxPlayers))
+        {
+            throw new Exception("Cant load server max players");
+        }
+
+        GameData.LevelCategory = levelCategory;
+        LeaderboardSerializer.LevelCategory = levelCategory;
+
+        NetworkManager.MaxConnections = int.Parse(serverMaxPlayers);
+    }
+
+    void AttachEventHandlers()
+    {
         mainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
         GameDataSender.OnSentQuestion += (sender, args) =>
         {
@@ -47,21 +85,21 @@ public class BasicExamServer : ExtendedMonoBehaviour
                 SendEndGameInfo();
             }
         };
+    }
 
+    void InitializeMainPlayerData()
+    {
+        mainPlayerData = new MainPlayerData(NetworkManager);
+        mainPlayerDataSynchronizer = new MainPlayerDataSynchronizer(NetworkManager, mainPlayerData);
+    }
+
+    void InitializeCommands()
+    {
         NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerAnswerSelectedCommand(OnReceivedSelectedAnswer));
         NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 10));
         NetworkManager.CommandsManager.AddCommand("SelectedAskAudienceJoker", new ReceivedSelectedAskAudienceJokerCommand(mainPlayerData, AskAudienceJokerRouter, NetworkManager, 10));
+        NetworkManager.CommandsManager.AddCommand("SelectedFifthyFifthyChanceJoker", new ReceivedSelectedFifthyFifthyChanceJokerCommand(mainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 4));
         NetworkManager.CommandsManager.AddCommand("Surrender", new ReceivedSurrenderBasicExamOneTimeCommand(mainPlayerData, OnMainPlayerSurrender));
-
-        GameData.LoadDataAsync();
-
-        LeaderboardSerializer.LevelCategory = GameData.LevelCategory;
-        LeaderboardSerializer.LoadDataAsync();
-
-        mainPlayerData.JokersData.AddJoker(typeof(HelpFromFriendJoker));
-        mainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
-
-        CoroutineUtils.WaitUntil(() => GameData.Loaded, () => remainingTimeToAnswer = GameData.SecondsForAnswerQuestion);
     }
 
     void Cleanup()

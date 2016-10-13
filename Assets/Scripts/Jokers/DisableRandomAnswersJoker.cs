@@ -57,6 +57,11 @@ public class DisableRandomAnswersJoker : IJoker
 
     public void Activate()
     {
+        if (questionUIController.CurrentlyLoadedQuestion == null)
+        {
+            throw new InvalidOperationException();
+        }
+
         var selectedJokerCommand = new NetworkCommandData("SelectedFifthyFifthyJoker");
         networkManager.SendServerCommand(selectedJokerCommand);
 
@@ -77,7 +82,7 @@ public class DisableRandomAnswersJoker : IJoker
 
     void OnReceivedJokerSettings(int answersToDisableCount)
     {
-        gameData.GetCurrentQuestion((question) => ActivateJoker(question, answersToDisableCount), Debug.LogException);
+        ActivateJoker(answersToDisableCount);
 
         Activated = true;
 
@@ -87,11 +92,13 @@ public class DisableRandomAnswersJoker : IJoker
         }
     }
 
-    void ActivateJoker(ISimpleQuestion currentQuestion, int answersToDisableCount)
+    void ActivateJoker(int answersToDisableCount)
     {
-        if (currentQuestion.Answers.Length >= answersToDisableCount)
+        var currentQuestion = questionUIController.CurrentlyLoadedQuestion;
+
+        if (answersToDisableCount >= currentQuestion.Answers.Length)
         {
-            throw new ArgumentException("Cannot disable all answers");
+            throw new ArgumentException("Answers to disable count must be less than answers count");
         }
 
         var correctAnswerIndex = currentQuestion.CorrectAnswerIndex;

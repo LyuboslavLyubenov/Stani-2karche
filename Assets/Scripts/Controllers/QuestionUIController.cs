@@ -29,6 +29,12 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         set;
     }
 
+    public ISimpleQuestion CurrentlyLoadedQuestion
+    {
+        get;
+        private set;
+    }
+
     public QuestionUIController()
     {
         OnAnswerClick = delegate
@@ -135,6 +141,8 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         }
 
         ShowAllAnswers();
+
+        CurrentlyLoadedQuestion = question;
 
         if (OnQuestionLoaded != null)
         {
