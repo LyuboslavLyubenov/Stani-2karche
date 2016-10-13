@@ -24,7 +24,6 @@ public class ReceivedServerAnswerSelectedCommand : INetworkManagerCommand
         var answerSelected = commandsOptionsValues["Answer"];
 
         onReceivedAnswer(connectionId, answerSelected);
-        //TODO:
     }
 }
 

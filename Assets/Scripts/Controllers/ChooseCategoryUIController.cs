@@ -5,22 +5,21 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
 using System;
+using UnityEngine.Events;
 
-public class ChooseThemeUIController : MonoBehaviour
+public class ChooseCategoryUIController : MonoBehaviour
 {
     const int SpaceBetweenElements = 10;
 
     readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
     public Transform ContentPanel;
-    public LocalGameData GameData;
-    public LeaderboardSerializer LeaderboardSerializer;
 
-    public EventHandler OnChoosedTheme = delegate
+    public EventHandler<ChoosedCategoryEventArgs> OnChoosedCategory = delegate
     {
     };
 
-    GameObject themeElementPrefab;
+    GameObject categoryElementPrefab;
 
     bool IsValidLevel(string path)
     {
@@ -31,32 +30,32 @@ public class ChooseThemeUIController : MonoBehaviour
 
     IEnumerator InitializeCoroutine()
     {
-        themeElementPrefab = Resources.Load<GameObject>("Prefabs/ThemeToSelectButton");
+        categoryElementPrefab = Resources.Load<GameObject>("Prefabs/CategoryToSelectButton");
 
         var currentDirectory = Directory.GetCurrentDirectory() + "\\LevelData\\теми\\";
-        var availableThemes = Directory.GetDirectories(currentDirectory).Where(IsValidLevel).ToArray();
+        var availableCategories = Directory.GetDirectories(currentDirectory).Where(IsValidLevel).ToArray();
 
-        if (availableThemes.Length > 0)
+        if (availableCategories.Length > 0)
         {
-            var elementWidth = themeElementPrefab.GetComponent<RectTransform>().sizeDelta.x;
+            var elementWidth = categoryElementPrefab.GetComponent<RectTransform>().sizeDelta.x;
 
-            for (int i = 0; i < availableThemes.Length; i++)
+            for (int i = 0; i < availableCategories.Length; i++)
             {
-                var themeElement = Instantiate(themeElementPrefab);
-                var elementRectTransform = themeElement.GetComponent<RectTransform>();
+                var categoryElement = Instantiate(categoryElementPrefab);
+                var elementRectTransform = categoryElement.GetComponent<RectTransform>();
 
-                themeElement.transform.SetParent(ContentPanel, false);
+                categoryElement.transform.SetParent(ContentPanel, false);
 
                 var x = (elementWidth / 2) + SpaceBetweenElements + (i * (elementWidth + SpaceBetweenElements));
                 var y = elementRectTransform.anchoredPosition.y;
 
                 elementRectTransform.anchoredPosition = new Vector2(x, y);
 
-                var elementText = themeElement.GetComponentInChildren<Text>();
-                elementText.text = availableThemes[i].Remove(0, currentDirectory.Length);
+                var elementText = categoryElement.GetComponentInChildren<Text>();
+                elementText.text = availableCategories[i].Remove(0, currentDirectory.Length);
 
-                var elementButton = themeElement.GetComponent<Button>();
-                elementButton.onClick.AddListener(ChooseTheme);
+                var elementButton = categoryElement.GetComponent<Button>();
+                elementButton.onClick.AddListener(new UnityAction(() => ChooseCategory(availableCategories[i])));
 
                 yield return new WaitForSeconds(0.05f);
             }
@@ -73,18 +72,12 @@ public class ChooseThemeUIController : MonoBehaviour
         }
     }
 
-    void ChooseTheme()
+    void ChooseCategory(string path)
     {
         var button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         var categoryName = button.GetComponentInChildren<Text>().text;
 
-        GameData.LevelCategory = categoryName;
-        GameData.LoadDataAsync();
-
-        LeaderboardSerializer.LevelCategory = categoryName;
-        LeaderboardSerializer.LoadDataAsync();
-
-        OnChoosedTheme(this, EventArgs.Empty);
+        OnChoosedCategory(this, new ChoosedCategoryEventArgs(categoryName, path));
 
         gameObject.SetActive(false);
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
 {
-    const string ExplainThemeSelectAlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTeacher - ExplainThemeSelect";
+    const string ExplainCategorySelectAlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTeacher - ExplainCategorySelect";
 
     public bool RepeatTutorials = false;
 
@@ -14,18 +14,18 @@ public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
         base.Start();
     }
 
-    public void ExplainThemeSelect()
+    public void ExplainCategorySelect()
     {
-        if (PlayerPrefs.HasKey(ExplainThemeSelectAlreadyPlayedKey) && !RepeatTutorials)
+        if (PlayerPrefs.HasKey(ExplainCategorySelectAlreadyPlayedKey) && !RepeatTutorials)
         {
             return;
         }
 
         CoroutineUtils.WaitForFrames(0, () =>
             {
-                var message = base.TeacherDialogs["ExplainThemeSelect"];
+                var message = base.TeacherDialogs["ExplainCategorySelect"];
                 base.DisplayMessage(message, 1.5f);
-                PlayerPrefs.SetInt(ExplainThemeSelectAlreadyPlayedKey, 1);
+                PlayerPrefs.SetInt(ExplainCategorySelectAlreadyPlayedKey, 1);
             });
     }
 }
