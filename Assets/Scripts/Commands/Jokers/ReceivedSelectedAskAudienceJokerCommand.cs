@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand
+public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand, ICommandExecutedCallback
 {
+    public EventHandler OnExecuted
+    {
+        get;
+        set;
+    }
+
     MainPlayerData mainPlayerData;
     AskAudienceJokerRouter askAudienceJokerRouter;
     ServerNetworkManager networkManager;
@@ -53,5 +59,10 @@ public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand
 
         mainPlayerData.JokersData.RemoveJoker(askAudienceJokerType);
         askAudienceJokerRouter.Activate(timeToAnswerInSeconds, senderConnectionId, mainPlayerData);
+
+        if (OnExecuted != null)
+        {
+            OnExecuted(this, EventArgs.Empty);
+        }
     }
 }

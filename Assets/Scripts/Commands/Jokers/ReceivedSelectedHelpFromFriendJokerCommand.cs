@@ -5,8 +5,14 @@ using System.Linq;
 using System.Timers;
 using System.Collections;
 
-public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
+public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand, ICommandExecutedCallback
 {
+    public EventHandler OnExecuted
+    {
+        get;
+        set;
+    }
+
     ServerNetworkManager networkManager;
 
     MainPlayerData mainPlayerData;
@@ -51,5 +57,10 @@ public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
 
         mainPlayerData.JokersData.RemoveJoker(helpFromFriendJokerType);
         jokerServerRouter.Activate(timeToAnswerInSeconds, senderConnectionId, sendClientId);
+
+        if (OnExecuted != null)
+        {
+            OnExecuted(this, EventArgs.Empty);
+        }
     }
 }

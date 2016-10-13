@@ -5,6 +5,10 @@ using System.Linq;
 
 public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 {
+    public EventHandler OnSentAnswerToMainPlayer = delegate
+    {
+    };
+
     public const int MinTimeToAnswerInSeconds = 10;
 
     public ServerNetworkManager NetworkManager;
@@ -17,7 +21,6 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
     List<int> clientsThatMustVote = new List<int>();
     List<int> votedClientsConnectionId = new List<int>();
     Dictionary<string, int> answersVotes = new Dictionary<string, int>();
-
 
     public bool Activated
     {
@@ -196,6 +199,11 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     public void Activate(int timeToAnswerInSeconds, int senderConnectionId, MainPlayerData mainPlayerData)
     {
+        if (Activated)
+        {
+            throw new InvalidOperationException("Already active");
+        }
+
         if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
         {
             throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
@@ -206,7 +214,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
             throw new ArgumentNullException("mainPlayerData");
         }
 
-        var minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
+        var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
 
         #if DEVELOPMENT_BUILD
         minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
@@ -214,12 +222,12 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         if (NetworkManager.ConnectedClientsCount < minClients)
         {
+            //TODO: GENERATE AUDIENCE RESULT
             var cannotActivateNotificationCommand = new NetworkCommandData("ShowNotification");
             cannotActivateNotificationCommand.AddOption("Color", "Red");
             cannotActivateNotificationCommand.AddOption("Message", "Cannot activate Ask Audience Joker because there arent enough players in audience");
 
             NetworkManager.SendClientCommand(senderConnectionId, cannotActivateNotificationCommand);
-            return;
         }
 
         this.timeToAnswerInSeconds = timeToAnswerInSeconds;

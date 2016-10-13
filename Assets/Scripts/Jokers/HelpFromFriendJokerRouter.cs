@@ -3,6 +3,10 @@ using System;
 
 public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
 {
+    public EventHandler OnSentAnswerToMainPlayer = delegate
+    {
+    };
+
     public const int MinTimeToAnswerInSeconds = 10;
 
     public ServerNetworkManager NetworkManager;
@@ -25,7 +29,10 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
 
     public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
     {
-        Deactivate();
+        if (Activated)
+        {
+            throw new InvalidOperationException("Already active");
+        }
 
         if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
         {
@@ -78,6 +85,8 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
         sendFriendResponseCommand.AddOption("Answer", answer);
 
         NetworkManager.SendClientCommand(senderConnectionId, sendFriendResponseCommand);
+
+        OnSentAnswerToMainPlayer(this, EventArgs.Empty);
 
         Deactivate();
     }

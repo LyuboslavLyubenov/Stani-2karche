@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class ReceivedSelectedFifthyFifthyChanceJokerCommand : INetworkManagerCommand
+public class ReceivedSelectedFifthyFifthyChanceJokerCommand : INetworkManagerCommand, ICommandExecutedCallback
 {
+    public EventHandler OnExecuted
+    {
+        get;
+        set;
+    }
+
     MainPlayerData mainPlayerData;
     DisableRandomAnswersJokerRouter jokerRouter;
     ServerNetworkManager networkManager;
@@ -50,5 +56,10 @@ public class ReceivedSelectedFifthyFifthyChanceJokerCommand : INetworkManagerCom
 
         mainPlayerData.JokersData.RemoveJoker(jokerType);
         jokerRouter.Activate(answersToDisableCount, mainPlayerData, networkManager);
+
+        if (OnExecuted != null)
+        {
+            OnExecuted(this, EventArgs.Empty);
+        }
     }
 }
