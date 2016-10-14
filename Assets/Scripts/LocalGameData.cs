@@ -29,10 +29,14 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     public bool Loaded
     {
-        get
-        {
-            return loaded; 
-        }
+        get;
+        private set;
+    }
+
+    public bool Loading
+    {
+        get;
+        private set;
     }
 
     public EventHandler<MarkEventArgs> OnMarkIncrease
@@ -45,6 +49,11 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         get
         {
+            if (!Loaded)
+            {
+                throw new Exception("Not loaded");
+            }
+
             return questionsToTakePerMark[currentMarkIndex] - currentQuestionIndex - 1;    
         }
     }
@@ -53,6 +62,11 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         get
         {
+            if (!Loaded)
+            {
+                throw new Exception("Not loaded");
+            }
+
             return (currentMarkIndex < marksQuestions.Count) && ((currentQuestionIndex + 1) >= marksQuestions[currentMarkIndex].Length);
         }
     }
@@ -61,6 +75,11 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         get
         {
+            if (!Loaded)
+            {
+                throw new Exception("Not loaded");
+            }
+            
             return currentMarkIndex + (MarkMin - 1);
         }
     }
@@ -69,11 +88,14 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         get
         {
+            if (!Loaded)
+            {
+                throw new Exception("Not loaded");
+            }
+
             return secondsForAnswerQuestionPerMark[currentMarkIndex];
         }
     }
-
-    bool loaded = false;
 
     int currentQuestionIndex = 0;
     int currentMarkIndex = 0;
@@ -85,14 +107,15 @@ public class LocalGameData : MonoBehaviour, IGameData
     IEnumerator ExtractLevelDataAsync()
     {
         yield return null;
-        ExtractLevelData();
-        loaded = true;
+        ExtractLevelData((ex) => Loading = false);
+        Loaded = true;
+        Loading = false;    
     }
 
     /// <summary>
     /// Load all questions and seperate them by categories
     /// </summary>
-    void ExtractLevelData()
+    void ExtractLevelData(Action<Exception> onException)
     {
         var levelPath = Directory.GetCurrentDirectory() + '\\' + LevelPath + LevelCategory;
         var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
@@ -104,7 +127,17 @@ public class LocalGameData : MonoBehaviour, IGameData
             var sheet = workbook.getSheet(0);
             int questionsToTake = DefaultQuestionToTakePerMark;
             int secondsForAnswerQuestion = DefaultSecondsForAnswerQuestion;
-            var allQuestionForMark = ExtractQuestionsFromWorksheet(sheet, i);
+            ISimpleQuestion[] allQuestionsForMark;
+
+            try
+            {
+                allQuestionsForMark = ExtractQuestionsFromWorksheet(sheet, i);    
+            }
+            catch (Exception ex)
+            {
+                onException(ex);
+                throw;
+            }
 
             try
             {
@@ -133,10 +166,10 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             if (ShuffleQuestions)
             {
-                allQuestionForMark.Shuffle();
+                allQuestionsForMark.Shuffle();
             }
 
-            marksQuestions.Add(allQuestionForMark);
+            marksQuestions.Add(allQuestionsForMark);
         }
     }
 
@@ -200,12 +233,22 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     public void LoadDataAsync()
     {
+        if (Loading)
+        {
+            throw new InvalidOperationException("Still loading");
+        }
+
+        if (Loaded)
+        {
+            throw new InvalidOperationException("Already loaded");
+        }
+
         this.StartCoroutineAsync(ExtractLevelDataAsync());
     }
 
     ISimpleQuestion _GetCurrentQuestion()
     {
-        if (!loaded)
+        if (!Loaded)
         {
             throw new Exception("Not loaded questions yet");
         }
@@ -222,7 +265,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     ISimpleQuestion _GetNextQuestion()
     {
-        if (!loaded)
+        if (!Loaded)
         {
             throw new Exception("Not loaded questions yet");
         }
@@ -264,6 +307,11 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     ISimpleQuestion _GetRandomQuestion()
     {
+        if (!Loaded)
+        {
+            throw new Exception("Not loaded questions yet");
+        }
+
         var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Length);
         return marksQuestions[currentMarkIndex][questionIndex];
     }
@@ -277,7 +325,10 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
         catch (Exception ex)
         {
-            onError(ex);
+            if (onError != null)
+            {
+                onError(ex);    
+            }
         }
     }
 
