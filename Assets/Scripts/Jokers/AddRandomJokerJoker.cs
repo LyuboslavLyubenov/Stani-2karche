@@ -48,8 +48,6 @@ public class AddRandomJokerJoker : IJoker
 
     public void Activate()
     {
-        throw new NotImplementedException();
-
         var index = UnityEngine.Random.Range(0, jokers.Length);
         var joker = jokers[index];
 

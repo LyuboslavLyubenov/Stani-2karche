@@ -30,9 +30,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
     MainPlayerDataSynchronizer mainPlayerDataSynchronizer;
 
     int remainingTimeToAnswer;
-    bool paused = false;
     // when using joker
-    // Use this for initialization
+    bool paused = false;
+
     void Start()
     {
         LoadServerSettings();

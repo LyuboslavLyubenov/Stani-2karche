@@ -82,18 +82,17 @@ public class LocalGameData : MonoBehaviour, IGameData
     List<int> questionsToTakePerMark = new List<int>();
     List<int> secondsForAnswerQuestionPerMark = new List<int>();
 
-    IEnumerator SerializeLevelDataAsync()
+    IEnumerator ExtractLevelDataAsync()
     {
-        Thread.Sleep(100);
-        SerializeLevelData();
-        loaded = true;
         yield return null;
+        ExtractLevelData();
+        loaded = true;
     }
 
     /// <summary>
     /// Load all questions and seperate them by categories
     /// </summary>
-    void SerializeLevelData()
+    void ExtractLevelData()
     {
         var levelPath = Directory.GetCurrentDirectory() + '\\' + LevelPath + LevelCategory;
         var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
@@ -115,6 +114,7 @@ public class LocalGameData : MonoBehaviour, IGameData
             {
                 var fileName = markQuestionsDataPath.Split('/').Last();
                 Debug.Log("Cant extract how many question to take per mark. File: " + fileName);
+                Debug.Log("Will use all questions for mark " + (i + MarkMin));
             }
 
             try
@@ -125,6 +125,7 @@ public class LocalGameData : MonoBehaviour, IGameData
             {
                 var fileName = markQuestionsDataPath.Split('/').Last();
                 Debug.Log("Cant extract how many seconds are. File: " + fileName);
+                Debug.Log("For this mark will have " + DefaultSecondsForAnswerQuestion + " seconds");
             }
 
             secondsForAnswerQuestionPerMark.Add(secondsForAnswerQuestion);
@@ -180,7 +181,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             if (string.IsNullOrEmpty(correctAnswer))
             {
-                throw new Exception("Няма правилен отговор. Файл " + MarkMin + workbookMarkIndex + ".xls на въпрос на ред " + rowi + 1);
+                throw new Exception("Няма правилен отговор. Файл " + (MarkMin + workbookMarkIndex) + ".xls на въпрос на ред " + (rowi + 1));
             }
 
             if (ShuffleAnswers)
@@ -199,7 +200,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     public void LoadDataAsync()
     {
-        this.StartCoroutineAsync(SerializeLevelDataAsync());
+        this.StartCoroutineAsync(ExtractLevelDataAsync());
     }
 
     ISimpleQuestion _GetCurrentQuestion()

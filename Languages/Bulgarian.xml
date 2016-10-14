@@ -1,45 +1,105 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Stani2karche>
-	<Mark>Оценка</Mark>
-	<QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>
-	<Leaderboard>Класация</Leaderboard>
-	<RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
-	<CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
-	<Loading>Зареждане</Loading>
-	<ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
-	<UnableToConnect>
-		<Text>Неуспешно свързване към сървъра.</Text>
-		<TryAgainToConnect>Опитай да се свържеш пак</TryAgainToConnect>
-		<ReturnToLobby>Върни се към лобито</ReturnToLobby>
-	</UnableToConnect>
-	
-	
-	<ConnectSettings>
-		<ConnectToServerIP>Въведи адрес към който искаш да се свържеш</ConnectToServerIP>
-	</ConnectSettings>
-	
-	<Surrender>
-		<Text>Найстина ли искаш да се откажеш?</Text>
-		<Text1>(Ако се откажеш ще получиш оценката на която си в момента)</Text1>
-		<Confirm>Да :(</Confirm>
-		<Decline>Не</Decline>
-	</Surrender>
-	
-	<Jokers>
-		<RiskyTrust>
-			<Text>
-				Здравей!
 
-				Имаш възможността да се възползваш от бонус жокера "Рисково доверие".
+    <ConnectSettings>
+        <ConnectToServerIP>Въведи адрес към който искаш да се свържеш</ConnectToServerIP>
+    </ConnectSettings>
 
-				Жокера ти дава възможността да зададеш въпрос на случаен човек от публиката.
-				Ако отговори правилно ще ти се възстанови един от изгубените жокери.
-				Отговори ли грешно пътят до следващата оценка ще стане още по дълъг.
-				Какво ще кажеш?
-			</Text>
-			<Use>Ще рискувам</Use>
-			<Discard>Следващият път ще пробвам</Discard>
-		</RiskyTrust>
-	</Jokers>
-	
+    <NetworkMessages>
+        <Ok> Заявката е изпълнена успешно</Ok>
+        <WrongHost>Хоста не съществува</WrongHost>
+        <WrongConnection>Връзката не съществува</WrongConnection>
+        <WrongChannel>Грешен канал</WrongChannel>
+        <NoResources>Няма ресурси за да извърши заявката</NoResources>
+        <Timeout>Таймаут на заявката</Timeout>
+        <MessageToLong>Съобщението е прекалено голямо за да бъде изпратено. Провери буфера на клеинта/сървъра</MessageToLong>
+        <WrongOperation>Не се подържа този вид заявка</WrongOperation>
+        <VersionMismatch>Версиите на клиента и сървъра не съвпадат</VersionMismatch>
+        <CRCMismatch>Сървъра и клиента са с различни мрежови настройки</CRCMismatch>
+        <DNSFailure>Не може да се открие адреса</DNSFailure>
+    </NetworkMessages>
+
+    <Mark>Оценка</Mark>
+    <QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>
+    <Leaderboard>Класация</Leaderboard>
+    <RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
+    <CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
+    <Loading>Зареждане</Loading>
+    <ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
+
+    <UnableToConnect>
+        <Text>Неуспешно свързване към сървъра.</Text>
+        <TryAgainToConnect>Опитай да се свържеш пак</TryAgainToConnect>
+        <ReturnToLobby>Върни се към лобито</ReturnToLobby>
+    </UnableToConnect>
+
+    <Surrender>
+        <Text>Найстина ли искаш да се откажеш?</Text>
+        <Text1>(Ако се откажеш ще получиш оценката на която си в момента)</Text1>
+        <Confirm>Да :(</Confirm>
+        <Decline>Не</Decline>
+    </Surrender>
+    
+    <Jokers>
+        <RiskyTrust>
+            <Text>
+                Здравей!
+
+                Имаш възможността да се възползваш от бонус жокера "Рисково доверие".
+
+                Жокера ти дава възможността да зададеш въпрос на случаен човек от публиката.
+                Ако отговори правилно ще ти се възстанови един от изгубените жокери.
+                Отговори ли грешно пътят до следващата оценка ще стане още по дълъг.
+                Какво ще кажеш?
+            </Text>
+            <Use>Ще рискувам</Use>
+            <Discard>Следващият път ще пробвам</Discard>
+        </RiskyTrust>
+    </Jokers>
+
+    <CreateOrJoinGame>
+        <Create>Създай игра</Create>
+        <Join>Присъедини се към игра</Join>
+    </CreateOrJoinGame>
+
+    <GameTypes>
+        <NormalGame>
+            <Text>Нормална игра</Text>
+            <ToolTip></ToolTip>
+        </NormalGame>
+        <AudienceRevenge>
+            <Text>Отмъщението на публиката</Text>
+            <ToolTip></ToolTip>
+        </AudienceRevenge>
+        <FastestWins>
+            <Text>Най-бързият печели</Text>
+            <ToolTip></ToolTip>
+        </FastestWins>
+    </GameTypes>
+
+    <EnterName>
+        <Text>Въведи името си</Text>
+        <ExampleName>Гошо</ExampleName>
+        <Submit>Запамети!</Submit>
+    </EnterName>
+
+    <Lobby>
+        <ConnectToExternalServer>
+            <Text>Свържи се към друг сървър</Text>
+            <ExampleIP>IP адрес на сървъра (127.0.0.1 пример)</ExampleIP>
+            <ConnectButton>Свържи се!</ConnectButton>
+        </ConnectToExternalServer>
+        <CreatedGames>
+            <Label>Създадени игри</Label>
+            <GameType>Вид игра</GameType>
+            <CreatorName>Създател</CreatorName>
+            <ConnectedPlayersCount>Брой на свързани потребители</ConnectedPlayersCount>
+        </CreatedGames>
+        <NormalExamSelectMode>
+            <Text>Избери като какво искаш да играеш</Text>
+            <MainPlayer>Главен играч</MainPlayer>
+            <Audience>Публика</Audience>
+        </NormalExamSelectMode>
+    </Lobby>
+    
 </Stani2karche>

@@ -58,7 +58,7 @@ public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand, I
         }
 
         mainPlayerData.JokersData.RemoveJoker(askAudienceJokerType);
-        askAudienceJokerRouter.Activate(timeToAnswerInSeconds, senderConnectionId, mainPlayerData);
+        askAudienceJokerRouter.Activate(senderConnectionId, mainPlayerData);
 
         if (OnExecuted != null)
         {

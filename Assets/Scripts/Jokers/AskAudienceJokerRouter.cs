@@ -197,16 +197,11 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         Activated = false;
     }
 
-    public void Activate(int timeToAnswerInSeconds, int senderConnectionId, MainPlayerData mainPlayerData)
+    public void Activate(int senderConnectionId, MainPlayerData mainPlayerData)
     {
         if (Activated)
         {
             throw new InvalidOperationException("Already active");
-        }
-
-        if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
-        {
-            throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
         }
 
         if (mainPlayerData == null)
@@ -230,7 +225,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
             NetworkManager.SendClientCommand(senderConnectionId, cannotActivateNotificationCommand);
         }
 
-        this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+        this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
         this.senderConnectionId = senderConnectionId;
 
         elapsedTime = 1;

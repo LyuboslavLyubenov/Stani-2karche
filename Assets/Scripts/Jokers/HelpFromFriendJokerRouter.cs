@@ -27,45 +27,6 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
         }
     }
 
-    public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
-    {
-        if (Activated)
-        {
-            throw new InvalidOperationException("Already active");
-        }
-
-        if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
-        {
-            throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
-        }
-
-        this.timeToAnswerInSeconds = timeToAnswerInSeconds;
-        this.senderConnectionId = senderConnectionId;
-        this.friendConnectionId = friendConnectionId;
-
-        var settingsCommandData = new NetworkCommandData("HelpFromFriendJokerSettings");
-        settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
-        NetworkManager.SendClientCommand(senderConnectionId, settingsCommandData);
-
-        LocalGameData.GetCurrentQuestion((question) =>
-            {
-                var sendQuestionToFriend = new NetworkCommandData("LoadQuestion");
-                var questionJSON = JsonUtility.ToJson(question);
-                sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
-
-                NetworkManager.SendClientCommand(friendConnectionId, sendQuestionToFriend);
-                NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
-
-                base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
-            }, (exception) =>
-            {
-                Debug.LogException(exception);
-                Deactivate();
-            });
-
-        activated = true;
-    }
-
     void OnReceivedFriendResponse(int connectionId, string answer)
     {
         if (connectionId != friendConnectionId)
@@ -116,6 +77,45 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
             NetworkManager.SendClientCommand(senderConnectionId, answerTimeoutCommandData);
             NetworkManager.SendClientCommand(friendConnectionId, answerTimeoutCommandData);
         }
+    }
+
+    public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
+    {
+        if (Activated)
+        {
+            throw new InvalidOperationException("Already active");
+        }
+
+        if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
+        {
+            throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
+        }
+
+        this.senderConnectionId = senderConnectionId;
+        this.friendConnectionId = friendConnectionId;
+        this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
+
+        var settingsCommandData = new NetworkCommandData("HelpFromFriendJokerSettings");
+        settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
+        NetworkManager.SendClientCommand(senderConnectionId, settingsCommandData);
+
+        LocalGameData.GetCurrentQuestion((question) =>
+            {
+                var sendQuestionToFriend = new NetworkCommandData("LoadQuestion");
+                var questionJSON = JsonUtility.ToJson(question);
+                sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
+
+                NetworkManager.SendClientCommand(friendConnectionId, sendQuestionToFriend);
+                NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
+
+                base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
+            }, (exception) =>
+            {
+                Debug.LogException(exception);
+                Deactivate();
+            });
+
+        activated = true;
     }
 
     public void Deactivate()

@@ -53,7 +53,6 @@ public class LeaderboardSerializer : MonoBehaviour
     IEnumerator LoadLeaderboardAsync()
     {
         yield return null;
-        Thread.Sleep(100);
 
         var endPath = GetEndPath();
         var sr = new StreamReader(endPath);
