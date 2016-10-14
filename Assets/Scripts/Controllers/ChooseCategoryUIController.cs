@@ -55,7 +55,7 @@ public class ChooseCategoryUIController : MonoBehaviour
                 elementText.text = availableCategories[i].Remove(0, currentDirectory.Length);
 
                 var elementButton = categoryElement.GetComponent<Button>();
-                elementButton.onClick.AddListener(new UnityAction(() => ChooseCategory(availableCategories[i])));
+                elementButton.onClick.AddListener(new UnityAction(() => ChooseCategory()));
 
                 yield return new WaitForSeconds(0.05f);
             }
@@ -72,12 +72,13 @@ public class ChooseCategoryUIController : MonoBehaviour
         }
     }
 
-    void ChooseCategory(string path)
+    void ChooseCategory()
     {
         var button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         var categoryName = button.GetComponentInChildren<Text>().text;
+        var categoryPath = Directory.GetCurrentDirectory() + "\\LevelData\\теми\\" + categoryName + ".xls";
 
-        OnChoosedCategory(this, new ChoosedCategoryEventArgs(categoryName, path));
+        OnChoosedCategory(this, new ChoosedCategoryEventArgs(categoryName, categoryPath));
 
         gameObject.SetActive(false);
     }

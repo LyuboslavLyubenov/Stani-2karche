@@ -4,6 +4,8 @@ using System;
 
 public class GameTypesUIController : MonoBehaviour
 {
+    public GameObject ChooseCategoryUI;
+
     void Start()
     {
         transform.localScale = new Vector3(1, 0, 1);
@@ -11,11 +13,10 @@ public class GameTypesUIController : MonoBehaviour
 
     public void LoadNormalGame()
     {
-//TODO:
-	throw new NotImplementedException();
-        PlayerPrefs.SetString("MainPlayerHost", "true");
-        PlayerPrefs.SetString("ServerIP", "127.0.0.1");
-        SceneManager.LoadScene("BasicExamMainPlayer", LoadSceneMode.Single);
+        PlayerPrefsEncryptionUtils.SetString("GameType", "BasicExam");
+        ChooseCategoryUI.SetActive(true);
+        ChooseCategoryUI.GetComponent<ChooseCategoryUIController>().Initialize();
+        gameObject.SetActive(false);
     }
 
     public void LoadAudienceRevenge()

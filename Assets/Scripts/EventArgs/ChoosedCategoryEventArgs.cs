@@ -22,6 +22,7 @@ public class ChoosedCategoryEventArgs : EventArgs
     }
 
     public ChoosedCategoryEventArgs(string name, string path)
+        : base()
     {
         if (name == null)
         {

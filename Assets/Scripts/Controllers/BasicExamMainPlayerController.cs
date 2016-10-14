@@ -5,6 +5,7 @@ using System.Collections;
 //Mediator
 using System.IO;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
@@ -36,10 +37,12 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void Start()
     {
-        if (PlayerPrefs.HasKey("MainPlayerHost"))
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
         {
             System.Diagnostics.Process.Start("Server\\start server nogui.bat");
         }
+
+        SceneManager.activeSceneChanged += (arg0, arg1) => KillLocalServer();
 
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
@@ -76,9 +79,9 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             });
     }
 
-    void OnDisable()
+    void KillLocalServer()
     {
-        if (PlayerPrefs.HasKey("MainPlayerHost"))
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
         {
             var serverProcesses = System.Diagnostics.Process.GetProcessesByName("stani2karcheserver");
 

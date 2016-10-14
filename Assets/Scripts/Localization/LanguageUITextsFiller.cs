@@ -1,11 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LanguageUITextsFiller : ExtendedMonoBehaviour
 {
     void Start()
     {
         LanguagesManager.Instance.OnLanguageLoad += (sender, args) => TranslateAllTextComponentsInScene();
+        SceneManager.activeSceneChanged += OnSceneChanged;
+
+        CoroutineUtils.WaitForFrames(1, TranslateAllTextComponentsInScene);
+    }
+
+    void OnSceneChanged(Scene oldScene, Scene newScene)
+    {
         CoroutineUtils.WaitForFrames(1, TranslateAllTextComponentsInScene);
     }
 
