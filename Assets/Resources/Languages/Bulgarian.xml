@@ -25,7 +25,7 @@
     <RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
     <CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
     <Loading>Зареждане</Loading>
-    <ChooseCategory>Избери тема на която ще протече изпитването</ChooseCategory>
+    <ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
 
     <UnableToConnect>
         <Text>Неуспешно свързване към сървъра.</Text>

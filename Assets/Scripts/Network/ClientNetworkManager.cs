@@ -78,10 +78,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void Start()
     {
-        #if UNITY_EDITOR
-        PlayerPrefs.SetString("ServerIP", "127.0.0.1");
-        #endif
-
         OnConnectedEvent = delegate
         {
         };
@@ -277,6 +273,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             throw new ArgumentException("Invalid ipv4 address");
         }
 
+        Debug.Log("Connecting to " + ip);
+
         if (IsConnected)
         {
             Disconnect();
@@ -354,6 +352,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
             ShowNotification(Color.red, errorMessage);
         }
+
+        Debug.Log("Disconnected");
 
         if (OnDisconnectedEvent != null)
         {

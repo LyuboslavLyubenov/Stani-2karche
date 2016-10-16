@@ -26,10 +26,18 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public AskAudienceJokerRouter AskAudienceJokerRouter;
     public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
 
+    public MainPlayerData MainPlayerData
+    {
+        get
+        {
+            return mainPlayerData;
+        }
+    }
+
     MainPlayerData mainPlayerData;
     MainPlayerDataSynchronizer mainPlayerDataSynchronizer;
 
-    int remainingTimeToAnswer;
+    int remainingTimeToAnswer = -1;
     // when using joker
     bool paused = false;
 
@@ -37,8 +45,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
     {
         LoadServerSettings();
 
-        InitializeCommands();
         InitializeMainPlayerData();
+        InitializeCommands();
 
         AttachEventHandlers();
 
@@ -51,15 +59,13 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
         CoroutineUtils.RepeatEverySeconds(1, () =>
             {
-                if (!NetworkManager.IsRunning || IsGameOver || paused)
+                if (!NetworkManager.IsRunning || IsGameOver || paused || remainingTimeToAnswer == -1)
                 {
                     return;
                 }
 
                 UpdateRemainingTime();
             });
-
-        CoroutineUtils.WaitUntil(() => GameData.Loaded, () => remainingTimeToAnswer = GameData.SecondsForAnswerQuestion);
     }
 
     void LoadServerSettings()
@@ -67,25 +73,25 @@ public class BasicExamServer : ExtendedMonoBehaviour
         var levelCategory = PlayerPrefsEncryptionUtils.GetString("ServerLevelCategory");
         var serverMaxPlayers = PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers");
 
-        if (string.IsNullOrEmpty(levelCategory))
+        if (!string.IsNullOrEmpty(levelCategory))
         {
-            throw new Exception("Cant load server level category");
+            GameData.LevelCategory = levelCategory;    
+            LeaderboardSerializer.LevelCategory = levelCategory;
         }
 
-        if (string.IsNullOrEmpty(serverMaxPlayers))
+        if (!string.IsNullOrEmpty(serverMaxPlayers))
         {
-            throw new Exception("Cant load server max players");
+            NetworkManager.MaxConnections = int.Parse(serverMaxPlayers);    
         }
-
-        GameData.LevelCategory = levelCategory;
-        LeaderboardSerializer.LevelCategory = levelCategory;
-
-        NetworkManager.MaxConnections = int.Parse(serverMaxPlayers);
     }
 
     void AttachEventHandlers()
     {
         mainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
+        GameData.OnLoaded += (sender, args) =>
+        {
+            remainingTimeToAnswer = GameData.SecondsForAnswerQuestion;  
+        };
         GameDataSender.OnSentQuestion += (sender, args) =>
         {
             if (args.QuestionType == QuestionRequestType.Next)
@@ -113,9 +119,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
     void InitializeCommands()
     {
         var selectedAnswerCommand = new ReceivedServerSelectedAnswerCommand(OnReceivedSelectedAnswer);
-        var selectedHelpFromFriendJokerCommand = new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 10);
-        var selectedAskAudienceJokerCommand = new ReceivedSelectedAskAudienceJokerCommand(mainPlayerData, AskAudienceJokerRouter, NetworkManager, 10);
-        var selectedFifthyFifthyChanceCommand = new ReceivedSelectedFifthyFifthyChanceJokerCommand(mainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 4);
+        var selectedHelpFromFriendJokerCommand = new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, mainPlayerData, HelpFromFriendJokerRouter, 60);
+        var selectedAskAudienceJokerCommand = new ReceivedSelectedAskAudienceJokerCommand(mainPlayerData, AskAudienceJokerRouter, NetworkManager, 60);
+        var selectedFifthyFifthyChanceCommand = new ReceivedSelectedFifthyFifthyChanceJokerCommand(mainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 2);
         var surrenderCommand = new ReceivedSurrenderBasicExamOneTimeCommand(mainPlayerData, OnMainPlayerSurrender);
         var selectedJokerCommands = new ICommandExecutedCallback[] { selectedAskAudienceJokerCommand, selectedFifthyFifthyChanceCommand, selectedHelpFromFriendJokerCommand };
 

@@ -37,12 +37,18 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void Start()
     {
+        #if UNITY_EDITOR
+
+        PlayerPrefs.SetString("ServerIP", "127.0.0.1");
+        PlayerPrefs.DeleteKey("MainPlayerHost");
+
+        #endif
+
         if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
         {
             System.Diagnostics.Process.Start("Server\\start server nogui.bat");
+            SceneManager.activeSceneChanged += (arg0, arg1) => KillLocalServer();
         }
-
-        SceneManager.activeSceneChanged += (arg0, arg1) => KillLocalServer();
 
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
@@ -77,6 +83,11 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
                 var ip = PlayerPrefs.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
             });
+    }
+
+    void OnApplicationQuit()
+    {
+        KillLocalServer();
     }
 
     void KillLocalServer()

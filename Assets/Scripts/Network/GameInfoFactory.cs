@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameInfoFactory : MonoBehaviour
 {
     public ServerNetworkManager ServerNetworkManager;
+    public BasicExamServer BasicExamServer;
 
     public CreatedGameInfo_Serializable Get()
     {
@@ -38,8 +39,8 @@ public class GameInfoFactory : MonoBehaviour
 
     BasicExamGameInfo_Serializable GetBasicExamGameInfo()
     {
-        var canConnectAsMainPlayer = PlayerPrefsEncryptionUtils.HasKey("CanConnectAsMainPlayer");
-        var canConnectAsAudience = PlayerPrefsEncryptionUtils.HasKey("CanConnectAsAudience");
+        var canConnectAsMainPlayer = !BasicExamServer.MainPlayerData.IsConnected;
+        var canConnectAsAudience = ServerNetworkManager.ConnectedClientsCount < ServerNetworkManager.MaxConnections;
         var gameType = GameType.BasicExam;
         var hostUsername = PlayerPrefsEncryptionUtils.GetString("Username");
         var serverInfo = GetServerInfo();

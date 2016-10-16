@@ -39,6 +39,12 @@ public class LocalGameData : MonoBehaviour, IGameData
         private set;
     }
 
+    public EventHandler OnLoaded
+    {
+        get;
+        set;
+    }
+
     public EventHandler<MarkEventArgs> OnMarkIncrease
     {
         get;
@@ -104,12 +110,24 @@ public class LocalGameData : MonoBehaviour, IGameData
     List<int> questionsToTakePerMark = new List<int>();
     List<int> secondsForAnswerQuestionPerMark = new List<int>();
 
+    void Start()
+    {
+        OnLoaded = delegate
+        {
+        };
+
+        OnMarkIncrease = delegate
+        {
+        };
+    }
+
     IEnumerator ExtractLevelDataAsync()
     {
         yield return null;
         ExtractLevelData((ex) => Loading = false);
         Loaded = true;
-        Loading = false;    
+        Loading = false;
+        OnLoaded(this, EventArgs.Empty);
     }
 
     /// <summary>

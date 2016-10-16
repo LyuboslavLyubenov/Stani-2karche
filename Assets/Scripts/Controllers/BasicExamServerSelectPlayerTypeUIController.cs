@@ -40,8 +40,7 @@ public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
             throw new Exception("Not set serverIP");
         }
 
-        PlayerPrefsEncryptionUtils.SetString("BasicExamConnectionType", "Player");
-        SceneManager.LoadScene("BasicExam");
+        SceneManager.LoadScene("BasicExamMainPlayer");
     }
 
     public void OpenGuestScene()
@@ -51,7 +50,6 @@ public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
             throw new Exception("Not set serverIP");
         }
 
-        PlayerPrefsEncryptionUtils.SetString("BasicExamConnectionType", "Audience");
-        SceneManager.LoadScene("BasicExam");
+        SceneManager.LoadScene("BasicExamAudience");
     }
 }
