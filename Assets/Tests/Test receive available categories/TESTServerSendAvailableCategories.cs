@@ -10,6 +10,6 @@ public class TESTServerSendAvailableCategories : MonoBehaviour
     void Start()
     {
         NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new ReceivedServerGetAllAvailableCategoriesCommand(NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("SelectedCategory", new ReceivedServerChoosedCategoryCommand(GameData, Leaderboard));
+        NetworkManager.CommandsManager.AddCommand("SelectedCategory", new ReceivedServerSelectedCategoryCommand(GameData, Leaderboard));
     }
 }

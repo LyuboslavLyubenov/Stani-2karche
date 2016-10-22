@@ -5,19 +5,32 @@
         <ConnectToServerIP>Въведи адрес към който искаш да се свържеш</ConnectToServerIP>
     </ConnectSettings>
 
-    <NetworkMessages>
-        <Ok> Заявката е изпълнена успешно</Ok>
-        <WrongHost>Хоста не съществува</WrongHost>
-        <WrongConnection>Връзката не съществува</WrongConnection>
-        <WrongChannel>Грешен канал</WrongChannel>
-        <NoResources>Няма ресурси за да извърши заявката</NoResources>
-        <Timeout>Таймаут на заявката</Timeout>
-        <MessageToLong>Съобщението е прекалено голямо за да бъде изпратено. Провери буфера на клеинта/сървъра</MessageToLong>
-        <WrongOperation>Не се подържа този вид заявка</WrongOperation>
-        <VersionMismatch>Версиите на клиента и сървъра не съвпадат</VersionMismatch>
-        <CRCMismatch>Сървъра и клиента са с различни мрежови настройки</CRCMismatch>
-        <DNSFailure>Не може да се открие адреса</DNSFailure>
-    </NetworkMessages>
+    <Errors>
+        <NetworkMessages>
+            <Ok> Заявката е изпълнена успешно</Ok>
+            <WrongHost>Хоста не съществува</WrongHost>
+            <WrongConnection>Връзката не съществува</WrongConnection>
+            <WrongChannel>Грешен канал</WrongChannel>
+            <NoResources>Няма ресурси за да извърши заявката</NoResources>
+            <Timeout>Таймаут на заявката</Timeout>
+            <MessageToLong>Съобщението е прекалено голямо за да бъде изпратено. Провери буфера на клеинта/сървъра</MessageToLong>
+            <WrongOperation>Не се подържа този вид заявка</WrongOperation>
+            <VersionMismatch>Версиите на клиента и сървъра не съвпадат</VersionMismatch>
+            <CRCMismatch>Сървъра и клиента са с различни мрежови настройки</CRCMismatch>
+            <DNSFailure>Не може да се открие адреса</DNSFailure>
+        </NetworkMessages>
+        
+        <LoadCategoriesTimeout>Не може да намери категориите за игра<LoadCategoriesTimeout>
+        <NotLoadedQuestions>Все още не са заредени въпросите</NotLoadedQuestions>
+        <CurrentlyLoadingQuestions>Въпросите все още се зареждат</CurrentlyLoadingQuestions>
+        <CantLoadCategories>Не може да зареди категориите.</CantLoadCategories>
+        <CantExtractSecondsForAnswer>Във файл {0} не е открито колко секунди са нужни за отговаряне на въпрос. В такъв случай играча ще има {1} секунди за въпрос.</CantExtractSecondsForAnswer>
+        <CantExtractQuestionsToTakeCount>Във файл {0} не е открито колко въпроса да използва за тази категория. Ще използва всичките</CantExtractQuestionsToTakeCount>
+        <EmptyQuestion>Във файл {0} на ред {1} има празен въпрос.</EmptyQuestion>
+        <EmptyAnswer>Във файл {0} на ред {1} има празен отговор. </EmptyAnswer>
+        <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.<MultipleCorrectAnswers>
+        <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
+    </Errors>
 
     <Mark>Оценка</Mark>
     <QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>

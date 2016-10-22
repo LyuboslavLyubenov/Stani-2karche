@@ -38,6 +38,8 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
         timeoutTimer.AutoReset = false;
         timeoutTimer.Interval = timeoutInSeconds * 1000;
         timeoutTimer.Elapsed += (sender, args) => OnTimeout();
+
+        var threadUtils = ThreadUtils.Instance;
     }
 
     void OnTimeout()
