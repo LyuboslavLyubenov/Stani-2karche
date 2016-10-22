@@ -109,7 +109,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     void ConfigureServer()
     {
         connectionConfig = new ConnectionConfig();
-        communicationChannel = connectionConfig.AddChannel(QosType.ReliableFragmented);
+        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
         topology = new HostTopology(connectionConfig, MaxConnections);
     }
 

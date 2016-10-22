@@ -4,13 +4,15 @@ public class FPSSettings : MonoBehaviour
 {
     void Start()
     {
-        #if !UNITY_STANDALONE
-        Application.targetFrameRate = 30;    
-        #else
+        DontDestroyOnLoad(this);
+
         Application.targetFrameRate = 60;
+
+        #if !UNITY_STANDALONE 
+        QualitySettings.vSyncCount = 2;
+        #else
+        QualitySettings.vSyncCount = 1;
         Application.runInBackground = true;
         #endif
-
-        QualitySettings.vSyncCount = 1;
     }
 }

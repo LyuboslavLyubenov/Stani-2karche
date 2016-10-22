@@ -31,6 +31,11 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         Dispose();
     }
 
+    void OnApplicationExit()
+    {
+        Dispose();
+    }
+
     void UpdateConnectedSockets()
     {
         var disconnectedSockets = connectedToServersIPsSockets.Where(ipSocket => !ipSocket.Value.Connected).ToList();
@@ -240,7 +245,17 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         StopAllCoroutines();
 
         var connectedSockets = connectedToServersIPsSockets.ToList();
-        connectedSockets.ForEach(ipSocket => DisconnectFrom(ipSocket.Key));
+        connectedSockets.ForEach(ipSocket =>
+            {
+                try
+                {
+                    DisconnectFrom(ipSocket.Key);
+                }
+                catch
+                {
+                    
+                }   
+            });
 
         connectedToServersIPsSockets.Clear();
 

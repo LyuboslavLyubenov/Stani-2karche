@@ -28,6 +28,7 @@ public class ReceivedSelectedFifthyFifthyChanceJokerCommand : INetworkManagerCom
         {
             throw new ArgumentNullException("mainPlayerData");   
         }
+
         if (jokerRouter == null)
         {
             throw new ArgumentNullException("jokerRouter");

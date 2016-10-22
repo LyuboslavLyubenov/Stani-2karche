@@ -4,6 +4,7 @@ using System;
 
 public class GameTypesUIController : MonoBehaviour
 {
+    public ClientNetworkManager NetworkManager;
     public GameObject ChooseCategoryUI;
 
     void Start()
@@ -15,7 +16,6 @@ public class GameTypesUIController : MonoBehaviour
     {
         PlayerPrefsEncryptionUtils.SetString("GameType", "BasicExam");
         ChooseCategoryUI.SetActive(true);
-        ChooseCategoryUI.GetComponent<ChooseCategoryUIController>().Initialize();
         gameObject.SetActive(false);
     }
 

@@ -7,7 +7,7 @@ public class StartScreenController : MonoBehaviour
     public GameObject CreateOrJoinUI;
     public EnterNameUIController EnterNameUIController;
     public HomeScreenTutorialsSwitcher TutorialsSwitcher;
-    public ChooseCategoryUIController ChooseCategoryUIController;
+    public ClientChooseCategoryUIController ChooseCategoryUIController;
 
     void Start()
     {
@@ -29,7 +29,6 @@ public class StartScreenController : MonoBehaviour
     {
         CreateOrJoinUI.SetActive(true);
     }
-    //TODO
 
     void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
     {

@@ -101,6 +101,11 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void Update()
     {
+        if (!IsConnected)
+        {
+            return;  
+        }
+
         if (networkErrorsCount >= MaxNetworkErrorsBeforeDisconnect)
         {
             if (elapsedTimeSinceNetworkError >= MaxServerReactionTimeInSeconds)
@@ -119,12 +124,16 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     {
         connectionConfig = new ConnectionConfig();
         connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts; 
-        communicationChannel = connectionConfig.AddChannel(QosType.ReliableFragmented);
+        communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
     }
 
     void ConfigureCommands()
     {
-        commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(NotificationsServiceController));
+        if (NotificationsServiceController != null)
+        {
+            commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(NotificationsServiceController));    
+        }
+
         commandsManager.AddCommand("AllowedToConnect", new ReceivedAllowToConnectToServerCommand(isConnected));
         commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(serverConnectedClientsCount));
     }
@@ -215,8 +224,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         {
             OnConnectedEvent(this, EventArgs.Empty);    
         }
-
-        NotificationsServiceController.AddNotification(Color.green, "Успешно се свърза към сървъра!");
     }
 
     void DataReceivedFromServer(NetworkData networkData)
@@ -299,7 +306,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         else
         {
             isRunning = true;
-            StartCoroutine(CheckCommandAllowedToConnectReceivedCoroutine());    
+            StartCoroutine(CheckCommandAllowedToConnectReceivedCoroutine());
         }
     }
 

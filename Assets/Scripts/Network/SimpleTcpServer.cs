@@ -56,6 +56,11 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         Dispose();
     }
 
+    void OnApplicationExit()
+    {
+        Dispose();
+    }
+
     void RemoveDisconnectedSockets()
     {
         var disconnectedSockets = connectedIPClientsSocket.Where(s => !s.Value.Connected).ToList();
@@ -216,11 +221,11 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
         acceptConnections.SendTimeout = SendMessageTimeoutInMiliseconds;
         acceptConnections.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
         acceptConnections.Bind(new IPEndPoint(IPAddress.Any, Port));
-        acceptConnections.Listen(40);
+        acceptConnections.Listen(10);
 
         BeginAcceptConnections();
 
-        CoroutineUtils.RepeatEverySeconds(0.5f, RemoveDisconnectedSockets);
+        CoroutineUtils.RepeatEverySeconds(1f, RemoveDisconnectedSockets);
 
         initialized = true;
 

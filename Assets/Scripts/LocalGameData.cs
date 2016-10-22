@@ -123,6 +123,8 @@ public class LocalGameData : MonoBehaviour, IGameData
 
     IEnumerator ExtractLevelDataAsync()
     {
+        Loaded = false;
+        Loading = true;
         yield return null;
         ExtractLevelData((ex) => Loading = false);
         Loaded = true;
@@ -164,8 +166,9 @@ public class LocalGameData : MonoBehaviour, IGameData
             catch (Exception ex)
             {
                 var fileName = markQuestionsDataPath.Split('/').Last();
-                Debug.Log("Cant extract how many question to take per mark. File: " + fileName);
-                Debug.Log("Will use all questions for mark " + (i + MarkMin));
+                var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantExtractQuestionsToTakeCount");
+
+                Debug.LogFormat(errorMsg, fileName);
             }
 
             try
@@ -175,8 +178,8 @@ public class LocalGameData : MonoBehaviour, IGameData
             catch (Exception ex)
             {
                 var fileName = markQuestionsDataPath.Split('/').Last();
-                Debug.Log("Cant extract how many seconds are. File: " + fileName);
-                Debug.Log("For this mark will have " + DefaultSecondsForAnswerQuestion + " seconds");
+                var cantExtractSecondsForAnswerMsg = LanguagesManager.Instance.GetValue("Errors/CantExtractSecondsForAnswer");
+                Debug.LogFormat(cantExtractSecondsForAnswerMsg, fileName, DefaultSecondsForAnswerQuestion);
             }
 
             secondsForAnswerQuestionPerMark.Add(secondsForAnswerQuestion);
@@ -201,7 +204,11 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             if (string.IsNullOrEmpty(questionText))
             {
-                throw new Exception("Празен въпрос. Във файл " + (MarkMin + workbookMarkIndex) + ".xls на ред " + (rowi + 1));    
+                var fileName = (MarkMin + workbookMarkIndex) + ".xls";
+                var rowNumber = (rowi + 1).ToString();
+                var errorMsg = LanguagesManager.Instance.GetValue("Errors/EmptyQuestion");
+                var errorFormatedMsg = string.Format(errorMsg, fileName, rowNumber);
+                throw new Exception(errorFormatedMsg);    
             }
 
             var answers = new List<string>();
@@ -213,8 +220,12 @@ public class LocalGameData : MonoBehaviour, IGameData
                 var isCorrect = sheet.getCell(1, answersRowI).getContents().ToLower() == "верен";
 
                 if (string.IsNullOrEmpty(answerText))
-                {
-                    throw new Exception("Не може да има празен отговор. Файл " + (MarkMin + workbookMarkIndex) + ".xls на ред " + (answersRowI + 1));
+                {                
+                    var fileName = (MarkMin + workbookMarkIndex) + ".xls";
+                    var rowNumber = (rowi + 1).ToString();
+                    var errorMsg = LanguagesManager.Instance.GetValue("Errors/EmptyAnswer");
+                    var errorFormatedMsg = string.Format(errorMsg, fileName, rowNumber);
+                    throw new Exception(errorFormatedMsg);
                 }
 
                 answers.Add(answerText);
@@ -223,7 +234,11 @@ public class LocalGameData : MonoBehaviour, IGameData
                 {
                     if (!string.IsNullOrEmpty(correctAnswer))
                     {
-                        throw new Exception("Не може да има 2 верни отговора на 1 въпрос. Файл " + (MarkMin + workbookMarkIndex) + ".xls на ред " + (answersRowI + 1));    
+                        var fileName = (MarkMin + workbookMarkIndex) + ".xls";
+                        var questionNumber = questions.Count + 1;
+                        var errorMsg = LanguagesManager.Instance.GetValue("Errors/MultipleCorrectAnswers");
+                        var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber.ToString());
+                        throw new Exception(errorFormatedMsg);    
                     }
 
                     correctAnswer = answerText;
@@ -232,7 +247,12 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             if (string.IsNullOrEmpty(correctAnswer))
             {
-                throw new Exception("Няма правилен отговор. Файл " + (MarkMin + workbookMarkIndex) + ".xls на въпрос на ред " + (rowi + 1));
+                var fileName = (MarkMin + workbookMarkIndex) + ".xls";
+                var questionNumber = questions.Count + 1;
+                var errorMsg = LanguagesManager.Instance.GetValue("Errors/NoCorrectAnswer");
+                var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber.ToString());
+
+                throw new Exception(errorFormatedMsg);
             }
 
             if (ShuffleAnswers)
@@ -253,12 +273,8 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         if (Loading)
         {
-            throw new InvalidOperationException("Still loading");
-        }
-
-        if (Loaded)
-        {
-            throw new InvalidOperationException("Already loaded");
+            var errorMsg = LanguagesManager.Instance.GetValue("Errors/CurrentlyLoadingQuestions");
+            throw new InvalidOperationException(errorMsg);
         }
 
         this.StartCoroutineAsync(ExtractLevelDataAsync());
@@ -268,7 +284,8 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         if (!Loaded)
         {
-            throw new Exception("Not loaded questions yet");
+            var errorMsg = LanguagesManager.Instance.GetValue("Errors/NotLoadedQuestions");
+            throw new Exception(errorMsg);
         }
 
         if (currentMarkIndex >= marksQuestions.Count)
@@ -285,7 +302,8 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         if (!Loaded)
         {
-            throw new Exception("Not loaded questions yet");
+            var errorMsg = LanguagesManager.Instance.GetValue("Errors/NotLoadedQuestions");
+            throw new Exception(errorMsg);
         }
 
         if (currentMarkIndex >= marksQuestions.Count)
@@ -327,7 +345,8 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         if (!Loaded)
         {
-            throw new Exception("Not loaded questions yet");
+            var errorMsg = LanguagesManager.Instance.GetValue("Errors/NotLoadedQuestions");
+            throw new Exception(errorMsg);
         }
 
         var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Length);
