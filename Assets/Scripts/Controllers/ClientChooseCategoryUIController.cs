@@ -1,39 +1,27 @@
 ﻿using UnityEngine;
-using System.IO;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.Linq;
 using System;
 using UnityEngine.Events;
 
-public class ChooseCategoryUIController : MonoBehaviour
+public class ClientChooseCategoryUIController : MonoBehaviour
 {
     const int SpaceBetweenElements = 10;
-
-    readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
-
-    public Transform ContentPanel;
 
     public EventHandler<ChoosedCategoryEventArgs> OnChoosedCategory = delegate
     {
     };
 
+    public ClientNetworkManager NetworkManager;
+    public Transform ContentPanel;
+    public NotificationsServiceController NotificationService;
+
     GameObject categoryElementPrefab;
 
-    bool IsValidLevel(string path)
-    {
-        var files = Directory.GetFiles(path).Select(f => f.Substring(path.Length + 1)).ToArray(); 
-        var isValidLevel = files.All(f => RequiredFiles.Contains(f));
-        return isValidLevel;
-    }
-
-    IEnumerator InitializeCoroutine()
+    IEnumerator InitializeCoroutine(string[] availableCategories)
     {
         categoryElementPrefab = Resources.Load<GameObject>("Prefabs/CategoryToSelectButton");
-
-        var currentDirectory = Directory.GetCurrentDirectory() + "\\LevelData\\теми\\";
-        var availableCategories = Directory.GetDirectories(currentDirectory).Where(IsValidLevel).ToArray();
 
         if (availableCategories.Length > 0)
         {
@@ -52,12 +40,13 @@ public class ChooseCategoryUIController : MonoBehaviour
                 elementRectTransform.anchoredPosition = new Vector2(x, y);
 
                 var elementText = categoryElement.GetComponentInChildren<Text>();
-                elementText.text = availableCategories[i].Remove(0, currentDirectory.Length);
+                elementText.text = availableCategories[i];
 
                 var elementButton = categoryElement.GetComponent<Button>();
-                elementButton.onClick.AddListener(new UnityAction(() => ChooseCategory()));
+                elementButton.onClick.AddListener(new UnityAction(() => ChoosedCategory()));
 
                 yield return new WaitForSeconds(0.05f);
+                yield return new WaitForEndOfFrame();
             }
 
             var elementsCount = ContentPanel.childCount;
@@ -72,19 +61,18 @@ public class ChooseCategoryUIController : MonoBehaviour
         }
     }
 
-    void ChooseCategory()
+    void ChoosedCategory()
     {
         var button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         var categoryName = button.GetComponentInChildren<Text>().text;
-        var categoryPath = Directory.GetCurrentDirectory() + "\\LevelData\\теми\\" + categoryName + ".xls";
 
-        OnChoosedCategory(this, new ChoosedCategoryEventArgs(categoryName, categoryPath));
-
+        OnChoosedCategory(this, new ChoosedCategoryEventArgs(categoryName));
+           
         gameObject.SetActive(false);
     }
 
-    public void Initialize()
+    public void Initialize(IAvailableCategoriesReader categoriesReader)
     {
-        StartCoroutine(InitializeCoroutine());
+        categoriesReader.GetAllCategoriesAsync((categories) => StartCoroutine(InitializeCoroutine(categories)));
     }
 }
