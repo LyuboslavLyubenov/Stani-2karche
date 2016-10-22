@@ -2,5 +2,5 @@
 
 public interface IAvailableCategoriesReader
 {
-    void GetAllCategoriesAsync(Action<string[]> onGetAllCategories);
+    void GetAllCategories(Action<string[]> onGetAllCategories);
 }

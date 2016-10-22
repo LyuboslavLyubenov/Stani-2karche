@@ -76,7 +76,7 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
         StopReceivingAvailableCategories();
     }
 
-    public void GetAllCategoriesAsync(Action<string[]> onGetAllCategories)
+    public void GetAllCategories(Action<string[]> onGetAllCategories)
     {
         if (onGetAllCategories == null)
         {

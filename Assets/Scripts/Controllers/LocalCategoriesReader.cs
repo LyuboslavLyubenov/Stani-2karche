@@ -8,7 +8,7 @@ public class LocalCategoriesReader : IAvailableCategoriesReader
 {
     readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
-    public void GetAllCategoriesAsync(Action<string[]> onGetAllCategories)
+    public void GetAllCategories(Action<string[]> onGetAllCategories)
     {
         if (onGetAllCategories == null)
         {

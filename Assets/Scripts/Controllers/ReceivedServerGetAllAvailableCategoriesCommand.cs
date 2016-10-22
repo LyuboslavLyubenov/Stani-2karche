@@ -29,7 +29,7 @@ public class ReceivedServerGetAllAvailableCategoriesCommand : INetworkManagerCom
     void SendAvailableCategories(int connectionId)
     {
         var localCategoriesReader = new LocalCategoriesReader();
-        localCategoriesReader.GetAllCategoriesAsync((categories) =>
+        localCategoriesReader.GetAllCategories((categories) =>
             {
                 var availableCategoriesCommand = new NetworkCommandData("AvailableCategories");
                 availableCategoriesCommand.AddOption("AvailableCategories", string.Join(",", categories));

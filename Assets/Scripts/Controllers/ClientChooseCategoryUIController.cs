@@ -73,6 +73,6 @@ public class ClientChooseCategoryUIController : MonoBehaviour
 
     public void Initialize(IAvailableCategoriesReader categoriesReader)
     {
-        categoriesReader.GetAllCategoriesAsync((categories) => StartCoroutine(InitializeCoroutine(categories)));
+        categoriesReader.GetAllCategories((categories) => StartCoroutine(InitializeCoroutine(categories)));
     }
 }

@@ -14,7 +14,7 @@ public class TESTClientGetAvailableCategories : MonoBehaviour
         NetworkManager.OnConnectedEvent += (sender, args) =>
         {
             categoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, OnGetCategoriesTimeout, 5);
-            categoriesReader.GetAllCategoriesAsync(OnGetAllCategories);
+            categoriesReader.GetAllCategories(OnGetAllCategories);
         };        
     }
 
