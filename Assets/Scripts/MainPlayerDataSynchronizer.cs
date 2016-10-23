@@ -31,7 +31,7 @@ public class MainPlayerDataSynchronizer
         SendAvailableJokersToMainPlayer(args.ConnectionId);
     }
 
-    void OnAddedJoker(object sender, JokerEventArgs args)
+    void OnAddedJoker(object sender, JokerTypeEventArgs args)
     {
         SendJokerToPlayer(args.JokerType, mainPlayerData.ConnectionId);
     }

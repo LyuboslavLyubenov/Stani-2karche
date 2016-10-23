@@ -5,7 +5,7 @@ using System.Linq;
 using System.Timers;
 using System.Collections;
 
-public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand, ICommandExecutedCallback
+public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
 {
     public EventHandler OnExecuted
     {

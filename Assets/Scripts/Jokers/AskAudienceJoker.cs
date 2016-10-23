@@ -2,7 +2,7 @@
 using System;
 using System.Timers;
 
-public class AskAudienceJoker : IJoker
+public class AskAudienceJoker : IJoker, INetworkOperationExecutedCallback
 {
     const int SettingsReceiveTimeoutInSeconds = 10;
 
@@ -28,6 +28,12 @@ public class AskAudienceJoker : IJoker
     }
 
     public EventHandler OnActivated
+    {
+        get;
+        set;
+    }
+
+    public EventHandler OnExecuted
     {
         get;
         set;
@@ -90,7 +96,15 @@ public class AskAudienceJoker : IJoker
         waitingToAnswerUI.SetActive(true);
 
         var receivedAskAudienceVoteResultCommand = new ReceivedAskAudienceVoteResultCommand(audienceAnswerUI);
-        receivedAskAudienceVoteResultCommand.OnFinishedExecution += (sender, args) => waitingToAnswerUI.SetActive(false);
+        receivedAskAudienceVoteResultCommand.OnFinishedExecution += (sender, args) =>
+        {
+            waitingToAnswerUI.SetActive(false);
+
+            if (OnExecuted != null)
+            {
+                OnExecuted(this, EventArgs.Empty);
+            }
+        };
 
         networkManager.CommandsManager.AddCommand("AskAudienceJokerVoteResult", receivedAskAudienceVoteResultCommand);
 

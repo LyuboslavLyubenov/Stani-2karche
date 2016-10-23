@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand, ICommandExecutedCallback
+public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
 {
     public EventHandler OnExecuted
     {

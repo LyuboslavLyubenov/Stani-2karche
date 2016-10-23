@@ -4,8 +4,6 @@ using System;
 
 public class GameTypesUIController : MonoBehaviour
 {
-    public ClientNetworkManager NetworkManager;
-    public GameObject ChooseCategoryUI;
 
     void Start()
     {
@@ -14,9 +12,12 @@ public class GameTypesUIController : MonoBehaviour
 
     public void LoadNormalGame()
     {
-        PlayerPrefsEncryptionUtils.SetString("GameType", "BasicExam");
-        ChooseCategoryUI.SetActive(true);
-        gameObject.SetActive(false);
+        PlayerPrefsEncryptionUtils.SetString("MainPlayerHost", "true");
+        PlayerPrefsEncryptionUtils.SetString("ServerIP", "127.0.0.1");
+
+        PlayerPrefsEncryptionUtils.SetString("ServerMaxPlayers", "30");
+
+        SceneManager.LoadScene("BasicExamMainPlayer", LoadSceneMode.Single);    
     }
 
     public void LoadAudienceRevenge()

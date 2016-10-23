@@ -1,17 +1,13 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Timers;
-using System.Collections;
 
 public class JokersData
 {
-    public EventHandler<JokerEventArgs> OnAddedJoker = delegate
+    public EventHandler<JokerTypeEventArgs> OnAddedJoker = delegate
     {
     };
 
-    public EventHandler<JokerEventArgs> OnRemovedJoker = delegate
+    public EventHandler<JokerTypeEventArgs> OnRemovedJoker = delegate
     {
     };
 
@@ -29,7 +25,7 @@ public class JokersData
     {
         JokerUtils.ValidateJokerType(joker);
         availableJokers.Add(joker);
-        OnAddedJoker(this, new JokerEventArgs(joker));
+        OnAddedJoker(this, new JokerTypeEventArgs(joker));
     }
 
     public void RemoveJoker(Type joker)
@@ -40,6 +36,6 @@ public class JokersData
         }
 
         availableJokers.Remove(joker);
-        OnRemovedJoker(this, new JokerEventArgs(joker));
+        OnRemovedJoker(this, new JokerTypeEventArgs(joker));
     }
 }

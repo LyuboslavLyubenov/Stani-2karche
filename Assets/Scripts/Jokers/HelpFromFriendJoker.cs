@@ -4,7 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Timers;
 
-public class HelpFromFriendJoker : IJoker
+public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
 {
     const int SettingsReceiveTimeoutInSeconds = 5;
     //0% = 0f, 100% = 1f
@@ -32,6 +32,12 @@ public class HelpFromFriendJoker : IJoker
     }
 
     public EventHandler OnActivated
+    {
+        get;
+        set;
+    }
+
+    public EventHandler OnExecuted
     {
         get;
         set;
@@ -106,8 +112,9 @@ public class HelpFromFriendJoker : IJoker
             
             loadingUI.SetActive(true);
 
-            var receivedSettingsCommand = new ReceivedHelpFromFriendJokerSettingsCommand(networkManager, loadingUI, waitingToAnswerUI, friendAnswerUI);
+            var receivedSettingsCommand = new ReceivedHelpFromFriendJokerSettingsCommand(networkManager, loadingUI, waitingToAnswerUI);
             receivedSettingsCommand.OnFinishedExecution += (s, a) => OnReceivedSettings();
+
 
             networkManager.CommandsManager.AddCommand("HelpFromFriendJokerSettings", receivedSettingsCommand);
 
@@ -140,6 +147,17 @@ public class HelpFromFriendJoker : IJoker
     {
         receiveSettingsTimeoutTimer.Stop();
         receiveSettingsTimeoutTimer.Dispose();
+
+        var responseCommand = new ReceivedHelpFromFriendResponseCommand(waitingToAnswerUI, friendAnswerUI);
+        responseCommand.OnFinishedExecution += (sender, args) =>
+        {
+            if (OnExecuted != null)
+            {
+                OnExecuted(this, EventArgs.Empty);
+            }
+        };
+
+        networkManager.CommandsManager.AddCommand("HelpFromFriendJokerResponse", responseCommand);
     }
 
     public void Activate()

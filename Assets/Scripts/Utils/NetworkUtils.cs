@@ -33,7 +33,7 @@ public class NetworkUtils
         WWW www = new WWW("http://icanhazip.com/");
         yield return www;
 
-        if (www.error != null)
+        if (!string.IsNullOrEmpty(www.error))
         {
             OnNetworkError(www.error);
         }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Stani2karche>
 
     <ConnectSettings>
@@ -20,6 +20,7 @@
             <DNSFailure>Не може да се открие адреса</DNSFailure>
         </NetworkMessages>
         
+        <NoInternetConnection>Няма връзка с интернет</NoInternetConnection>
         <LoadCategoriesTimeout>Не може да намери категориите за игра<LoadCategoriesTimeout>
         <NotLoadedQuestions>Все още не са заредени въпросите</NotLoadedQuestions>
         <CurrentlyLoadingQuestions>Въпросите все още се зареждат</CurrentlyLoadingQuestions>
@@ -31,7 +32,8 @@
         <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.<MultipleCorrectAnswers>
         <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
     </Errors>
-
+    <SecondsRemaining>Оставащи секунди за отговор</SecondsRemaining>
+    <IP>Адрес на машината:</IP>
     <Mark>Оценка</Mark>
     <QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>
     <Leaderboard>Класация</Leaderboard>

@@ -9,6 +9,10 @@ public class ClientChooseCategoryUIController : MonoBehaviour
 {
     const int SpaceBetweenElements = 10;
 
+    public EventHandler OnLoadedCategories = delegate
+    {
+    };
+
     public EventHandler<ChoosedCategoryEventArgs> OnChoosedCategory = delegate
     {
     };
@@ -59,6 +63,8 @@ public class ClientChooseCategoryUIController : MonoBehaviour
 
             contentRectTransform.sizeDelta = new Vector2(width, height);
         }
+
+        OnLoadedCategories(this, EventArgs.Empty);
     }
 
     void ChoosedCategory()

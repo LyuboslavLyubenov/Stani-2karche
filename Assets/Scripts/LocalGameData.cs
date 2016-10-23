@@ -110,7 +110,7 @@ public class LocalGameData : MonoBehaviour, IGameData
     List<int> questionsToTakePerMark = new List<int>();
     List<int> secondsForAnswerQuestionPerMark = new List<int>();
 
-    void Start()
+    void Awake()
     {
         OnLoaded = delegate
         {
@@ -125,10 +125,10 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         Loaded = false;
         Loading = true;
-        yield return null;
         ExtractLevelData((ex) => Loading = false);
         Loaded = true;
         Loading = false;
+        yield return Ninja.JumpToUnity;
         OnLoaded(this, EventArgs.Empty);
     }
 
@@ -237,7 +237,7 @@ public class LocalGameData : MonoBehaviour, IGameData
                         var fileName = (MarkMin + workbookMarkIndex) + ".xls";
                         var questionNumber = questions.Count + 1;
                         var errorMsg = LanguagesManager.Instance.GetValue("Errors/MultipleCorrectAnswers");
-                        var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber.ToString());
+                        var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber);
                         throw new Exception(errorFormatedMsg);    
                     }
 
@@ -250,7 +250,7 @@ public class LocalGameData : MonoBehaviour, IGameData
                 var fileName = (MarkMin + workbookMarkIndex) + ".xls";
                 var questionNumber = questions.Count + 1;
                 var errorMsg = LanguagesManager.Instance.GetValue("Errors/NoCorrectAnswer");
-                var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber.ToString());
+                var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber);
 
                 throw new Exception(errorFormatedMsg);
             }

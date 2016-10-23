@@ -24,7 +24,7 @@ public class ReceivedHelpFromFriendJokerSettingsCommand : IOneTimeExecuteCommand
         set;
     }
 
-    public ReceivedHelpFromFriendJokerSettingsCommand(ClientNetworkManager networkManager, GameObject loadingUI, GameObject waitingToAnswerUI, GameObject friendAnswerUI)
+    public ReceivedHelpFromFriendJokerSettingsCommand(ClientNetworkManager networkManager, GameObject loadingUI, GameObject waitingToAnswerUI)
     {
         if (networkManager == null)
         {
@@ -40,16 +40,10 @@ public class ReceivedHelpFromFriendJokerSettingsCommand : IOneTimeExecuteCommand
         {
             throw new ArgumentNullException("waitingToAnswerUI");
         }
-            
-        if (friendAnswerUI == null)
-        {
-            throw new ArgumentNullException("friendAnswerUI");
-        }
 
         this.networkManager = networkManager;
         this.loadingUI = loadingUI;
         this.waitingToAnswerUI = waitingToAnswerUI;
-        this.friendAnswerUI = friendAnswerUI;
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
@@ -60,8 +54,6 @@ public class ReceivedHelpFromFriendJokerSettingsCommand : IOneTimeExecuteCommand
         waitingToAnswerUI.SetActive(true);
 
         waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = timeToAnswerInSeconds;
-
-        networkManager.CommandsManager.AddCommand("HelpFromFriendJokerResponse", new ReceivedHelpFromFriendResponseCommand(waitingToAnswerUI, friendAnswerUI));
 
         FinishedExecution = true;
 
