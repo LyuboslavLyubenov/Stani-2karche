@@ -20,6 +20,12 @@ public class GameDataSender : MonoBehaviour
             NetworkManager.SendAllClientsCommand(commandData);
         };
 
+        LocalGameData.OnLoaded += (sender, args) =>
+        {
+            var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
+            NetworkManager.SendAllClientsCommand(loadedGameDataCommand);
+        };
+
         var getCurrentQuestionCommand = new ReceivedGetCurrentQuestionCommand(LocalGameData, NetworkManager);
         var getRandomQuestionCommand = new ReceivedGetRandomQuestionCommand(LocalGameData, NetworkManager);
         var getNextQuestionCommand = new ReceivedGetNextQuestionCommand(LocalGameData, NetworkManager);

@@ -1,12 +1,8 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
-
-//Mediator
-using System.IO;
-using System.Threading;
 using UnityEngine.SceneManagement;
-
+using System.Linq;
 
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 {
@@ -30,6 +26,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     public QuestionUIController QuestionUIController;
     public MarkPanelController MarkPanelController;
     public QuestionsRemainingUIController QuestionsRemainingUIController;
+    public ClientChooseCategoryUIController ChooseCategoryUIController;
+    public SecondsRemainingUIController SecondsRemainingUIController;
 
     public RemoteGameData GameData;
 
@@ -37,26 +35,43 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void Start()
     {
-        #if UNITY_EDITOR
+        unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
-        PlayerPrefs.SetString("ServerIP", "127.0.0.1");
-        PlayerPrefs.DeleteKey("MainPlayerHost");
+        //TODO UPDATE Seconds remaining UI CONTROLLER
+        InitializeCommands();
+        StartServerIfPlayerIsHost();
+        AttachEventHandlers();
+        ConnectToServer();
 
-        #endif
+        LoadingUI.SetActive(true);
+    }
 
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+    void InitializeCommands()
+    {
+        var loadedGameDataCommand = new DummyOneTimeCommand();
+        loadedGameDataCommand.OnFinishedExecution += (sender, args) =>
         {
-            System.Diagnostics.Process.Start("Server\\start server nogui.bat");
-            SceneManager.activeSceneChanged += (arg0, arg1) => KillLocalServer();
-        }
+            GameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+        };
 
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new ReceivedAddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
+        NetworkManager.CommandsManager.AddCommand("LoadedGameData", loadedGameDataCommand);
+    }
 
-        unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
+    void StartServerIfPlayerIsHost()
+    {
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+        {
+            System.Diagnostics.Process.Start("Server\\start server nogui.bat");
+            SceneManager.activeSceneChanged += OnActivateSceneChanged;
+        }
+    }
 
+    void AttachEventHandlers()
+    {
         unableToConnectUIController.OnTryingAgainToConnectToServer += (sender, args) =>
         {
             LoadingUI.SetActive(true);
@@ -71,18 +86,61 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         };
 
         QuestionUIController.OnAnswerClick += OnAnswerClick;
-        QuestionUIController.OnQuestionLoaded += (sender, args) =>
-            QuestionsRemainingUIController.SetRemainingQuestions(GameData.RemainingQuestionsToNextMark);
+        QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
 
         GameData.OnMarkIncrease += (sender, args) => MarkPanelController.SetMark(args.Mark.ToString());
 
-        LoadingUI.SetActive(true);
+        ChooseCategoryUIController.OnLoadedCategories += (sender, args) =>
+        {
+            LoadingUI.SetActive(false);
+        };
+        ChooseCategoryUIController.OnChoosedCategory += (sender, args) =>
+        {
+            var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
+            selectedCategoryCommand.AddOption("Category", args.Name);
+            NetworkManager.SendServerCommand(selectedCategoryCommand);
+        };
 
-        CoroutineUtils.WaitForFrames(1, () =>
+        AvailableJokersUIController.OnAddedJoker += (sender, args) =>
+        {
+            var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
+
+            if (jokerExecutedCallback == null)
+            {
+                return;
+            }
+
+            jokerExecutedCallback.OnExecuted += (s, a) =>
+            {
+                SecondsRemainingUIController.Paused = false;
+            };
+        };
+
+        AvailableJokersUIController.OnUsedJoker += (sender, args) =>
+        {
+            SecondsRemainingUIController.Paused = true;  
+        };
+    }
+
+    void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
+    {
+        QuestionsRemainingUIController.SetRemainingQuestions(GameData.RemainingQuestionsToNextMark);
+        SecondsRemainingUIController.SetSeconds(GameData.SecondsForAnswerQuestion);
+    }
+
+    void ConnectToServer()
+    {
+        CoroutineUtils.WaitForFrames(0, () =>
             {
                 var ip = PlayerPrefs.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
             });
+    }
+
+    void OnActivateSceneChanged(Scene oldScene, Scene newScene)
+    {
+        KillLocalServer();
+        SceneManager.activeSceneChanged -= OnActivateSceneChanged;
     }
 
     void OnApplicationQuit()
@@ -107,12 +165,20 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void OnConnectedToServer(object sender, EventArgs args)
     {
-        LoadingUI.SetActive(false);
-
         var commandData = new NetworkCommandData("MainPlayerConnecting");
         NetworkManager.SendServerCommand(commandData);
 
-        GameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+        var remoteCategoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, () =>
+            {
+                var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
+                Debug.LogError(errorMsg);
+                ShowNotification(Color.red, errorMsg);
+
+                ChooseCategoryUIController.gameObject.SetActive(false);
+                NetworkManager.Disconnect();
+            }, 5);
+
+        ChooseCategoryUIController.gameObject.SetActive(true);
     }
 
     void ShowNotification(Color color, string message)
@@ -145,3 +211,4 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         }
     }
 }
+
