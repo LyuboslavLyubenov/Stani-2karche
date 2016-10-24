@@ -21,7 +21,7 @@
         </NetworkMessages>
         
         <NoInternetConnection>Няма връзка с интернет</NoInternetConnection>
-        <LoadCategoriesTimeout>Не може да намери категориите за игра<LoadCategoriesTimeout>
+        <LoadCategoriesTimeout>Не може да намери категориите за игра</LoadCategoriesTimeout>
         <NotLoadedQuestions>Все още не са заредени въпросите</NotLoadedQuestions>
         <CurrentlyLoadingQuestions>Въпросите все още се зареждат</CurrentlyLoadingQuestions>
         <CantLoadCategories>Не може да зареди категориите.</CantLoadCategories>
@@ -29,7 +29,7 @@
         <CantExtractQuestionsToTakeCount>Във файл {0} не е открито колко въпроса да използва за тази категория. Ще използва всичките</CantExtractQuestionsToTakeCount>
         <EmptyQuestion>Във файл {0} на ред {1} има празен въпрос.</EmptyQuestion>
         <EmptyAnswer>Във файл {0} на ред {1} има празен отговор. </EmptyAnswer>
-        <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.<MultipleCorrectAnswers>
+        <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.</MultipleCorrectAnswers>
         <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
     </Errors>
     <SecondsRemaining>Оставащи секунди за отговор</SecondsRemaining>
