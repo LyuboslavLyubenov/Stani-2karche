@@ -37,12 +37,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
     void LoadControllers()
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
-        unableToConnectController = unableToConnectController.GetComponent<UnableToConnectUIController>();
-
-        if (questionUIController == null)
-        {
-            throw new Exception("QuestionUIController component is null");
-        }
+        unableToConnectController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
     }
 
     void LoadCommands()
