@@ -27,6 +27,10 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
     {
     };
 
+    public EventHandler<ConnectedClientDataEventArgs> OnClientSetUsername = delegate
+    {
+    };
+
     int genericHostId = 0;
 
     ConnectionConfig connectionConfig = null;
@@ -257,10 +261,18 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     void FilterCommandLineOptions(NetworkCommandData command)
     {
-        command.Options.ToList()
-            .Where(o => o.Key == "ConnectionId")
-            .ToList()
-            .ForEach(o => command.RemoveOption(o.Key));
+        var optionsKeyValue = command.Options.ToArray();
+
+        for (int i = 0; i < optionsKeyValue.Length; i++)
+        {
+            var optionKeyValue = optionsKeyValue[i];
+            var key = optionKeyValue.Key;
+
+            if (key == "ConnectionId")
+            {
+                command.Options.Remove(key);
+            }
+        }
     }
 
     void OnClientSendData(NetworkData receiveNetworkData)
@@ -347,14 +359,17 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         isRunning = false;
     }
 
-    public void SetClientName(int connectionId, string name)
+    public void SetClientUsername(int connectionId, string username)
     {
         if (!connectedClientsIds.Contains(connectionId))
         {
             throw new ArgumentException("Client with id " + connectionId + " is not connected");
         } 
 
-        connectedClientsNames.Add(connectionId, name);
+        connectedClientsNames.Add(connectionId, username);
+
+        var connectedClientData = new ConnectedClientData(connectionId, username);
+        OnClientSetUsername(this, new ConnectedClientDataEventArgs(connectedClientData));
     }
 
     public void SendClientCommand(int connectionId, NetworkCommandData command)

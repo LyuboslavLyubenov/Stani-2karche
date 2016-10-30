@@ -24,13 +24,13 @@ public class ReceivedSetUsernameCommand : INetworkManagerCommand
         if (!commandsParamsValues.ContainsKey("Username"))
         {
             //empty username :(
-            networkManager.SetClientName(connectionId, "Играч " + connectionId);
+            networkManager.SetClientUsername(connectionId, "Играч " + connectionId);
             return;
         }
         else
         {
             var username = commandsParamsValues["Username"];
-            networkManager.SetClientName(connectionId, username);   
+            networkManager.SetClientUsername(connectionId, username);   
         }
     }
     

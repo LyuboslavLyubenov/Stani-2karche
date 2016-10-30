@@ -50,7 +50,10 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
     void OnFoundBasicExam(BasicExamGameInfo_Serializable gameInfo)
     {
         var obj = ServerFoundElementsPool.Get();
+        var controller = obj.GetComponent<ServerDiscoveredElementController>();
+
         obj.SetParent(Container.transform, true);
+        CoroutineUtils.WaitForFrames(0, () => controller.SetData((BasicExamGameInfo_Serializable)gameInfo));
 
         var button = obj.GetComponent<Button>();
         button.onClick.RemoveAllListeners();

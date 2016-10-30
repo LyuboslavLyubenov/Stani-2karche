@@ -4,16 +4,9 @@ using System.Collections.Generic;
 
 public class ServerDiscoveredElementController : ExtendedMonoBehaviour
 {
-    public Text Category;
-    public Text CreatorName;
-    public Text ConnectedClients;
-
-    Dictionary<GameType, string> gameTypesTranslations = new Dictionary<GameType, string>()
-    {
-        { GameType.BasicExam, "Нормално изпитване" },
-        { GameType.AudienceRevenge, "Отмъщението на публиката" },
-        { GameType.FastestWins, "Най-бързият печели" }
-    };
+    Text category;
+    Text creatorName;
+    Text connectedClients;
 
     public string ServerIPAddress
     {
@@ -21,19 +14,24 @@ public class ServerDiscoveredElementController : ExtendedMonoBehaviour
         private set;
     }
 
+    void Start()
+    {
+        category = transform.FindChild("CategoryType").GetComponent<Text>();
+        creatorName = transform.FindChild("CreatorName").GetComponent<Text>();
+        connectedClients = transform.FindChild("ConnectedClients").GetComponent<Text>();
+    }
+
     public void SetData(CreatedGameInfo_Serializable gameInfo)
     {
-        CoroutineUtils.WaitForFrames(0, () =>
-            {
-                Category.text = TranslateGameType(gameInfo.GameType);
-                CreatorName.text = gameInfo.HostUsername;
-                ConnectedClients.text = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
-                ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
-            });
+        category.text = TranslateGameType(gameInfo.GameType);
+        creatorName.text = gameInfo.HostUsername;
+        connectedClients.text = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
+        ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
     }
 
     string TranslateGameType(GameType gameType)
     {
-        return gameTypesTranslations[gameType];
+        var enumName = Enum.GetName(typeof(GameType), gameType);
+        return LanguagesManager.Instance.GetValue(enumName);
     }
 }
