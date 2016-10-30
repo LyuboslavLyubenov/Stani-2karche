@@ -1,9 +1,7 @@
-using UnityEngine;
 using System;
-using System.Collections;
-using UnityEngine.SceneManagement;
 
 //Mediator
+using System.Collections.Generic;
 
 public class DummyOneTimeCommand : IOneTimeExecuteCommand
 {
@@ -19,7 +17,7 @@ public class DummyOneTimeCommand : IOneTimeExecuteCommand
         private set;
     }
 
-    public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
+    public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         if (OnFinishedExecution != null)
         {

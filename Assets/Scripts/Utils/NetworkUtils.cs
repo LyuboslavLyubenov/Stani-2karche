@@ -28,14 +28,17 @@ public class NetworkUtils
         }
     }
 
-    public static IEnumerator GetExternalIP(Action<string> OnFound, Action<string> OnNetworkError)
+    public static IEnumerator GetExternalIP(Action<string> OnFound, Action<string> OnNetworkError = null)
     {
         WWW www = new WWW("http://icanhazip.com/");
         yield return www;
 
         if (!string.IsNullOrEmpty(www.error))
         {
-            OnNetworkError(www.error);
+            if (OnNetworkError != null)
+            {
+                OnNetworkError(www.error);    
+            }
         }
         else
         {

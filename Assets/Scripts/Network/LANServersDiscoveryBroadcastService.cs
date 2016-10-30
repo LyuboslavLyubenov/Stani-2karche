@@ -6,6 +6,8 @@ public class LANServersDiscoveryBroadcastService : LANBroadcastService
     {
     };
 
+    const int RetrieveMessageDelayInSeconds = 1;
+
     void Start()
     {
         base.Initialize();
@@ -24,7 +26,7 @@ public class LANServersDiscoveryBroadcastService : LANBroadcastService
             OnFound(this, new IpEventArgs(ip));
         }
 
-        CoroutineUtils.WaitForSeconds(1f, ReceiveIsServerOnlineMessage);
+        CoroutineUtils.WaitForSeconds(RetrieveMessageDelayInSeconds, ReceiveIsServerOnlineMessage);
     }
 	
 }

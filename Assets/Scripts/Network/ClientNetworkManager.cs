@@ -58,6 +58,19 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         {
             return isConnected.Value;
         }
+        private set
+        {
+            if (value == true)
+            {
+                OnConnectedEvent(this, EventArgs.Empty);
+            }
+            else
+            {
+                OnDisconnectedEvent(this, EventArgs.Empty);
+            }
+
+            this.isConnected.Value = value;
+        }
     }
 
     public CommandsManager CommandsManager
@@ -76,7 +89,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
     }
 
-    void Start()
+    void Awake()
     {
         OnConnectedEvent = delegate
         {
@@ -89,7 +102,10 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         OnDisconnectedEvent = delegate
         {
         };
+    }
 
+    void Start()
+    {
         ConfigureCommands();
         ConfigureClient();
 
@@ -134,7 +150,13 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(NotificationsServiceController));    
         }
 
-        commandsManager.AddCommand("AllowedToConnect", new ReceivedAllowToConnectToServerCommand(isConnected));
+        var allowedToConnect = new DummyCommand();
+        allowedToConnect.OnExecuted += (sender, args) =>
+        {
+            IsConnected = true;
+        };
+
+        commandsManager.AddCommand("AllowedToConnect", allowedToConnect);
         commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(serverConnectedClientsCount));
     }
 
@@ -220,10 +242,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         commandLine.AddOption("Username", username);
         SendServerCommand(commandLine);
 
-        if (OnConnectedEvent != null)
-        {
-            OnConnectedEvent(this, EventArgs.Empty);    
-        }
+        IsConnected = true;
     }
 
     void DataReceivedFromServer(NetworkData networkData)
@@ -266,11 +285,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     void DisconnectedFromServer(NetworkData networkData)
     {
         Disconnect();
-
-        if (OnDisconnectedEvent != null)
-        {
-            OnDisconnectedEvent(this, EventArgs.Empty);    
-        }
     }
 
     public void ConnectToHost(string ip)
@@ -337,9 +351,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
     {
         byte error = 0;
 
-        isConnected.Value = false;
-        isRunning = false;
-
         try
         {
             NetworkTransport.Disconnect(genericHostId, connectionId, out error);    
@@ -360,12 +371,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             ShowNotification(Color.red, errorMessage);
         }
 
-        Debug.Log("Disconnected");
-
-        if (OnDisconnectedEvent != null)
-        {
-            OnDisconnectedEvent(this, EventArgs.Empty);    
-        }
+        IsConnected = false;
+        isRunning = false;
     }
 
     public void SendServerCommand(NetworkCommandData commandData)

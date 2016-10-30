@@ -7,6 +7,13 @@ public class GameInfoFactory : MonoBehaviour
     public ServerNetworkManager ServerNetworkManager;
     public BasicExamServer BasicExamServer;
 
+    string externalIp = "";
+
+    void Awake()
+    {
+        NetworkUtils.GetExternalIP((ip) => externalIp = ip);
+    }
+
     public CreatedGameInfo_Serializable Get()
     {
         var sceneName = SceneManager.GetActiveScene().name;
@@ -59,15 +66,12 @@ public class GameInfoFactory : MonoBehaviour
 
     ServerInfo_Serializable GetServerInfo()
     {
-        //TODO get external ip address
-        var externalIpAddress = "";
         var localIPAddress = NetworkUtils.GetLocalIP();
         var connectedClientsCount = ServerNetworkManager.ConnectedClientsCount;
         var maxConnections = ServerNetworkManager.MaxConnections;
-         
         var serverInfo = new ServerInfo_Serializable()
         {
-            ExternalIpAddress = externalIpAddress,
+            ExternalIpAddress = externalIp,
             LocalIPAddress = localIPAddress,
             ConnectedClientsCount = connectedClientsCount,
             MaxConnectionsAllowed = maxConnections

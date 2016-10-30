@@ -2,12 +2,12 @@
 {
     public const string MessageIAmServer = "Stani2karcheIAmServer";
 
-    const float TimeDelaySendServerIsOnlineInSeconds = 0.5f;
+    const float TimeDelaySendServerIsOnlineInSeconds = 1f;
 
     public void Start()
     {
         base.Initialize();
-        CoroutineUtils.WaitForSeconds(1, SendServerOnline);
+        CoroutineUtils.WaitForSeconds(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
     }
 
     void SendServerOnline()

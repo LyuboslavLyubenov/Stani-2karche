@@ -9,8 +9,8 @@ using System.Net;
 
 public class SimpleTcpClient : ExtendedMonoBehaviour
 {
-    protected const int ReceiveMessageTimeoutInMiliseconds = 4000;
-    protected const int SendMessageTimeoutInMiliseconds = 4000;
+    protected const int ReceiveMessageTimeoutInMiliseconds = 1000;
+    protected const int SendMessageTimeoutInMiliseconds = 1000;
 
     Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
 
@@ -38,12 +38,12 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
     void UpdateConnectedSockets()
     {
-        var disconnectedSockets = connectedToServersIPsSockets.Where(ipSocket => !ipSocket.Value.Connected).ToList();
+        var disconnectedSockets = connectedToServersIPsSockets.Where(ipSocket => !ipSocket.Value.IsConnected()).ToList();
         disconnectedSockets.ForEach(ipSocket =>
             {
                 try
                 {
-                    DisconnectFrom(ipSocket.Key);    
+                    ipSocket.Value.Close();
                 }
                 catch (Exception ex)
                 {
@@ -59,7 +59,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         var state = new ClientConnectingState() { OnConnected = OnConnected, Client = socket };
 
-        //socket.ExclusiveAddressUse = false;
+        socket.ExclusiveAddressUse = false;
 
         socket.SendTimeout = ReceiveMessageTimeoutInMiliseconds;
         socket.ReceiveTimeout = SendMessageTimeoutInMiliseconds;
@@ -214,7 +214,6 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
         try
         {
             connectedToServersIPsSockets.Remove(state.IPAddress);
-            socket.EndDisconnect(result);
             socket.Close();
         }
         catch (Exception ex)
@@ -234,7 +233,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
 
         var threadUtils = ThreadUtils.Instance;//initialize
 
-        CoroutineUtils.RepeatEverySeconds(0.5f, UpdateConnectedSockets);
+        CoroutineUtils.RepeatEverySeconds(1f, UpdateConnectedSockets);
         initialized = true;
 
         Debug.Log("SimpleTcpClient initialized");
@@ -249,7 +248,7 @@ public class SimpleTcpClient : ExtendedMonoBehaviour
             {
                 try
                 {
-                    DisconnectFrom(ipSocket.Key);
+                    ipSocket.Value.Close();
                 }
                 catch
                 {

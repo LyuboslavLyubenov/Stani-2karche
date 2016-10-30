@@ -46,4 +46,9 @@ public class ConnectedClientData
         this.ConnectionId = connectionId;
         this.Username = username;
     }
+
+    public bool Equals(ConnectedClientData data)
+    {
+        return (this.ConnectionId == data.ConnectionId && this.Username == data.Username);
+    }
 }
