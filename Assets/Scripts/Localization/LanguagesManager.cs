@@ -85,6 +85,7 @@ public class LanguagesManager : MonoBehaviour
     }
 
 
+
 #else
 
     Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
@@ -171,7 +172,7 @@ public class LanguagesManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogException(e);
+            Debug.LogWarning(e.Message);
             return path;
         }
     }

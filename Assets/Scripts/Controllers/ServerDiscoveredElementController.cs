@@ -16,9 +16,9 @@ public class ServerDiscoveredElementController : ExtendedMonoBehaviour
 
     void Start()
     {
-        category = transform.FindChild("CategoryType").GetComponent<Text>();
-        creatorName = transform.FindChild("CreatorName").GetComponent<Text>();
-        connectedClients = transform.FindChild("ConnectedClients").GetComponent<Text>();
+        category = transform.Find("CategoryType").GetComponent<Text>();
+        creatorName = transform.Find("CreatorName").GetComponent<Text>();
+        connectedClients = transform.Find("ConnectedClients").GetComponent<Text>();
     }
 
     public void SetData(CreatedGameInfo_Serializable gameInfo)

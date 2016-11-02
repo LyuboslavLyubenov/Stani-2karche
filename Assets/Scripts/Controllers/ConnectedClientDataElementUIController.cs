@@ -25,8 +25,8 @@ public class ConnectedClientDataElementUIController : MonoBehaviour
 
     void Start()
     {
-        var connectionIdTextObj = transform.FindChild("ConnectionId");
-        var usernameTextObj = transform.FindChild("Username");
+        var connectionIdTextObj = transform.Find("ConnectionId");
+        var usernameTextObj = transform.Find("Username");
 
         connectionIdText = connectionIdTextObj.GetComponent<Text>();
         usernameText = usernameTextObj.GetComponent<Text>();
@@ -41,10 +41,5 @@ public class ConnectedClientDataElementUIController : MonoBehaviour
 
         connectionIdText.text = clientData.ConnectionId.ToString();
         usernameText.text = clientData.Username;
-    }
-
-    void GetRealUsername()
-    {
-        
     }
 }

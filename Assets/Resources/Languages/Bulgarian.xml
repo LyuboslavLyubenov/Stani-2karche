@@ -117,4 +117,7 @@
         </NormalExamSelectMode>
     </Lobby>
     
+    <ConnectedClients>Свързани потребители</ConnectedClients>
+    <ConnectionId>Индетификатор на връзката</ConnectionId>
+    <Username>Потребителско име</Username>
 </Stani2karche>

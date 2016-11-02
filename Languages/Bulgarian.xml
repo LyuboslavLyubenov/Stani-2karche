@@ -32,6 +32,7 @@
         <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.</MultipleCorrectAnswers>
         <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
     </Errors>
+    
     <SecondsRemaining>Оставащи секунди за отговор</SecondsRemaining>
     <IP>Адрес на машината:</IP>
     <Mark>Оценка</Mark>
@@ -116,5 +117,14 @@
             <Audience>Публика</Audience>
         </NormalExamSelectMode>
     </Lobby>
+    
+    <ConnectedClients>Свързани потребители</ConnectedClients>
+    <ConnectionId>Индетификатор на връзката</ConnectionId>
+    <Username>Потребителско име</Username>
+    <Role>Роля</Role>
+    <Reason>Причина</Reason>
+    <Kick>Изгони от сървъра</Kick>
+    <Ban>Забрани да влиза във сървъра</Ban>
+    <EndGame>Спри играта</EndGame>
     
 </Stani2karche>

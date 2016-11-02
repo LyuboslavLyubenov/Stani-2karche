@@ -45,7 +45,7 @@ public class LeaderboardUIController : MonoBehaviour
                 var propertyName = propertyInfos[j].Name;
                 var propertyValue = propertyInfos[j].GetValue(playerScoreData, null);
 
-                var propObj = scoreObj.transform.FindChild(propertyName);
+                var propObj = scoreObj.transform.Find(propertyName);
 
                 if (propObj == null || propertyValue == null)
                 {

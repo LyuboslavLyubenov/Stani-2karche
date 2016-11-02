@@ -60,6 +60,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
         private set
         {
+            this.isConnected.Value = value;
+
             if (value == true)
             {
                 OnConnectedEvent(this, EventArgs.Empty);
@@ -68,8 +70,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             {
                 OnDisconnectedEvent(this, EventArgs.Empty);
             }
-
-            this.isConnected.Value = value;
         }
     }
 

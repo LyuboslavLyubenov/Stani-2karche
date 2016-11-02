@@ -20,6 +20,10 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public AskAudienceJokerRouter AskAudienceJokerRouter;
     public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
 
+    public ConnectedClientsUIController ConnectedClientsUIController;
+    public BasicExamClientOptionsUIController ClientOptionsUIController;
+
+
     public bool IsGameOver
     {
         get;
@@ -97,6 +101,24 @@ public class BasicExamServer : ExtendedMonoBehaviour
         };
         HelpFromFriendJokerRouter.OnSentAnswerToMainPlayer += (sender, args) => paused = false;
         AskAudienceJokerRouter.OnSentAnswerToMainPlayer += (sender, args) => paused = false;
+
+        ConnectedClientsUIController.OnSelectedPlayer += (sender, args) =>
+        {
+            ClientOptionsUIController.gameObject.SetActive(true);
+            CoroutineUtils.WaitForFrames(0, () =>
+                {
+                    var username = NetworkManager.GetClientUsername(args.ConnectionId);
+                    var clientData = new ConnectedClientData(args.ConnectionId, username);
+                    var role = 
+                        (MainPlayerData.IsConnected && MainPlayerData.ConnectionId == args.ConnectionId) 
+                            ? 
+                            BasicExamClientRole.MainPlayer 
+                            : 
+                            BasicExamClientRole.Audience;
+                    
+                    ClientOptionsUIController.Set(clientData, role);
+                });
+        };
     }
 
     void InitializeMainPlayerData()
@@ -196,7 +218,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
             Debug.LogException);
     }
 
-    void EndGame()
+    public void EndGame()
     {
         SendEndGameInfo();
         SavePlayerScoreToLeaderboard();
