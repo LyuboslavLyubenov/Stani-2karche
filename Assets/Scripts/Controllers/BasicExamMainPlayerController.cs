@@ -175,6 +175,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void OnConnectedToServer(object sender, EventArgs args)
     {
+        AvailableJokersUIController.ClearAll();
         LoadingUI.SetActive(false);
 
         var commandData = new NetworkCommandData("MainPlayerConnecting");

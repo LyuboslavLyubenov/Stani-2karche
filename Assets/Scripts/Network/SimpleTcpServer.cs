@@ -115,7 +115,13 @@ public class SimpleTcpServer : ExtendedMonoBehaviour
             connectionSocket.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
             connectionSocket.SendTimeout = SendMessageTimeoutInMiliseconds;
 
-            connectedIPClientsSocket.Add(ip, connectionSocket);
+            if (connectedIPClientsSocket.ContainsKey(ip))
+            {
+                Disconnect(ip);
+                Thread.Sleep(30);
+            }
+
+            connectedIPClientsSocket[ip] = connectionSocket;
 
             Debug.Log("SimpleTcpServer Accepted " + ip);
 

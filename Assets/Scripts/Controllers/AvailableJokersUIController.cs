@@ -21,6 +21,8 @@ public class AvailableJokersUIController : MonoBehaviour
 
     RectTransform containerRectTransform;
 
+    List<Transform> jokerObjs = new List<Transform>();
+
     List<IJoker> jokers = new List<IJoker>();
     Transform dummyJokerButtonPrefab;
     Vector2 jokerStartPosition;
@@ -47,36 +49,6 @@ public class AvailableJokersUIController : MonoBehaviour
         distanceBetweenJokers = jokerStartPosition.y - jokerButtonSize.y;
     }
 
-    public void AddJoker(IJoker joker)
-    {
-        if (joker == null)
-        {
-            throw new ArgumentNullException("joker");
-        }
-            
-        var jokerButtonObj = Instantiate(dummyJokerButtonPrefab);
-
-        jokerButtonObj.SetParent(Container, false);
-
-        var jokerRect = jokerButtonObj.GetComponent<RectTransform>();
-        var x = jokerStartPosition.x;
-        var y = jokerStartPosition.y + SpawnOffset + (jokers.Count * (jokerButtonSize.y + distanceBetweenJokers));
-        jokerRect.anchoredPosition = new Vector2(x, y);
-
-        var jokerButton = jokerButtonObj.GetComponent<Button>();
-        jokerButton.onClick.AddListener(new UnityAction(() => OnJokerClick(jokerButtonObj.gameObject, joker)));
-
-        var jokerImageObj = jokerButtonObj.GetChild(0);
-        var jokerImage = jokerImageObj.GetComponent<Image>();
-        jokerImage.sprite = joker.Image;
-
-        jokers.Add(joker);
-
-        var contentHeight = -jokerStartPosition.y + (jokers.Count * jokerButtonSize.y); 
-        containerRectTransform.sizeDelta = new Vector2(containerRectTransform.sizeDelta.x, contentHeight);
-
-        OnAddedJoker(this, new JokerEventArgs(joker));
-    }
 
     void OnJokerClick(GameObject jokerObj, IJoker joker)
     {
@@ -93,5 +65,49 @@ public class AvailableJokersUIController : MonoBehaviour
 
         jokers.Remove(joker);
         Destroy(jokerObj);//TODO: EXIT ANIMATION?  
+    }
+
+    public void AddJoker(IJoker joker)
+    {
+        if (joker == null)
+        {
+            throw new ArgumentNullException("joker");
+        }
+            
+        var jokerObj = Instantiate(dummyJokerButtonPrefab);
+
+        jokerObj.SetParent(Container, false);
+
+        var jokerRect = jokerObj.GetComponent<RectTransform>();
+        var x = jokerStartPosition.x;
+        var y = jokerStartPosition.y + SpawnOffset + (jokers.Count * (jokerButtonSize.y + distanceBetweenJokers));
+        jokerRect.anchoredPosition = new Vector2(x, y);
+
+        var jokerButton = jokerObj.GetComponent<Button>();
+        jokerButton.onClick.AddListener(new UnityAction(() => OnJokerClick(jokerObj.gameObject, joker)));
+
+        var jokerImageObj = jokerObj.GetChild(0);
+        var jokerImage = jokerImageObj.GetComponent<Image>();
+        jokerImage.sprite = joker.Image;
+
+        jokerObjs.Add(jokerObj);
+        jokers.Add(joker);
+
+        var contentHeight = -jokerStartPosition.y + (jokers.Count * jokerButtonSize.y); 
+        containerRectTransform.sizeDelta = new Vector2(containerRectTransform.sizeDelta.x, contentHeight);
+
+        OnAddedJoker(this, new JokerEventArgs(joker));
+    }
+
+    public void ClearAll()
+    {
+        for (int i = 0; i < jokerObjs.Count; i++)
+        {
+            var jokerObj = jokerObjs[i];
+            Destroy(jokerObj.gameObject);
+        }
+
+        jokers.Clear();
+        jokerObjs.Clear();
     }
 }

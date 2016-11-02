@@ -58,5 +58,7 @@ public class CreatedGameInfoReceiverService : MonoBehaviour
         }
 
         pendingRequests.Remove(ipAddress);
+        TcpClient.DisconnectFrom(ipAddress);
+        TcpServer.Disconnect(ipAddress);
     }
 }

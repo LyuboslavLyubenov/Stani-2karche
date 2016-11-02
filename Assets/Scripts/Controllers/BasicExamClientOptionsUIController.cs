@@ -30,7 +30,15 @@ public class BasicExamClientOptionsUIController : MonoBehaviour
     {
         var connectionId = int.Parse(connectionIdField.Value);
         var reason = reasonInputField.text;
-        NetworkManager.KickPlayer(connectionId, reason);
+
+        if (string.IsNullOrEmpty(reason))
+        {
+            NetworkManager.KickPlayer(connectionId);    
+        }
+        else
+        {
+            NetworkManager.KickPlayer(connectionId, reason);    
+        }
 
         gameObject.SetActive(false);
     }
