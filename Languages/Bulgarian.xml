@@ -33,16 +33,6 @@
         <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
     </Errors>
     
-    <SecondsRemaining>Оставащи секунди за отговор</SecondsRemaining>
-    <IP>Адрес на машината:</IP>
-    <Mark>Оценка</Mark>
-    <QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>
-    <Leaderboard>Класация</Leaderboard>
-    <RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
-    <CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
-    <Loading>Зареждане</Loading>
-    <ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
-
     <UnableToConnect>
         <Text>Неуспешно свързване към сървъра.</Text>
         <TryAgainToConnect>Опитай да се свържеш пак</TryAgainToConnect>
@@ -118,6 +108,16 @@
         </NormalExamSelectMode>
     </Lobby>
     
+     <SecondsRemaining>Оставащи секунди за отговор</SecondsRemaining>
+    <IP>Адрес на машината</IP>
+    <Mark>Текуща оценка</Mark>
+    <RemainingQuestions>Оставащи въпроси до следващата оценка</RemainingQuestions>
+    <Leaderboard>Класация</Leaderboard>
+    <RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
+    <CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
+    <Loading>Зареждане</Loading>
+    <ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
+    
     <ConnectedClients>Свързани потребители</ConnectedClients>
     <ConnectionId>Индетификатор на връзката</ConnectionId>
     <Username>Потребителско име</Username>
@@ -126,5 +126,8 @@
     <Kick>Изгони от сървъра</Kick>
     <Ban>Забрани да влиза във сървъра</Ban>
     <EndGame>Спри играта</EndGame>
+    <MainPlayer>Главен играч</MainPlayer>
+    <IsConnected>Свързан ли е?</IsConnected>
+    <Category>Категория</Category>
     
 </Stani2karche>

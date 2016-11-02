@@ -23,7 +23,6 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public ConnectedClientsUIController ConnectedClientsUIController;
     public BasicExamClientOptionsUIController ClientOptionsUIController;
 
-
     public bool IsGameOver
     {
         get;
@@ -42,7 +41,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     // when using joker
     bool paused = false;
 
-    void Start()
+    void Awake()
     {
         LoadServerSettings();
 
@@ -54,7 +53,10 @@ public class BasicExamServer : ExtendedMonoBehaviour
         MainPlayerData.JokersData.AddJoker(typeof(HelpFromFriendJoker));
         MainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
         MainPlayerData.JokersData.AddJoker(typeof(DisableRandomAnswersJoker));
+    }
 
+    void Start()
+    {
         CoroutineUtils.RepeatEverySeconds(1, () =>
             {
                 if (!NetworkManager.IsRunning || IsGameOver || paused || remainingTimeToAnswerMainQuestion == -1)

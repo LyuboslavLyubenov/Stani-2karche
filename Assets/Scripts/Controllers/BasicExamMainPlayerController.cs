@@ -51,6 +51,9 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         var loadedGameDataCommand = new DummyOneTimeCommand();
         loadedGameDataCommand.OnFinishedExecution += (sender, args) =>
         {
+            LoadingUI.SetActive(false);
+            ChooseCategoryUIController.gameObject.SetActive(false);
+            PlayerPrefs.SetString("LoadedGameData", "true");
             GameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
         };
 
@@ -140,12 +143,19 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     void OnActivateSceneChanged(Scene oldScene, Scene newScene)
     {
         KillLocalServer();
+        CleanUp();
         SceneManager.activeSceneChanged -= OnActivateSceneChanged;
     }
 
     void OnApplicationQuit()
     {
         KillLocalServer();
+        CleanUp();
+    }
+
+    void CleanUp()
+    {
+        PlayerPrefs.DeleteKey("LoadedGameData");
     }
 
     void KillLocalServer()
@@ -165,8 +175,17 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void OnConnectedToServer(object sender, EventArgs args)
     {
+        LoadingUI.SetActive(false);
+
         var commandData = new NetworkCommandData("MainPlayerConnecting");
         NetworkManager.SendServerCommand(commandData);
+
+        if (PlayerPrefs.HasKey("LoadedGameData"))
+        {
+            var loadedGameData = new NetworkCommandData("LoadedGameData");
+            NetworkManager.CommandsManager.Execute(loadedGameData);
+            return;
+        }
 
         var remoteCategoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, () =>
             {
