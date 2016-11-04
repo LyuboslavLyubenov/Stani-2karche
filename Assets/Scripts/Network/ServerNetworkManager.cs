@@ -200,12 +200,14 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             try
             {
                 byte error;
-                NetworkTransport.Disconnect(genericHostId, deadClientConnectionId, out error);    
+                NetworkTransport.Disconnect(genericHostId, deadClientConnectionId, out error);   
             }
             catch (Exception e)
             {
                 Debug.Log(e.Message);
             }
+
+            OnClientDisconnected(this, new ClientConnectionDataEventArgs(deadClientConnectionId));
 
             connectedClientsNames.Remove(deadClientConnectionId);
         }
@@ -473,8 +475,15 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     #region DEBUG_MENU
 
+    public bool ShowDebugMenu;
+
     void OnGUI()
     {
+        if (!ShowDebugMenu)
+        {
+            return;
+        }
+
         GUI.Box(new Rect(0, 0, 315, 300), "ServerNetworkManager");
 
         var connectedPlayersRect = new Rect(5, 30, 150, 30);

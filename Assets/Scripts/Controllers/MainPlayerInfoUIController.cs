@@ -14,7 +14,7 @@ public class MainPlayerInfoUIController : MonoBehaviour
         isConnectedField = transform.Find("IsConnectedField").GetComponent<FieldUIController>();
 
         Server.MainPlayerData.OnConnected += OnMainPlayerConnected;
-        Server.MainPlayerData.OnDisconnected += OnMainPlayerConnected;
+        Server.MainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
     }
 
     void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
@@ -25,7 +25,7 @@ public class MainPlayerInfoUIController : MonoBehaviour
 
     void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
     {
-        connectionIdField.Value = "";
+        connectionIdField.Value = "-1";
         isConnectedField.Value = LanguagesManager.Instance.GetValue("Disconnected");
     }
 }

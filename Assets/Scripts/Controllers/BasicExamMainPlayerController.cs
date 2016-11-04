@@ -35,6 +35,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void Start()
     {
+        PlayerPrefs.DeleteKey("LoadedGameData");
+
         unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
         //TODO UPDATE Seconds remaining UI CONTROLLER
