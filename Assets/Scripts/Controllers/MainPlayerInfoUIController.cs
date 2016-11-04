@@ -20,12 +20,12 @@ public class MainPlayerInfoUIController : MonoBehaviour
     void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
     {
         connectionIdField.Value = Server.MainPlayerData.ConnectionId.ToString();
-        isConnectedField.Value = LanguagesManager.Instance.GetValue("Connected");
+        isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/Yes");
     }
 
     void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
     {
         connectionIdField.Value = "-1";
-        isConnectedField.Value = LanguagesManager.Instance.GetValue("Disconnected");
+        isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/No");
     }
 }

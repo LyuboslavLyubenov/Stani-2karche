@@ -6,6 +6,8 @@ using System.Linq;
 
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 {
+    const string ServerBinaryName = "stani2karcheserver";
+
     public GameObject LeaderboardUI;
     public GameObject LoadingUI;
     public GameObject EndGameUI;
@@ -70,7 +72,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
         if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
         {
-            System.Diagnostics.Process.Start("Server\\start server nogui.bat");
+            var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
+            System.Diagnostics.Process.Start(serverPath);
             SceneManager.activeSceneChanged += OnActivateSceneChanged;
         }
     }
@@ -164,7 +167,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
         if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
         {
-            var serverProcesses = System.Diagnostics.Process.GetProcessesByName("stani2karcheserver");
+            var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
 
             for (int i = 0; i < serverProcesses.Length; i++)
             {

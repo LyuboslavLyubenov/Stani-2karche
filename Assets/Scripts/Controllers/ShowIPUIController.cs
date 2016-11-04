@@ -15,7 +15,7 @@ public class ShowIPUIController : MonoBehaviour
     void OnFoundIP(string ip)
     {
         IPText.text += Environment.NewLine;
-        IPText.text += ip;
+        IPText.text += ip.Trim();
     }
 
     void OnNetworkError(string errorMsg)
