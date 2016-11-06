@@ -134,7 +134,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         var selectedAnswerCommand = new ReceivedServerSelectedAnswerCommand(OnReceivedSelectedAnswer);
         var selectedHelpFromFriendJokerCommand = new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, MainPlayerData, HelpFromFriendJokerRouter, 60);
         var selectedAskAudienceJokerCommand = new ReceivedSelectedAskAudienceJokerCommand(MainPlayerData, AskAudienceJokerRouter, NetworkManager, 60);
-        var selectedFifthyFifthyChanceCommand = new ReceivedSelectedFifthyFifthyChanceJokerCommand(MainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 2);
+        var selectedFifthyFifthyChanceCommand = new ReceivedSelectedDisableRandomAnswersJokerCommand(MainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 2);
         var surrenderCommand = new ReceivedSurrenderBasicExamOneTimeCommand(MainPlayerData, OnMainPlayerSurrender);
         var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAskAudienceJokerCommand, selectedFifthyFifthyChanceCommand, selectedHelpFromFriendJokerCommand };
 
@@ -155,9 +155,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
         var jokerName = sender.GetType().Name
                 .Replace("ReceivedSelected", "")
                 .Replace("Command", "")
-                .ToLower();
-
-        if (jokerName == ("FifthyFifthyChanceJoker").ToLower())
+                .ToUpperInvariant();
+        
+        if (jokerName == ("DisableRandomAnswersJoker").ToUpperInvariant())
         {
             return;
         }
@@ -201,7 +201,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void OnReceivedSelectedAnswer(int clientId, string answer)
     {
-        if (IsGameOver || !MainPlayerData.IsConnected || clientId != MainPlayerData.ConnectionId)
+        if (IsGameOver || !MainPlayerData.IsConnected || clientId != MainPlayerData.ConnectionId || paused)
         {
             return;
         }
@@ -218,15 +218,6 @@ public class BasicExamServer : ExtendedMonoBehaviour
                 EndGame();
             }, 
             Debug.LogException);
-    }
-
-    public void EndGame()
-    {
-        SendEndGameInfo();
-        SavePlayerScoreToLeaderboard();
-        IsGameOver = true;
-        OnGameOver(this, EventArgs.Empty);
-        Cleanup();
     }
 
     void SendEndGameInfo()
@@ -250,5 +241,14 @@ public class BasicExamServer : ExtendedMonoBehaviour
         var playerScore = new PlayerScore(mainPlayerName, currentMark, DateTime.Now);
 
         LeaderboardSerializer.SetPlayerScore(playerScore);
+    }
+
+    public void EndGame()
+    {
+        SendEndGameInfo();
+        SavePlayerScoreToLeaderboard();
+        IsGameOver = true;
+        OnGameOver(this, EventArgs.Empty);
+        Cleanup();
     }
 }

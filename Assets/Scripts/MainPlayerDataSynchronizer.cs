@@ -59,8 +59,6 @@ public class MainPlayerDataSynchronizer
             return;
         }
 
-        JokerUtils.ValidateJokerType(jokerType);
-
         var jokerName = jokerType.Name;
         var addJokerCommand = new NetworkCommandData("Add" + jokerName);
 

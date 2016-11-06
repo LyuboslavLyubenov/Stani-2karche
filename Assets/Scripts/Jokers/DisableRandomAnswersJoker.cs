@@ -3,6 +3,8 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using CielaSpike;
+using System.Linq;
 
 public class DisableRandomAnswersJoker : IJoker
 {
@@ -62,7 +64,7 @@ public class DisableRandomAnswersJoker : IJoker
             throw new InvalidOperationException();
         }
 
-        var selectedJokerCommand = new NetworkCommandData("SelectedFifthyFifthyJoker");
+        var selectedJokerCommand = new NetworkCommandData("SelectedFifthyFifthyChanceJoker");
         networkManager.SendServerCommand(selectedJokerCommand);
 
         var receiveJokerSettings = new ReceivedDisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings);
@@ -101,31 +103,19 @@ public class DisableRandomAnswersJoker : IJoker
             throw new ArgumentException("Answers to disable count must be less than answers count");
         }
 
+        var allAnswers = currentQuestion.Answers.ToList();
         var correctAnswerIndex = currentQuestion.CorrectAnswerIndex;
-        var disabledAnswersIndex = new List<int>();
-
-        for (int i = 0; i < answersToDisableCount; i++)
+        var correctAnswer = allAnswers[correctAnswerIndex];
+        var wrongAnswersIndexes = allAnswers.Where(a => a != correctAnswer)
+            .ToArray()
+            .GetRandomElements(answersToDisableCount)
+            .Select(a => allAnswers.FindIndex(answer => answer == a))
+            .ToArray();
+        
+        for (int i = 0; i < wrongAnswersIndexes.Length; i++)
         {
-            int n;
-
-            while (true)
-            {
-                //make sure we dont disable correct answer and we dont disable answer 2 times
-                n = UnityEngine.Random.Range(0, answersToDisableCount);
-
-                if (n != correctAnswerIndex && !disabledAnswersIndex.Contains(n))
-                {
-                    break;
-                }
-            }
-
-            disabledAnswersIndex.Add(n);
-        }
-
-        for (int i = 0; i < disabledAnswersIndex.Count; i++)
-        {
-            var disabledIndex = disabledAnswersIndex[i];
-            questionUIController.HideAnswer(disabledIndex);
+            var disabledAnswerIndex = wrongAnswersIndexes[i];
+            questionUIController.HideAnswer(disabledAnswerIndex);
         }
     }
 }

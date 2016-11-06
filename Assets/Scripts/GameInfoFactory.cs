@@ -4,6 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class GameInfoFactory : MonoBehaviour
 {
+    const string BasicExam = "BasicExam";
+    const string AudienceRevenge = "AudienceRevenge";
+    const string FastestWins = "FastestWins";
+
     public ServerNetworkManager ServerNetworkManager;
     public BasicExamServer BasicExamServer;
 
@@ -22,18 +26,18 @@ public class GameInfoFactory : MonoBehaviour
 
     public CreatedGameInfo_Serializable Get(string levelName)
     {
-        var levelNameLower = levelName.ToLower();
+        var levelNameUpper = levelName.ToUpperInvariant();
 
-        if (levelNameLower.Contains("basicexam"))
+        if (levelNameUpper.Contains(BasicExam.ToUpperInvariant()))
         {
             return GetBasicExamGameInfo();
         }
-        else if (levelNameLower.Contains("audiencerevenge"))
+        else if (levelNameUpper.Contains(AudienceRevenge.ToUpperInvariant()))
         {
             //TODO
             throw new NotImplementedException();
         }
-        else if (levelNameLower.Contains("fastetswins"))
+        else if (levelNameUpper.Contains(FastestWins.ToUpperInvariant()))
         {
             //TODO
             throw new NotImplementedException();

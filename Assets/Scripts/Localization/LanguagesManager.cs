@@ -86,8 +86,8 @@ public class LanguagesManager : MonoBehaviour
 
 
 
-#else
-
+    #else
+    
     Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
 
     void CollectLanguages()
@@ -105,8 +105,8 @@ public class LanguagesManager : MonoBehaviour
 
     string GetLanguageFile(string language)
     {
-        var languageLower = language.ToLower();
-        return languageFiles.FirstOrDefault(l => l.ToLower().Contains(languageLower));
+        var languageUpper = language.ToUpperInvariant();
+        return languageFiles.FirstOrDefault(l => l.ToUpperInvariant().Contains(languageUpper));
     }
 
     public void LoadLanguage(string language)

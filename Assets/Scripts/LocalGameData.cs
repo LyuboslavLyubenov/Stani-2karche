@@ -217,7 +217,7 @@ public class LocalGameData : MonoBehaviour, IGameData
             for (int answersRowI = rowi + 1; answersRowI < rowi + 5; answersRowI++)
             {   
                 var answerText = sheet.getCell(0, answersRowI).getContents();
-                var isCorrect = sheet.getCell(1, answersRowI).getContents().ToLower() == "верен";
+                var isCorrect = sheet.getCell(1, answersRowI).getContents().ToUpperInvariant() == ("верен").ToUpperInvariant();
 
                 if (string.IsNullOrEmpty(answerText))
                 {                

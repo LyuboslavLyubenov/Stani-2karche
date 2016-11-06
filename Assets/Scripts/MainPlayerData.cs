@@ -61,10 +61,6 @@ public class MainPlayerData : IPlayerData
         networkManager.OnClientDisconnected += OnClientDisconnected;
         networkManager.CommandsManager.AddCommand("MainPlayerConnecting", new ReceivedMainPlayerConnectingCommand(OnMainPlayerConnecting));
 
-        JokersData.OnAddedJoker += (sender, args) =>
-        {
-        };
-        
         //lazy motherf*cker
         OnConnected = delegate
         {

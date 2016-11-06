@@ -39,6 +39,8 @@ public class SecondsRemainingUIController : ExtendedMonoBehaviour
             throw new ArgumentOutOfRangeException("seconds");
         }
 
+        Paused = false;
+
         RemainingSecondsToAnswer = seconds;
         SecondsText.text = RemainingSecondsToAnswer.ToString();
     }

@@ -41,7 +41,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
         unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
-        //TODO UPDATE Seconds remaining UI CONTROLLER
         InitializeCommands();
         StartServerIfPlayerIsHost();
         AttachEventHandlers();
@@ -57,14 +56,15 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         {
             LoadingUI.SetActive(false);
             ChooseCategoryUIController.gameObject.SetActive(false);
-            PlayerPrefs.SetString("LoadedGameData", "true");
             GameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+            
+            PlayerPrefs.SetString("LoadedGameData", "true");
         };
 
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddFifthyFifthyJoker", new ReceivedAddFifthyFifthyJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
+        NetworkManager.CommandsManager.AddCommand("AddDisableRandomAnswersJoker", new ReceivedAddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
         NetworkManager.CommandsManager.AddCommand("LoadedGameData", loadedGameDataCommand);
     }
 
@@ -111,23 +111,37 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
         AvailableJokersUIController.OnAddedJoker += (sender, args) =>
         {
-            var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
 
-            if (jokerExecutedCallback == null)
-            {
-                return;
-            }
-
-            jokerExecutedCallback.OnExecuted += (s, a) =>
-            {
-                SecondsRemainingUIController.Paused = false;
-            };
         };
 
         AvailableJokersUIController.OnUsedJoker += (sender, args) =>
         {
             SecondsRemainingUIController.Paused = true;  
         };
+    }
+
+    void OnAddedJoker(object sender, JokerEventArgs args)
+    {
+        var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
+
+        if (jokerExecutedCallback == null)
+        {
+            return;
+        }
+
+        var jokerTypeName = args.Joker.GetType().Name;
+
+        if (jokerTypeName.ToUpperInvariant() == ("DisableRandomAnswersJoker").ToUpperInvariant())
+        {
+            return;       
+        }
+
+        jokerExecutedCallback.OnExecuted += (s, a) =>
+        {
+            SecondsRemainingUIController.Paused = false;
+        };
+
+
     }
 
     void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
@@ -138,7 +152,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void ConnectToServer()
     {
-        CoroutineUtils.WaitForFrames(0, () =>
+        CoroutineUtils.WaitForSeconds(8f, () =>
             {
                 var ip = PlayerPrefs.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
@@ -161,6 +175,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     void CleanUp()
     {
         PlayerPrefs.DeleteKey("LoadedGameData");
+        PlayerPrefs.DeleteKey("MainPlayerHost");
     }
 
     void KillLocalServer()
@@ -173,8 +188,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             {
                 serverProcesses[i].Kill();
             }
-
-            PlayerPrefs.DeleteKey("MainPlayerHost");
         }
     }
 
@@ -233,6 +246,10 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         if (isCorrect)
         {
             GameData.GetNextQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+        }
+        else
+        {
+            AvailableJokersUIController.ClearAll();
         }
     }
 }
