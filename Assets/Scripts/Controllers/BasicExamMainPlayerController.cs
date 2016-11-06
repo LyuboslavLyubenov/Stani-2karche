@@ -109,15 +109,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             NetworkManager.SendServerCommand(selectedCategoryCommand);
         };
 
-        AvailableJokersUIController.OnAddedJoker += (sender, args) =>
-        {
-
-        };
-
-        AvailableJokersUIController.OnUsedJoker += (sender, args) =>
-        {
-            SecondsRemainingUIController.Paused = true;  
-        };
+        AvailableJokersUIController.OnAddedJoker += OnAddedJoker;
+        AvailableJokersUIController.OnUsedJoker += OnUsedJoker;
     }
 
     void OnAddedJoker(object sender, JokerEventArgs args)
@@ -129,19 +122,22 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             return;
         }
 
-        var jokerTypeName = args.Joker.GetType().Name;
-
-        if (jokerTypeName.ToUpperInvariant() == ("DisableRandomAnswersJoker").ToUpperInvariant())
-        {
-            return;       
-        }
-
         jokerExecutedCallback.OnExecuted += (s, a) =>
         {
             SecondsRemainingUIController.Paused = false;
         };
+    }
 
+    void OnUsedJoker(object sender, JokerEventArgs args)
+    {
+        var jokerTypeNameUpper = args.Joker.GetType().Name.ToUpperInvariant();
 
+        if (jokerTypeNameUpper == ("DisableRandomAnswersJoker").ToUpperInvariant())
+        {
+            return;
+        }
+
+        SecondsRemainingUIController.Paused = true;  
     }
 
     void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
@@ -253,4 +249,3 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         }
     }
 }
-

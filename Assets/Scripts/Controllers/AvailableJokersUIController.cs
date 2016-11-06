@@ -93,7 +93,7 @@ public class AvailableJokersUIController : MonoBehaviour
         jokerObjs.Add(jokerObj);
         jokers.Add(joker);
 
-        var contentHeight = -jokerStartPosition.y + (jokers.Count * jokerButtonSize.y); 
+        var contentHeight = -jokerStartPosition.y + (jokers.Count * (jokerButtonSize.y + 10)); 
         containerRectTransform.sizeDelta = new Vector2(containerRectTransform.sizeDelta.x, contentHeight);
 
         OnAddedJoker(this, new JokerEventArgs(joker));
