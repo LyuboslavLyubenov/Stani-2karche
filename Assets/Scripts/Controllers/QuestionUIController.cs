@@ -4,11 +4,12 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 
-public class QuestionUIController : MonoBehaviour, IQuestionUIController
+public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 {
     const int AnswersCount = 4;
 
     public bool ShouldPlayButtonAnimation = true;
+    public bool ShowCorrectAnswerAfterError = false;
 
     bool initialized = false;
 
@@ -113,20 +114,7 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         DisableAnswers();
         HideAllAnswers();
 
-        for (int i = 0; i < AnswersCount; i++)
-        {
-            while (true)
-            {
-                var stateInfo = answersAnimators[i].GetCurrentAnimatorStateInfo(0);
-
-                if (stateInfo.IsTag("Hidden"))
-                {
-                    break;
-                }
-
-                yield return new WaitForEndOfFrame();
-            }
-        }
+        yield return StartCoroutine(WaitUntilAnswersAreHiddenCoroutine());
 
         for (int i = 0; i < AnswersCount; i++)
         {
@@ -150,6 +138,24 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         }
     }
 
+    IEnumerator WaitUntilAnswersAreHiddenCoroutine()
+    {
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            while (true)
+            {
+                var stateInfo = answersAnimators[i].GetCurrentAnimatorStateInfo(0);
+
+                if (stateInfo.IsTag("Hidden"))
+                {
+                    break;
+                }
+
+                yield return new WaitForEndOfFrame();
+            }
+        }
+    }
+
     void AttachButtonListener(int buttonIndex, bool isCorrect)
     {
         var button = answersButtons[buttonIndex];
@@ -159,7 +165,8 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
 
                 if (ShouldPlayButtonAnimation)
                 {
-                    PlayClickedAnimation(buttonIndex, isCorrect);    
+                    var answerText = answersTexts[buttonIndex].text;
+                    ColorAnswer(answerText, true);   
                 }
                 else
                 {
@@ -177,10 +184,23 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
         }
     }
 
-    void PlayClickedAnimation(int buttonIndex, bool isCorrect)
+    void ColorAnswer(string answer, bool fireClickEvent)
     {
-        answersAnimators[buttonIndex].SetTrigger("clicked");
-        answersAnimators[buttonIndex].SetBool("isCorrect", isCorrect);
+        var correctAnswerIndex = CurrentlyLoadedQuestion.CorrectAnswerIndex;
+        var answerIndex = CurrentlyLoadedQuestion.Answers.ToList().FindIndex(a => a == answer);
+        var isCorrect = (correctAnswerIndex == answerIndex);
+        var answerAnimator = answersAnimators[answerIndex];
+
+        answerAnimator.SetTrigger("clicked");
+        answerAnimator.SetBool("fireClickEvent", fireClickEvent);
+        answerAnimator.SetBool("isCorrect", isCorrect);
+    }
+
+    void ShowCorrectAnswer()
+    {
+        var correctAnswerIndex = CurrentlyLoadedQuestion.CorrectAnswerIndex;
+        var correctAnswer = CurrentlyLoadedQuestion.Answers[correctAnswerIndex];
+        ColorAnswer(correctAnswer, false);
     }
 
     void ShowAnswer(int index)
@@ -236,7 +256,12 @@ public class QuestionUIController : MonoBehaviour, IQuestionUIController
 
     public void _OnIncorrectAnswerAnimEnd(string answer)
     {
-        OnAnswerClick(this, new AnswerEventArgs(answer, false));
+        ShowCorrectAnswer();
+
+        CoroutineUtils.WaitForSeconds(3f, () =>
+            {
+                OnAnswerClick(this, new AnswerEventArgs(answer, false));
+            });
     }
 
     public void _OnCorrectAnswerAnimEnd(string answer)

@@ -18,19 +18,19 @@ public static class StringExtensions
 
     public static bool ToBoolean(this string value)
     {
-        switch (value.ToLower())
+        switch (value.ToUpperInvariant())
         {
-            case "true":
+            case "TRUE":
                 return true;
-            case "t":
+            case "T":
                 return true;
             case "1":
                 return true;
             case "0":
                 return false;
-            case "false":
+            case "FALSE":
                 return false;
-            case "f":
+            case "F":
                 return false;
             default:
                 throw new InvalidCastException("You can't cast a weird value to a bool!");

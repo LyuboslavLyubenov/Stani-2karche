@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 
-public class ReceivedSelectedFifthyFifthyChanceJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+public class ReceivedSelectedDisableRandomAnswersJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
 {
     public EventHandler OnExecuted
     {
@@ -17,7 +17,7 @@ public class ReceivedSelectedFifthyFifthyChanceJokerCommand : INetworkManagerCom
     int answersToDisableCount;
     Type jokerType;
 
-    public ReceivedSelectedFifthyFifthyChanceJokerCommand(
+    public ReceivedSelectedDisableRandomAnswersJokerCommand(
         MainPlayerData mainPlayerData, 
         DisableRandomAnswersJokerRouter jokerRouter, 
         ServerNetworkManager networkManager,

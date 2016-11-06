@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using CielaSpike;
+using System.Collections;
 
 public class ThreadUtils : MonoBehaviour
 {
@@ -26,14 +28,6 @@ public class ThreadUtils : MonoBehaviour
         }
     }
 
-    public void RunOnMainThread(Action method)
-    {
-        lock (MyLock)
-        {
-            MethodsQueue.Enqueue(method);        
-        }
-    }
-
     void Update()
     {
         lock (MyLock)
@@ -46,5 +40,23 @@ public class ThreadUtils : MonoBehaviour
             var methodToRun = MethodsQueue.Dequeue();
             methodToRun();    
         }
+    }
+
+    public void RunOnMainThread(Action method)
+    {
+        lock (MyLock)
+        {
+            MethodsQueue.Enqueue(method);        
+        }
+    }
+
+    public void RunOnBackgroundThread(IEnumerator coroutine, out Task task)
+    {
+        this.StartCoroutineAsync(coroutine, out task);    
+    }
+
+    public void RunOnBackgroundThread(IEnumerator coroutine)
+    {
+        this.StartCoroutineAsync(coroutine);    
     }
 }
