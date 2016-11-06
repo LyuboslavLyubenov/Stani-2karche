@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 
-public class RemoteGameData : MonoBehaviour, IGameData
+public class RemoteGameData : IGameData
 {
     public EventHandler<MarkEventArgs> OnMarkIncrease
     {
@@ -37,7 +37,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         private set;
     }
 
-    public ClientNetworkManager NetworkManager;
+    ClientNetworkManager networkManager;
 
     bool loaded = false;
 
@@ -47,16 +47,17 @@ public class RemoteGameData : MonoBehaviour, IGameData
 
     ISimpleQuestion currentQuestionCache = null;
 
-    void Start()
+    public RemoteGameData(ClientNetworkManager networkManager)
     {
+        this.networkManager = networkManager;
         InitializeCommands();
     }
 
     void InitializeCommands()
     {
-        NetworkManager.CommandsManager.AddCommand("GameDataQuestion", new ReceivedQuestionCommand(OnReceivedQuestion));
-        NetworkManager.CommandsManager.AddCommand("GameDataMark", new ReceivedMarkCommand(OnReceivedMark));
-        NetworkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ReceivedNoMoreQuestionsCommand(OnNoMoreQuestions));
+        networkManager.CommandsManager.AddCommand("GameDataQuestion", new ReceivedQuestionCommand(OnReceivedQuestion));
+        networkManager.CommandsManager.AddCommand("GameDataMark", new ReceivedMarkCommand(OnReceivedMark));
+        networkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ReceivedNoMoreQuestionsCommand(OnNoMoreQuestions));
     }
 
     void OnNoMoreQuestions()
@@ -126,7 +127,7 @@ public class RemoteGameData : MonoBehaviour, IGameData
         var commandData = new NetworkCommandData("GameDataGetQuestion");
         var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
         commandData.AddOption("RequestType", requestTypeStr);
-        NetworkManager.SendServerCommand(commandData);
+        networkManager.SendServerCommand(commandData);
     }
 
     public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)

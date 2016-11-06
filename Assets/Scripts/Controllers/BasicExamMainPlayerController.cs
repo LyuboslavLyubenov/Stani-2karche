@@ -31,13 +31,15 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     public ClientChooseCategoryUIController ChooseCategoryUIController;
     public SecondsRemainingUIController SecondsRemainingUIController;
 
-    public RemoteGameData GameData;
+    IGameData gameData;
 
     UnableToConnectUIController unableToConnectUIController;
 
     void Start()
     {
         PlayerPrefs.DeleteKey("LoadedGameData");
+
+        gameData = new RemoteGameData(NetworkManager);
 
         unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
@@ -56,7 +58,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         {
             LoadingUI.SetActive(false);
             ChooseCategoryUIController.gameObject.SetActive(false);
-            GameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+            gameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
             
             PlayerPrefs.SetString("LoadedGameData", "true");
         };
@@ -64,7 +66,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddDisableRandomAnswersJoker", new ReceivedAddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, GameData, QuestionUIController));
+        NetworkManager.CommandsManager.AddCommand("AddDisableRandomAnswersJoker", new ReceivedAddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
         NetworkManager.CommandsManager.AddCommand("LoadedGameData", loadedGameDataCommand);
     }
 
@@ -96,7 +98,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         QuestionUIController.OnAnswerClick += OnAnswerClick;
         QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
 
-        GameData.OnMarkIncrease += (sender, args) => MarkPanelController.SetMark(args.Mark.ToString());
+        gameData.OnMarkIncrease += (sender, args) => MarkPanelController.SetMark(args.Mark.ToString());
 
         ChooseCategoryUIController.OnLoadedCategories += (sender, args) =>
         {
@@ -142,8 +144,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
     {
-        QuestionsRemainingUIController.SetRemainingQuestions(GameData.RemainingQuestionsToNextMark);
-        SecondsRemainingUIController.SetSeconds(GameData.SecondsForAnswerQuestion);
+        QuestionsRemainingUIController.SetRemainingQuestions(gameData.RemainingQuestionsToNextMark);
+        SecondsRemainingUIController.SetSeconds(gameData.SecondsForAnswerQuestion);
     }
 
     void ConnectToServer()
@@ -241,7 +243,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
         if (isCorrect)
         {
-            GameData.GetNextQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+            gameData.GetNextQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
         }
         else
         {
