@@ -256,12 +256,21 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 
     public void _OnIncorrectAnswerAnimEnd(string answer)
     {
-        ShowCorrectAnswer();
+        if (ShowCorrectAnswerAfterError)
+        {
+            ShowCorrectAnswer();
 
-        CoroutineUtils.WaitForSeconds(3f, () =>
-            {
-                OnAnswerClick(this, new AnswerEventArgs(answer, false));
-            });
+            CoroutineUtils.WaitForSeconds(3f, () =>
+                {
+                    OnAnswerClick(this, new AnswerEventArgs(answer, false));
+                });
+            
+        }
+        else
+        {
+            OnAnswerClick(this, new AnswerEventArgs(answer, false));
+        }
+
     }
 
     public void _OnCorrectAnswerAnimEnd(string answer)
