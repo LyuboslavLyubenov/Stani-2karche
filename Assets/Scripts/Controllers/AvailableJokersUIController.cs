@@ -104,6 +104,12 @@ public class AvailableJokersUIController : MonoBehaviour
         for (int i = 0; i < jokerObjs.Count; i++)
         {
             var jokerObj = jokerObjs[i];
+
+            if (jokerObj == null)
+            {
+                continue;
+            }
+
             Destroy(jokerObj.gameObject);
         }
 

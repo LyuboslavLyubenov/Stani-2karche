@@ -222,15 +222,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void SendEndGameInfo()
     {
-        var playersScores = LeaderboardSerializer.Leaderboard.Select(ps => new PlayerScore_Serializable(ps))
-            .ToArray();
-        var leaderboardData = new LeaderboardData_Serializable() { PlayerScore = playersScores };
-        var leaderboardDataJSON = JsonUtility.ToJson(leaderboardData);
         var commandData = new NetworkCommandData("BasicExamGameEnd");
-
         commandData.AddOption("Mark", GameData.CurrentMark.ToString());
-        commandData.AddOption("LeaderboardDataJSON", leaderboardDataJSON);
-
         NetworkManager.SendAllClientsCommand(commandData);
     }
 

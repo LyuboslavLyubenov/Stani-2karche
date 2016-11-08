@@ -5,11 +5,10 @@ using System.Linq;
 
 public class ReceivedBasicExamGameEndCommand : INetworkManagerCommand
 {
+    const int LoadLeaderboardTimeoutInSeconds = 10;
+
     GameObject endGameUI;
     GameObject leaderboardUI;
-
-    EndGameUIController endGameUIController;
-    LeaderboardUIController leaderboardUIController;
 
     public ReceivedBasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
     {
@@ -24,22 +23,23 @@ public class ReceivedBasicExamGameEndCommand : INetworkManagerCommand
         }
 
         this.endGameUI = endGameUI;
-        this.endGameUIController = endGameUI.GetComponent<EndGameUIController>();
         this.leaderboardUI = leaderboardUI;
-        this.leaderboardUIController = leaderboardUI.GetComponent<LeaderboardUIController>();
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var mark = int.Parse(commandsOptionsValues["Mark"]);
-        var leaderboardDataJSON = commandsOptionsValues["LeaderboardDataJSON"];
-        var leaderboardData = JsonUtility.FromJson<LeaderboardData_Serializable>(leaderboardDataJSON);
-        var playersScores = leaderboardData.PlayerScore.Select(d => PlayerScore.CreateFrom(d)).ToArray();
 
+        var endGameUIController = endGameUI.GetComponent<EndGameUIController>();
         endGameUI.SetActive(true);
         endGameUIController.SetMark(mark);
 
-        leaderboardUI.SetActive(true);
-        leaderboardUIController.Populate(playersScores);
+        var leaderboardUIController = leaderboardUI.GetComponent<LeaderboardUIController>();
+        var leaderboardReceiver = leaderboardUI.GetComponent<LeaderboardReceiver>();
+
+        leaderboardReceiver.Receive(
+            (scores) => leaderboardUIController.Populate(scores), 
+            () => Debug.LogError("Load leaderboard timeout"), 
+            LoadLeaderboardTimeoutInSeconds);
     }
 }
