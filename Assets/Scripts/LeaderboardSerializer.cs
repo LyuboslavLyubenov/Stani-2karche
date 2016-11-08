@@ -5,12 +5,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections;
 using CielaSpike;
-using System.Threading;
-using System.Text;
 
-/// <summary>
-/// Used to load leaderboard file data
-/// </summary>
 public class LeaderboardSerializer : MonoBehaviour
 {
     const string FilePath = "LevelData\\теми";
@@ -90,7 +85,7 @@ public class LeaderboardSerializer : MonoBehaviour
         loaded = true;
     }
 
-    IEnumerator SetPlayerScoreAsync(PlayerScore playerScore)
+    IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
     {
         if (!loaded)
         {
@@ -144,9 +139,9 @@ public class LeaderboardSerializer : MonoBehaviour
     /// <summary>
     /// Sets the player score in the leaderboard file
     /// </summary>
-    public void SetPlayerScore(PlayerScore playerScore)
+    public void SavePlayerScore(PlayerScore playerScore)
     {
-        this.StartCoroutineAsync(SetPlayerScoreAsync(playerScore));
+        this.StartCoroutineAsync(SavePlayerScoreAsync(playerScore));
     }
 
     public void LoadDataAsync()

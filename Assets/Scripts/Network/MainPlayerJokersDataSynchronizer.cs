@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
 
-public class MainPlayerDataSynchronizer
+public class MainPlayerJokersDataSynchronizer
 {
     ServerNetworkManager networkManager;
 
     MainPlayerData mainPlayerData;
 
-    public MainPlayerDataSynchronizer(ServerNetworkManager networkManager, MainPlayerData mainPlayerData)
+    public MainPlayerJokersDataSynchronizer(ServerNetworkManager networkManager, MainPlayerData mainPlayerData)
     {
         if (networkManager == null)
         {

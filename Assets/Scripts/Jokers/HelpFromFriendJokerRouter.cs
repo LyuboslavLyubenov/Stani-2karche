@@ -1,11 +1,25 @@
 using UnityEngine;
 using System;
 
-public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
+public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
 {
-    public EventHandler OnSentAnswerToMainPlayer = delegate
+    public EventHandler OnActivated
     {
-    };
+        get;
+        set;
+    }
+
+    public EventHandler OnFinished
+    {
+        get;
+        set;
+    }
+
+    public EventHandler<UnhandledExceptionEventArgs> OnError
+    {
+        get;
+        set;
+    }
 
     public const int MinTimeToAnswerInSeconds = 10;
 
@@ -25,6 +39,21 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
         {
             return activated;
         }
+    }
+
+    void Awake()
+    {
+        OnActivated = delegate
+        {
+        };
+
+        OnFinished = delegate
+        {
+        };
+
+        OnError = delegate
+        {
+        };
     }
 
     void OnReceivedFriendResponse(int connectionId, string answer)
@@ -47,7 +76,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
 
         NetworkManager.SendClientCommand(senderConnectionId, sendFriendResponseCommand);
 
-        OnSentAnswerToMainPlayer(this, EventArgs.Empty);
+        OnFinished(this, EventArgs.Empty);
 
         Deactivate();
     }
@@ -109,13 +138,16 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour
                 NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
 
                 base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
+
+                OnActivated(this, EventArgs.Empty);
+
+                activated = true;
             }, (exception) =>
             {
+                OnError(this, new UnhandledExceptionEventArgs(exception, true));
                 Debug.LogException(exception);
                 Deactivate();
             });
-
-        activated = true;
     }
 
     public void Deactivate()

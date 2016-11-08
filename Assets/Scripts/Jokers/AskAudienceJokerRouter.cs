@@ -5,9 +5,23 @@ using System.Linq;
 
 public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 {
-    public EventHandler OnSentAnswerToMainPlayer = delegate
+    public EventHandler OnActivated
     {
-    };
+        get;
+        set;
+    }
+
+    public EventHandler OnFinished
+    {
+        get;
+        set;
+    }
+
+    public EventHandler<UnhandledExceptionEventArgs> OnError
+    {
+        get;
+        set;
+    }
 
     public const int MinTimeToAnswerInSeconds = 10;
 
@@ -67,6 +81,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
             (exception) =>
             {
                 //TODO:
+                OnError(this, new UnhandledExceptionEventArgs(this, true));
                 Debug.LogException(exception);
                 Deactivate();
             });
@@ -85,6 +100,9 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         }
 
         NetworkManager.SendClientCommand(senderConnectionId, voteResultCommandData);
+
+        OnFinished(this, EventArgs.Empty);
+
         Deactivate();
     }
 
@@ -242,8 +260,11 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
                 Activated = true;
 
                 CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
+
+                OnActivated(this, EventArgs.Empty);
             }, (exception) =>
             {
+                OnError(this, new UnhandledExceptionEventArgs(exception, true));
                 Debug.LogException(exception);
                 Deactivate();
             });

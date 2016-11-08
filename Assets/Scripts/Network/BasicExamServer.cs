@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Linq;
-using System.Timers;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
@@ -35,7 +33,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         private set;
     }
 
-    MainPlayerDataSynchronizer mainPlayerDataSynchronizer;
+    MainPlayerJokersDataSynchronizer mainPlayerJokersDataSynchronizer;
 
     int remainingTimeToAnswerMainQuestion = -1;
     // when using joker
@@ -87,6 +85,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
             NetworkManager.SendAllClientsCommand(gameDataLoadedCommand);
             remainingTimeToAnswerMainQuestion = GameData.SecondsForAnswerQuestion;  
         };
+        
         GameDataSender.OnSentQuestion += (sender, args) =>
         {
             if (args.QuestionType == QuestionRequestType.Next)
@@ -94,6 +93,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
                 remainingTimeToAnswerMainQuestion = GameData.SecondsForAnswerQuestion;
             }
         };
+        
         NetworkManager.OnClientConnected += (sender, args) =>
         {
             if (IsGameOver)
@@ -101,32 +101,16 @@ public class BasicExamServer : ExtendedMonoBehaviour
                 SendEndGameInfo();
             }
         };
-        HelpFromFriendJokerRouter.OnSentAnswerToMainPlayer += (sender, args) => paused = false;
-        AskAudienceJokerRouter.OnSentAnswerToMainPlayer += (sender, args) => paused = false;
-
-        ConnectedClientsUIController.OnSelectedPlayer += (sender, args) =>
-        {
-            ClientOptionsUIController.gameObject.SetActive(true);
-            CoroutineUtils.WaitForFrames(0, () =>
-                {
-                    var username = NetworkManager.GetClientUsername(args.ConnectionId);
-                    var clientData = new ConnectedClientData(args.ConnectionId, username);
-                    var role = 
-                        (MainPlayerData.IsConnected && MainPlayerData.ConnectionId == args.ConnectionId) 
-                            ? 
-                            BasicExamClientRole.MainPlayer 
-                            : 
-                            BasicExamClientRole.Audience;
-                    
-                    ClientOptionsUIController.Set(clientData, role);
-                });
-        };
+        
+        HelpFromFriendJokerRouter.OnFinished += (sender, args) => paused = false;
+        AskAudienceJokerRouter.OnFinished += (sender, args) => paused = false;
+        ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => OnClientSelected(args.ConnectionId);
     }
 
     void InitializeMainPlayerData()
     {
         MainPlayerData = new MainPlayerData(NetworkManager);
-        mainPlayerDataSynchronizer = new MainPlayerDataSynchronizer(NetworkManager, MainPlayerData);
+        mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(NetworkManager, MainPlayerData);
     }
 
     void InitializeCommands()
@@ -167,7 +151,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void Cleanup()
     {
-        mainPlayerDataSynchronizer = null;
+        mainPlayerJokersDataSynchronizer = null;
         NetworkManager.CommandsManager.RemoveCommand("SelectedHelpFromFriendJoker");
         NetworkManager.CommandsManager.RemoveCommand("SelectedAskAudienceJoker");
         NetworkManager.CommandsManager.RemoveCommand("Surrender");
@@ -186,6 +170,24 @@ public class BasicExamServer : ExtendedMonoBehaviour
         {
             EndGame();
         }
+    }
+
+    void OnClientSelected(int connectionId)
+    {
+        ClientOptionsUIController.gameObject.SetActive(true);
+        CoroutineUtils.WaitForFrames(0, () =>
+            {
+                var username = NetworkManager.GetClientUsername(connectionId);
+                var clientData = new ConnectedClientData(connectionId, username);
+                var role = 
+                    (MainPlayerData.IsConnected && MainPlayerData.ConnectionId == connectionId) 
+                    ? 
+                    BasicExamClientRole.MainPlayer 
+                    : 
+                    BasicExamClientRole.Audience;
+
+                ClientOptionsUIController.Set(clientData, role);
+            });
     }
 
     void OnMainPlayerSurrender()
@@ -233,7 +235,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         var mainPlayerName = MainPlayerData.Username;
         var playerScore = new PlayerScore(mainPlayerName, currentMark, DateTime.Now);
 
-        LeaderboardSerializer.SetPlayerScore(playerScore);
+        LeaderboardSerializer.SavePlayerScore(playerScore);
     }
 
     public void EndGame()
