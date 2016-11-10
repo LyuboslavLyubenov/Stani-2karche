@@ -3,6 +3,10 @@ using System;
 
 public class GameDataSender : MonoBehaviour
 {
+    public EventHandler<ServerSentQuestionEventArgs> OnBeforeSend = delegate
+    {
+    };
+
     public EventHandler<ServerSentQuestionEventArgs> OnSentQuestion = delegate
     {
     };
@@ -12,27 +16,21 @@ public class GameDataSender : MonoBehaviour
 
     void Start()
     {
-        LocalGameData.OnMarkIncrease += (sender, args) =>
-        {
-            var commandData = new NetworkCommandData("GameDataMark");
-            commandData.AddOption("Mark", args.Mark.ToString());
-
-            NetworkManager.SendAllClientsCommand(commandData);
-        };
-
-        LocalGameData.OnLoaded += (sender, args) =>
-        {
-            var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
-            NetworkManager.SendAllClientsCommand(loadedGameDataCommand);
-        };
+        NetworkManager.OnClientConnected += OnClientConnected;
+        LocalGameData.OnMarkIncrease += OnMarkIncrease;
+        LocalGameData.OnLoaded += (sender, args) => SendLoadedGameData();
 
         var getCurrentQuestionCommand = new ReceivedGetCurrentQuestionCommand(LocalGameData, NetworkManager);
         var getRandomQuestionCommand = new ReceivedGetRandomQuestionCommand(LocalGameData, NetworkManager);
         var getNextQuestionCommand = new ReceivedGetNextQuestionCommand(LocalGameData, NetworkManager);
                 
-        getCurrentQuestionCommand.OnSentQuestion += (sender, args) => OnSentQuestionToClient(args);
-        getRandomQuestionCommand.OnSentQuestion += (sender, args) => OnSentQuestionToClient(args);
-        getNextQuestionCommand.OnSentQuestion += (sender, args) => OnSentQuestionToClient(args);
+        getCurrentQuestionCommand.OnBeforeSend += OnBeforeSentToClient;
+        getRandomQuestionCommand.OnBeforeSend += OnBeforeSentToClient;
+        getNextQuestionCommand.OnBeforeSend += OnBeforeSentToClient;
+
+        getCurrentQuestionCommand.OnSentQuestion += OnSentQuestionToClient;
+        getRandomQuestionCommand.OnSentQuestion += OnSentQuestionToClient;
+        getNextQuestionCommand.OnSentQuestion += OnSentQuestionToClient;
 
         NetworkManager.CommandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(NetworkManager));
         NetworkManager.CommandsManager.AddCommand("GameDataGetCurrentQuestion", getCurrentQuestionCommand);
@@ -40,9 +38,35 @@ public class GameDataSender : MonoBehaviour
         NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
     }
 
-    void OnSentQuestionToClient(ServerSentQuestionEventArgs args)
+    void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+    {
+        if (LocalGameData.Loaded)
+        {
+            SendLoadedGameData();
+        }
+    }
+
+    void OnMarkIncrease(object sender, MarkEventArgs args)
+    {
+        var commandData = new NetworkCommandData("GameDataMark");
+        commandData.AddOption("Mark", args.Mark.ToString());
+
+        NetworkManager.SendAllClientsCommand(commandData);
+    }
+
+    void SendLoadedGameData()
+    {
+        var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
+        NetworkManager.SendAllClientsCommand(loadedGameDataCommand);
+    }
+
+    void OnSentQuestionToClient(object sender, ServerSentQuestionEventArgs args)
     {
         OnSentQuestion(this, args);
     }
 
+    void OnBeforeSentToClient(object sender, ServerSentQuestionEventArgs args)
+    {
+        OnBeforeSend(this, args);
+    }
 }

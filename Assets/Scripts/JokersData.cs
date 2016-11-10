@@ -45,7 +45,6 @@ public class JokersData
             var jokerName = jokerType.Name;
             var executedJokerCommand = new DummyCommand();
             executedJokerCommand.OnExecuted += (sender, args) => UsedJoker(jokerType);
-
             networkManager.CommandsManager.AddCommand("Selected" + jokerName, executedJokerCommand);
         }
     }

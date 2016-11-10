@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Stani2karche>
 
-    <ConnectSettings>
-        <ConnectToServerIP>Въведи адрес към който искаш да се свържеш</ConnectToServerIP>
-    </ConnectSettings>
-
     <Errors>
         <NetworkMessages>
             <Ok> Заявката е изпълнена успешно</Ok>
@@ -32,16 +28,7 @@
         <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.</MultipleCorrectAnswers>
         <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
     </Errors>
-    <SecondsRemaining>Оставащи секунди за отговор</SecondsRemaining>
-    <IP>Адрес на машината:</IP>
-    <Mark>Оценка</Mark>
-    <QuestionsRemaining>Оставащи въпроси до следващата оценка</QuestionsRemaining>
-    <Leaderboard>Класация</Leaderboard>
-    <RemainingSecondsToAnswer>Времето което остава да се получи отговор</RemainingSecondsToAnswer>
-    <CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
-    <Loading>Зареждане</Loading>
-    <ChooseTheme>Избери тема на която ще протече изпитването</ChooseTheme>
-
+    
     <UnableToConnect>
         <Text>Неуспешно свързване към сървъра.</Text>
         <TryAgainToConnect>Опитай да се свържеш пак</TryAgainToConnect>
@@ -72,6 +59,10 @@
         </RiskyTrust>
     </Jokers>
 
+    <ConnectSettings>
+        <ConnectToServerIP>Въведи адрес към който искаш да се свържеш</ConnectToServerIP>
+    </ConnectSettings>
+
     <CreateOrJoinGame>
         <Create>Създай игра</Create>
         <Join>Присъедини се към игра</Join>
@@ -98,26 +89,93 @@
         <Submit>Запамети!</Submit>
     </EnterName>
 
-    <Lobby>
-        <ConnectToExternalServer>
-            <Text>Свържи се към друг сървър</Text>
-            <ExampleIP>IP адрес на сървъра (127.0.0.1 пример)</ExampleIP>
-            <ConnectButton>Свържи се!</ConnectButton>
-        </ConnectToExternalServer>
-        <CreatedGames>
-            <Label>Създадени игри</Label>
-            <GameType>Вид игра</GameType>
-            <CreatorName>Създател</CreatorName>
-            <ConnectedPlayersCount>Брой на свързани потребители</ConnectedPlayersCount>
-        </CreatedGames>
-        <NormalExamSelectMode>
-            <Text>Избери като какво искаш да играеш</Text>
-            <MainPlayer>Главен играч</MainPlayer>
-            <Audience>Публика</Audience>
-        </NormalExamSelectMode>
-    </Lobby>
-    
-    <ConnectedClients>Свързани потребители</ConnectedClients>
-    <ConnectionId>Индетификатор на връзката</ConnectionId>
-    <Username>Потребителско име</Username>
+    <ConnectToExternalServer>
+        <Text>Свържи се към друг сървър</Text>
+        <ExampleIP>IP адрес на сървъра (127.0.0.1 пример)</ExampleIP>
+        <ConnectButton>Свържи се!</ConnectButton>
+    </ConnectToExternalServer>
+
+    <CreatedGames>
+        <Text>Създадени игри</Text>
+        <GameType>Вид игра</GameType>
+        <CreatorName>Създател</CreatorName>
+        <ConnectedPlayersCount>Брой на свързани потребители</ConnectedPlayersCount>
+    </CreatedGames>
+
+    <NormalExamSelectMode>
+        <Text>Избери като какво искаш да играеш</Text>
+        <MainPlayer>Главен играч</MainPlayer>
+        <Audience>Публика</Audience>
+    </NormalExamSelectMode>
+
+    <GameDataInfo>
+      <Category>Категория</Category>
+      <Mark>Текуща оценка</Mark>
+      <RemainingQuestions>Оставащи въпроси до следващата оценка</RemainingQuestions>
+      <CurrentQuestion>Текущ въпрос</CurrentQuestion>
+    </GameDataInfo>
+
+    <ConnectedClients>
+        <Text>Свързани потребители</Text>
+        <ConnectionId>Индетификатор</ConnectionId>
+        <Username>Потребителско име</Username>
+    </ConnectedClients>
+
+    <ClientOptions>
+        <ConnectionId>Индетификатор</ConnectionId>
+        <Username>Потребителско име</Username>
+        <Role>Роля</Role>
+        <Reason>Причина</Reason>
+        <Kick>Изгони от сървъра</Kick>
+        <Ban>Забрани да влиза във сървъра</Ban>
+    </ClientOptions>
+
+    <IPAddressUI>
+        <IP>Адрес на машината</IP>
+    </IPAddressUI>
+
+    <RemainingSeconds>
+        <Text>Оставащи секунди за отговор</Text>
+    </RemainingSeconds>
+
+    <Mark>
+        <Text>Оценка</Text>
+    </Mark>
+
+    <RemainingQuestions>
+        <Text>Оставащи въпроси</Text>
+    </RemainingQuestions>
+
+    <EndGameButton>Спри играта</EndGameButton>
+
+    <MainPlayerInfo>
+        <MainPlayer>Главен играч</MainPlayer>
+        <ConnectionId>Индетификатор</ConnectionId>
+        <IsConnected>Свързан ли е?</IsConnected>
+        <Yes>Да</Yes>
+        <No>Не</No>
+    </MainPlayerInfo>
+
+    <Leaderboard>Класация</Leaderboard>
+    <CallingAFriend>Избери приятел на който ще се обадиш</CallingAFriend>
+    <Loading>Зареждане</Loading>
+
+    <ChooseCategory>
+        <Text>Избери тема на която ще протече изпитването</Text>
+    </ChooseCategory>
+
+    <EndGame>
+        <Leaderboard>
+            <Text>Класация</Text>
+        </Leaderboard>
+    </EndGame>
+
+    <WaitingToAnswer>
+        <Text>Времето което остава да се получи отговор</Text>
+    </WaitingToAnswer>
+
+    <CallAFriend>
+        <Text>Избери приятел на които искаш да се обадиш</Text>
+    </CallAFriend>
+
 </Stani2karche>

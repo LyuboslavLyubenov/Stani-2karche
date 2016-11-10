@@ -8,6 +8,10 @@ public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerComman
     {
     };
 
+    public EventHandler<ServerSentQuestionEventArgs> OnBeforeSend = delegate
+    {
+    };
+
     protected ServerNetworkManager NetworkManager
     {
         get;
@@ -38,6 +42,8 @@ public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerComman
 
     protected void SendQuestion(int connectionId, ISimpleQuestion question, QuestionRequestType requestType)
     {
+        OnBeforeSend(this, new ServerSentQuestionEventArgs(question, requestType, connectionId));
+
         var questionJSON = JsonUtility.ToJson(question.Serialize());
         var commandData = new NetworkCommandData("GameDataQuestion");
         var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);

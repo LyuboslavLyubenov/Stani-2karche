@@ -7,6 +7,8 @@ public class LeaderboardSender : ExtendedMonoBehaviour
     public ServerNetworkManager NetworkManager;
     public LeaderboardSerializer LeaderboardSerializer;
 
+
+
     void Start()
     {
         CoroutineUtils.WaitForFrames(0, () => Initialize());
@@ -14,14 +16,16 @@ public class LeaderboardSender : ExtendedMonoBehaviour
 
     void Initialize()
     {
+        //tODO FIX TIMEOUT
         var sendLeaderboardEntitiesCommand = new DummyCommand();
+
         sendLeaderboardEntitiesCommand.OnExecuted += (sender, args) =>
         {
             var connectionId = int.Parse(args.CommandsOptionsValues["ConnectionId"]);
             StartSendingLeaderboardEntities(connectionId);
         };
         
-        NetworkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);    
+        NetworkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);   
     }
 
     void StartSendingLeaderboardEntities(int connectionId)

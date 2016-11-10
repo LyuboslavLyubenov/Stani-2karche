@@ -21,6 +21,14 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public ConnectedClientsUIController ConnectedClientsUIController;
     public BasicExamClientOptionsUIController ClientOptionsUIController;
 
+    public int RemainingTimetoAnswerInSeconds
+    {
+        get
+        {
+            return remainingTimeToAnswerMainQuestion;
+        }
+    }
+
     public bool IsGameOver
     {
         get;
@@ -240,8 +248,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     public void EndGame()
     {
-        SendEndGameInfo();
         SavePlayerScoreToLeaderboard();
+        SendEndGameInfo();
         IsGameOver = true;
         OnGameOver(this, EventArgs.Empty);
         Cleanup();

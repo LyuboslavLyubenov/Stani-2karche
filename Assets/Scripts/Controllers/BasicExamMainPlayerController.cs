@@ -173,7 +173,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     void CleanUp()
     {
         PlayerPrefs.DeleteKey("LoadedGameData");
-        PlayerPrefs.DeleteKey("MainPlayerHost");
+        PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
     }
 
     void KillLocalServer()

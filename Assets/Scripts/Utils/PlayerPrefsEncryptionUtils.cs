@@ -19,6 +19,13 @@ public class PlayerPrefsEncryptionUtils
         }
     }
 
+    public static void DeleteKey(string key)
+    {
+        ValidateNotEmpty(key, "Key");
+        var encryptedKey = CipherUtility.Encrypt<RijndaelManaged>(key, SecuritySettings.PLAYERPREFS_PASSWORD, SecuritySettings.SALT);
+        PlayerPrefs.DeleteKey(encryptedKey);
+    }
+
     public static bool HasKey(string key)
     {
         ValidateNotEmpty(key, "Key");
