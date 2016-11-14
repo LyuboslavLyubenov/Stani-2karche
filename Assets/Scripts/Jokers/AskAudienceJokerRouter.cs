@@ -25,6 +25,12 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     public const int MinTimeToAnswerInSeconds = 10;
 
+    const float MinCorrectAnswerVoteProcentage = 0.45f;
+    const float MaxCorrectAnswerVoteProcentage = 0.85f;
+
+    const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
+    const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
+
     public ServerNetworkManager NetworkManager;
     public LocalGameData LocalGameData;
    
@@ -198,6 +204,46 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         }
     }
 
+    void GenerateAudienceVotes(ISimpleQuestion question)
+    { 
+        var correctAnswer = question.Answers[question.CorrectAnswerIndex]; 
+        var correctAnswerChance = (int)(UnityEngine.Random.Range(MinCorrectAnswerVoteProcentage, MaxCorrectAnswerVoteProcentage) * 100); 
+        var wrongAnswersLeftOverChance = 100 - correctAnswerChance; 
+        answersVotes.Add(correctAnswer, correctAnswerChance); 
+
+        for (int i = 0; i < question.Answers.Length - 1; i++)
+        { 
+            if (i == question.CorrectAnswerIndex)
+            { 
+                continue; 
+            } 
+
+            var wrongAnswerChance = UnityEngine.Random.Range(0, wrongAnswersLeftOverChance); 
+            answersVotes.Add(question.Answers[i], wrongAnswersLeftOverChance); 
+            wrongAnswersLeftOverChance -= wrongAnswerChance; 
+        }  
+
+        answersVotes.Add(question.Answers.Last(), wrongAnswersLeftOverChance);
+    }
+
+    void SendGeneratedResultToMainPlayer()
+    {
+        var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
+        CoroutineUtils.WaitForSeconds(secondsToWait, () =>
+            {
+                LocalGameData.GetCurrentQuestion((question) =>
+                    {
+                        GenerateAudienceVotes(question);
+                        SendVoteResult(question);
+                    }, (exception) =>
+                    {
+                        Debug.LogException(exception);
+                        Deactivate();
+                        OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                    });    
+            });
+    }
+
     public void Deactivate()
     {
         TellClientsThatJokerIsDeactivated();
@@ -233,18 +279,14 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
         #endif
 
-        if (NetworkManager.ConnectedClientsCount < minClients)
-        {
-            //TODO: GENERATE AUDIENCE RESULT
-            var cannotActivateNotificationCommand = new NetworkCommandData("ShowNotification");
-            cannotActivateNotificationCommand.AddOption("Color", "Red");
-            cannotActivateNotificationCommand.AddOption("Message", "Cannot activate Ask Audience Joker because there arent enough players in audience");
-
-            NetworkManager.SendClientCommand(senderConnectionId, cannotActivateNotificationCommand);
-        }
-
         this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
         this.senderConnectionId = senderConnectionId;
+
+        if (NetworkManager.ConnectedClientsCount < minClients)
+        {
+            SendGeneratedResultToMainPlayer();
+            return;
+        }
 
         elapsedTime = 1;
 
@@ -264,9 +306,9 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
                 OnActivated(this, EventArgs.Empty);
             }, (exception) =>
             {
-                OnError(this, new UnhandledExceptionEventArgs(exception, true));
                 Debug.LogException(exception);
                 Deactivate();
+                OnError(this, new UnhandledExceptionEventArgs(exception, true));
             });
     }
 }

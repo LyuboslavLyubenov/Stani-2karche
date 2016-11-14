@@ -17,5 +17,10 @@ public interface ISimpleQuestion
         get;
     }
 
+    string CorrectAnswer
+    {
+        get;
+    }
+
     SimpleQuestion_Serializable Serialize();
 }

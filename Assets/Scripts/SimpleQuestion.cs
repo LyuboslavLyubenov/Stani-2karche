@@ -27,6 +27,14 @@ public class SimpleQuestion : ISimpleQuestion
         }
     }
 
+    public string CorrectAnswer
+    {
+        get
+        {
+            return Answers[CorrectAnswerIndex];
+        }
+    }
+
     string text;
     string[] answers;
     int correctAnswerIndex;
