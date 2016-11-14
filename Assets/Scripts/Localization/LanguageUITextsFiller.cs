@@ -4,12 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class LanguageUITextsFiller : ExtendedMonoBehaviour
 {
-    void Start()
+    void Awake()
     {
         LanguagesManager.Instance.OnLoadedLanguage += (sender, args) => TranslateAllTextComponentsInScene();
         SceneManager.activeSceneChanged += OnSceneChanged;
-
-        CoroutineUtils.WaitForFrames(1, TranslateAllTextComponentsInScene);
     }
 
     void OnSceneChanged(Scene oldScene, Scene newScene)
