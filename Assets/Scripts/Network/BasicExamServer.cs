@@ -21,6 +21,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public ConnectedClientsUIController ConnectedClientsUIController;
     public BasicExamClientOptionsUIController ClientOptionsUIController;
 
+    public BasicExamStatisticsCollector StatisticsCollector;
+
     public int RemainingTimetoAnswerInSeconds
     {
         get
@@ -138,7 +140,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand("AnswerSelected", selectedAnswerCommand);
         NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", selectedHelpFromFriendJokerCommand);
         NetworkManager.CommandsManager.AddCommand("SelectedAskAudienceJoker", selectedAskAudienceJokerCommand);
-        NetworkManager.CommandsManager.AddCommand("SelectedFifthyFifthyChanceJoker", selectedFifthyFifthyChanceCommand);
+        NetworkManager.CommandsManager.AddCommand("SelectedDisableRandomAnswersJoker", selectedFifthyFifthyChanceCommand);
         NetworkManager.CommandsManager.AddCommand("Surrender", surrenderCommand);
     }
 
@@ -246,12 +248,18 @@ public class BasicExamServer : ExtendedMonoBehaviour
         LeaderboardSerializer.SavePlayerScore(playerScore);
     }
 
+    void ExportStatistics()
+    {
+        new BasicExamGeneralStatiticsExporter(StatisticsCollector).Export();
+    }
+
     public void EndGame()
     {
         SavePlayerScoreToLeaderboard();
         SendEndGameInfo();
         IsGameOver = true;
         OnGameOver(this, EventArgs.Empty);
+        ExportStatistics();
         Cleanup();
     }
 }
