@@ -19,6 +19,5 @@ public class ChangeLanguageButtonUIController : MonoBehaviour
     void OnMouseDown()
     {
         AvailableLanguages.SetActive(true);    
-        gameObject.SetActive(false);
     }
 }

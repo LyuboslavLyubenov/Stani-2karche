@@ -115,7 +115,6 @@ public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
             var receivedSettingsCommand = new ReceivedHelpFromFriendJokerSettingsCommand(networkManager, loadingUI, waitingToAnswerUI);
             receivedSettingsCommand.OnFinishedExecution += (s, a) => OnReceivedSettings();
 
-
             networkManager.CommandsManager.AddCommand("HelpFromFriendJokerSettings", receivedSettingsCommand);
 
             receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
@@ -128,7 +127,6 @@ public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
     {
         var commandData = new NetworkCommandData("ConnectedClientsIdsNames");
         networkManager.SendServerCommand(commandData);
-
         networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
     }
 
