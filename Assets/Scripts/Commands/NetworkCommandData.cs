@@ -8,6 +8,7 @@ public class NetworkCommandData
     //TODO: Move in external class
     public const int CODE_OptionClientConnectionIdValueAll = -1;
     public const int CODE_OptionClientConnectionIdValueRandom = -2;
+    public const int CODE_OptionClientConnectionIdValueAI = -3;
 
     const int MinCommandNameLength = 3;
     const int MinOptionNameLength = 3;
