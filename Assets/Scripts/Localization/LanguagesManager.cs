@@ -9,7 +9,7 @@ public class LanguagesManager : MonoBehaviour
 {
     const string DefaultLanguage = "Bulgarian";
 
-    public EventHandler<LanguageEventArgs> OnLanguageLoad = delegate
+    public EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
     {
     };
 
@@ -146,7 +146,7 @@ public class LanguagesManager : MonoBehaviour
 
             IsLoadedLanguage = true;
 
-            OnLanguageLoad(this, new LanguageEventArgs(language));
+            OnLoadedLanguage(this, new LanguageEventArgs(language));
         }
         catch (System.Exception e)
         {

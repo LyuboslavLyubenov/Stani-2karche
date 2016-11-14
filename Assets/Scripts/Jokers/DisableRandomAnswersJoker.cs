@@ -54,7 +54,7 @@ public class DisableRandomAnswersJoker : IJoker
         this.questionUIController = questionUIController;
         this.gameData = gameData;
 
-        Image = Resources.Load<Sprite>("Images/Buttons/Jokers/FifthyFifthyChance");
+        Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
     }
 
     public void Activate()
@@ -64,7 +64,7 @@ public class DisableRandomAnswersJoker : IJoker
             throw new InvalidOperationException();
         }
 
-        var selectedJokerCommand = new NetworkCommandData("SelectedFifthyFifthyChanceJoker");
+        var selectedJokerCommand = new NetworkCommandData("SelectedDisableRandomAnswersJoker");
         networkManager.SendServerCommand(selectedJokerCommand);
 
         var receiveJokerSettings = new ReceivedDisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings);

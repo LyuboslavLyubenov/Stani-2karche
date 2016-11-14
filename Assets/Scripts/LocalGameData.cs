@@ -10,7 +10,7 @@ using System.Threading;
 
 public class LocalGameData : MonoBehaviour, IGameData
 {
-    const string LevelPath = "LevelData\\теми\\";
+    const string LevelPath = "\\Server\\LevelData\\теми\\";
     const int DefaultSecondsForAnswerQuestion = 60;
     const int DefaultQuestionToTakePerMark = int.MaxValue;
     const int MarkMin = 3;

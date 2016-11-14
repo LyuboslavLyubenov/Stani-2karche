@@ -30,12 +30,12 @@ public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
 
         var serverInfo = gameInfo.ServerInfo;
         var serverIP = (serverInfo.ExternalIpAddress == string.Empty) ? serverInfo.LocalIPAddress : serverInfo.ExternalIpAddress;
-        PlayerPrefs.SetString("ServerIP", serverIP);
+        PlayerPrefsEncryptionUtils.SetString("ServerIP", serverIP);
     }
 
     public void OpenHostScene()
     {
-        if (!PlayerPrefs.HasKey("ServerIP"))
+        if (!PlayerPrefsEncryptionUtils.HasKey("ServerIP"))
         {
             throw new Exception("Not set serverIP");
         }
@@ -45,7 +45,7 @@ public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
 
     public void OpenGuestScene()
     {
-        if (!PlayerPrefs.HasKey("ServerIP"))
+        if (!PlayerPrefsEncryptionUtils.HasKey("ServerIP"))
         {
             throw new Exception("Not set serverIP");
         }

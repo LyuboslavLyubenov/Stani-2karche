@@ -15,6 +15,8 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
         private set;
     }
 
+    int timeoutInSeconds;
+
     public RemoteAvailableCategoriesReader(ClientNetworkManager networkManager, Action onTimeout, int timeoutInSeconds)
     {
         if (networkManager == null)
@@ -34,10 +36,7 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
    
         this.networkManager = networkManager;
         this.onTimeout = onTimeout; 
-
-        timeoutTimer.AutoReset = false;
-        timeoutTimer.Interval = timeoutInSeconds * 1000;
-        timeoutTimer.Elapsed += (sender, args) => OnTimeout();
+        this.timeoutInSeconds = timeoutInSeconds;
 
         var threadUtils = ThreadUtils.Instance;
     }
@@ -51,7 +50,6 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
                     return;
                 }
 
-                Receiving = false;
                 StopReceivingAvailableCategories();
                 onTimeout();   
             });
@@ -61,8 +59,8 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
     {
         try
         {
-            networkManager.CommandsManager.RemoveCommand("AvailableCategories");
             Receiving = false;
+            networkManager.CommandsManager.RemoveCommand("AvailableCategories");
         }
         catch
         {
@@ -96,6 +94,9 @@ public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisp
 
         Receiving = true;
 
-        timeoutTimer.Start();
+        timeoutTimer = new Timer();
+        timeoutTimer.AutoReset = false;
+        timeoutTimer.Interval = timeoutInSeconds * 1000;
+        timeoutTimer.Elapsed += (sender, args) => OnTimeout();
     }
 }

@@ -1,12 +1,10 @@
-using UnityEngine;
 using System.IO;
 using System.Linq;
 using System;
-using System.Collections.Generic;
 
 public class LocalCategoriesReader : IAvailableCategoriesReader
 {
-    readonly string[] RequiredFiles = new string[] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
+    readonly string[] RequiredFiles = new [] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
     public void GetAllCategories(Action<string[]> onGetAllCategories)
     {
@@ -15,7 +13,7 @@ public class LocalCategoriesReader : IAvailableCategoriesReader
             throw new ArgumentNullException("onGetAllCategories");
         }
 
-        var currentDirectory = Directory.GetCurrentDirectory() + "\\LevelData\\теми\\";
+        var currentDirectory = Directory.GetCurrentDirectory() + "\\Server\\LevelData\\теми\\";
         var availableCategories = Directory.GetDirectories(currentDirectory)
             .Where(IsValidLevel)
             .Select((categoryFilePath) => GetNameOfCategory(categoryFilePath))
@@ -31,7 +29,6 @@ public class LocalCategoriesReader : IAvailableCategoriesReader
 
         return categoryName;
     }
-
 
     bool IsValidLevel(string path)
     {

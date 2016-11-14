@@ -16,6 +16,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     public GameObject WaitingToAnswerUI;
     public GameObject AudienceAnswerUI;
     public GameObject UnableToConnectUI;
+    public GameObject ChooseCategoryUI;
 
     public ClientNetworkManager NetworkManager;
 
@@ -91,6 +92,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         NetworkManager.OnConnectedEvent += OnConnectedToServer;
         NetworkManager.OnDisconnectedEvent += (sender, args) =>
         {
+            ChooseCategoryUIController.gameObject.SetActive(false);
             LoadingUI.SetActive(false);
             UnableToConnectUI.SetActive(true);   
         };
@@ -152,7 +154,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
         CoroutineUtils.WaitForSeconds(8f, () =>
             {
-                var ip = PlayerPrefs.GetString("ServerIP");
+                var ip = PlayerPrefsEncryptionUtils.GetString("ServerIP");
                 NetworkManager.ConnectToHost(ip);
             });
     }
@@ -209,10 +211,10 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
                 var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
                 Debug.LogError(errorMsg);
                 ShowNotification(Color.red, errorMsg);
-
-                ChooseCategoryUIController.gameObject.SetActive(false);
+               
+                ChooseCategoryUI.SetActive(false);
                 NetworkManager.Disconnect();
-            }, 5);
+            }, 10);
 
         ChooseCategoryUIController.gameObject.SetActive(true);
     }

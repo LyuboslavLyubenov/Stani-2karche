@@ -6,7 +6,7 @@ public class LanguageLoader : ExtendedMonoBehaviour
     {
         CoroutineUtils.WaitForFrames(0, () =>
             {
-                var language = PlayerPrefs.GetString("Language");
+                var language = PlayerPrefsEncryptionUtils.GetString("Language");
                 LanguagesManager.Instance.LoadLanguage(language);
             });
     }

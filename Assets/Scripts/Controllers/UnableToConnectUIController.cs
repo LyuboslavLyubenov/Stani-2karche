@@ -11,7 +11,7 @@ public class UnableToConnectUIController : MonoBehaviour
 
     public void TryAgainToConnectToServer()
     {
-        var serverIP = PlayerPrefs.GetString("ServerIP");
+        var serverIP = PlayerPrefsEncryptionUtils.GetString("ServerIP");
         OnTryingAgainToConnectToServer(this, new IpEventArgs(serverIP));
         gameObject.SetActive(false);
     }

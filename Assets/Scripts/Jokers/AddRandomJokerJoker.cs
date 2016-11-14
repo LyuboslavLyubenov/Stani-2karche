@@ -29,7 +29,6 @@ public class AddRandomJokerJoker : IJoker
     {
         throw new NotImplementedException();
 
-
         if (jokersToChooseFrom == null || jokersToChooseFrom.Length <= 0)
         {
             throw new ArgumentException("There must be at least 1 joker in collection");

@@ -106,6 +106,12 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void Start()
     {
+        #if DEVELOPMENT_BUILD
+
+        PlayerPrefsEncryptionUtils.DeleteKey("Username");        
+        #endif
+
+
         ConfigureCommands();
         ConfigureClient();
 

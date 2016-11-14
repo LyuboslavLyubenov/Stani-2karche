@@ -6,7 +6,7 @@ public class LanguageUITextsFiller : ExtendedMonoBehaviour
 {
     void Start()
     {
-        LanguagesManager.Instance.OnLanguageLoad += (sender, args) => TranslateAllTextComponentsInScene();
+        LanguagesManager.Instance.OnLoadedLanguage += (sender, args) => TranslateAllTextComponentsInScene();
         SceneManager.activeSceneChanged += OnSceneChanged;
 
         CoroutineUtils.WaitForFrames(1, TranslateAllTextComponentsInScene);
