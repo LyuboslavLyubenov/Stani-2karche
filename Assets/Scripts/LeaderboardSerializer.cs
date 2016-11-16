@@ -50,6 +50,12 @@ public class LeaderboardSerializer : MonoBehaviour
         yield return null;
 
         var endPath = GetEndPath();
+
+        if (!File.Exists(endPath))
+        {
+            File.Create(endPath).Close();
+        }
+
         var sr = new StreamReader(endPath);
 
         while (true)

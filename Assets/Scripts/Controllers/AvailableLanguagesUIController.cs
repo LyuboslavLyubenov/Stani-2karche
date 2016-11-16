@@ -3,8 +3,6 @@ using System.IO;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Linq;
-using System.Collections;
-using UnityEditor;
 
 public class AvailableLanguagesUIController : MonoBehaviour
 {
@@ -64,7 +62,7 @@ public class AvailableLanguagesUIController : MonoBehaviour
         rectTransform.anchoredPosition = new Vector2(xPos, 0f);
 
         var img = obj.AddComponent<Image>();
-        img.sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd"); 
+        img.sprite = Resources.Load<Sprite>("UI/Skin/UISprite.psd"); 
         img.type = Image.Type.Sliced;
         img.fillCenter = true;
 

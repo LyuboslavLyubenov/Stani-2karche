@@ -28,6 +28,11 @@ public class BasicExamGeneralStatiticsExporter
         }
             
         this.statisticsCollector = statisticsCollector;
+
+        if (!File.Exists(Path))
+        {
+            Workbook.createWorkbook(new FileInfo(Path));
+        }
     }
 
     float ExtractAvgSpentTimeOnQuestion(Sheet sheet)

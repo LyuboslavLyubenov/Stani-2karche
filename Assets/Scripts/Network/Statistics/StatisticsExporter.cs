@@ -27,6 +27,12 @@ public class StatisticsExporter
     public StatisticsExporter(string path)
     {
         fileInfo = new FileInfo(path);
+
+        if (!fileInfo.Exists)
+        {
+            Workbook.createWorkbook(fileInfo);    
+        }
+
         statisticsWorkbook = Workbook.getWorkbook(fileInfo);
         statisticsSheet = statisticsWorkbook.getSheet(0);
     }

@@ -120,17 +120,6 @@ public class AskAudienceJoker : IJoker, INetworkOperationExecutedCallback
     {
         loadingUI.SetActive(true);
 
-        var minClients = MinClientsForOnlineVote_Release;
-
-        #if DEVELOPMENT_BUILD
-        minClients = MinClientsForOnlineVote_Development;
-        #endif
-
-        if (networkManager.ServerConnectedClientsCount < minClients)
-        {
-            throw new InvalidOperationException("There must be at least " + minClients + " clients to activate this joker.");
-        }
-
         var selectedAskAudienceJokerCommand = new NetworkCommandData("SelectedAskAudienceJoker");
         networkManager.SendServerCommand(selectedAskAudienceJokerCommand);
 

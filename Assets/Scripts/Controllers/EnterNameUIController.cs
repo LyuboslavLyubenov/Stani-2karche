@@ -20,7 +20,7 @@ public class EnterNameUIController : ExtendedMonoBehaviour
 
         transform.localScale = new Vector3(0, 0, 0);
 
-        CoroutineUtils.WaitForFrames(1, Initialize);
+        CoroutineUtils.WaitForFrames(0, Initialize);
     }
 
     void Initialize()
@@ -29,7 +29,7 @@ public class EnterNameUIController : ExtendedMonoBehaviour
         {
             var username = PlayerPrefsEncryptionUtils.GetString("Username");
             OnUsernameSet(this, new UserNameEventArgs(username));
-            Deactivate();
+            gameObject.SetActive(false);
         }
     }
 

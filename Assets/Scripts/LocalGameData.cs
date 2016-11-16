@@ -121,21 +121,38 @@ public class LocalGameData : MonoBehaviour, IGameData
         };
     }
 
-    IEnumerator ExtractLevelDataAsync()
+    IEnumerator ExtractLevelDataAsync(Action<Exception> onError)
     {
-        Loaded = false;
-        Loading = true;
-        ExtractLevelData((ex) => Loading = false);
-        Loaded = true;
-        Loading = false;
-        yield return Ninja.JumpToUnity;
-        OnLoaded(this, EventArgs.Empty);
+        Exception exception = null;
+
+        try
+        {
+            Loaded = false;
+            Loading = true;
+            ExtractLevelData();
+            Loaded = true;
+            Loading = false;
+        }
+        catch (Exception ex)
+        {
+            exception = ex;
+        }
+
+        if (exception == null)
+        {
+            yield return Ninja.JumpToUnity;
+            OnLoaded(this, EventArgs.Empty);    
+        }
+        else
+        {
+            onError(exception);
+        }
     }
 
     /// <summary>
     /// Load all questions and seperate them by categories
     /// </summary>
-    void ExtractLevelData(Action<Exception> onException)
+    void ExtractLevelData()
     {
         var levelPath = Directory.GetCurrentDirectory() + '\\' + LevelPath + LevelCategory;
         var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
@@ -149,15 +166,7 @@ public class LocalGameData : MonoBehaviour, IGameData
             int secondsForAnswerQuestion = DefaultSecondsForAnswerQuestion;
             ISimpleQuestion[] allQuestionsForMark;
 
-            try
-            {
-                allQuestionsForMark = ExtractQuestionsFromWorksheet(sheet, i);    
-            }
-            catch (Exception ex)
-            {
-                onException(ex);
-                throw;
-            }
+            allQuestionsForMark = ExtractQuestionsFromWorksheet(sheet, i);    
 
             try
             {
@@ -269,15 +278,16 @@ public class LocalGameData : MonoBehaviour, IGameData
         return questions.ToArray();
     }
 
-    public void LoadDataAsync()
+    public void LoadDataAsync(Action<Exception> onErrorLoading)
     {
         if (Loading)
         {
             var errorMsg = LanguagesManager.Instance.GetValue("Errors/CurrentlyLoadingQuestions");
-            throw new InvalidOperationException(errorMsg);
+            onErrorLoading(new InvalidOperationException(errorMsg));
+            return;
         }
 
-        this.StartCoroutineAsync(ExtractLevelDataAsync());
+        this.StartCoroutineAsync(ExtractLevelDataAsync(onErrorLoading));
     }
 
     ISimpleQuestion _GetCurrentQuestion()

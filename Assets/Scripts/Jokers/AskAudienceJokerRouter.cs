@@ -185,7 +185,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         clients.Add(senderConnectionId);
 
         var notificationCommand = new NetworkCommandData("ShowNotification");
-        notificationCommand.AddOption("Color", "red");
+        notificationCommand.AddOption("Color", "yellow");
         notificationCommand.AddOption("Message", "Voting is over!");
 
         for (int i = 0; i < clients.Count; i++)
@@ -197,6 +197,8 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     void ResetAnswerVotes(ISimpleQuestion question)
     {
+        answersVotes.Clear();
+
         for (int i = 0; i < question.Answers.Length; i++)
         {
             var answer = question.Answers[i];
@@ -234,7 +236,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
                 LocalGameData.GetCurrentQuestion((question) =>
                     {
                         GenerateAudienceVotes(question);
-                        SendVoteResult(question);
+                        SendMainPlayerVoteResult();
                     }, (exception) =>
                     {
                         Debug.LogException(exception);
@@ -275,15 +277,13 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
 
-        #if DEVELOPMENT_BUILD
-        minClients = AskAudienceJoker.MinClientsForOnlineVote_Development;
-        #endif
-
         this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
         this.senderConnectionId = senderConnectionId;
 
         if (NetworkManager.ConnectedClientsCount < minClients)
         {
+            answersVotes.Clear();
+            SendJokerSettings();
             SendGeneratedResultToMainPlayer();
             return;
         }

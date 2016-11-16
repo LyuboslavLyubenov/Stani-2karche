@@ -7,11 +7,6 @@ public class CallFriendPageElement
 {
     public CallFriendPageElement(int connectionId, string name)
     {
-        if (connectionId < 0)
-        {
-            throw new ArgumentOutOfRangeException("connectionId");
-        }
-
         if (string.IsNullOrEmpty(name))
         {
             throw new ArgumentNullException("name");
