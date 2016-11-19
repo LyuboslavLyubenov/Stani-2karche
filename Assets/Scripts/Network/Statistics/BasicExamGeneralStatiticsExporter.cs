@@ -5,6 +5,7 @@ using CSharpJExcel.Jxl;
 using System.Linq;
 using CSharpJExcel.Jxl.Write;
 using CSharpJExcel.Jxl.Biff;
+using UnityEngine;
 
 public class BasicExamGeneralStatiticsExporter
 {
@@ -28,11 +29,6 @@ public class BasicExamGeneralStatiticsExporter
         }
             
         this.statisticsCollector = statisticsCollector;
-
-        if (!File.Exists(Path))
-        {
-            Workbook.createWorkbook(new FileInfo(Path));
-        }
     }
 
     float ExtractAvgSpentTimeOnQuestion(Sheet sheet)
@@ -107,18 +103,31 @@ public class BasicExamGeneralStatiticsExporter
     public void Export()
     {
         var fileInfo = new FileInfo(Path);
-        var fileStream = fileInfo.Open(FileMode.Open, FileAccess.ReadWrite);
+
+        if (!fileInfo.Exists)
+        {
+            var newWorkbook = Workbook.createWorkbook(fileInfo);
+            newWorkbook.createSheet("Sheet1", 0).addCell(new Label(0, 0, ""));
+            newWorkbook.write();
+            newWorkbook.close();
+        }
+
         var workbook = Workbook.getWorkbook(fileInfo);
         var sheet = workbook.getSheet(0);
         var newAvgSpentTime = CalculateNewAvgSpentTimeOnQuestion(sheet);
         var newUsedJokerCount = CalculateNewUsedJokerCount(sheet);
-        var newSurrenderCount = ExtractSurrenderCount(sheet) + 1;
+        var newSurrenderCount = ExtractSurrenderCount(sheet);
+
+        if (PlayerPrefs.HasKey("Surrender"))
+        {
+            newSurrenderCount++;
+            PlayerPrefs.DeleteKey("Surrender");
+        }
 
         workbook.close();
-        fileStream.Close();
 
         var exporter = new StatisticsExporter(Path);
-        exporter.AddData("Средно време прекарано на въпрос", newAvgSpentTime.ToString());
+        exporter.AddData("Средно време прекарано на въпрос (в секунди)", newAvgSpentTime.ToString());
         exporter.AddData("Общо използвани жокери", newUsedJokerCount.ToString());
         exporter.AddData("Oбщо пъти използван \"предавам се\"", newSurrenderCount.ToString());
         exporter.Export(new SimpleHorizontalSheetFiller(0, 0));

@@ -103,6 +103,11 @@ public class BasicExamStatisticsCollector : MonoBehaviour
 
     void SetCurrentQuestion()
     {
-        GameData.GetCurrentQuestion((question) => lastQuestion = question);
+        GameData.GetCurrentQuestion(OnLoadedCurrentQuestion);
+    }
+
+    void OnLoadedCurrentQuestion(ISimpleQuestion question)
+    {
+        lastQuestion = question;
     }
 }

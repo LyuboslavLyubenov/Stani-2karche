@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
-using System.Linq;
 
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 {
@@ -59,6 +58,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         {
             LoadingUI.SetActive(false);
             ChooseCategoryUIController.gameObject.SetActive(false);
+            QuestionUIController.HideAllAnswers();
+            SecondsRemainingUIController.Paused = false;
             gameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
             
             PlayerPrefs.SetString("LoadedGameData", "true");
@@ -71,16 +72,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand("LoadedGameData", loadedGameDataCommand);
     }
 
-    void StartServerIfPlayerIsHost()
-    {
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-        {
-            var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
-            System.Diagnostics.Process.Start(serverPath);
-            SceneManager.activeSceneChanged += OnActivateSceneChanged;
-        }
-    }
-
     void AttachEventHandlers()
     {
         unableToConnectUIController.OnTryingAgainToConnectToServer += (sender, args) =>
@@ -90,12 +81,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         };
 
         NetworkManager.OnConnectedEvent += OnConnectedToServer;
-        NetworkManager.OnDisconnectedEvent += (sender, args) =>
-        {
-            ChooseCategoryUIController.gameObject.SetActive(false);
-            LoadingUI.SetActive(false);
-            UnableToConnectUI.SetActive(true);   
-        };
+        NetworkManager.OnDisconnectedEvent += OnDisconnectedFromServer;
 
         QuestionUIController.OnAnswerClick += OnAnswerClick;
         QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
@@ -106,15 +92,17 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         {
             LoadingUI.SetActive(false);
         };
-        ChooseCategoryUIController.OnChoosedCategory += (sender, args) =>
-        {
-            var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
-            selectedCategoryCommand.AddOption("Category", args.Name);
-            NetworkManager.SendServerCommand(selectedCategoryCommand);
-        };
+        ChooseCategoryUIController.OnChoosedCategory += OnChoosedCategory;
 
         AvailableJokersUIController.OnAddedJoker += OnAddedJoker;
         AvailableJokersUIController.OnUsedJoker += OnUsedJoker;
+    }
+
+    void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
+    {
+        var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
+        selectedCategoryCommand.AddOption("Category", args.Name);
+        NetworkManager.SendServerCommand(selectedCategoryCommand);
     }
 
     void OnAddedJoker(object sender, JokerEventArgs args)
@@ -150,15 +138,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         SecondsRemainingUIController.SetSeconds(gameData.SecondsForAnswerQuestion);
     }
 
-    void ConnectToServer()
-    {
-        CoroutineUtils.WaitForSeconds(8f, () =>
-            {
-                var ip = PlayerPrefsEncryptionUtils.GetString("ServerIP");
-                NetworkManager.ConnectToHost(ip);
-            });
-    }
-
     void OnActivateSceneChanged(Scene oldScene, Scene newScene)
     {
         KillLocalServer();
@@ -172,23 +151,12 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         CleanUp();
     }
 
-    void CleanUp()
+    void OnDisconnectedFromServer(object sender, EventArgs args)
     {
-        PlayerPrefs.DeleteKey("LoadedGameData");
-        PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
-    }
-
-    void KillLocalServer()
-    {
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-        {
-            var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
-
-            for (int i = 0; i < serverProcesses.Length; i++)
-            {
-                serverProcesses[i].Kill();
-            }
-        }
+        ChooseCategoryUIController.gameObject.SetActive(false);
+        LoadingUI.SetActive(false);
+        SecondsRemainingUIController.Paused = true;
+        UnableToConnectUI.SetActive(true);   
     }
 
     void OnConnectedToServer(object sender, EventArgs args)
@@ -206,25 +174,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             return;
         }
 
-        var remoteCategoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, () =>
-            {
-                var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
-                Debug.LogError(errorMsg);
-                ShowNotification(Color.red, errorMsg);
-               
-                ChooseCategoryUI.SetActive(false);
-                NetworkManager.Disconnect();
-            }, 10);
-
-        ChooseCategoryUIController.gameObject.SetActive(true);
-    }
-
-    void ShowNotification(Color color, string message)
-    {
-        if (NotificationService != null)
-        {
-            NotificationService.AddNotification(color, message);
-        }
+        StartLoadingCategories();
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)
@@ -250,6 +200,67 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         else
         {
             AvailableJokersUIController.ClearAll();
+        }
+    }
+
+    void ShowNotification(Color color, string message)
+    {
+        if (NotificationService != null)
+        {
+            NotificationService.AddNotification(color, message);
+        }
+    }
+
+    void ConnectToServer()
+    {
+        CoroutineUtils.WaitForSeconds(8f, () =>
+            {
+                var ip = PlayerPrefsEncryptionUtils.GetString("ServerIP");
+                NetworkManager.ConnectToHost(ip);
+            });
+    }
+
+    void StartLoadingCategories()
+    {
+        var remoteCategoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, () =>
+            {
+                var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
+                Debug.LogError(errorMsg);
+                ShowNotification(Color.red, errorMsg);
+
+                ChooseCategoryUI.SetActive(false);
+                NetworkManager.Disconnect();
+            }, 10);
+
+        ChooseCategoryUIController.gameObject.SetActive(true);
+    }
+
+    void StartServerIfPlayerIsHost()
+    {
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+        {
+            var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
+            System.Diagnostics.Process.Start(serverPath);
+            SceneManager.activeSceneChanged += OnActivateSceneChanged;
+        }
+    }
+
+    void CleanUp()
+    {
+        PlayerPrefs.DeleteKey("LoadedGameData");
+        PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
+    }
+
+    void KillLocalServer()
+    {
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+        {
+            var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
+
+            for (int i = 0; i < serverProcesses.Length; i++)
+            {
+                serverProcesses[i].Kill();
+            }
         }
     }
 }

@@ -202,6 +202,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void OnMainPlayerSurrender()
     {
+        PlayerPrefs.SetString("Surrender", "true");
         EndGame();
     }
 
@@ -255,10 +256,11 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     public void EndGame()
     {
-        SavePlayerScoreToLeaderboard();
-        SendEndGameInfo();
         IsGameOver = true;
         OnGameOver(this, EventArgs.Empty);
+
+        SavePlayerScoreToLeaderboard();
+        SendEndGameInfo();
         ExportStatistics();
         Cleanup();
     }

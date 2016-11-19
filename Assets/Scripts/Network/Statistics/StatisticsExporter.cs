@@ -17,9 +17,6 @@ public class StatisticsExporter
     {
     };
 
-    Workbook statisticsWorkbook;
-    Sheet statisticsSheet;
-
     FileInfo fileInfo;
 
     Dictionary<string, string> dataHeaderValues = new Dictionary<string, string>();
@@ -27,14 +24,6 @@ public class StatisticsExporter
     public StatisticsExporter(string path)
     {
         fileInfo = new FileInfo(path);
-
-        if (!fileInfo.Exists)
-        {
-            Workbook.createWorkbook(fileInfo);    
-        }
-
-        statisticsWorkbook = Workbook.getWorkbook(fileInfo);
-        statisticsSheet = statisticsWorkbook.getSheet(0);
     }
 
     public void AddData(string header, string data)
@@ -60,8 +49,14 @@ public class StatisticsExporter
     public void Export(ISheetFiller sheetFiller)
     {
         OnBeforeSave(this, EventArgs.Empty);
-        var workbookW = Workbook.createWorkbook(fileInfo, statisticsWorkbook);
-        var sheetW = workbookW.getSheet(0);
+
+        if (fileInfo.Exists)
+        {
+            fileInfo.Delete();
+        }
+
+        var workbookW = Workbook.createWorkbook(fileInfo);
+        var sheetW = workbookW.createSheet("General", 0);
         var data = dataHeaderValues.ToArray();
 
         sheetFiller.Fill(sheetW, dataHeaderValues);

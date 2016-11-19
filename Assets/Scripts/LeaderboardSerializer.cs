@@ -8,7 +8,7 @@ using CielaSpike;
 
 public class LeaderboardSerializer : MonoBehaviour
 {
-    const string FilePath = "\\Server\\LevelData\\теми";
+    const string FilePath = "Server\\LevelData\\теми";
     const string FileName = "Rating.csv";
 
     public string LevelCategory = "философия";

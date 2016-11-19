@@ -53,7 +53,7 @@ public class GameInfoFactory : MonoBehaviour
         var canConnectAsMainPlayer = !BasicExamServer.MainPlayerData.IsConnected;
         var canConnectAsAudience = ServerNetworkManager.ConnectedClientsCount < (ServerNetworkManager.MaxConnections - 1);
         var gameType = GameType.BasicExam;
-        var hostUsername = PlayerPrefsEncryptionUtils.GetString("Username");
+        var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
         var serverInfo = GetServerInfo();
 
         var gameInfo = new BasicExamGameInfo_Serializable()
