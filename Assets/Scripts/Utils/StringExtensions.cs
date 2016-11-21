@@ -36,4 +36,32 @@ public static class StringExtensions
                 throw new InvalidCastException("You can't cast a weird value to a bool!");
         }
     }
+
+    public static T ConvertTo<T>(this string value) where T : IConvertible
+    {
+        var valToConvert = value;
+
+        if (string.IsNullOrEmpty(valToConvert))
+        {
+            throw new ArgumentNullException();
+        }
+
+        return (T)Convert.ChangeType(value, typeof(T));
+    }
+
+    public static T ConvertToOrDefault<T>(this string value) where T : IConvertible
+    {
+        var result = default(T);
+
+        try
+        {
+            result = value.ConvertTo<T>();
+        }
+        catch (Exception ex)
+        {
+            
+        }
+
+        return result;
+    }
 }
