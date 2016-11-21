@@ -77,8 +77,20 @@ public class ClientChooseCategoryUIController : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    void RemoveOldCategories()
+    {
+        var childCount = ContentPanel.childCount;
+
+        for (int i = 0; i < childCount; i++)
+        {
+            var categoryObj = ContentPanel.GetChild(i);
+            Destroy(categoryObj);
+        }
+    }
+
     public void Initialize(IAvailableCategoriesReader categoriesReader)
     {
+        RemoveOldCategories();
         categoriesReader.GetAllCategories((categories) => StartCoroutine(InitializeCoroutine(categories)));
     }
 }
