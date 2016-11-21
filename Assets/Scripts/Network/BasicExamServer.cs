@@ -7,6 +7,10 @@ public class BasicExamServer : ExtendedMonoBehaviour
     {
     };
 
+    public EventHandler<AnswerEventArgs> OnMainPlayerSelectedAnswer = delegate
+    {
+    };
+
     public ServerNetworkManager NetworkManager;
 
     public LocalGameData GameData;
@@ -228,7 +232,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
                     return;
                 }
 
-                EndGame();
+                CoroutineUtils.WaitForFrames(1, () => EndGame());
             }, 
             Debug.LogException);
     }
@@ -252,6 +256,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     void ExportStatistics()
     {
         new BasicExamGeneralStatiticsExporter(StatisticsCollector).Export();
+        new BasicExamGameDataStatisticsExporter(StatisticsCollector, GameData).Export();
     }
 
     public void EndGame()
