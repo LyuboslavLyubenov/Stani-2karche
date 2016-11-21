@@ -37,6 +37,12 @@ public class RemoteGameData : IGameData
         private set;
     }
 
+    public string LevelCategory
+    {
+        get;
+        private set;
+    }
+
     ClientNetworkManager networkManager;
 
     bool loaded = false;
@@ -55,9 +61,15 @@ public class RemoteGameData : IGameData
 
     void InitializeCommands()
     {
+        networkManager.CommandsManager.AddCommand("LoadedGameData", new ReceivedLoadedGameDataCommand(OnLoadedGameData));
         networkManager.CommandsManager.AddCommand("GameDataQuestion", new ReceivedQuestionCommand(OnReceivedQuestion));
         networkManager.CommandsManager.AddCommand("GameDataMark", new ReceivedMarkCommand(OnReceivedMark));
         networkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ReceivedNoMoreQuestionsCommand(OnNoMoreQuestions));
+    }
+
+    void OnLoadedGameData(string levelCategory)
+    {
+        this.LevelCategory = levelCategory;
     }
 
     void OnNoMoreQuestions()
@@ -209,4 +221,3 @@ public enum QuestionRequestType
     Next,
     Random
 }
-

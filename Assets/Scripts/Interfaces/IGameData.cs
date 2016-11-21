@@ -28,6 +28,11 @@ public interface IGameData
         get;    
     }
 
+    string LevelCategory
+    {
+        get;
+    }
+
     void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 
     void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);

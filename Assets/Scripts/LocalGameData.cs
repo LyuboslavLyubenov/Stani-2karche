@@ -10,11 +10,16 @@ using System.Threading;
 
 public class LocalGameData : MonoBehaviour, IGameData
 {
-    const string LevelPath = "\\Server\\LevelData\\теми\\";
+    public const string LevelPath = "Server\\LevelData\\теми\\";
     const int DefaultSecondsForAnswerQuestion = 60;
     const int DefaultQuestionToTakePerMark = int.MaxValue;
-    const int MarkMin = 3;
-    const int MarkMax = 6;
+    public const int MarkMin = 3;
+    public const int MarkMax = 6;
+
+    public static readonly JExcelCellPosition SettingsStartPosition = new JExcelCellPosition(0, 5);
+
+    readonly JExcelCellPosition QuestionsToTakePosition = new JExcelCellPosition(1, 1);
+    readonly JExcelCellPosition SecondsForAnswerQuestionPosition = new JExcelCellPosition(3, 1);
 
     /// <summary>
     /// If true questions for given marks are aways with randomized order
@@ -25,7 +30,11 @@ public class LocalGameData : MonoBehaviour, IGameData
     /// </summary>
     public bool ShuffleAnswers = true;
 
-    public string LevelCategory = "философия";
+    public string LevelCategory
+    {
+        get;
+        set;
+    }
 
     public bool Loaded
     {
@@ -170,7 +179,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             try
             {
-                questionsToTake = int.Parse(sheet.getCell(1, 0).getContents());
+                questionsToTake = int.Parse(sheet.getCell(QuestionsToTakePosition.Column, QuestionsToTakePosition.Row).getContents());
             }
             catch (Exception ex)
             {
@@ -182,7 +191,7 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             try
             {
-                secondsForAnswerQuestion = int.Parse(sheet.getCell(3, 0).getContents());    
+                secondsForAnswerQuestion = int.Parse(sheet.getCell(SecondsForAnswerQuestionPosition.Column, SecondsForAnswerQuestionPosition.Row).getContents());    
             }
             catch (Exception ex)
             {
@@ -207,7 +216,7 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         var questions = new List<ISimpleQuestion>();
 
-        for (int rowi = 2; rowi < sheet.getRows() - 6; rowi += 6)
+        for (int rowi = LocalGameData.SettingsStartPosition.Row; rowi < sheet.getRows() - 6; rowi += 6)
         {
             var questionText = sheet.getCell(0, rowi).getContents();
 

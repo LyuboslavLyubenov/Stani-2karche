@@ -53,23 +53,22 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void InitializeCommands()
     {
-        var loadedGameDataCommand = new DummyOneTimeCommand();
-        loadedGameDataCommand.OnFinishedExecution += (sender, args) =>
-        {
-            LoadingUI.SetActive(false);
-            ChooseCategoryUIController.gameObject.SetActive(false);
-            QuestionUIController.HideAllAnswers();
-            SecondsRemainingUIController.Paused = false;
-            gameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
-            
-            PlayerPrefs.SetString("LoadedGameData", "true");
-        };
-
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
         NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand("AddDisableRandomAnswersJoker", new ReceivedAddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
-        NetworkManager.CommandsManager.AddCommand("LoadedGameData", loadedGameDataCommand);
+        NetworkManager.CommandsManager.AddCommand("LoadedGameData", new ReceivedLoadedGameDataCommand(OnLoadedGameData));
+    }
+
+    void OnLoadedGameData(string levelCategory)
+    {
+        LoadingUI.SetActive(false);
+        ChooseCategoryUIController.gameObject.SetActive(false);
+        QuestionUIController.HideAllAnswers();
+        SecondsRemainingUIController.Paused = false;
+        gameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
+
+        PlayerPrefs.SetString("LoadedGameData", "true");
     }
 
     void AttachEventHandlers()
