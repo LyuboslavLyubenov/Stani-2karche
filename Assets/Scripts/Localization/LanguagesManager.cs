@@ -51,6 +51,20 @@ public class LanguagesManager : MonoBehaviour
         private set;
     }
 
+    public string Language
+    {
+        get;
+        private set;
+    }
+
+    public string[] AvailableLanguages
+    {
+        get
+        {
+            return this.languageFiles;
+        }
+    }
+
     void Awake()
     {
         languagePath = Environment.CurrentDirectory + "/Languages/";
@@ -84,9 +98,14 @@ public class LanguagesManager : MonoBehaviour
         }
     }
 
+    string GetLanguageFile(string language)
+    {
+        var languageUpper = language.ToUpperInvariant();
+        return languageFiles.FirstOrDefault(l => l.ToUpperInvariant().Contains(languageUpper));
+    }
 
 
-    #else
+#else
     
     Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
 
@@ -97,17 +116,12 @@ public class LanguagesManager : MonoBehaviour
 
         for (int i = 0; i < allLanguages.Length; i++)
         {
+            languageFiles[i] = allLanguages[i].name;
             mobileLanguages.Add(allLanguages[i].name, allLanguages[i].text);
         }
     }
-
+        
     #endif
-
-    string GetLanguageFile(string language)
-    {
-        var languageUpper = language.ToUpperInvariant();
-        return languageFiles.FirstOrDefault(l => l.ToUpperInvariant().Contains(languageUpper));
-    }
 
     public void LoadLanguage(string language)
     {
@@ -145,7 +159,7 @@ public class LanguagesManager : MonoBehaviour
             root = mainDoc.DocumentElement;
 
             IsLoadedLanguage = true;
-
+            Language = language;
             OnLoadedLanguage(this, new LanguageEventArgs(language));
         }
         catch (System.Exception e)

@@ -13,7 +13,7 @@ public class AvailableLanguagesUIController : MonoBehaviour
 
     void Start()
     {
-        var availableLanguages = GetAvailableLanguages();
+        var availableLanguages = LanguagesManager.Instance.AvailableLanguages;
         var contentRectTransform = Content.GetComponent<RectTransform>();
         var contentHeight = contentRectTransform.sizeDelta.y;
 
@@ -69,29 +69,6 @@ public class AvailableLanguagesUIController : MonoBehaviour
         var btn = obj.AddComponent<Button>();
         btn.image = img;
         btn.onClick.AddListener(new UnityAction(() => OnSelectedLanguage(language)));
-    }
-
-    string[] GetAvailableLanguages()
-    {
-        string[] availableLanguages;
-
-        #if UNITY_STANDALONE
-
-        availableLanguages = Directory.GetFiles("Languages")
-            .Where(l => Path.GetExtension(l) == ".xml")
-            .Select(l => Path.GetFileNameWithoutExtension(l))
-            .ToArray();
-
-        #else
-
-        availableLanguages = Resources.LoadAll<TextAsset>("Languages")
-        .Where(l => Path.GetExtension(l.text) == ".xml")
-        .Select(l => Path.GetFileNameWithoutExtension(l.text))
-        .ToArray();
-
-        #endif
-
-        return availableLanguages;
     }
 
     void OnSelectedLanguage(string language)
