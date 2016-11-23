@@ -13,36 +13,30 @@ public class NetworkUtils
     /// 
     ///         }));
     /// </summary>
-    public static IEnumerator CheckInternetConnectionPromise(Action<bool> OnCheckCompleted)
+    public static IEnumerator CheckInternetConnectionPromise(Action<bool> onCheckCompleted)
     {
-        WWW www = new WWW("http://google.com");
+        WWW www = new WWW("http://icanhazip.com/");
         yield return www;
 
-        if (www.error != null)
-        {
-            OnCheckCompleted(false);    
-        }
-        else
-        {
-            OnCheckCompleted(true);
-        }
+        var haveConnection = string.IsNullOrEmpty(www.error);
+        onCheckCompleted(haveConnection);
     }
 
-    public static IEnumerator GetExternalIP(Action<string> OnFound, Action<string> OnNetworkError = null)
+    public static IEnumerator GetExternalIP(Action<string> onFound, Action<string> onNetworkError = null)
     {
         WWW www = new WWW("http://icanhazip.com/");
         yield return www;
 
         if (!string.IsNullOrEmpty(www.error))
         {
-            if (OnNetworkError != null)
+            if (onNetworkError != null)
             {
-                OnNetworkError(www.error);    
+                onNetworkError(www.error);    
             }
         }
         else
         {
-            OnFound(www.text);
+            onFound(www.text);
         }
     }
 

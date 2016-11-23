@@ -1,8 +1,5 @@
 ﻿using System.IO;
 using System.Net;
-using System.Text;
-using UnityEngine;
-using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System;
@@ -13,6 +10,12 @@ public class RequesterUtils
     public const string AppKey = "kid_B1p9ERZMl";
     public const string AppSecret = "4d8b75c1cd254ce293409aaa43c25981";
 
+    public static string SessionAuth
+    {
+        get;
+        set;
+    }
+
     RequesterUtils()
     {
     }
@@ -22,17 +25,9 @@ public class RequesterUtils
         RemoveSessionAuth();
     }
 
-    public static void SetSessionAuth(string auth)
-    {
-        PlayerPrefs.SetString("SessionAuth", auth);
-    }
-
     public static void RemoveSessionAuth()
     {
-        if (PlayerPrefs.HasKey("SessionAuth"))
-        {
-            PlayerPrefs.DeleteKey("SessionAuth");
-        }
+        SessionAuth = null;
     }
 
     public static HttpWebRequest ConfigRequester(string url, string method, string data, bool useSession)
@@ -45,10 +40,14 @@ public class RequesterUtils
         request.Method = method;
         request.ReadWriteTimeout = 2000;
 
-        if (useSession && PlayerPrefs.HasKey("SessionAuth"))
+        if (useSession)
         {
-            var tokenAuth = PlayerPrefs.GetString("SessionAuth");
-            request.Headers.Set("Authorization", "Kinvey " + tokenAuth);
+            if (string.IsNullOrEmpty(SessionAuth))
+            {
+                throw new InvalidOperationException("Doest have session auth. Not logged in");
+            }
+
+            request.Headers.Set("Authorization", "Kinvey " + SessionAuth);
         }
         else
         {
@@ -103,25 +102,3 @@ public class RequesterUtils
     }
 }
 
-public static class HttpWebRequesterExtensions
-{
-    public static string GetRequestResult(this HttpWebRequest requester)
-    {
-        using (HttpWebResponse response = requester.GetResponse() as HttpWebResponse)
-        {
-            if (response.StatusCode != HttpStatusCode.OK &&
-                response.StatusCode != HttpStatusCode.Created &&
-                response.StatusCode != HttpStatusCode.NoContent &&
-                response.StatusCode != HttpStatusCode.Accepted)
-            {
-                throw new Exception(response.StatusCode + " " + response.StatusDescription);  
-            }   
-
-            using (StreamReader Reader = new StreamReader(response.GetResponseStream()))
-            {
-                string dataJSON = Reader.ReadToEnd();
-                return dataJSON;
-            }
-        }
-    }
-}

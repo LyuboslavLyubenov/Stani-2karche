@@ -1,10 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public class _UserReceivedData
+public class _UserReceivedData : _KinveyEntityDetails
 {
-    public string _id;
     public string username;
-    public _KMD _kmd;
-    public _ACL _acl;
 }
