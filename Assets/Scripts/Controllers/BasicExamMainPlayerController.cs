@@ -186,8 +186,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         var commandData = new NetworkCommandData("AnswerSelected");
         commandData.AddOption("Answer", answer);
 
-        yield return null;
-
         NetworkManager.SendServerCommand(commandData);
 
         yield return null;

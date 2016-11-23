@@ -1,12 +1,18 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Net;
+using System;
+using System.IO;
+using System.Collections;
+using CielaSpike;
+using System.Text;
 
 public class ServersAvailableUIController : ExtendedMonoBehaviour
 {
-    public LANServersDiscoveryBroadcastService ServerDiscoveryService;
+    public LANServersDiscoveryService LANServersDiscoveryService;
     public CreatedGameInfoReceiverService GameInfoReceiverService;
-    public BasicExamServerSelectPlayerTypeUIController basicExamSelectPlayerTypeController;
+    public BasicExamServerSelectPlayerTypeUIController BasicExamSelectPlayerTypeController;
 
     public NotificationsServiceController NotificationsService;
 
@@ -18,7 +24,8 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
 
     void Start()
     {
-        ServerDiscoveryService.OnFound += OnLocalServerFound;
+        CoroutineUtils.RepeatEverySeconds(10f, () => ClearFoundServerList());
+        LANServersDiscoveryService.OnFound += OnLocalServerFound;
     }
 
     void OnLocalServerFound(object sender, IpEventArgs args)
@@ -68,11 +75,11 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
             return;
         }
 
-        basicExamSelectPlayerTypeController.gameObject.SetActive(true);
-        CoroutineUtils.WaitForFrames(0, () => basicExamSelectPlayerTypeController.Initialize(gameInfo));
+        BasicExamSelectPlayerTypeController.gameObject.SetActive(true);
+        CoroutineUtils.WaitForFrames(0, () => BasicExamSelectPlayerTypeController.Initialize(gameInfo));
     }
 
-    void ClearServerFoundList()
+    void ClearFoundServerList()
     {
         var serversCount = Container.transform.childCount;
 
@@ -81,5 +88,7 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
             var foundServer = Container.transform.GetChild(i);
             foundServer.gameObject.SetActive(false);
         }
+
+        foundServers.Clear();
     }
 }

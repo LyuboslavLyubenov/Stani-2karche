@@ -35,7 +35,7 @@ public class EnterNameUIController : ExtendedMonoBehaviour
 
     void Deactivate()
     {
-        GetComponent<Animator>().SetTrigger("disabled");
+        GetComponent<Animator>().SetTrigger("hide");
     }
 
     public void SaveUsername()

@@ -72,7 +72,7 @@ public class DisableAfterDelay : MonoBehaviour
     {
         if (UseAnimator)
         {
-            GetComponent<Animator>().SetTrigger("disable");
+            GetComponent<Animator>().SetTrigger("hide");
         }
         else
         {

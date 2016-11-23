@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class LANServersDiscoveryBroadcastService : LANBroadcastService
+public class LANServersDiscoveryService : LANBroadcastService
 {
     public EventHandler<IpEventArgs> OnFound = delegate
     {

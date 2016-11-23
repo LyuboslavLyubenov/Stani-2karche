@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using CSharpJExcel.Jxl.Write;
-using System.Collections.Generic;
 using System;
 
 public class BasicExamGameDataStatisticsExporter : IStatisticsExporter

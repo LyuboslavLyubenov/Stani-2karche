@@ -1,13 +1,10 @@
 ﻿using UnityEngine;
-using System.IO;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using System.Linq;
 
 public class AvailableLanguagesUIController : MonoBehaviour
 {
     public Transform Content;
-    public GameObject LoadingUI;
 
     const float LanguageBtnWidth = 200f;
 
