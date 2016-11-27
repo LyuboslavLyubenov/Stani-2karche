@@ -53,6 +53,17 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         StartCoroutine(InitializeCoroutine());
     }
 
+    void InitializeAnswers(int answersCount)
+    {
+        var answersPanel = transform.Find("Answers").GetComponent<RectTransform>();
+        var leftColumn = answersPanel.transform.Find("Left Column").GetComponent<RectTransform>();
+        var rightColumn = answersPanel.transform.Find("Right Column").GetComponent<RectTransform>();
+        var answers = GenerateAnswers(leftColumn, rightColumn, answersCount);
+        LoadAnswersComponents(answers);
+
+        this.AnswersCount = answersCount;
+    }
+
     void LoadAnswersComponents(GameObject[] answers)
     {
         answersTexts = new Text[answers.Length];
@@ -86,20 +97,15 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         }
     }
 
-    GameObject[] GenerateAnswers()
+    GameObject[] GenerateAnswers(RectTransform leftColumn, RectTransform rightColumn, int count)
     {
         var answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
-        var answers = new GameObject[AnswersCount];
-        var answersPanel = transform.Find("Answers");
-        var leftColumn = answersPanel.Find("Left Column");
-        var rightColumn = answersPanel.Find("Right Column");
-        var leftRectTransform = leftColumn.GetComponent<RectTransform>();
-        var rightRectTransform = rightColumn.GetComponent<RectTransform>();
+        var answers = new GameObject[count];
 
         for (int i = 0; i < answers.Length; i++)
         {
             var parent = (i % 2 == 0) ? leftColumn : rightColumn;
-            var parentRectTransform = (i % 2 == 0) ? leftRectTransform : rightRectTransform;
+            var parentRectTransform = (i % 2 == 0) ? leftColumn : rightColumn;
             var parentHeight = parentRectTransform.sizeDelta.y;
             var answerObjsInColumn = (int)Math.Ceiling(AnswersCount / 2d);
             var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
@@ -129,11 +135,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 
         yield return null;
 
-        var answers = GenerateAnswers();
-
-        yield return null;
-
-        LoadAnswersComponents(answers);
+        InitializeAnswers(AnswersCount);
 
         yield return null;
 
@@ -252,6 +254,22 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         {
             answersAnimators[index].SetTrigger("show");
         }
+    }
+
+    public void ChangeAnswersCount(int count)
+    {
+        if (this.answersButtons.Length == count)
+        {
+            return;
+        }
+
+        for (int i = 0; i < answersButtons.Length; i++)
+        {
+            var answerObj = answersButtons[i].gameObject;
+            Destroy(answerObj);
+        }
+
+        InitializeAnswers(count);
     }
 
     public void HideAnswer(int index)
