@@ -6,31 +6,56 @@ using System.Linq;
 
 public class AudienceAnswerUIController : MonoBehaviour
 {
-    GameObject[] answers;
+    const int DistanceBetweenElements = 10;
+
+    Transform[] answers;
     Text[] answersText;
     Text[] chanceToBeCorrectText;
 
-    void OnEnable()
+    void DeleteOldAnswers()
     {
-        answers = GameObject.FindGameObjectsWithTag("AudienceAnswerChance");
-
-        if (answers.Length != 4)
+        for (int i = 0; i < transform.childCount; i++)
         {
-            throw new Exception("Answers must be exactly 4");
+            var answerChance = transform.GetChild(i);
+            Destroy(answerChance);
         }
 
-        answersText = new Text[answers.Length];
-        chanceToBeCorrectText = new Text[answers.Length];   
+        answers = null;
+        answersText = null;
+        chanceToBeCorrectText = null;
+    }
 
-        for (int i = 0; i < answers.Length; i++)
+    void SetAnswersChancesCount(int count)
+    {
+        answers = new Transform[count];
+        answersText = new Text[count];
+        chanceToBeCorrectText = new Text[count];
+
+        var prefab = Resources.Load<GameObject>("Prefabs/AnswerChance");
+        var parentRectTransform = transform.GetComponent<RectTransform>();
+        var parentSizeY = parentRectTransform.sizeDelta.y;
+        var sizeY = (parentSizeY - (DistanceBetweenElements * count)) / count;
+
+        for (int i = 0; i < count; i++)
         {
-            answersText[i] = answers[i].transform.GetChild(0).GetComponent<Text>();
-            chanceToBeCorrectText[i] = answers[i].transform.GetChild(1).GetComponent<Text>();
+            var answerChance = (GameObject)Instantiate(prefab, parentRectTransform.transform, false);
+            var rectTransform = answerChance.GetComponent<RectTransform>();
+            var y = (sizeY / 2) + (i * (sizeY + DistanceBetweenElements)); 
+
+            rectTransform.anchoredPosition = new Vector2(0, -y);
+            rectTransform.sizeDelta = new Vector2(1, sizeY);
+
+            answers[i] = answerChance.transform;
+            answersText[i] = answers[i].GetChild(0).GetComponent<Text>();
+            chanceToBeCorrectText[i] = answers[i].GetChild(1).GetComponent<Text>();
         }
     }
 
     public void SetVoteCount(Dictionary<string, int> answersVoteCount, bool inProcentage)
     {
+        DeleteOldAnswers();
+        SetAnswersChancesCount(answersVoteCount.Count);
+
         var answersVotes = answersVoteCount.Shuffled();
         var votedCountValues = answersVotes.Select(a => a.Value).ToArray();
         var chancesSum = votedCountValues.Sum();
