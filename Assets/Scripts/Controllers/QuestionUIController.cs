@@ -6,17 +6,18 @@ using System.Linq;
 
 public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 {
-    const int AnswersCount = 4;
+    const int DistanceBetweenAnswerButton = 10;
 
+    public int AnswersCount = 4;
     public bool ShouldPlayButtonAnimation = true;
     public bool ShowCorrectAnswerAfterError = false;
 
     bool initialized = false;
 
     Text questionText = null;
-    Text[] answersTexts = new Text[AnswersCount];
-    Button[] answersButtons = new Button[AnswersCount];
-    Animator[] answersAnimators = new Animator[AnswersCount];
+    Text[] answersTexts = null;
+    Button[] answersButtons = null;
+    Animator[] answersAnimators = null;
 
     public EventHandler<AnswerEventArgs> OnAnswerClick
     {
@@ -52,26 +53,11 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         StartCoroutine(InitializeCoroutine());
     }
 
-    IEnumerator InitializeCoroutine()
+    void LoadAnswersComponents(GameObject[] answers)
     {
-        yield return null;
-
-        var answers = GameObject.FindGameObjectsWithTag("Answer").Take(AnswersCount)
-            .ToArray();
-
-        if (answers.Length != 4)
-        {
-            throw new NullReferenceException("Invalid answers count. Found " + answers.Length + " expected 4.");
-        }
-
-        questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
-
-        if (questionText == null)
-        {
-            throw new NullReferenceException("Cannot found Text component on questionText");
-        }
-
-        yield return null;
+        answersTexts = new Text[answers.Length];
+        answersButtons = new Button[answers.Length];
+        answersAnimators = new Animator[answers.Length];
 
         for (int i = 0; i < answers.Length; i++)
         {
@@ -97,9 +83,59 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
             answersButtons[i] = answerButton;
             answersTexts[i] = answerText;
             answersAnimators[i] = answerAnimator;
- 
-            yield return null;
         }
+    }
+
+    GameObject[] GenerateAnswers()
+    {
+        var answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
+        var answers = new GameObject[AnswersCount];
+        var answersPanel = transform.Find("Answers");
+        var leftColumn = answersPanel.Find("Left Column");
+        var rightColumn = answersPanel.Find("Right Column");
+        var leftRectTransform = leftColumn.GetComponent<RectTransform>();
+        var rightRectTransform = rightColumn.GetComponent<RectTransform>();
+
+        for (int i = 0; i < answers.Length; i++)
+        {
+            var parent = (i % 2 == 0) ? leftColumn : rightColumn;
+            var parentRectTransform = (i % 2 == 0) ? leftRectTransform : rightRectTransform;
+            var parentHeight = parentRectTransform.sizeDelta.y;
+            var answerObjsInColumn = (int)Math.Ceiling(AnswersCount / 2d);
+            var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
+            var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
+            var y = (sizeY / 2) + (parent.childCount * (DistanceBetweenAnswerButton + (int)sizeY));
+            var answer = (GameObject)Instantiate(answerPrefab, parent, false);
+            var answerRectTransform = answer.GetComponent<RectTransform>();
+
+            answerRectTransform.sizeDelta = new Vector2(answerRectTransform.sizeDelta.x, (float)sizeY);
+            answerRectTransform.anchoredPosition = new Vector2(answerRectTransform.anchoredPosition.x, (float)-y);
+            answers[i] = answer;
+        }
+
+        return answers;
+    }
+
+    IEnumerator InitializeCoroutine()
+    {
+        yield return null;
+
+        questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
+
+        if (questionText == null)
+        {
+            throw new NullReferenceException("Cannot found Text component on questionText");
+        }
+
+        yield return null;
+
+        var answers = GenerateAnswers();
+
+        yield return null;
+
+        LoadAnswersComponents(answers);
+
+        yield return null;
 
         initialized = true;
     }
