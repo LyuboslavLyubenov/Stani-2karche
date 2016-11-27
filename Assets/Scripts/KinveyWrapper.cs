@@ -322,8 +322,8 @@ public class KinveyWrapper : MonoBehaviour
 
     public void Logout(Action onLogout, Action<Exception> onError)
     {
-        ValidationUtils.ValidateObjectNotNull(onLogout);
-        ValidationUtils.ValidateObjectNotNull(onError);
+        ValidationUtils.ValidateObjectNotNull(onLogout, "onLogout");
+        ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
         this.StartCoroutineAsync(LogoutCoroutine(onLogout, onError));
     }

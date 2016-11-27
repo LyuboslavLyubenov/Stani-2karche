@@ -1,12 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Net;
 using System;
-using System.IO;
-using System.Collections;
-using CielaSpike;
-using System.Text;
 
 public class ServersAvailableUIController : ExtendedMonoBehaviour
 {
@@ -24,14 +19,43 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
 
     void Start()
     {
-        CoroutineUtils.RepeatEverySeconds(10f, () => ClearFoundServerList());
+        CoroutineUtils.RepeatEverySeconds(10f, () =>
+            {
+                ClearFoundServerList();
+                StartLoadingExternalServersIfConnectedToInternet();
+            });
         LANServersDiscoveryService.OnFound += OnLocalServerFound;
+    }
+
+    void StartLoadingExternalServersIfConnectedToInternet()
+    {
+        NetworkUtils.CheckInternetConnectionPromise((isConnectedToInternet) =>
+            {
+                if (!isConnectedToInternet || !KinveyWrapper.Instance.IsLoggedIn)
+                {
+                    return;
+                }
+
+                KinveyWrapper.Instance.RetrieveEntityAsync<ServerInfo_Serializable>("Servers", null, (servers) =>
+                    {
+                        for (int i = 0; i < servers.Length; i++)
+                        {
+                            var entity = servers[i].Entity;
+                            var ip = entity.ExternalIpAddress;
+                            BeginReceiveServerGameInfo(ip);
+                        }
+                    }, Debug.LogException);
+            });
     }
 
     void OnLocalServerFound(object sender, IpEventArgs args)
     {
         var ip = args.IPAddress;
+        BeginReceiveServerGameInfo(ip);
+    }
 
+    void BeginReceiveServerGameInfo(string ip)
+    {
         if (foundServers.Contains(ip))
         {
             return;
@@ -60,7 +84,7 @@ public class ServersAvailableUIController : ExtendedMonoBehaviour
         var controller = obj.GetComponent<ServerDiscoveredElementController>();
 
         obj.SetParent(Container.transform, true);
-        CoroutineUtils.WaitForFrames(0, () => controller.SetData((BasicExamGameInfo_Serializable)gameInfo));
+        CoroutineUtils.WaitForFrames(0, () => controller.SetData(gameInfo));
 
         var button = obj.GetComponent<Button>();
         button.onClick.RemoveAllListeners();

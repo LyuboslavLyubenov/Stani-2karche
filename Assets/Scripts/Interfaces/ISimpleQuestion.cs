@@ -1,5 +1,3 @@
-using System;
-
 public interface ISimpleQuestion
 {
     string Text
