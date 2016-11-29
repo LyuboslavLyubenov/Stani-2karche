@@ -61,7 +61,7 @@ public class LanguagesManager : MonoBehaviour
     {
         get
         {
-            return this.languageFiles;
+            return this.languageFiles.Select(p => Path.GetFileName(p)).ToArray();
         }
     }
 
@@ -105,7 +105,7 @@ public class LanguagesManager : MonoBehaviour
     }
 
 
-#else
+    #else
     
     Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
 

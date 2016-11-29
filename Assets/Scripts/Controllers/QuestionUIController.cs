@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 
 public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 {

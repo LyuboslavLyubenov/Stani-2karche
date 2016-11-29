@@ -99,8 +99,6 @@ public class BasicExamServer : ExtendedMonoBehaviour
         MainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
         GameData.OnLoaded += (sender, args) =>
         {
-            var gameDataLoadedCommand = new NetworkCommandData("LoadedGameData");
-            NetworkManager.SendAllClientsCommand(gameDataLoadedCommand);
             remainingTimeToAnswerMainQuestion = GameData.SecondsForAnswerQuestion;  
         };
         
