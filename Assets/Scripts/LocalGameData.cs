@@ -6,11 +6,11 @@ using System.Collections;
 using System.Linq;
 using CSharpJExcel.Jxl;
 using CielaSpike;
-using System.Threading;
+using System.Reflection;
 
 public class LocalGameData : MonoBehaviour, IGameData
 {
-    public const string LevelPath = "Server\\LevelData\\теми\\";
+    public const string LevelPath = "LevelData\\теми\\";
     const int DefaultSecondsForAnswerQuestion = 60;
     const int DefaultQuestionToTakePerMark = int.MaxValue;
     public const int MarkMin = 3;
@@ -147,9 +147,10 @@ public class LocalGameData : MonoBehaviour, IGameData
             exception = ex;
         }
 
+        yield return Ninja.JumpToUnity;
+
         if (exception == null)
         {
-            yield return Ninja.JumpToUnity;
             OnLoaded(this, EventArgs.Empty);    
         }
         else
@@ -163,7 +164,8 @@ public class LocalGameData : MonoBehaviour, IGameData
     /// </summary>
     void ExtractLevelData()
     {
-        var levelPath = Directory.GetCurrentDirectory() + '\\' + LevelPath + LevelCategory;
+        var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
+        var levelPath = execPath + LevelPath + LevelCategory;
         var questionFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
 
         for (int i = 0; i < questionFilesPath.Length; i++)
@@ -216,34 +218,27 @@ public class LocalGameData : MonoBehaviour, IGameData
     {
         var questions = new List<ISimpleQuestion>();
 
-        for (int rowi = LocalGameData.SettingsStartPosition.Row; rowi < sheet.getRows() - 6; rowi += 6)
+        for (int rowi = LocalGameData.SettingsStartPosition.Row; rowi < sheet.getRows();)
         {
-            var questionText = sheet.getCell(0, rowi).getContents();
+            var questionText = sheet.GetCellOrDefault(0, rowi).getContents().Trim();
 
             if (string.IsNullOrEmpty(questionText))
             {
-                var fileName = (MarkMin + workbookMarkIndex) + ".xls";
-                var rowNumber = (rowi + 1).ToString();
-                var errorMsg = LanguagesManager.Instance.GetValue("Errors/EmptyQuestion");
-                var errorFormatedMsg = string.Format(errorMsg, fileName, rowNumber);
-                throw new Exception(errorFormatedMsg);    
+                break;
             }
 
             var answers = new List<string>();
             var correctAnswer = "";
 
-            for (int answersRowI = rowi + 1; answersRowI < rowi + 5; answersRowI++)
+            for (int answersRowI = rowi + 1;; answersRowI++)
             {   
-                var answerText = sheet.getCell(0, answersRowI).getContents();
-                var isCorrect = sheet.getCell(1, answersRowI).getContents().ToUpperInvariant() == ("верен").ToUpperInvariant();
+                var answerText = sheet.GetCellOrDefault(0, answersRowI).getContents().Trim();
+                var isCorrect = sheet.GetCellOrDefault(1, answersRowI).getContents().ToUpperInvariant() == ("верен").ToUpperInvariant();
 
                 if (string.IsNullOrEmpty(answerText))
                 {                
-                    var fileName = (MarkMin + workbookMarkIndex) + ".xls";
-                    var rowNumber = (rowi + 1).ToString();
-                    var errorMsg = LanguagesManager.Instance.GetValue("Errors/EmptyAnswer");
-                    var errorFormatedMsg = string.Format(errorMsg, fileName, rowNumber);
-                    throw new Exception(errorFormatedMsg);
+                    rowi = answersRowI + 1;
+                    break;
                 }
 
                 answers.Add(answerText);
@@ -252,11 +247,8 @@ public class LocalGameData : MonoBehaviour, IGameData
                 {
                     if (!string.IsNullOrEmpty(correctAnswer))
                     {
-                        var fileName = (MarkMin + workbookMarkIndex) + ".xls";
-                        var questionNumber = questions.Count + 1;
                         var errorMsg = LanguagesManager.Instance.GetValue("Errors/MultipleCorrectAnswers");
-                        var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber);
-                        throw new Exception(errorFormatedMsg);    
+                        ExtracingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);   
                     }
 
                     correctAnswer = answerText;
@@ -265,12 +257,14 @@ public class LocalGameData : MonoBehaviour, IGameData
 
             if (string.IsNullOrEmpty(correctAnswer))
             {
-                var fileName = (MarkMin + workbookMarkIndex) + ".xls";
-                var questionNumber = questions.Count + 1;
                 var errorMsg = LanguagesManager.Instance.GetValue("Errors/NoCorrectAnswer");
-                var errorFormatedMsg = string.Format(errorMsg, fileName, questionNumber);
+                ExtracingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);
+            }
 
-                throw new Exception(errorFormatedMsg);
+            if (answers.Count <= 0)
+            {
+                var errorMsg = LanguagesManager.Instance.GetValue("Errors/QuestionWithoutAnswers");
+                ExtracingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);
             }
 
             if (ShuffleAnswers)
@@ -285,6 +279,13 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
 
         return questions.ToArray();
+    }
+
+    void ExtracingQuestionException(int workbookMarkIndex, int questionNumber, string exceptionMsg)
+    {
+        var fileName = (MarkMin + workbookMarkIndex) + ".xls";
+        var errorFormatedMsg = string.Format(exceptionMsg, fileName, questionNumber);
+        throw new Exception(errorFormatedMsg); 
     }
 
     public void LoadDataAsync(Action<Exception> onErrorLoading)
@@ -414,4 +415,3 @@ public class LocalGameData : MonoBehaviour, IGameData
         }
     }
 }
-

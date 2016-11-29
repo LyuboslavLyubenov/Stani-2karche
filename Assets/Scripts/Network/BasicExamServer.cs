@@ -3,6 +3,8 @@ using System;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
+    const int DefaultServerMaxPlayers = 40;
+
     public EventHandler OnGameOver = delegate
     {
     };
@@ -82,12 +84,14 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void LoadServerSettings()
     {
-        var serverMaxPlayers = PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers");
+        int serverMaxPlayers = DefaultServerMaxPlayers;
 
-        if (!string.IsNullOrEmpty(serverMaxPlayers))
+        if (PlayerPrefsEncryptionUtils.HasKey("ServerMaxPlayers"))
         {
-            NetworkManager.MaxConnections = int.Parse(serverMaxPlayers);    
+            serverMaxPlayers = int.Parse(PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers"));    
         }
+
+        NetworkManager.MaxConnections = serverMaxPlayers;    
     }
 
     void AttachEventHandlers()

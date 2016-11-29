@@ -1,6 +1,7 @@
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System;
+using System.Reflection;
 
 public class LocalCategoriesReader : IAvailableCategoriesReader
 {
@@ -13,8 +14,9 @@ public class LocalCategoriesReader : IAvailableCategoriesReader
             throw new ArgumentNullException("onGetAllCategories");
         }
 
-        var currentDirectory = Directory.GetCurrentDirectory() + "\\Server\\LevelData\\теми\\";
-        var availableCategories = Directory.GetDirectories(currentDirectory)
+        var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
+        var themesPath = execPath + "LevelData\\теми\\";
+        var availableCategories = Directory.GetDirectories(themesPath)
             .Where(IsValidLevel)
             .Select((categoryFilePath) => GetNameOfCategory(categoryFilePath))
             .ToArray();

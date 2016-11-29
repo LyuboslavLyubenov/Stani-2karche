@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 public class SimpleQuestion : ISimpleQuestion
 {
@@ -46,11 +45,6 @@ public class SimpleQuestion : ISimpleQuestion
             throw new ArgumentException("Въпросът не трябва да е празен");
         }
 
-        if (answers.Length != 4)
-        {
-            throw new ArgumentException("Отговорите трябва да са 4 на брои");
-        }
-
         for (int i = 0; i < answers.Length; i++)
         {
             if (string.IsNullOrEmpty(answers[i]))
@@ -59,9 +53,9 @@ public class SimpleQuestion : ISimpleQuestion
             }
         }
             
-        if (correctAnswerIndex < 0 || correctAnswerIndex > 3)
+        if (correctAnswerIndex < 0 || correctAnswerIndex >= answers.Length)
         {
-            throw new ArgumentOutOfRangeException("correctAnswerIndex", "correctAnswerIndex трябва да бъде със стойности между 0 и 3 (включително)");
+            throw new ArgumentOutOfRangeException("correctAnswerIndex", "correctAnswerIndex трябва да бъде със стойности между 0 и " + answers.Length);
         }
 
         this.text = text;

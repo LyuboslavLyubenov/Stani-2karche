@@ -27,6 +27,7 @@
         <EmptyAnswer>Във файл {0} на ред {1} има празен отговор. </EmptyAnswer>
         <MultipleCorrectAnswers>Във файл {0}, въпрос номер {1} има повече от 1 верен отговор.</MultipleCorrectAnswers>
         <NoCorrectAnswer>Във файл {0}, въпрос номер {1} няма правилен отговор.</NoCorrectAnswer>
+        <QuestionWithoutAnswers>Във файл {0}, въпрос номер {1} няма отговори</QuestionWithoutAnswers>
     </Errors>
     
     <UnableToConnect>

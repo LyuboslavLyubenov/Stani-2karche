@@ -173,7 +173,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
             return;
         }
 
-        StartLoadingCategories();
+        ChooseCategoryUIController.gameObject.SetActive(true);
+        //StartLoadingCategories();
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)

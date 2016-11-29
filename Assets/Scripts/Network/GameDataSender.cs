@@ -57,6 +57,7 @@ public class GameDataSender : MonoBehaviour
     void SendLoadedGameData()
     {
         var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
+        loadedGameDataCommand.AddOption("LevelCategory", LocalGameData.LevelCategory);
         NetworkManager.SendAllClientsCommand(loadedGameDataCommand);
     }
 

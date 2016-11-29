@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class InitializeChooseCategoryControllerAfterAnimationLoad : StateMachineBehaviour
 {
@@ -12,10 +11,11 @@ public class InitializeChooseCategoryControllerAfterAnimationLoad : StateMachine
 
     void OnTimeout()
     {
+        var clientNetworkManager = GameObject.FindObjectOfType<ClientNetworkManager>();
         var notificationsController = GameObject.FindObjectOfType<NotificationsServiceController>();
         var errorMsg = LanguagesManager.Instance.GetValue("Errors/LoadCategoriesTimeout");
         notificationsController.AddNotification(Color.red, errorMsg);
-        //
+        clientNetworkManager.Disconnect();
     }
 
 }

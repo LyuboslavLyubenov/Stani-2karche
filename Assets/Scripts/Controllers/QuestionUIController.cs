@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 {
@@ -18,6 +19,10 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
     Text[] answersTexts = null;
     Button[] answersButtons = null;
     Animator[] answersAnimators = null;
+
+    Transform answersPanel = null;
+    RectTransform leftColumn = null;
+    RectTransform rightColumn = null;
 
     public EventHandler<AnswerEventArgs> OnAnswerClick
     {
@@ -55,12 +60,8 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 
     void InitializeAnswers(int answersCount)
     {
-        var answersPanel = transform.Find("Answers").GetComponent<RectTransform>();
-        var leftColumn = answersPanel.transform.Find("Left Column").GetComponent<RectTransform>();
-        var rightColumn = answersPanel.transform.Find("Right Column").GetComponent<RectTransform>();
-        var answers = GenerateAnswers(leftColumn, rightColumn, answersCount);
+        var answers = GenerateAnswers(answersCount);
         LoadAnswersComponents(answers);
-
         this.AnswersCount = answersCount;
     }
 
@@ -97,7 +98,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         }
     }
 
-    GameObject[] GenerateAnswers(RectTransform leftColumn, RectTransform rightColumn, int count)
+    GameObject[] GenerateAnswers(int count)
     {
         var answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
         var answers = new GameObject[count];
@@ -107,7 +108,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
             var parent = (i % 2 == 0) ? leftColumn : rightColumn;
             var parentRectTransform = (i % 2 == 0) ? leftColumn : rightColumn;
             var parentHeight = parentRectTransform.sizeDelta.y;
-            var answerObjsInColumn = (int)Math.Ceiling(AnswersCount / 2d);
+            var answerObjsInColumn = (int)Math.Ceiling(count / 2d);
             var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
             var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
             var y = (sizeY / 2) + (parent.childCount * (DistanceBetweenAnswerButton + (int)sizeY));
@@ -127,11 +128,9 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         yield return null;
 
         questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
-
-        if (questionText == null)
-        {
-            throw new NullReferenceException("Cannot found Text component on questionText");
-        }
+        answersPanel = transform.Find("Answers").GetComponent<RectTransform>();
+        leftColumn = answersPanel.transform.Find("Left Column").GetComponent<RectTransform>();
+        rightColumn = answersPanel.transform.Find("Right Column").GetComponent<RectTransform>();
 
         yield return null;
 
@@ -140,6 +139,21 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         yield return null;
 
         initialized = true;
+    }
+
+    void DestroyOldAnswerObjs()
+    {
+        for (int i = 0; i < leftColumn.childCount; i++)
+        {
+            var answerObj = leftColumn.GetChild(i).gameObject;
+            Destroy(answerObj);
+        }
+
+        for (int i = 0; i < rightColumn.childCount; i++)
+        {
+            var answerObj = rightColumn.GetChild(i).gameObject;
+            Destroy(answerObj);
+        }
     }
 
     IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
@@ -153,6 +167,19 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         HideAllAnswers();
 
         yield return StartCoroutine(WaitUntilAnswersAreHiddenCoroutine());
+
+        if (question.Answers.Length != AnswersCount)
+        {
+            yield return null;
+
+            DestroyOldAnswerObjs();
+
+            yield return null;
+
+            InitializeAnswers(question.Answers.Length);
+
+            yield return null;
+        }
 
         for (int i = 0; i < AnswersCount; i++)
         {

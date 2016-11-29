@@ -18,14 +18,12 @@ public class EnterNameUIController : ExtendedMonoBehaviour
             throw new NullReferenceException("UsernameTextField is null on EnterNameUIController obj");
         }
 
-        transform.localScale = new Vector3(0, 0, 0);
-
         CoroutineUtils.WaitForFrames(0, Initialize);
     }
 
     void Initialize()
     {
-        if (PlayerPrefsEncryptionUtils.HasKey("Username"))
+        if (!PlayerPrefsEncryptionUtils.HasKey("Username"))
         {
             var username = PlayerPrefsEncryptionUtils.GetString("Username");
             OnUsernameSet(this, new UserNameEventArgs(username));
@@ -35,14 +33,14 @@ public class EnterNameUIController : ExtendedMonoBehaviour
 
     void Deactivate()
     {
-        GetComponent<Animator>().SetTrigger("hide");
+        GetComponent<Animator>().SetTrigger("disable");
     }
 
     public void SaveUsername()
     {
         var usernameText = UsernameTextField.GetComponent<Text>();
         PlayerPrefsEncryptionUtils.SetString("Username", usernameText.text);
-        OnUsernameSet(this, new UserNameEventArgs(usernameText.text));
         Deactivate();
+        OnUsernameSet(this, new UserNameEventArgs(usernameText.text));
     }
 }
