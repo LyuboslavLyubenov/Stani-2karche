@@ -149,6 +149,7 @@ public class LeaderboardSerializer : MonoBehaviour
     /// </summary>
     public void SavePlayerScore(PlayerScore playerScore)
     {
+        this.leaderboard.Add(playerScore);
         this.StartCoroutineAsync(SavePlayerScoreAsync(playerScore));
     }
 

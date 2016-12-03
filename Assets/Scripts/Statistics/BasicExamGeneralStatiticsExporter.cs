@@ -9,7 +9,7 @@ using System.Reflection;
 
 public class BasicExamGeneralStatiticsExporter : IStatisticsExporter
 {
-    const string Directory = "Server\\Statistics\\";
+    const string Directory = "Statistics\\";
     const string FileName = "General";
     const string Extension = ".xls";
 
@@ -30,7 +30,7 @@ public class BasicExamGeneralStatiticsExporter : IStatisticsExporter
             
         this.statisticsCollector = statisticsCollector;
 
-        var execPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
+        var execPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
         Path = execPath + Directory + FileName + Extension;
     }
 
