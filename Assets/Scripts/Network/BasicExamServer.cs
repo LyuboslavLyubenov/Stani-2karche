@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Linq;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
@@ -80,6 +81,11 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
                 UpdateRemainingTime();
             });
+    }
+
+    void OnApplicationQuit()
+    {
+        EndGame();
     }
 
     void LoadServerSettings()
@@ -246,11 +252,19 @@ public class BasicExamServer : ExtendedMonoBehaviour
         NetworkManager.SendAllClientsCommand(commandData);
     }
 
+    int CalculateScore()
+    {
+        var correctAnsweredQuestionsCount = StatisticsCollector.CorrectAnsweredQuestions.Count;
+        var totalTimeSpentThinking = StatisticsCollector.QuestionsSpentTime.Values.ToList().Sum();
+        var avgSpentTimeThinking = totalTimeSpentThinking / StatisticsCollector.QuestionsSpentTime.Values.Count;
+        var score = (correctAnsweredQuestionsCount * 10000) / (float)avgSpentTimeThinking;
+        return (int)score;
+    }
+
     void SavePlayerScoreToLeaderboard()
     {
-        var currentMark = GameData.CurrentMark;
         var mainPlayerName = MainPlayerData.Username;
-        var playerScore = new PlayerScore(mainPlayerName, currentMark, DateTime.Now);
+        var playerScore = new PlayerScore(mainPlayerName, CalculateScore(), DateTime.Now);
 
         LeaderboardSerializer.SavePlayerScore(playerScore);
     }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using CSharpJExcel.Jxl.Write;
 using System;
+using System.Reflection;
 
 public class BasicExamGameDataStatisticsExporter : IStatisticsExporter
 {
@@ -193,7 +194,8 @@ public class BasicExamGameDataStatisticsExporter : IStatisticsExporter
     {
         for (int mark = LocalGameData.MarkMin; mark <= LocalGameData.MarkMax; mark++)
         {
-            var path = string.Format("{0}{1}\\{2}.xls", LocalGameData.LevelPath, gameData.LevelCategory, mark);
+            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
+            var path = string.Format("{0}{1}{2}\\{3}.xls", execPath, LocalGameData.LevelPath, gameData.LevelCategory, mark);
             var newPath = path + ".new";
 
             File.Copy(path, newPath);

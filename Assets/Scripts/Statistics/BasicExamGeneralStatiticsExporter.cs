@@ -4,16 +4,16 @@ using System.IO;
 using CSharpJExcel.Jxl;
 using System.Linq;
 using CSharpJExcel.Jxl.Write;
-using CSharpJExcel.Jxl.Biff;
 using UnityEngine;
+using System.Reflection;
 
 public class BasicExamGeneralStatiticsExporter : IStatisticsExporter
 {
-    const string Directory = "Server/Statistics/";
+    const string Directory = "Server\\Statistics\\";
     const string FileName = "General";
     const string Extension = ".xls";
 
-    readonly string Path = Directory + FileName + Extension;
+    readonly string Path;
 
     readonly JExcelCellPosition AvgSpentTimeLabelAddress = new JExcelCellPosition(0, 1);
     readonly JExcelCellPosition UsedJokersCountLabelAddress = new JExcelCellPosition(1, 1);
@@ -29,6 +29,9 @@ public class BasicExamGeneralStatiticsExporter : IStatisticsExporter
         }
             
         this.statisticsCollector = statisticsCollector;
+
+        var execPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
+        Path = execPath + Directory + FileName + Extension;
     }
 
     float ExtractAvgSpentTimeOnQuestion(Sheet sheet)
