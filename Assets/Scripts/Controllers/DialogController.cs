@@ -1,6 +1,6 @@
 ﻿using UnityEngine.UI;
 
-public class TeacherDialogController : ExtendedMonoBehaviour
+public class DialogController : ExtendedMonoBehaviour
 {
     Text text;
 
@@ -18,11 +18,6 @@ public class TeacherDialogController : ExtendedMonoBehaviour
     }
 
     public void SetMessage(string message)
-    {
-        CoroutineUtils.WaitForFrames(0, () => _SetMessage(message));
-    }
-
-    void _SetMessage(string message)
     {
         CoroutineUtils.WaitUntil(() => initialized, () => text.text = message);
     }

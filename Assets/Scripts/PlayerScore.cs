@@ -30,15 +30,15 @@ public class PlayerScore
     public static PlayerScore CreateFrom(PlayerScore_Serializable playerScore_Serializable)
     {
         var username = playerScore_Serializable.PlayerName;
-        var mark = playerScore_Serializable.Score;
+        var score = playerScore_Serializable.Score;
 
         if (string.IsNullOrEmpty(playerScore_Serializable.CreationDate))
         {
-            return new PlayerScore(username, mark);
+            return new PlayerScore(username, score);
         }
 
         var date = DateTime.Parse(playerScore_Serializable.CreationDate);
-        return new PlayerScore(username, mark, date);
+        return new PlayerScore(username, score, date);
     }
 
     public string PlayerName

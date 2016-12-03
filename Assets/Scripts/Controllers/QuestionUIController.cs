@@ -162,7 +162,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 
         questionText.text = question.Text;
 
-        DisableAnswers();
+        DisableAllAnswersInteractivity();
         HideAllAnswers();
 
         yield return StartCoroutine(WaitUntilAnswersAreHiddenCoroutine());
@@ -225,7 +225,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         var button = answersButtons[buttonIndex];
         button.onClick.AddListener(() =>
             {
-                DisableAnswers();
+                DisableAllAnswersInteractivity();
 
                 if (ShouldPlayButtonAnimation)
                 {
@@ -238,14 +238,6 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
                     OnAnswerClick(this, new AnswerEventArgs(answer, isCorrect));
                 }
             });
-    }
-
-    void DisableAnswers()
-    {
-        for (int i = 0; i < answersButtons.Length; i++)
-        {
-            answersButtons[i].interactable = false;
-        }
     }
 
     void ColorAnswer(string answer, bool fireClickEvent)
@@ -282,6 +274,21 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         }
     }
 
+    int GetAnswerIndex(string answer)
+    {        
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            var answerText = answersTexts[i].text;
+
+            if (answerText == answer)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public void ChangeAnswersCount(int count)
     {
         if (this.answersButtons.Length == count)
@@ -311,6 +318,18 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         {
             answersAnimators[index].SetTrigger("hide");    
         }
+    }
+
+    public void HideAnswer(string answer)
+    {
+        int answerIndex = GetAnswerIndex(answer);
+
+        if (answerIndex == -1)
+        {
+            throw new ArgumentException("Answer doesnt exists");
+        }
+
+        HideAnswer(answerIndex);
     }
 
     public void HideAllAnswers()
@@ -356,5 +375,30 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
     public void _OnCorrectAnswerAnimEnd(string answer)
     {
         OnAnswerClick(this, new AnswerEventArgs(answer, true));
+    }
+
+    public void DisableAnswerInteractivity(string answer)
+    {
+        var answerIndex = GetAnswerIndex(answer);
+
+        if (answerIndex == -1)
+        {
+            throw new ArgumentException("Answer doesnt exists");
+        }
+
+        DisableAnswerInteractivity(answerIndex);
+    }
+
+    public void DisableAnswerInteractivity(int answerIndex)
+    {
+        answersButtons[answerIndex].interactable = false;
+    }
+
+    public void DisableAllAnswersInteractivity()
+    {
+        for (int i = 0; i < AnswersCount; i++)
+        {
+            DisableAnswerInteractivity(i);
+        }
     }
 }

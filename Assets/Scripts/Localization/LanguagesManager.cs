@@ -67,6 +67,7 @@ public class LanguagesManager : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad(this);
         languagePath = Environment.CurrentDirectory + "/Languages/";
         CollectLanguages();
     }

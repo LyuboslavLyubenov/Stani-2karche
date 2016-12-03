@@ -99,7 +99,7 @@ public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
     void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
     {
         var connectedClientsIdsNames = connectedClientsData.OnlinePlayers.ToDictionary(c => c.ConnectionId, c => c.Username);
-        connectedClientsIdsNames.Add(NetworkCommandData.CODE_OptionClientConnectionIdValueAI, LanguagesManager.Instance.GetValue("Computer"));
+        connectedClientsIdsNames.Add(NetworkCommandData.CODE_Option_ClientConnectionId_AI, LanguagesManager.Instance.GetValue("Computer"));
 
         loadingUI.SetActive(false);
         callAFriendUI.SetActive(true);

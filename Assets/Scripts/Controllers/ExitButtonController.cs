@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ExitButtonController : MonoBehaviour
 {
-    public void LoadMainScreen()
+    void Start()
+    {
+        GetComponent<Button>().onClick.AddListener(LoadMainScreen);
+    }
+
+    void LoadMainScreen()
     {
         SceneManager.LoadScene("StartScreen");        
     }

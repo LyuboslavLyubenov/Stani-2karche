@@ -6,6 +6,7 @@ public class LanguageUITextsFiller : ExtendedMonoBehaviour
 {
     void Awake()
     {
+        DontDestroyOnLoad(this);
         LanguagesManager.Instance.OnLoadedLanguage += (sender, args) => TranslateAllTextComponentsInScene();
         SceneManager.activeSceneChanged += OnSceneChanged;
     }

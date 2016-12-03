@@ -103,10 +103,6 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
 
         if (elapsedTime < timeToAnswerInSeconds)
         {
-            var remainingTimeInSeconds = timeToAnswerInSeconds - elapsedTime;
-            var remainingTimeToAnswerCommand = new NetworkCommandData("RemainingTimeToAnswer");
-            remainingTimeToAnswerCommand.AddOption("TimeInSeconds", remainingTimeInSeconds.ToString());
-            NetworkManager.SendClientCommand(friendConnectionId, remainingTimeToAnswerCommand);
         }
         else
         {   
@@ -116,6 +112,8 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
 
             NetworkManager.SendClientCommand(senderConnectionId, answerTimeoutCommandData);
             NetworkManager.SendClientCommand(friendConnectionId, answerTimeoutCommandData);
+
+
         }
     }
 
@@ -132,12 +130,12 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
 
                         if (shouldSendCorrect)
                         {
-                            SendMainPlayerAnswerResponse(NetworkCommandData.CODE_OptionClientConnectionIdValueAI, correctAnswer);    
+                            SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, correctAnswer);    
                         }
                         else
                         {
                             var rndWrongAnswer = question.Answers.Where(a => a != correctAnswer).ToArray().GetRandomElement();
-                            SendMainPlayerAnswerResponse(NetworkCommandData.CODE_OptionClientConnectionIdValueAI, rndWrongAnswer);
+                            SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, rndWrongAnswer);
                         }
                     }, (exception) =>
                     {
@@ -155,6 +153,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
             {
                 var sendQuestionToFriend = new NetworkCommandData("LoadQuestion");
                 var questionJSON = JsonUtility.ToJson(question);
+                sendQuestionToFriend.AddOption("TimeToAnswer", LocalGameData.SecondsForAnswerQuestion.ToString());
                 sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
 
                 NetworkManager.SendClientCommand(friendConnectionId, sendQuestionToFriend);
@@ -193,7 +192,11 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
         settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
         NetworkManager.SendClientCommand(senderConnectionId, settingsCommandData);
 
-        if (friendConnectionId == NetworkCommandData.CODE_OptionClientConnectionIdValueAI)
+        var remainingTimeCommand = new NetworkCommandData("RemainingTime");
+        remainingTimeCommand.AddOption("TimeInSeconds", LocalGameData.SecondsForAnswerQuestion.ToString());
+        NetworkManager.SendClientCommand(friendConnectionId, remainingTimeCommand);
+
+        if (friendConnectionId == NetworkCommandData.CODE_Option_ClientConnectionId_AI)
         {
             SendComputerGeneratedAnswer();
         }

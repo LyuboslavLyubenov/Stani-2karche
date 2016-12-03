@@ -178,7 +178,13 @@
     <CallAFriend>
         <Text>Избери приятел на които искаш да се обадиш</Text>
     </CallAFriend>
-
+    
     <Computer>Компютър</Computer>
+    
+    <Settings>
+        <Text>Настройки</Text>
+        <Username>Потребителско име</Username>
+        <Language>Език</Language>
+    </Settings>
         
 </Stani2karche>

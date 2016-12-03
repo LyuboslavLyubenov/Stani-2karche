@@ -6,7 +6,7 @@ using System.IO;
 
 public abstract class DialogSwitcher : ExtendedMonoBehaviour
 {
-    public TeacherDialogController TeacherDialogController;
+    public DialogController TeacherDialogController;
 
     /// <summary>
     /// Path to dialogs file starting from Resources folder

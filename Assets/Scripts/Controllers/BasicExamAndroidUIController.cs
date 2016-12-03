@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System;
-using System.Collections;
 
 //Mediator
 public class BasicExamAndroidUIController : MonoBehaviour
@@ -12,10 +10,14 @@ public class BasicExamAndroidUIController : MonoBehaviour
     public GameObject EndGameUI;
     public GameObject LeaderboardUI;
     public GameObject UnableToConnectUI;
+    public GameObject SecondsRemainingUI;
+    public GameObject MainPlayerDialogUI;
 
     public ClientNetworkManager NetworkManager;
     public NotificationsServiceController NotificationsController;
-    public ConnectionSettingsUIController connectionSettingsUIController;
+    public ConnectionSettingsUIController ConnectionSettingsUIController;
+    public SecondsRemainingUIController SecondsRemainingUIController;
+    public DialogController MainPlayerDialogController;
 
     public Animator QuestionPanelAnimator;
 
@@ -43,7 +45,6 @@ public class BasicExamAndroidUIController : MonoBehaviour
     void LoadCommands()
     {
         NetworkManager.CommandsManager.AddCommand("AnswerTimeout", new ReceivedAnswerTimeoutCommand(QuestionPanelUI, NotificationsController));
-        NetworkManager.CommandsManager.AddCommand("RemainingTimeToAnswer", new ReceivedRemainingTimeToAnswerCommand(OnReceivedRemainingTime));
         NetworkManager.CommandsManager.AddCommand("LoadQuestion", new ReceivedLoadQuestionCommand(LoadQuestion));
         NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
     }
@@ -53,7 +54,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
         NetworkManager.OnConnectedEvent += OnConnected;
         NetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
         questionUIController.OnAnswerClick += OnAnswerClick;
-        connectionSettingsUIController.OnConnectToServer += ((sender, e) => ConnectTo(e.IPAddress));
+        ConnectionSettingsUIController.OnConnectToServer += ((sender, e) => ConnectTo(e.IPAddress));
         unableToConnectController.OnTryingAgainToConnectToServer += (sender, args) => ConnectTo(args.IPAddress);
     }
 
@@ -62,25 +63,16 @@ public class BasicExamAndroidUIController : MonoBehaviour
         var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
         answerSelectedCommand.AddOption("Answer", args.Answer);
         NetworkManager.SendServerCommand(answerSelectedCommand);
+
         QuestionPanelUI.SetActive(false);
+        SecondsRemainingUI.SetActive(false);
+        //MainPlayerDialogUI.SetActive(true);
     }
 
     void OnConnected(object sender, EventArgs args)
     {
-        //hide loading bar
         ConnectingUI.SetActive(false);
-        //vibrate if mobile
         Vibrate();
-    }
-
-    void OnReceivedRemainingTime(RemainingTimeEventArgs remainingTime)
-    {
-        var timeInSeconds = remainingTime.Seconds;
-
-        if (timeInSeconds > 0 && timeInSeconds <= 10 && timeInSeconds % 2 == 0)
-        {
-            QuestionPanelAnimator.SetTrigger("shake");
-        }
     }
 
     /// <summary>
@@ -99,11 +91,14 @@ public class BasicExamAndroidUIController : MonoBehaviour
         UnableToConnectUI.SetActive(true);
     }
 
-    void LoadQuestion(ISimpleQuestion question)
+    void LoadQuestion(ISimpleQuestion question, int timeToAnswer)
     {
         QuestionPanelUI.SetActive(true);
         questionUIController.LoadQuestion(question);
-        NotificationsController.AddNotification(Color.gray, "Имаш 30 секунди за отговор. Кликни на мен за да ме махнеш");
+
+        SecondsRemainingUI.SetActive(true);
+        SecondsRemainingUIController.SetSeconds(timeToAnswer);
+        SecondsRemainingUIController.Paused = false;
     }
 
     public void ConnectTo(string ip)

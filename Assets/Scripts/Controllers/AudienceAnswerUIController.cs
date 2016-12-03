@@ -16,7 +16,7 @@ public class AudienceAnswerUIController : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            var answerChance = transform.GetChild(i);
+            var answerChance = transform.GetChild(i).gameObject;
             Destroy(answerChance);
         }
 

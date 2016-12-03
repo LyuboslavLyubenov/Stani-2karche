@@ -320,7 +320,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
 
     public string GetClientUsername(int connectionId)
     {
-        if (connectionId == NetworkCommandData.CODE_OptionClientConnectionIdValueAI)
+        if (connectionId == NetworkCommandData.CODE_Option_ClientConnectionId_AI)
         {
             return LanguagesManager.Instance.GetValue("Computer");
         }

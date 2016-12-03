@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections;
 using CielaSpike;
+using System.Reflection;
 
 public class LeaderboardSerializer : MonoBehaviour
 {
@@ -42,7 +43,8 @@ public class LeaderboardSerializer : MonoBehaviour
 
     string GetEndPath()
     {
-        return string.Format("{0}\\{1}\\{2}", FilePath, LevelCategory, FileName);
+        var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
+        return string.Format("{0}\\{1}\\{2}\\{3}", execPath, FilePath, LevelCategory, FileName);
     }
 
     IEnumerator LoadLeaderboardAsync()

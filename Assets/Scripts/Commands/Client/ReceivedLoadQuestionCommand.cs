@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class ReceivedLoadQuestionCommand : INetworkManagerCommand
 {
-    Action<ISimpleQuestion> OnReceivedQuestion;
+    public delegate void OnReceivedQuestion(ISimpleQuestion question,int timeToAnswer);
 
-    public ReceivedLoadQuestionCommand(Action<ISimpleQuestion> OnReceivedQuestion)
+    OnReceivedQuestion onReceivedQuestion;
+
+    public ReceivedLoadQuestionCommand(OnReceivedQuestion onReceivedQuestion)
     {
-        if (OnReceivedQuestion == null)
+        if (onReceivedQuestion == null)
         {
-            throw new ArgumentNullException("OnReceivedQuestion");
+            throw new ArgumentNullException("onReceivedQuestion");
         }
             
-        this.OnReceivedQuestion = OnReceivedQuestion;
+        this.onReceivedQuestion = onReceivedQuestion;
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var questionJSON = commandsOptionsValues["QuestionJSON"];
+        var timeToAnswer = int.Parse(commandsOptionsValues["TimeToAnswer"]);
         var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
-        OnReceivedQuestion(question.Deserialize());
+        onReceivedQuestion(question.Deserialize(), timeToAnswer);
     }
 }

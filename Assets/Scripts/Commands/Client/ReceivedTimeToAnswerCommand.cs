@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System;
 
-public class ReceivedRemainingTimeToAnswerCommand : INetworkManagerCommand
+public class ReceivedTimeToAnswerCommand : INetworkManagerCommand
 {
-    Action<RemainingTimeEventArgs> onReceivedRemainingTime;
+    Action<int> onReceivedRemainingTime;
 
-    public ReceivedRemainingTimeToAnswerCommand(Action<RemainingTimeEventArgs> onReceivedRemainingTime)
+    public ReceivedTimeToAnswerCommand(Action<int> onReceivedRemainingTime)
     { 
         if (onReceivedRemainingTime == null)
         {
@@ -19,8 +19,6 @@ public class ReceivedRemainingTimeToAnswerCommand : INetworkManagerCommand
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var secondsRemaining = int.Parse(commandsOptionsValues["TimeInSeconds"]);
-        var remainingTimeEventArgs = new RemainingTimeEventArgs(secondsRemaining);
-
-        onReceivedRemainingTime(remainingTimeEventArgs);
+        onReceivedRemainingTime(secondsRemaining);
     }
 }

@@ -6,9 +6,9 @@ using System;
 public class NetworkCommandData
 {
     //TODO: Move in external class
-    public const int CODE_OptionClientConnectionIdValueAll = -1;
-    public const int CODE_OptionClientConnectionIdValueRandom = -2;
-    public const int CODE_OptionClientConnectionIdValueAI = -3;
+    public const int CODE_Option_ClientConnectionId_All = -1;
+    public const int CODE_Option_ClientConnectionId_Random = -2;
+    public const int CODE_Option_ClientConnectionId_AI = -3;
 
     const int MinCommandNameLength = 3;
     const int MinOptionNameLength = 3;

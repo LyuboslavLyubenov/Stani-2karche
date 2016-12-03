@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class LanguageLoader : ExtendedMonoBehaviour
+﻿public class LanguageLoader : ExtendedMonoBehaviour
 {
     void Start()
     {
