@@ -22,14 +22,7 @@ public class LeaderboardSerializer : MonoBehaviour
     {
         get
         {
-            if (!loaded)
-            {
-                return null;
-            }
-            else
-            {
-                return leaderboard;    
-            }
+            return !loaded ? null : leaderboard;
         }
     }
 
@@ -109,14 +102,19 @@ public class LeaderboardSerializer : MonoBehaviour
         {
             for (int i = 0; i < scores.Count; i++)
             {
-                var scoreData = scores[i].Split(',');
+                var scoreData = scores[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                if (scoreData[0] == playerScore.PlayerName)
+                if (scoreData[0] == playerScore.PlayerName && int.Parse(scoreData[1]) < playerScore.Score)
                 {
                     playerIndex = i;
                     break;
                 }
             }    
+        }
+
+        if (playerIndex == -1)
+        {
+            yield break;
         }
 
         var data = new List<string>();

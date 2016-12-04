@@ -54,11 +54,22 @@ public class JokersData
         OnUsedJoker(this, new JokerTypeEventArgs(jokerType));
     }
 
+    void _AddJoker(Type joker)
+    {
+        availableJokers.Add(joker);
+        OnAddedJoker(this, new JokerTypeEventArgs(joker));
+    }
+
     public void AddJoker(Type joker)
     {
         JokerUtils.ValidateJokerType(joker);
-        availableJokers.Add(joker);
-        OnAddedJoker(this, new JokerTypeEventArgs(joker));
+        _AddJoker(joker);
+    }
+
+    public void AddJoker<T>() where T : IJoker
+    {
+        var joker = typeof(T);
+        _AddJoker(joker);
     }
 
     public void RemoveJoker(Type joker)
@@ -70,5 +81,11 @@ public class JokersData
 
         availableJokers.Remove(joker);
         OnRemovedJoker(this, new JokerTypeEventArgs(joker));
+    }
+
+    public void RemoveJoker<T>()
+    {
+        var joker = typeof(T);
+        RemoveJoker(joker);
     }
 }

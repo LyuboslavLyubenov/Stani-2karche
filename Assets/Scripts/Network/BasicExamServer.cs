@@ -65,9 +65,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
         AttachEventHandlers();
 
-        MainPlayerData.JokersData.AddJoker(typeof(HelpFromFriendJoker));
-        MainPlayerData.JokersData.AddJoker(typeof(AskAudienceJoker));
-        MainPlayerData.JokersData.AddJoker(typeof(DisableRandomAnswersJoker));
+        MainPlayerData.JokersData.AddJoker<HelpFromFriendJoker>();
+        MainPlayerData.JokersData.AddJoker<AskAudienceJoker>();
+        MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
     }
 
     void Start()
