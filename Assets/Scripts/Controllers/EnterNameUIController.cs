@@ -1,14 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Collections;
 
 public class EnterNameUIController : ExtendedMonoBehaviour
 {
     public GameObject UsernameTextField;
     public EventHandler<UserNameEventArgs> OnUsernameSet = delegate
     {
-
     };
 
     void Start()
@@ -23,7 +21,7 @@ public class EnterNameUIController : ExtendedMonoBehaviour
 
     void Initialize()
     {
-        if (!PlayerPrefsEncryptionUtils.HasKey("Username"))
+        if (PlayerPrefsEncryptionUtils.HasKey("Username"))
         {
             var username = PlayerPrefsEncryptionUtils.GetString("Username");
             OnUsernameSet(this, new UserNameEventArgs(username));
@@ -39,8 +37,13 @@ public class EnterNameUIController : ExtendedMonoBehaviour
     public void SaveUsername()
     {
         var usernameText = UsernameTextField.GetComponent<Text>();
-        PlayerPrefsEncryptionUtils.SetString("Username", usernameText.text);
+        SaveUsername(usernameText.text);
+    }
+
+    public void SaveUsername(string username)
+    {
+        PlayerPrefsEncryptionUtils.SetString("Username", username);
         Deactivate();
-        OnUsernameSet(this, new UserNameEventArgs(usernameText.text));
+        OnUsernameSet(this, new UserNameEventArgs(username));        
     }
 }
