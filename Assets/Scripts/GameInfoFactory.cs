@@ -44,6 +44,7 @@ public class GameInfoFactory : MonoBehaviour
         }
         else
         {
+            //TODO
             throw new NotImplementedException();
         }
     }

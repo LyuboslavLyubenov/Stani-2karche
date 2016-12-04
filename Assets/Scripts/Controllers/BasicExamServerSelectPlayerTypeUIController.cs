@@ -15,18 +15,8 @@ public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
             throw new Exception("Server is full");
         }
 
-        HostButton.gameObject.SetActive(false);
-        GuestButton.gameObject.SetActive(false);
-
-        if (gameInfo.CanConnectAsAudience)
-        {
-            HostButton.gameObject.SetActive(true);
-        }
-
-        if (gameInfo.CanConnectAsMainPlayer)
-        {
-            GuestButton.gameObject.SetActive(true);
-        }
+        HostButton.gameObject.SetActive(gameInfo.CanConnectAsMainPlayer);
+        GuestButton.gameObject.SetActive(gameInfo.CanConnectAsAudience);
 
         var serverInfo = gameInfo.ServerInfo;
         var serverIP = (serverInfo.ExternalIpAddress == string.Empty) ? serverInfo.LocalIPAddress : serverInfo.ExternalIpAddress;

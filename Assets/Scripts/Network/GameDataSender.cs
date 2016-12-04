@@ -18,7 +18,7 @@ public class GameDataSender : MonoBehaviour
     {
         NetworkManager.OnClientConnected += OnClientConnected;
         LocalGameData.OnMarkIncrease += OnMarkIncrease;
-        LocalGameData.OnLoaded += (sender, args) => SendLoadedGameData();
+        LocalGameData.OnLoaded += OnGameDataLoaded;
 
         var getCurrentQuestionCommand = new ReceivedGetCurrentQuestionCommand(LocalGameData, NetworkManager);
         var getRandomQuestionCommand = new ReceivedGetRandomQuestionCommand(LocalGameData, NetworkManager);
@@ -38,11 +38,22 @@ public class GameDataSender : MonoBehaviour
         NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
     }
 
+    void OnGameDataLoaded(object sender, EventArgs args)
+    {
+        var connectedClients = NetworkManager.ConnectedClientsConnectionId;
+
+        for (int i = 0; i < connectedClients.Length; i++)
+        {
+            var clientId = connectedClients[i];
+            SendLoadedGameData(clientId);
+        }
+    }
+
     void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
     {
         if (LocalGameData.Loaded)
         {
-            SendLoadedGameData();
+            SendLoadedGameData(args.ConnectionId);
         }
     }
 
@@ -50,15 +61,14 @@ public class GameDataSender : MonoBehaviour
     {
         var commandData = new NetworkCommandData("GameDataMark");
         commandData.AddOption("Mark", args.Mark.ToString());
-
         NetworkManager.SendAllClientsCommand(commandData);
     }
 
-    void SendLoadedGameData()
+    void SendLoadedGameData(int connectionId)
     {
         var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
         loadedGameDataCommand.AddOption("LevelCategory", LocalGameData.LevelCategory);
-        NetworkManager.SendAllClientsCommand(loadedGameDataCommand);
+        NetworkManager.SendClientCommand(connectionId, loadedGameDataCommand);
     }
 
     void OnSentQuestionToClient(object sender, ServerSentQuestionEventArgs args)

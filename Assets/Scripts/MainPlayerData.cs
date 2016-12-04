@@ -68,26 +68,29 @@ public class MainPlayerData : IPlayerData
         OnDisconnected = delegate
         {
         };
+
+        IsConnected = false;
     }
 
     void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
     {
-        if (ConnectionId == args.ConnectionId)
-        {
-            IsConnected = false;
-            OnDisconnected(this, args);
-        }
-    }
-
-    void OnMainPlayerConnecting(int connectionId)
-    {
-        if (IsConnected)
+        if (ConnectionId != args.ConnectionId)
         {
             return;
         }
 
+        networkManager.CommandsManager.AddCommand("MainPlayerConnecting", new ReceivedMainPlayerConnectingCommand(OnMainPlayerConnecting));
+
+        IsConnected = false;
+        OnDisconnected(this, args);
+    }
+
+    void OnMainPlayerConnecting(int connectionId)
+    {
         ConnectionId = connectionId;
         IsConnected = true;
+
+        networkManager.CommandsManager.RemoveCommand("MainPlayerConnecting");
 
         OnConnected(this, new ClientConnectionDataEventArgs(connectionId));
     }

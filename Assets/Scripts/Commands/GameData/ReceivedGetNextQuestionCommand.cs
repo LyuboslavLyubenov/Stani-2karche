@@ -5,7 +5,7 @@ public class ReceivedGetNextQuestionCommand : GameDataGetQuestionAbstractCommand
 {
     public ReceivedGetNextQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
         : base(gameData, networkManager)
-    {       
+    {     
     }
 
     public override void Execute(Dictionary<string, string> commandsOptionsValues)

@@ -123,7 +123,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
         var jokerTypeNameUpper = args.Joker.GetType().Name.ToUpperInvariant();
 
-        if (jokerTypeNameUpper == ("DisableRandomAnswersJoker").ToUpperInvariant())
+        if (jokerTypeNameUpper == typeof(DisableRandomAnswersJoker).Name.ToUpperInvariant())
         {
             return;
         }

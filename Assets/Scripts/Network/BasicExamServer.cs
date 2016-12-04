@@ -68,6 +68,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         MainPlayerData.JokersData.AddJoker<HelpFromFriendJoker>();
         MainPlayerData.JokersData.AddJoker<AskAudienceJoker>();
         MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
+
     }
 
     void Start()
@@ -127,6 +128,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
         HelpFromFriendJokerRouter.OnFinished += (sender, args) => paused = false;
         AskAudienceJokerRouter.OnFinished += (sender, args) => paused = false;
         ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => OnClientSelected(args.ConnectionId);
+        GameDataSender.OnBeforeSend += OnBeforeSendQuestion;
     }
 
     void InitializeMainPlayerData()
@@ -156,6 +158,15 @@ public class BasicExamServer : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand("Surrender", surrenderCommand);
     }
 
+    void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
+    {
+        if (args.QuestionType == QuestionRequestType.Next &&
+            args.ClientId != MainPlayerData.ConnectionId)
+        {
+            throw new Exception("Client id " + args.ClientId + " doesnt have premission to get next question.");
+        }
+    }
+
     void OnMainPlayerSelectedJoker(object sender, EventArgs args)
     {
         var jokerName = sender.GetType().Name
@@ -163,7 +174,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
                 .Replace("Command", "")
                 .ToUpperInvariant();
         
-        if (jokerName == ("DisableRandomAnswersJoker").ToUpperInvariant())
+        if (jokerName == typeof(DisableRandomAnswersJoker).Name.ToUpperInvariant())
         {
             return;
         }
