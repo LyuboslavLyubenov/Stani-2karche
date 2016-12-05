@@ -5,6 +5,12 @@ public class CommandsManager
 {
     Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
 
+    public void AddCommand(INetworkManagerCommand commandToExecute)
+    {
+        var commandName = commandToExecute.GetType().Name.Replace("Command", "");
+        AddCommand(commandName, commandToExecute);
+    }
+
     public void AddCommand(string commandName, INetworkManagerCommand commandToExecute)
     {
         if (string.IsNullOrEmpty(commandName))
@@ -24,6 +30,12 @@ public class CommandsManager
         }
 
         commands[commandName].Add(commandToExecute);
+    }
+
+    public void RemoveCommand<T>()
+    {
+        var commandName = typeof(T).Name.Replace("Command", "");
+        RemoveCommand(commandName);
     }
 
     public void RemoveCommand(string commandName)

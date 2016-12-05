@@ -80,6 +80,12 @@ public class NetworkCommandData
     {
     }
 
+    public static NetworkCommandData From<T>()
+    {
+        var commandName = typeof(T).Name.Replace("Command", "");
+        return new NetworkCommandData(commandName);
+    }
+
     public void AddOption(string optionName, string optionValue)
     {
         ValidateOption(optionName, optionValue);
@@ -199,9 +205,12 @@ public class NetworkCommandData
         {
             command.Append(OptionsBeginDelitemerSymbol);
         }
-        
-        foreach (var parameter in Options.ToList())
+
+        var optionsKeyValues = Options.ToArray();
+
+        for (int i = 0; i < optionsKeyValues.Length; i++)
         {
+            var parameter = optionsKeyValues[i];
             var parameterName = parameter.Key;
             var parameterValue = parameter.Value;
 
@@ -213,10 +222,7 @@ public class NetworkCommandData
                 continue;
             }
 
-            command.Append(parameterName)
-                .Append(OptionValueDelitemerSymbol)
-                .Append(parameterValue)
-                .Append(OptionsDelitemerSymbol);
+            command.Append(parameterName).Append(OptionValueDelitemerSymbol).Append(parameterValue).Append(OptionsDelitemerSymbol);
         }
 
         return command.ToString();
