@@ -268,8 +268,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
         var correctAnsweredQuestionsCount = StatisticsCollector.CorrectAnsweredQuestions.Count;
         var totalTimeSpentThinking = StatisticsCollector.QuestionsSpentTime.Values.ToList().Sum();
         var avgSpentTimeThinking = totalTimeSpentThinking / StatisticsCollector.QuestionsSpentTime.Values.Count;
-        var score = (correctAnsweredQuestionsCount * 10000) / (float)avgSpentTimeThinking;
-        return (int)score;
+        var score = (correctAnsweredQuestionsCount * 10000) / avgSpentTimeThinking;
+        return score;
     }
 
     void SavePlayerScoreToLeaderboard()

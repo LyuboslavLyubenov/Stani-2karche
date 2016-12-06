@@ -5,7 +5,7 @@ using System;
 
 public class ClientNetworkManager : ExtendedMonoBehaviour
 {
-    const int Port = 7788;
+    public const int Port = 7788;
 
     const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
     const float SendKeepAliveRequestDelayInSeconds = 3f;
@@ -91,6 +91,8 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void Awake()
     {
+        NetworkTransport.Init();
+
         OnConnectedEvent = delegate
         {
         };
@@ -106,12 +108,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
 
     void Start()
     {
-        #if DEVELOPMENT_BUILD
-
-        PlayerPrefsEncryptionUtils.DeleteKey("Username");        
-        #endif
-
-
         ConfigureCommands();
         ConfigureClient();
 
@@ -307,7 +303,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
             Disconnect();
         }
 
-        NetworkTransport.Init();
         HostTopology topology = new HostTopology(connectionConfig, 2);
         genericHostId = NetworkTransport.AddHost(topology, 0);
 
@@ -319,7 +314,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         if (networkError != NetworkConnectionError.NoError)
         {
             var errorMessage = NetworkErrorUtils.GetMessage(networkError);
-            ShowNotification(Color.red, errorMessage);
             Debug.LogError(errorMessage);
             Disconnect();
         }
@@ -367,7 +361,6 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
         }
 
         NetworkTransport.RemoveHost(genericHostId);
-        NetworkTransport.Shutdown();
 
         var networkError = (NetworkError)error;
 
@@ -404,6 +397,7 @@ public class ClientNetworkManager : ExtendedMonoBehaviour
                 networkErrorsCount++;
             });
     }
+
 
     #region DEBUG
 

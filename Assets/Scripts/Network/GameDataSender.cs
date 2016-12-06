@@ -32,10 +32,12 @@ public class GameDataSender : MonoBehaviour
         getRandomQuestionCommand.OnSentQuestion += OnSentQuestionToClient;
         getNextQuestionCommand.OnSentQuestion += OnSentQuestionToClient;
 
-        NetworkManager.CommandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("GameDataGetCurrentQuestion", getCurrentQuestionCommand);
-        NetworkManager.CommandsManager.AddCommand("GameDataGetRandomQuestion", getRandomQuestionCommand);
-        NetworkManager.CommandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
+        var commandsManager = NetworkManager.CommandsManager;
+
+        commandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(NetworkManager));
+        commandsManager.AddCommand("GameDataGetCurrentQuestion", getCurrentQuestionCommand);
+        commandsManager.AddCommand("GameDataGetRandomQuestion", getRandomQuestionCommand);
+        commandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
     }
 
     void OnGameDataLoaded(object sender, EventArgs args)

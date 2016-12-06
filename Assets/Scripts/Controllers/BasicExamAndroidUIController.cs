@@ -2,7 +2,7 @@
 using System;
 
 //Mediator
-public class BasicExamAndroidUIController : MonoBehaviour
+public class BasicExamAndroidUIController : ExtendedMonoBehaviour
 {
     public GameObject QuestionPanelUI;
     public GameObject ConnectionSettingsUI;
@@ -22,7 +22,7 @@ public class BasicExamAndroidUIController : MonoBehaviour
     public Animator QuestionPanelAnimator;
 
     QuestionUIController questionUIController = null;
-    UnableToConnectUIController unableToConnectController = null;
+    UnableToConnectUIController unableToConnectUIController = null;
 
     void Start()
     {
@@ -32,14 +32,24 @@ public class BasicExamAndroidUIController : MonoBehaviour
         LoadCommands();
         AttachEventsHooks();
 
-        var ipToConnect = PlayerPrefs.GetString("ServerIP");
-        ConnectTo(ipToConnect);
+        var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
+        var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
+
+        CoroutineUtils.WaitForFrames(1, () =>
+            {
+                NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
+                    {
+                        var serverIp = isRunning ? localIp : externalIp;
+                        unableToConnectUIController.ServerIP = serverIp;
+                        ConnectTo(serverIp);
+                    });
+            });
     }
 
     void LoadControllers()
     {
         questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
-        unableToConnectController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
+        unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
     }
 
     void LoadCommands()
@@ -55,7 +65,6 @@ public class BasicExamAndroidUIController : MonoBehaviour
         NetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
         questionUIController.OnAnswerClick += OnAnswerClick;
         ConnectionSettingsUIController.OnConnectToServer += ((sender, e) => ConnectTo(e.IPAddress));
-        unableToConnectController.OnTryingAgainToConnectToServer += (sender, args) => ConnectTo(args.IPAddress);
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)

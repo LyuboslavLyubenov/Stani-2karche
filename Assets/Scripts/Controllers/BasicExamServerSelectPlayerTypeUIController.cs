@@ -19,27 +19,22 @@ public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
         GuestButton.gameObject.SetActive(gameInfo.CanConnectAsAudience);
 
         var serverInfo = gameInfo.ServerInfo;
-        var serverIP = (serverInfo.ExternalIpAddress == string.Empty) ? serverInfo.LocalIPAddress : serverInfo.ExternalIpAddress;
-        PlayerPrefsEncryptionUtils.SetString("ServerIP", serverIP);
+
+        if (!string.IsNullOrEmpty(serverInfo.ExternalIpAddress))
+        {
+            PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", serverInfo.ExternalIpAddress);    
+        }
+
+        PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", serverInfo.LocalIPAddress);
     }
 
     public void OpenHostScene()
     {
-        if (!PlayerPrefsEncryptionUtils.HasKey("ServerIP"))
-        {
-            throw new Exception("Not set serverIP");
-        }
-
         SceneManager.LoadScene("BasicExamMainPlayer");
     }
 
     public void OpenGuestScene()
     {
-        if (!PlayerPrefsEncryptionUtils.HasKey("ServerIP"))
-        {
-            throw new Exception("Not set serverIP");
-        }
-
         SceneManager.LoadScene("BasicExamAudience");
     }
 }

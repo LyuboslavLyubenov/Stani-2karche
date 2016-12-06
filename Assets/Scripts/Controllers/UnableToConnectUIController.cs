@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
 using System;
 
 public class UnableToConnectUIController : MonoBehaviour
 {
-    public EventHandler<IpEventArgs> OnTryingAgainToConnectToServer = delegate
+    public EventHandler OnTryingAgainToConnectToServer = delegate
     {
     };
 
+    public string ServerIP
+    {
+        get;
+        set;
+    }
+
+    public ClientNetworkManager NetworkManager;
+
     public void TryAgainToConnectToServer()
     {
-        var serverIP = PlayerPrefsEncryptionUtils.GetString("ServerIP");
-        OnTryingAgainToConnectToServer(this, new IpEventArgs(serverIP));
+        NetworkManager.ConnectToHost(ServerIP);
+        OnTryingAgainToConnectToServer(this, new EventArgs());
         gameObject.SetActive(false);
     }
 

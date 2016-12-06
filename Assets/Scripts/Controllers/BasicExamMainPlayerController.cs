@@ -44,11 +44,36 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
         InitializeCommands();
-        StartServerIfPlayerIsHost();
         AttachEventHandlers();
+        StartServerIfPlayerIsHost();
         ConnectToServer();
 
         LoadingUI.SetActive(true);
+    }
+
+    void ConnectToServer()
+    {
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+        {
+            //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
+            unableToConnectUIController.ServerIP = "127.0.0.1";
+            CoroutineUtils.WaitForSeconds(9, () => NetworkManager.ConnectToHost("127.0.0.1"));    
+        }
+        else
+        {
+            var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
+            var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
+
+            CoroutineUtils.WaitForFrames(1, () =>
+                {
+                    NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
+                        {
+                            var serverIp = isRunning ? localIp : externalIp;
+                            unableToConnectUIController.ServerIP = serverIp;
+                            NetworkManager.ConnectToHost(serverIp);
+                        });
+                });
+        }
     }
 
     void InitializeCommands()
@@ -73,25 +98,15 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void AttachEventHandlers()
     {
-        unableToConnectUIController.OnTryingAgainToConnectToServer += (sender, args) =>
-        {
-            LoadingUI.SetActive(true);
-            NetworkManager.ConnectToHost(args.IPAddress);
-        };
-
-        NetworkManager.OnConnectedEvent += OnConnectedToServer;
-        NetworkManager.OnDisconnectedEvent += OnDisconnectedFromServer;
-
         QuestionUIController.OnAnswerClick += OnAnswerClick;
         QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
 
         gameData.OnMarkIncrease += (sender, args) => MarkPanelController.SetMark(args.Mark.ToString());
 
-        ChooseCategoryUIController.OnLoadedCategories += (sender, args) =>
-        {
-            LoadingUI.SetActive(false);
-        };
+        ChooseCategoryUIController.OnLoadedCategories += (sender, args) => LoadingUI.SetActive(false);
         ChooseCategoryUIController.OnChoosedCategory += OnChoosedCategory;
+
+        unableToConnectUIController.OnTryingAgainToConnectToServer += (s, a) => LoadingUI.SetActive(true);
 
         AvailableJokersUIController.OnAddedJoker += OnAddedJoker;
         AvailableJokersUIController.OnUsedJoker += OnUsedJoker;
@@ -161,7 +176,10 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     void OnConnectedToServer(object sender, EventArgs args)
     {
         AvailableJokersUIController.ClearAll();
+
         LoadingUI.SetActive(false);
+        UnableToConnectUI.SetActive(false);   
+        ChooseCategoryUIController.gameObject.SetActive(false);
 
         var commandData = new NetworkCommandData("MainPlayerConnecting");
         NetworkManager.SendServerCommand(commandData);
@@ -207,15 +225,6 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         {
             NotificationService.AddNotification(color, message);
         }
-    }
-
-    void ConnectToServer()
-    {
-        CoroutineUtils.WaitForSeconds(8f, () =>
-            {
-                var ip = PlayerPrefsEncryptionUtils.GetString("ServerIP");
-                NetworkManager.ConnectToHost(ip);
-            });
     }
 
     void StartLoadingCategories()
