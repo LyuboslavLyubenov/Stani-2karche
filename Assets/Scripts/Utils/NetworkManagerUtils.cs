@@ -53,7 +53,7 @@ public class NetworkManagerUtils : MonoBehaviour
 
         int recvConnectionId;
         int recvChannelId;
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[512];
         int recSize;
         byte recError;
         var eventType = NetworkTransport.ReceiveFromHost(genericHostId, out recvConnectionId, out recvChannelId, buffer, buffer.Length, out recSize, out recError);
@@ -64,6 +64,9 @@ public class NetworkManagerUtils : MonoBehaviour
 
         byte disconnectError;
         NetworkTransport.Disconnect(genericHostId, connectionId, out disconnectError);
+        NetworkTransport.RemoveHost(genericHostId);
+
+        yield return new WaitForEndOfFrame();
 
         isRunning(isUp);
     }
