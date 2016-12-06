@@ -35,7 +35,7 @@ public class LocalCategoriesReader : IAvailableCategoriesReader
     bool IsValidLevel(string path)
     {
         var files = Directory.GetFiles(path).Select(f => f.Substring(path.Length + 1)).ToArray(); 
-        var isValidLevel = files.All(f => RequiredFiles.Contains(f));
+        var isValidLevel = RequiredFiles.All(rf => files.Contains(rf));
         return isValidLevel;
     }
 }
