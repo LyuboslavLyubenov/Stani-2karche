@@ -186,5 +186,8 @@
         <Username>Потребителско име</Username>
         <Language>Език</Language>
     </Settings>
-        
+
+    <KickMessages>
+        <UsernameContainsBannedWords>Потребителското име съдържа забранени дума</UsernameContainsBannedWords>
+    </KickMessages>
 </Stani2karche>

@@ -167,7 +167,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
         }    
     }
 
-    IList<int> GetDeadClientsIds(ICollection<int> aliveClientsIds)
+    IList<int> GetDeadClientsIds()
     {
         var result = new List<int>();
 
@@ -191,7 +191,7 @@ public class ServerNetworkManager : ExtendedMonoBehaviour
             return;
         }
 
-        var deadClientsIds = GetDeadClientsIds(aliveClientsId);
+        var deadClientsIds = GetDeadClientsIds();
 
         for (int i = 0; i < deadClientsIds.Count; i++)
         {
