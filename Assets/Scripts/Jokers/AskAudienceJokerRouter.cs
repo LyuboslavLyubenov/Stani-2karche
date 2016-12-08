@@ -57,22 +57,13 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         elapsedTime++;
 
-        if (AreFinishedVoting())
+        if (!AreFinishedVoting())
         {
-            TellClientsThatJokerIsDeactivated();
-            SendMainPlayerVoteResult();
             return;
         }
-
-        var remainingTimeInSeconds = timeToAnswerInSeconds - elapsedTime;
-        SendRemainingTimeToAnswerToAudience(remainingTimeInSeconds);
-    }
-
-    void SendRemainingTimeToAnswerToAudience(int remainingTimeInSeconds)
-    {
-        var remainingTimeToAnswerCommand = new NetworkCommandData("RemainingTimeToAnswer");
-        remainingTimeToAnswerCommand.AddOption("TimeInSeconds", remainingTimeInSeconds.ToString());
-        NetworkManager.SendAllClientsCommand(remainingTimeToAnswerCommand, senderConnectionId);
+            
+        TellClientsThatJokerIsDeactivated();
+        SendMainPlayerVoteResult();
     }
 
     void NoMoreTimeToAnswer()

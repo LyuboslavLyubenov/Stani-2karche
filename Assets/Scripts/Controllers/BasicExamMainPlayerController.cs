@@ -46,34 +46,35 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         InitializeCommands();
         AttachEventHandlers();
         StartServerIfPlayerIsHost();
-        ConnectToServer();
+
+        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+        {
+            PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
+            //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
+            CoroutineUtils.WaitForSeconds(9, ConnectToServer);
+        }
+        else
+        {
+            ConnectToServer();
+        }
 
         LoadingUI.SetActive(true);
     }
 
     void ConnectToServer()
     {
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-        {
-            //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-            unableToConnectUIController.ServerIP = "127.0.0.1";
-            CoroutineUtils.WaitForSeconds(9, () => NetworkManager.ConnectToHost("127.0.0.1"));    
-        }
-        else
-        {
-            var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
-            var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
+        var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
+        var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
 
-            CoroutineUtils.WaitForFrames(1, () =>
-                {
-                    NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
-                        {
-                            var serverIp = isRunning ? localIp : externalIp;
-                            unableToConnectUIController.ServerIP = serverIp;
-                            NetworkManager.ConnectToHost(serverIp);
-                        });
-                });
-        }
+        CoroutineUtils.WaitForFrames(1, () =>
+            {
+                NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
+                    {
+                        var serverIp = isRunning ? localIp : externalIp;
+                        unableToConnectUIController.ServerIP = serverIp;
+                        NetworkManager.ConnectToHost(serverIp);
+                    });
+            });
     }
 
     void InitializeCommands()
@@ -98,6 +99,9 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void AttachEventHandlers()
     {
+        NetworkManager.OnConnectedEvent += OnConnectedToServer;
+        NetworkManager.OnDisconnectedEvent += OnDisconnectedFromServer;
+
         QuestionUIController.OnAnswerClick += OnAnswerClick;
         QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
 

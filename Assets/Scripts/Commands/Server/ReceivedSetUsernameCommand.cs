@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
 
 public class ReceivedSetUsernameCommand : INetworkManagerCommand
@@ -30,7 +28,8 @@ public class ReceivedSetUsernameCommand : INetworkManagerCommand
         else
         {
             var username = commandsParamsValues["Username"];
-            networkManager.SetClientUsername(connectionId, username);   
+            networkManager.SetClientUsername(connectionId, username);
+            return;
         }
     }
     

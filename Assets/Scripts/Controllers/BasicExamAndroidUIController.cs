@@ -31,7 +31,11 @@ public class BasicExamAndroidUIController : ExtendedMonoBehaviour
         LoadControllers();
         LoadCommands();
         AttachEventsHooks();
+        ConnectToServer();
+    }
 
+    void ConnectToServer()
+    {
         var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
         var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
 

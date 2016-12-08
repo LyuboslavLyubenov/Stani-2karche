@@ -101,19 +101,12 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
 
         elapsedTime++;
 
-        if (elapsedTime < timeToAnswerInSeconds)
+        if (elapsedTime >= timeToAnswerInSeconds)
         {
-        }
-        else
-        {   
             Deactivate();
-
             var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
-
             NetworkManager.SendClientCommand(senderConnectionId, answerTimeoutCommandData);
             NetworkManager.SendClientCommand(friendConnectionId, answerTimeoutCommandData);
-
-
         }
     }
 
@@ -152,7 +145,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
         LocalGameData.GetCurrentQuestion((question) =>
             {
                 var sendQuestionToFriend = new NetworkCommandData("LoadQuestion");
-                var questionJSON = JsonUtility.ToJson(question);
+                var questionJSON = JsonUtility.ToJson(question.Serialize());
                 sendQuestionToFriend.AddOption("TimeToAnswer", LocalGameData.SecondsForAnswerQuestion.ToString());
                 sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
 
@@ -172,6 +165,13 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
             });
     }
 
+    void SendJokerSettings(int connectionId)
+    {
+        var settingsCommandData = new NetworkCommandData("HelpFromFriendJokerSettings");
+        settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
+        NetworkManager.SendClientCommand(connectionId, settingsCommandData);
+    }
+
     public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
     {
         if (Activated)
@@ -188,13 +188,7 @@ public class HelpFromFriendJokerRouter : ExtendedMonoBehaviour, IJokerRouter
         this.friendConnectionId = friendConnectionId;
         this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
 
-        var settingsCommandData = new NetworkCommandData("HelpFromFriendJokerSettings");
-        settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
-        NetworkManager.SendClientCommand(senderConnectionId, settingsCommandData);
-
-        var remainingTimeCommand = new NetworkCommandData("RemainingTime");
-        remainingTimeCommand.AddOption("TimeInSeconds", LocalGameData.SecondsForAnswerQuestion.ToString());
-        NetworkManager.SendClientCommand(friendConnectionId, remainingTimeCommand);
+        SendJokerSettings(senderConnectionId);
 
         if (friendConnectionId == NetworkCommandData.CODE_Option_ClientConnectionId_AI)
         {

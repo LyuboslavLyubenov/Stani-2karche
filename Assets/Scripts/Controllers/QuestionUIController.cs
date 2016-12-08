@@ -106,7 +106,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         {
             var parent = (i % 2 == 0) ? leftColumn : rightColumn;
             var parentRectTransform = (i % 2 == 0) ? leftColumn : rightColumn;
-            var parentHeight = parentRectTransform.sizeDelta.y;
+            var parentHeight = parentRectTransform.rect.size.y;
             var answerObjsInColumn = (int)Math.Ceiling(count / 2d);
             var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
             var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
