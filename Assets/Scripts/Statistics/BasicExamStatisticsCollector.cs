@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class BasicExamStatisticsCollector : MonoBehaviour
 {
@@ -70,6 +71,18 @@ public class BasicExamStatisticsCollector : MonoBehaviour
     {
         get;
         private set;
+    }
+
+    public int PlayerScore
+    {
+        get
+        {
+            var correctAnsweredQuestionsCount = CorrectAnsweredQuestions.Count;
+            var totalTimeSpentThinking = QuestionsSpentTime.Values.ToList().Sum();
+            var avgSpentTimeThinking = totalTimeSpentThinking / QuestionsSpentTime.Values.Count;
+            var score = (correctAnsweredQuestionsCount * 10000) / avgSpentTimeThinking;
+            return score;
+        }
     }
 
     void Start()

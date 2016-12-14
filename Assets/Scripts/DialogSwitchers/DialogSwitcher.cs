@@ -39,18 +39,19 @@ public abstract class DialogSwitcher : ExtendedMonoBehaviour
         }
     }
 
-    protected virtual void Start()
+    protected virtual void Initialize()
     {
-        if (TeacherDialogController == null)
-        {
-            throw new Exception("TeacherDialogController is null on " + this.gameObject.name);
-        }    
-
         teacherDialogObj = TeacherDialogController.gameObject;
 
-        var dialogFile = Resources.Load<TextAsset>(DialogFilePath).text;
-        var dialogFileLines = dialogFile.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] dialogFileLines;
 
+        #if UNITY_ANDROID
+        var file = Resources.Load<TextAsset>(DialogFilePath).text;
+        dialogFileLines = file.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        #else
+        dialogFileLines = File.ReadAllLines(DialogFilePath);
+        #endif
+            
         for (int i = 0; i < dialogFileLines.Length - 2; i += 3)
         {
             var tutorialName = dialogFileLines[i];

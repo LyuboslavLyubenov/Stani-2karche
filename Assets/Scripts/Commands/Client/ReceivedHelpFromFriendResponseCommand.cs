@@ -28,7 +28,7 @@ public class ReceivedHelpFromFriendResponseCommand : IOneTimeExecuteCommand
 
         if (friendAnswerUIController == null)
         {
-            throw new Exception("Friend answer ui doenst have FriendAnswerUIController component");
+            throw new ArgumentException("Friend answer ui doenst have FriendAnswerUIController component");
         }
 
         FinishedExecution = false;

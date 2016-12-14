@@ -27,6 +27,38 @@ public class NetworkManagerUtils : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Get ip needed to connect to the server from PlayerPrefsEncryptionUtils. 
+    /// If server is available and user internet connection is ok should return ip that can be used to connect to the server. 
+    /// Otherwise onError 
+    /// </summary>
+    public void GetServerIp(Action<string> onFound, Action onError)
+    {
+        var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
+        var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
+
+        NetworkManagerUtils.Instance.IsServerUp(externalIp, ClientNetworkManager.Port, (isRunningExternal) =>
+            {
+
+                if (isRunningExternal)
+                {
+                    onFound(externalIp);
+                    return;
+                }
+
+                NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunningLocal) =>
+                    {
+                        if (isRunningLocal)
+                        {
+                            onFound(localIp);
+                            return;
+                        }
+
+                        onError();
+                    });    
+            });
+    }
+
     public void IsServerUp(string ip, int port, Action<bool> isUp)
     {
         StartCoroutine(IsServerUpCoroutine(ip, port, isUp));

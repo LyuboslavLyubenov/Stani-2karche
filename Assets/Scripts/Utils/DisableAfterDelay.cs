@@ -10,7 +10,7 @@ public class DisableAfterDelay : MonoBehaviour
     public bool DisableAfterClick = true;
     public bool UseAnimator = false;
 
-    public event EventHandler<RemainingTimeEventArgs> OnTimePass
+    public event EventHandler<TimeInSecondsEventArgs> OnTimePass
     {
         add
         {
@@ -40,7 +40,7 @@ public class DisableAfterDelay : MonoBehaviour
         }
     }
 
-    EventHandler<RemainingTimeEventArgs> onTimePass = delegate
+    EventHandler<TimeInSecondsEventArgs> onTimePass = delegate
     {
     };
 
@@ -86,7 +86,7 @@ public class DisableAfterDelay : MonoBehaviour
         {
             yield return new WaitForSeconds(1f);
             PassedSeconds++;
-            onTimePass(this, new RemainingTimeEventArgs(DelayInSeconds - PassedSeconds));
+            onTimePass(this, new TimeInSecondsEventArgs(DelayInSeconds - PassedSeconds));
         }
 
         Disable();

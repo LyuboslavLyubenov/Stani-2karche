@@ -7,11 +7,11 @@ public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
 
     public bool RepeatTutorials = false;
 
-    protected override void Start()
+    protected override void Initialize()
     {
         string teacherDialogsFilePath = "Tutorials Texts\\basicExamPlayerTeacherDialogs";
         base.DialogFilePath = teacherDialogsFilePath;
-        base.Start();
+        base.Initialize();
     }
 
     public void ExplainCategorySelect()

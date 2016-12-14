@@ -47,7 +47,7 @@ public class WaitingToAnswerUIController : MonoBehaviour
         remainingSecondsText.text = remainingSeconds + " секунди";
     }
 
-    void OnTimePass(object sender, RemainingTimeEventArgs args)
+    void OnTimePass(object sender, TimeInSecondsEventArgs args)
     {
         UpdateTimer(args.Seconds);
     }

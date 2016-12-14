@@ -1,11 +1,8 @@
-using UnityEngine;
-using System.Collections;
 using System;
-using System.Linq;
 
-public class RemainingTimeEventArgs : System.EventArgs
+public class TimeInSecondsEventArgs : System.EventArgs
 {
-    public RemainingTimeEventArgs(int seconds)
+    public TimeInSecondsEventArgs(int seconds)
     {
         if (seconds < 0)
         {

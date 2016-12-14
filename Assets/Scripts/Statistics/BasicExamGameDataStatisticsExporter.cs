@@ -198,6 +198,11 @@ public class BasicExamGameDataStatisticsExporter : IStatisticsExporter
             var path = string.Format("{0}\\{1}{2}\\{3}.xls", execPath, LocalGameData.LevelPath, gameData.LevelCategory, mark);
             var newPath = path + ".new";
 
+            if (File.Exists(newPath))
+            {
+                File.Delete(newPath);
+            }
+
             File.Copy(path, newPath);
 
             var fileInfo = new FileInfo(path);

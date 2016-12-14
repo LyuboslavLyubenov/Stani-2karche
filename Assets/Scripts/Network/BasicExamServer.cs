@@ -55,6 +55,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     int remainingTimeToAnswerMainQuestion = -1;
     // when using joker
     bool paused = false;
+    bool playerSentAnswer = false;
 
     void Awake()
     {
@@ -68,7 +69,6 @@ public class BasicExamServer : ExtendedMonoBehaviour
         MainPlayerData.JokersData.AddJoker<HelpFromFriendJoker>();
         MainPlayerData.JokersData.AddJoker<AskAudienceJoker>();
         MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
-
     }
 
     void Start()
@@ -114,6 +114,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
             if (args.QuestionType == QuestionRequestType.Next)
             {
                 remainingTimeToAnswerMainQuestion = GameData.SecondsForAnswerQuestion;
+                playerSentAnswer = false;
             }
         };
         
@@ -160,10 +161,17 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
     {
-        if (args.QuestionType == QuestionRequestType.Next &&
-            args.ClientId != MainPlayerData.ConnectionId)
+        if (args.QuestionType == QuestionRequestType.Next)
         {
-            throw new Exception("Client id " + args.ClientId + " doesnt have premission to get next question.");
+            if (args.ClientId != MainPlayerData.ConnectionId)
+            {
+                throw new Exception("Client id " + args.ClientId + " doesnt have premission to get next question.");    
+            }
+
+            if (!playerSentAnswer)
+            {
+                throw new Exception("MainPlayer must answer current question before requesting new one.");
+            }
         }
     }
 
@@ -254,6 +262,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
                 CoroutineUtils.WaitForFrames(1, () => EndGame());
             }, 
             Debug.LogException);
+
+        playerSentAnswer = true;
     }
 
     void SendEndGameInfo()
@@ -263,19 +273,10 @@ public class BasicExamServer : ExtendedMonoBehaviour
         NetworkManager.SendAllClientsCommand(commandData);
     }
 
-    int CalculateScore()
-    {
-        var correctAnsweredQuestionsCount = StatisticsCollector.CorrectAnsweredQuestions.Count;
-        var totalTimeSpentThinking = StatisticsCollector.QuestionsSpentTime.Values.ToList().Sum();
-        var avgSpentTimeThinking = totalTimeSpentThinking / StatisticsCollector.QuestionsSpentTime.Values.Count;
-        var score = (correctAnsweredQuestionsCount * 10000) / avgSpentTimeThinking;
-        return score;
-    }
-
     void SavePlayerScoreToLeaderboard()
     {
         var mainPlayerName = MainPlayerData.Username;
-        var playerScore = new PlayerScore(mainPlayerName, CalculateScore(), DateTime.Now);
+        var playerScore = new PlayerScore(mainPlayerName, StatisticsCollector.PlayerScore, DateTime.Now);
 
         LeaderboardSerializer.SavePlayerScore(playerScore);
     }
