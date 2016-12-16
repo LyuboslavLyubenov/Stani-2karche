@@ -2,11 +2,9 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Timers;
 
-public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
+public class HelpFromFriendJoker : IJoker
 {
-    const int SettingsReceiveTimeoutInSeconds = 5;
     //0% = 0f, 100% = 1f
     const float ChanceForGeneratingCorrectAnswer = 0.85f;
 
@@ -14,16 +12,14 @@ public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
     {
     };
 
-    ClientNetworkManager networkManager;
-
     CallAFriendUIController callAFriendUIController;
+
+    ClientNetworkManager networkManager;
 
     GameObject callAFriendUI;
     GameObject friendAnswerUI;
     GameObject waitingToAnswerUI;
     GameObject loadingUI;
-
-    Timer receiveSettingsTimeoutTimer;
 
     public Sprite Image
     {
@@ -37,21 +33,11 @@ public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
         set;
     }
 
-    public EventHandler OnExecuted
-    {
-        get;
-        set;
-    }
-
     public bool Activated
     {
-        get
-        {
-            return activated;
-        }
+        get;
+        private set;
     }
-
-    bool activated = false;
 
     public HelpFromFriendJoker(ClientNetworkManager networkManager, 
                                GameObject callAFriendUI, 
@@ -105,63 +91,76 @@ public class HelpFromFriendJoker : IJoker, INetworkOperationExecutedCallback
         callAFriendUI.SetActive(true);
 
         callAFriendUIController.SetContacts(connectedClientsIdsNames);
-        callAFriendUIController.OnCalledPlayer += (sender, args) =>
-        {
-            var selectedJokerCommand = new NetworkCommandData("SelectedHelpFromFriendJoker");
-            selectedJokerCommand.AddOption("SendClientId", args.PlayerConnectionId.ToString());
-            networkManager.SendServerCommand(selectedJokerCommand);
-            
-            loadingUI.SetActive(true);
+        callAFriendUIController.OnCalledPlayer += OnCalledPlayer;
+    }
 
-            var receivedSettingsCommand = new ReceivedHelpFromFriendJokerSettingsCommand(networkManager, loadingUI, waitingToAnswerUI);
-            receivedSettingsCommand.OnFinishedExecution += (s, a) => OnReceivedSettings();
+    void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
+    {
+        callAFriendUI.SetActive(false);
+        loadingUI.SetActive(true);
 
-            networkManager.CommandsManager.AddCommand("HelpFromFriendJokerSettings", receivedSettingsCommand);
+        var resultRetriever = AskPlayerQuestionResultRetriever.Instance;
 
-            receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-            receiveSettingsTimeoutTimer.AutoReset = false;
-            receiveSettingsTimeoutTimer.Elapsed += (s, e) => OnReceiveSettingsTimeout();
-        };
+        resultRetriever.OnReceivedSettings += OnReceivedSettings;
+        resultRetriever.OnReceiveSettingsTimeout += OnReceiveSettingsTimeout;
+        resultRetriever.OnReceivedAnswer += OnReceivedAnswer;
+        resultRetriever.OnReceiveAnswerTimeout += OnReceiveAnswerTimeout;
+
+        resultRetriever.Activate(args.PlayerConnectionId);
+    }
+
+    void OnReceivedSettings(object sender, JokerSettingsEventArgs args)
+    {
+        loadingUI.SetActive(false);
+        waitingToAnswerUI.SetActive(true);
+        waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = args.TimeToAnswerInSeconds;
+    }
+
+    void OnReceiveSettingsTimeout(object sender, EventArgs args)
+    {
+        loadingUI.SetActive(false);
+
+        var message = LanguagesManager.Instance.GetValue("Errors/NetworkErrors/Timeout");
+        NotificationsServiceController.Instance.AddNotification(Color.red, message);
+
+        Activated = false;
+    }
+
+    void OnReceivedAnswer(object sender, AskPlayerResponseEventArgs args)
+    {
+        waitingToAnswerUI.SetActive(false);
+        friendAnswerUI.SetActive(true);
+        friendAnswerUI.GetComponent<FriendAnswerUIController>().SetResponse(args.Username, args.Answer);
+
+        Activated = false;
+    }
+
+    void OnReceiveAnswerTimeout(object sender, EventArgs args)
+    {
+        waitingToAnswerUI.SetActive(false);
+
+        var message = LanguagesManager.Instance.GetValue("Errors/NetworkErrors/Timeout");
+        NotificationsServiceController.Instance.AddNotification(Color.red, message);
+
+        Activated = false;
     }
 
     void BeginReceiveConnectedClientsIdsNames()
     {
         var commandData = new NetworkCommandData("ConnectedClientsIdsNames");
         networkManager.SendServerCommand(commandData);
-        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
-    }
-
-    void OnReceiveSettingsTimeout()
-    {
-        ThreadUtils.Instance.RunOnMainThread(() =>
-            {
-                activated = false;
-                loadingUI.SetActive(false);
-                receiveSettingsTimeoutTimer.Dispose();
-                networkManager.CommandsManager.RemoveCommand("HelpFromFriendJokerSettings");
-            });
-    }
-
-    void OnReceivedSettings()
-    {
-        receiveSettingsTimeoutTimer.Stop();
-        receiveSettingsTimeoutTimer.Dispose();
-
-        var responseCommand = new ReceivedHelpFromFriendResponseCommand(waitingToAnswerUI, friendAnswerUI);
-        responseCommand.OnFinishedExecution += (sender, args) =>
-        {
-            if (OnExecuted != null)
-            {
-                OnExecuted(this, EventArgs.Empty);
-            }
-        };
-
-        networkManager.CommandsManager.AddCommand("HelpFromFriendJokerResponse", responseCommand);
+        networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ConnectedClientsDataCommand(OnReceivedConnectedClientsIdsNames));
     }
 
     public void Activate()
     {
         loadingUI.SetActive(true);
         BeginReceiveConnectedClientsIdsNames();
+        Activated = true;
+
+        if (OnActivated != null)
+        {
+            OnActivated(this, EventArgs.Empty);    
+        }
     }
 }

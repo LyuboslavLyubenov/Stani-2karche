@@ -79,11 +79,11 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void InitializeCommands()
     {
-        NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
-        NetworkManager.CommandsManager.AddCommand("AddHelpFromFriendJoker", new ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddAskAudienceJoker", new ReceivedAddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand("AddDisableRandomAnswersJoker", new ReceivedAddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
-        NetworkManager.CommandsManager.AddCommand("LoadedGameData", new ReceivedLoadedGameDataCommand(OnLoadedGameData));
+        NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(EndGameUI, LeaderboardUI));
+        NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
+        NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI, NotificationService));
+        NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
+        NetworkManager.CommandsManager.AddCommand(new LoadedGameDataCommand(OnLoadedGameData));
     }
 
     void OnLoadedGameData(string levelCategory)
@@ -125,6 +125,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
     void OnAddedJoker(object sender, JokerEventArgs args)
     {
+        //TODO REFACTOR
         var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
 
         if (jokerExecutedCallback == null)
@@ -185,18 +186,18 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         UnableToConnectUI.SetActive(false);   
         ChooseCategoryUIController.gameObject.SetActive(false);
 
-        var commandData = new NetworkCommandData("MainPlayerConnecting");
+        var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
         NetworkManager.SendServerCommand(commandData);
 
         if (PlayerPrefs.HasKey("LoadedGameData"))
         {
             var loadedGameData = new NetworkCommandData("LoadedGameData");
+            loadedGameData.AddOption("LevelCategory", gameData.LevelCategory);
             NetworkManager.CommandsManager.Execute(loadedGameData);
             return;
         }
 
         ChooseCategoryUIController.gameObject.SetActive(true);
-        //StartLoadingCategories();
     }
 
     void OnAnswerClick(object sender, AnswerEventArgs args)

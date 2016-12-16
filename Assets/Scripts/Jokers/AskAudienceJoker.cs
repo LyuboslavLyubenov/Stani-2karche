@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 using System;
-using System.Timers;
 
-public class AskAudienceJoker : IJoker, INetworkOperationExecutedCallback
+public class AskAudienceJoker : IJoker
 {
-    const int SettingsReceiveTimeoutInSeconds = 10;
-
     public const int MinClientsForOnlineVote_Release = 4;
     public const int MinClientsForOnlineVote_Development = 1;
 
@@ -19,7 +16,9 @@ public class AskAudienceJoker : IJoker, INetworkOperationExecutedCallback
     GameObject loadingUI;
     GameObject audienceAnswerUI;
 
-    Timer receiveSettingsTimeoutTimer;
+    AudienceAnswerPollResultRetriever pollDataRetriever;
+
+    NotificationsServiceController notificationsServiceController;
 
     public Sprite Image
     {
@@ -33,19 +32,18 @@ public class AskAudienceJoker : IJoker, INetworkOperationExecutedCallback
         set;
     }
 
-    public EventHandler OnExecuted
-    {
-        get;
-        set;
-    }
-
     public bool Activated
     {
         get;
         private set;
     }
 
-    public AskAudienceJoker(ClientNetworkManager networkManager, GameObject waitingToAnswerUI, GameObject audienceAnswerUI, GameObject loadingUI)
+    public AskAudienceJoker(
+        ClientNetworkManager networkManager, 
+        GameObject waitingToAnswerUI, 
+        GameObject audienceAnswerUI, 
+        GameObject loadingUI,
+        NotificationsServiceController notificationsServiceController)
     {
         if (networkManager == null)
         {
@@ -66,69 +64,73 @@ public class AskAudienceJoker : IJoker, INetworkOperationExecutedCallback
         {
             throw new ArgumentNullException("loadingUI");
         }
+
+        if (notificationsServiceController == null)
+        {
+            throw new ArgumentNullException("notificationsServiceController");
+        }
             
         this.networkManager = networkManager;
         this.waitingToAnswerUI = waitingToAnswerUI;
         this.audienceAnswerUI = audienceAnswerUI;
         this.loadingUI = loadingUI;
+        this.pollDataRetriever = AudienceAnswerPollResultRetriever.Instance;
+        this.notificationsServiceController = notificationsServiceController;
 
         Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
+
+        this.pollDataRetriever.OnReceiveSettingsTimeout += OnReceiveSettingsTimeout;
+        this.pollDataRetriever.OnReceivedSettings += OnReceivedJokerSettings;
+        this.pollDataRetriever.OnAudienceVoted += Retriever_OnAudienceVoted;
+        this.pollDataRetriever.OnReceiveAudienceVoteTimeout += OnReceiveAudienceVoteTimeout;
     }
 
-    void OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
+    void OnReceiveSettingsTimeout(object sender, EventArgs args)
     {
-        ThreadUtils.Instance.RunOnMainThread(() =>
-            {
-                receiveSettingsTimeoutTimer.Dispose();
-                networkManager.CommandsManager.RemoveCommand("AskAudienceJokerSettings");
-            });
+        loadingUI.SetActive(false);
+        waitingToAnswerUI.SetActive(false);
+
+        var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
+        notificationsServiceController.AddNotification(Color.red, message);
     }
 
-    void OnReceivedJokerSettings(int timeToAnswerInSeconds)
+    void OnReceivedJokerSettings(object sender, JokerSettingsEventArgs args)
     {
         loadingUI.SetActive(false);
         waitingToAnswerUI.SetActive(true);
-        waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = timeToAnswerInSeconds;
+        waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = args.TimeToAnswerInSeconds;
+    }
 
-        receiveSettingsTimeoutTimer.Stop();
+    void Retriever_OnAudienceVoted(object sender, AudienceVoteEventArgs args)
+    {
+        waitingToAnswerUI.SetActive(false);
+        audienceAnswerUI.SetActive(true);
 
-        loadingUI.SetActive(false);
-        waitingToAnswerUI.SetActive(true);
+        var answersVotes = args.AnswersVotes;
+        audienceAnswerUI.GetComponent<AudienceAnswerUIController>()
+            .SetVoteCount(answersVotes, true);
 
-        var receivedAskAudienceVoteResultCommand = new ReceivedAskAudienceVoteResultCommand(audienceAnswerUI);
-        receivedAskAudienceVoteResultCommand.OnFinishedExecution += (sender, args) =>
-        {
-            waitingToAnswerUI.SetActive(false);
+        OnAudienceVoted(this, args);
+    }
 
-            if (OnExecuted != null)
-            {
-                OnExecuted(this, EventArgs.Empty);
-            }
-        };
+    void OnReceiveAudienceVoteTimeout(object sender, EventArgs args)
+    {
+        waitingToAnswerUI.SetActive(false);
 
-        networkManager.CommandsManager.AddCommand("AskAudienceJokerVoteResult", receivedAskAudienceVoteResultCommand);
-
-        Activated = true;
-
-        if (OnActivated != null)
-        {
-            OnActivated(this, EventArgs.Empty);
-        }
+        var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
+        notificationsServiceController.AddNotification(Color.red, message);
     }
 
     public void Activate()
     {
         loadingUI.SetActive(true);
+        pollDataRetriever.Activate();
 
-        var selectedAskAudienceJokerCommand = new NetworkCommandData("SelectedAskAudienceJoker");
-        networkManager.SendServerCommand(selectedAskAudienceJokerCommand);
+        if (OnActivated != null)
+        {
+            OnActivated(this, EventArgs.Empty);    
+        }
 
-        var receiveJokerSettingsCommand = new ReceivedAskAudienceJokerSettingsCommand(OnReceivedJokerSettings);
-
-        networkManager.CommandsManager.AddCommand("AskAudienceJokerSettings", receiveJokerSettingsCommand);
-
-        receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-        receiveSettingsTimeoutTimer.AutoReset = false;
-        receiveSettingsTimeoutTimer.Elapsed += OnReceiveSettingsTimeout;
+        Activated = true;
     }
 }

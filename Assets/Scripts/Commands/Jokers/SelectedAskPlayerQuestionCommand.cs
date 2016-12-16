@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System;
 
-public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+public class SelectedAskPlayerQuestionCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
 {
     public EventHandler OnExecuted
     {
@@ -12,12 +12,12 @@ public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
     ServerNetworkManager networkManager;
 
     MainPlayerData mainPlayerData;
-    HelpFromFriendJokerRouter jokerServerRouter;
+    AskPlayerQuestionRouter jokerServerRouter;
     int timeToAnswerInSeconds;
 
     Type helpFromFriendJokerType;
 
-    public ReceivedSelectedHelpFromFriendJokerCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, HelpFromFriendJokerRouter jokerServerRouter, int timeToAnswerInSeconds)
+    public SelectedAskPlayerQuestionCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, AskPlayerQuestionRouter jokerServerRouter, int timeToAnswerInSeconds)
     {
         if (networkManager == null)
         {
@@ -44,7 +44,7 @@ public class ReceivedSelectedHelpFromFriendJokerCommand : INetworkManagerCommand
     public void Execute(Dictionary<string, string> commandsOptionsValues)
     {
         var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-        var sendClientId = int.Parse(commandsOptionsValues["SendClientId"]);
+        var sendClientId = int.Parse(commandsOptionsValues["PlayerConnectionId"]);
 
         if (!mainPlayerData.JokersData.AvailableJokers.Contains(helpFromFriendJokerType) || !networkManager.IsConnected(senderConnectionId))
         {

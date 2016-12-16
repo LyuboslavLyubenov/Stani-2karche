@@ -1,9 +1,7 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Linq;
 
-public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+public class SelectedAudiencePollCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
 {
     public EventHandler OnExecuted
     {
@@ -12,14 +10,14 @@ public class ReceivedSelectedAskAudienceJokerCommand : INetworkManagerCommand, I
     }
 
     MainPlayerData mainPlayerData;
-    AskAudienceJokerRouter askAudienceJokerRouter;
+    AudienceAnswerPollRouter askAudienceJokerRouter;
     ServerNetworkManager networkManager;
     Type askAudienceJokerType;
     int timeToAnswerInSeconds;
 
-    public ReceivedSelectedAskAudienceJokerCommand(
+    public SelectedAudiencePollCommand(
         MainPlayerData mainPlayerData, 
-        AskAudienceJokerRouter askAudienceJokerRouter, 
+        AudienceAnswerPollRouter askAudienceJokerRouter, 
         ServerNetworkManager networkManager, 
         int timeToAnswerInSeconds
     )

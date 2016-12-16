@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Linq;
 
-public class ReceivedAskAudienceVoteResultCommand : IOneTimeExecuteCommand
+public class AudiencePollResultCommand : IOneTimeExecuteCommand
 {
     public EventHandler OnFinishedExecution
     {
@@ -18,19 +18,16 @@ public class ReceivedAskAudienceVoteResultCommand : IOneTimeExecuteCommand
         private set;
     }
 
-    AudienceAnswerUIController audienceAnswerUIController;
+    Action<Dictionary<string, int>> onReceivedAnswersVotes;
 
-    GameObject audienceAnswerUI;
-
-    public ReceivedAskAudienceVoteResultCommand(GameObject audienceAnswerUI)
+    public AudiencePollResultCommand(Action<Dictionary<string, int>> onReceivedAnswersVotes)
     {
-        if (audienceAnswerUI == null)
+        if (onReceivedAnswersVotes == null)
         {
-            throw new ArgumentNullException("audienceAnswerUI");
+            throw new ArgumentNullException("onReceivedAnswersVotes");
         }
-         
-        this.audienceAnswerUI = audienceAnswerUI;
-        this.audienceAnswerUIController = audienceAnswerUI.GetComponent<AudienceAnswerUIController>();
+            
+        this.onReceivedAnswersVotes = onReceivedAnswersVotes;
     }
 
     public void Execute(Dictionary<string, string> commandsOptionsValues)
@@ -47,8 +44,7 @@ public class ReceivedAskAudienceVoteResultCommand : IOneTimeExecuteCommand
             answersVotesData.Add(answer, voteCount);
         }
 
-        audienceAnswerUI.SetActive(true);
-        audienceAnswerUIController.SetVoteCount(answersVotesData, true);
+        onReceivedAnswersVotes(answersVotesData);
 
         FinishedExecution = true;
 

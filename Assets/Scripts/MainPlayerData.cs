@@ -58,7 +58,7 @@ public class MainPlayerData : IPlayerData
         JokersData = new JokersData(networkManager);
 
         networkManager.OnClientDisconnected += OnClientDisconnected;
-        networkManager.CommandsManager.AddCommand("MainPlayerConnecting", new ReceivedMainPlayerConnectingCommand(OnMainPlayerConnecting));
+        networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(OnMainPlayerConnecting));
 
         //lazy motherf*cker
         OnConnected = delegate
@@ -79,7 +79,7 @@ public class MainPlayerData : IPlayerData
             return;
         }
 
-        networkManager.CommandsManager.AddCommand("MainPlayerConnecting", new ReceivedMainPlayerConnectingCommand(OnMainPlayerConnecting));
+        networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(OnMainPlayerConnecting));
 
         IsConnected = false;
         OnDisconnected(this, args);
@@ -90,7 +90,7 @@ public class MainPlayerData : IPlayerData
         ConnectionId = connectionId;
         IsConnected = true;
 
-        networkManager.CommandsManager.RemoveCommand("MainPlayerConnecting");
+        networkManager.CommandsManager.RemoveCommand<MainPlayerConnectingCommand>();
 
         OnConnected(this, new ClientConnectionDataEventArgs(connectionId));
     }

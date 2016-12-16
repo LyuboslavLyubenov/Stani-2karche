@@ -8,7 +8,7 @@
             <WrongConnection>Връзката не съществува</WrongConnection>
             <WrongChannel>Грешен канал</WrongChannel>
             <NoResources>Няма ресурси за да извърши заявката</NoResources>
-            <Timeout>Таймаут на заявката</Timeout>
+            <Timeout>Проблем с връзката със сървъра.</Timeout>
             <MessageToLong>Съобщението е прекалено голямо за да бъде изпратено. Провери буфера на клеинта/сървъра</MessageToLong>
             <WrongOperation>Не се подържа този вид заявка</WrongOperation>
             <VersionMismatch>Версиите на клиента и сървъра не съвпадат</VersionMismatch>

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Timers;
 using System.Linq;
 
-public class ReceivedAskAudienceJokerSettingsCommand : IOneTimeExecuteCommand
+public class AudiencePollSettingsCommand : IOneTimeExecuteCommand
 {
     public delegate void OnReceivedSettings(int timeToAnswerInSeconds);
 
@@ -22,7 +22,7 @@ public class ReceivedAskAudienceJokerSettingsCommand : IOneTimeExecuteCommand
         set;
     }
 
-    public ReceivedAskAudienceJokerSettingsCommand(OnReceivedSettings onReceivedSettings)
+    public AudiencePollSettingsCommand(OnReceivedSettings onReceivedSettings)
     {
         if (onReceivedSettings == null)
         {

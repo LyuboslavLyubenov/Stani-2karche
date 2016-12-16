@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Linq;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
@@ -21,8 +20,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     public LeaderboardSerializer LeaderboardSerializer;
 
-    public HelpFromFriendJokerRouter HelpFromFriendJokerRouter;
-    public AskAudienceJokerRouter AskAudienceJokerRouter;
+    public AskPlayerQuestionRouter AskPlayerQuestionRouter;
+    public AudienceAnswerPollRouter AudiencePollRouter;
     public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
 
     public ConnectedClientsUIController ConnectedClientsUIController;
@@ -126,8 +125,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
             }
         };
         
-        HelpFromFriendJokerRouter.OnFinished += (sender, args) => paused = false;
-        AskAudienceJokerRouter.OnFinished += (sender, args) => paused = false;
+        AskPlayerQuestionRouter.OnFinished += (sender, args) => paused = false;
+        AudiencePollRouter.OnSentResult += (sender, args) => paused = false;
         ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => OnClientSelected(args.ConnectionId);
         GameDataSender.OnBeforeSend += OnBeforeSendQuestion;
     }
@@ -141,11 +140,11 @@ public class BasicExamServer : ExtendedMonoBehaviour
     void InitializeCommands()
     {
         var selectedAnswerCommand = new ReceivedServerSelectedAnswerCommand(OnReceivedSelectedAnswer);
-        var selectedHelpFromFriendJokerCommand = new ReceivedSelectedHelpFromFriendJokerCommand(NetworkManager, MainPlayerData, HelpFromFriendJokerRouter, 60);
-        var selectedAskAudienceJokerCommand = new ReceivedSelectedAskAudienceJokerCommand(MainPlayerData, AskAudienceJokerRouter, NetworkManager, 60);
-        var selectedFifthyFifthyChanceCommand = new ReceivedSelectedDisableRandomAnswersJokerCommand(MainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 2);
-        var surrenderCommand = new ReceivedSurrenderBasicExamOneTimeCommand(MainPlayerData, OnMainPlayerSurrender);
-        var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAskAudienceJokerCommand, selectedFifthyFifthyChanceCommand, selectedHelpFromFriendJokerCommand };
+        var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(NetworkManager, MainPlayerData, AskPlayerQuestionRouter, 60);
+        var selectedAudiencePollCommand = new SelectedAudiencePollCommand(MainPlayerData, AudiencePollRouter, NetworkManager, 60);
+        var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(MainPlayerData, DisableRandomAnswersJokerRouter, NetworkManager, 2);
+        var surrenderCommand = new SurrenderBasicExamOneTimeCommand(MainPlayerData, OnMainPlayerSurrender);
+        var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };
 
         for (var i = 0; i < selectedJokerCommands.Length; i++)
         {
@@ -153,9 +152,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
         }
 
         NetworkManager.CommandsManager.AddCommand("AnswerSelected", selectedAnswerCommand);
-        NetworkManager.CommandsManager.AddCommand("SelectedHelpFromFriendJoker", selectedHelpFromFriendJokerCommand);
-        NetworkManager.CommandsManager.AddCommand("SelectedAskAudienceJoker", selectedAskAudienceJokerCommand);
-        NetworkManager.CommandsManager.AddCommand("SelectedDisableRandomAnswersJoker", selectedFifthyFifthyChanceCommand);
+        NetworkManager.CommandsManager.AddCommand(selectedAskPlayerQuestionCommand);
+        NetworkManager.CommandsManager.AddCommand(selectedAudiencePollCommand);
+        NetworkManager.CommandsManager.AddCommand(selectedFifthyFifthyChanceCommand);
         NetworkManager.CommandsManager.AddCommand("Surrender", surrenderCommand);
     }
 
@@ -178,7 +177,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     void OnMainPlayerSelectedJoker(object sender, EventArgs args)
     {
         var jokerName = sender.GetType().Name
-                .Replace("ReceivedSelected", "")
+                .Replace("Selected", "")
                 .Replace("Command", "")
                 .ToUpperInvariant();
         
@@ -193,8 +192,9 @@ public class BasicExamServer : ExtendedMonoBehaviour
     void Cleanup()
     {
         mainPlayerJokersDataSynchronizer = null;
-        NetworkManager.CommandsManager.RemoveCommand("SelectedHelpFromFriendJoker");
-        NetworkManager.CommandsManager.RemoveCommand("SelectedAskAudienceJoker");
+        NetworkManager.CommandsManager.RemoveCommand("AnswerSelected");
+        NetworkManager.CommandsManager.RemoveCommand<SelectedAskPlayerQuestionCommand>();
+        NetworkManager.CommandsManager.RemoveCommand<SelectedAudiencePollCommand>();
         NetworkManager.CommandsManager.RemoveCommand("Surrender");
     }
 
@@ -239,8 +239,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
     {
-        HelpFromFriendJokerRouter.Deactivate();
-        AskAudienceJokerRouter.Deactivate();
+        AskPlayerQuestionRouter.Deactivate();
+        AudiencePollRouter.Deactivate();
     }
 
     void OnReceivedSelectedAnswer(int clientId, string answer)
@@ -259,7 +259,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
                     return;
                 }
 
-                CoroutineUtils.WaitForFrames(1, () => EndGame());
+                CoroutineUtils.WaitForFrames(1, EndGame);
             }, 
             Debug.LogException);
 
@@ -268,7 +268,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
     void SendEndGameInfo()
     {
-        var commandData = new NetworkCommandData("BasicExamGameEnd");
+        var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
         commandData.AddOption("Mark", GameData.CurrentMark.ToString());
         NetworkManager.SendAllClientsCommand(commandData);
     }

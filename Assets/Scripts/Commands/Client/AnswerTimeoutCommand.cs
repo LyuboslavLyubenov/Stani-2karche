@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-public class ReceivedAnswerTimeoutCommand : INetworkManagerCommand
+public class AnswerTimeoutCommand : INetworkManagerCommand
 {
     const string AnsweTimeoutMessage = "Времето за отговор изтече";
 
@@ -10,7 +10,7 @@ public class ReceivedAnswerTimeoutCommand : INetworkManagerCommand
 
     NotificationsServiceController notificationService;
 
-    public ReceivedAnswerTimeoutCommand(GameObject questionPanelUI, NotificationsServiceController notificationService)
+    public AnswerTimeoutCommand(GameObject questionPanelUI, NotificationsServiceController notificationService)
     {
         if (notificationService == null)
         {

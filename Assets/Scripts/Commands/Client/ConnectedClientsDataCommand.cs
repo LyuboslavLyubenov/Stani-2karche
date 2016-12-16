@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class ReceivedConnectedClientsDataCommand : IOneTimeExecuteCommand
+public class ConnectedClientsDataCommand : IOneTimeExecuteCommand
 {
     Action<OnlineClientsData_Serializable> onReceivedOnlineClients;
 
@@ -19,7 +19,7 @@ public class ReceivedConnectedClientsDataCommand : IOneTimeExecuteCommand
         set;
     }
 
-    public ReceivedConnectedClientsDataCommand(Action<OnlineClientsData_Serializable> onReceivedOnlineClientsData)
+    public ConnectedClientsDataCommand(Action<OnlineClientsData_Serializable> onReceivedOnlineClientsData)
     {
         if (onReceivedOnlineClientsData == null)
         {

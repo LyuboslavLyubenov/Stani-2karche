@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 
 public class DisableRandomAnswersJokerRouter : ExtendedMonoBehaviour, IJokerRouter
@@ -60,13 +59,4 @@ public class DisableRandomAnswersJokerRouter : ExtendedMonoBehaviour, IJokerRout
         OnActivated(this, EventArgs.Empty);
         OnFinished(this, EventArgs.Empty);
     }
-}
-
-public interface IJokerRouter
-{
-    EventHandler OnActivated { get; set; }
-
-    EventHandler OnFinished { get; set; }
-
-    EventHandler<UnhandledExceptionEventArgs> OnError { get; set; }
 }

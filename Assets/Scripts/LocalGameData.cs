@@ -10,6 +10,7 @@ using System.Reflection;
 
 public class LocalGameData : MonoBehaviour, IGameData
 {
+
     public const string LevelPath = "LevelData\\теми\\";
     const int DefaultSecondsForAnswerQuestion = 60;
     const int DefaultQuestionToTakePerMark = int.MaxValue;
@@ -248,7 +249,7 @@ public class LocalGameData : MonoBehaviour, IGameData
                     if (!string.IsNullOrEmpty(correctAnswer))
                     {
                         var errorMsg = LanguagesManager.Instance.GetValue("Errors/MultipleCorrectAnswers");
-                        ExtracingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);   
+                        ExtractingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);   
                     }
 
                     correctAnswer = answerText;
@@ -258,13 +259,13 @@ public class LocalGameData : MonoBehaviour, IGameData
             if (string.IsNullOrEmpty(correctAnswer))
             {
                 var errorMsg = LanguagesManager.Instance.GetValue("Errors/NoCorrectAnswer");
-                ExtracingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);
+                ExtractingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);
             }
 
             if (answers.Count <= 0)
             {
                 var errorMsg = LanguagesManager.Instance.GetValue("Errors/QuestionWithoutAnswers");
-                ExtracingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);
+                ExtractingQuestionException(workbookMarkIndex, questions.Count + 1, errorMsg);
             }
 
             if (ShuffleAnswers)
@@ -281,23 +282,11 @@ public class LocalGameData : MonoBehaviour, IGameData
         return questions.ToArray();
     }
 
-    void ExtracingQuestionException(int workbookMarkIndex, int questionNumber, string exceptionMsg)
+    void ExtractingQuestionException(int workbookMarkIndex, int questionNumber, string exceptionMsg)
     {
         var fileName = (MarkMin + workbookMarkIndex) + ".xls";
         var errorFormatedMsg = string.Format(exceptionMsg, fileName, questionNumber);
         throw new Exception(errorFormatedMsg); 
-    }
-
-    public void LoadDataAsync(Action<Exception> onErrorLoading)
-    {
-        if (Loading)
-        {
-            var errorMsg = LanguagesManager.Instance.GetValue("Errors/CurrentlyLoadingQuestions");
-            onErrorLoading(new InvalidOperationException(errorMsg));
-            return;
-        }
-
-        this.StartCoroutineAsync(ExtractLevelDataAsync(onErrorLoading));
     }
 
     ISimpleQuestion _GetCurrentQuestion()
@@ -372,6 +361,41 @@ public class LocalGameData : MonoBehaviour, IGameData
         var questionIndex = UnityEngine.Random.Range(0, marksQuestions[currentMarkIndex].Length);
         return marksQuestions[currentMarkIndex][questionIndex];
     }
+
+    public void LoadDataAsync(Action<Exception> onErrorLoading)
+    {
+        if (Loading)
+        {
+            var errorMsg = LanguagesManager.Instance.GetValue("Errors/CurrentlyLoadingQuestions");
+            onErrorLoading(new InvalidOperationException(errorMsg));
+            return;
+        }
+
+        this.StartCoroutineAsync(ExtractLevelDataAsync(onErrorLoading));
+    }
+
+    public ISimpleQuestion GetQuestion(int markIndex, int questionIndex)
+    {
+        if (!Loaded)
+        {
+            throw new Exception("Not loaded");
+        }
+
+        if (markIndex < 0 || markIndex >= marksQuestions.Count)
+        {
+            throw new ArgumentOutOfRangeException("markIndex");
+        }
+
+        if (questionIndex < 0 || questionIndex >= marksQuestions[markIndex].Length)
+        {
+            throw new ArgumentOutOfRangeException("questionIndex");
+        }
+
+        var question = marksQuestions[markIndex][questionIndex];
+        return question;
+    }
+
+    //TODO: Refactor. (something like) Iterator pattern. This class should contain only data extraction logic.     
 
     public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
     {

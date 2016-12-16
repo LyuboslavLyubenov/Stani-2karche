@@ -3,25 +3,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class AskAudienceJokerRouter : ExtendedMonoBehaviour
+public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 {
-    public EventHandler OnActivated
+    public EventHandler OnActivated = delegate
     {
-        get;
-        set;
-    }
+    };
 
-    public EventHandler OnFinished
+    public EventHandler OnBeforeSendResult = delegate
     {
-        get;
-        set;
-    }
+    };
 
-    public EventHandler<UnhandledExceptionEventArgs> OnError
+    public EventHandler OnSentResult = delegate
     {
-        get;
-        set;
-    }
+    };
+    
+    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+    {
+    };
 
     public const int MinTimeToAnswerInSeconds = 10;
 
@@ -48,6 +46,11 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         private set;
     }
 
+    void Start()
+    {
+        CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
+    }
+
     void UpdateTimer()
     {
         if (!Activated)
@@ -68,25 +71,28 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     void NoMoreTimeToAnswer()
     {
-        var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
+        var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
         NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, senderConnectionId);
     }
 
     void SendMainPlayerVoteResult()
     {
+        OnBeforeSendResult(this, EventArgs.Empty);
+
         LocalGameData.GetCurrentQuestion(SendVoteResult, 
             (exception) =>
             {
                 //TODO:
-                OnError(this, new UnhandledExceptionEventArgs(this, true));
                 Debug.LogException(exception);
                 Deactivate();
+
+                OnError(this, new UnhandledExceptionEventArgs(this, true));
             });
     }
 
     void SendVoteResult(ISimpleQuestion currentQuestion)
     {
-        var voteResultCommandData = new NetworkCommandData("AskAudienceJokerVoteResult");
+        var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
         var answersVotesPairs = answersVotes.ToArray();
 
         for (int i = 0; i < answersVotesPairs.Length; i++)
@@ -98,7 +104,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
         NetworkManager.SendClientCommand(senderConnectionId, voteResultCommandData);
 
-        OnFinished(this, EventArgs.Empty);
+        OnSentResult(this, EventArgs.Empty);
 
         Deactivate();
     }
@@ -156,15 +162,14 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
 
     void SendJokerSettings()
     {
-        var setAskAudienceJokerSettingsCommand = new NetworkCommandData("AskAudienceJokerSettings");
+        var setAskAudienceJokerSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
         setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
-
         NetworkManager.SendClientCommand(senderConnectionId, setAskAudienceJokerSettingsCommand);
     }
 
     void SendQuestionToAudience(ISimpleQuestion question)
     {
-        var sendQuestionCommand = new NetworkCommandData("LoadQuestion");
+        var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
         var questionJSON = JsonUtility.ToJson(question.Serialize());
         sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
         NetworkManager.SendAllClientsCommand(sendQuestionCommand, senderConnectionId);
@@ -202,6 +207,7 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
         var correctAnswer = question.Answers[question.CorrectAnswerIndex]; 
         var correctAnswerChance = (int)(UnityEngine.Random.Range(MinCorrectAnswerVoteProcentage, MaxCorrectAnswerVoteProcentage) * 100); 
         var wrongAnswersLeftOverChance = 100 - correctAnswerChance; 
+
         answersVotes.Add(correctAnswer, correctAnswerChance); 
 
         for (int i = 0; i < question.Answers.Length - 1; i++)
@@ -291,8 +297,6 @@ public class AskAudienceJokerRouter : ExtendedMonoBehaviour
                 SendQuestionToAudience(question);
                 BeginReceiveVote();
                 Activated = true;
-
-                CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
 
                 OnActivated(this, EventArgs.Empty);
             }, (exception) =>

@@ -4,6 +4,25 @@ using UnityEngine.UI;
 
 public class NotificationsServiceController : MonoBehaviour, INotificationService
 {
+    static NotificationsServiceController instance;
+
+    public static NotificationsServiceController Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                var prefab = Resources.Load<GameObject>("Prefabs/Notifications");
+                var canvas = GameObject.FindObjectOfType<Canvas>().transform;
+                var obj = (GameObject)Instantiate(prefab, canvas, false);
+                instance = obj.GetComponent<NotificationsServiceController>();
+            }
+
+            //TODO: TEST
+            return instance;
+        }
+    }
+
     const int SpaceBetweenNotifications = 20;
     const int StartOffset = 10;
     const int NormalDisableDelayInSeconds = 5;

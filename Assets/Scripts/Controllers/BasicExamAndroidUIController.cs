@@ -39,6 +39,7 @@ public class BasicExamAndroidUIController : ExtendedMonoBehaviour
         var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
         var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
 
+        //TODO: use NetworkManager.GetServerIp()
         CoroutineUtils.WaitForFrames(1, () =>
             {
                 NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
@@ -58,9 +59,13 @@ public class BasicExamAndroidUIController : ExtendedMonoBehaviour
 
     void LoadCommands()
     {
-        NetworkManager.CommandsManager.AddCommand("AnswerTimeout", new ReceivedAnswerTimeoutCommand(QuestionPanelUI, NotificationsController));
-        NetworkManager.CommandsManager.AddCommand("LoadQuestion", new ReceivedLoadQuestionCommand(LoadQuestion));
-        NetworkManager.CommandsManager.AddCommand("BasicExamGameEnd", new ReceivedBasicExamGameEndCommand(EndGameUI, LeaderboardUI));
+        var answerTimeout = new AnswerTimeoutCommand(QuestionPanelUI, NotificationsController);
+        var loadQuestion = new LoadQuestionCommand(LoadQuestion);
+        var basicExamGameEnd = new BasicExamGameEndCommand(EndGameUI, LeaderboardUI);
+
+        NetworkManager.CommandsManager.AddCommand(answerTimeout);
+        NetworkManager.CommandsManager.AddCommand(loadQuestion);
+        NetworkManager.CommandsManager.AddCommand(basicExamGameEnd);
     }
 
     void AttachEventsHooks()

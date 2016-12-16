@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System;
 
-public class ReceivedLoadedGameDataCommand : INetworkManagerCommand
+public class LoadedGameDataCommand : INetworkManagerCommand
 {
     public delegate void OnLoadedGameData(string levelCategory);
 
     OnLoadedGameData onLoadedGameData;
 
-    public ReceivedLoadedGameDataCommand(OnLoadedGameData onLoadedGameData)
+    public LoadedGameDataCommand(OnLoadedGameData onLoadedGameData)
     {
         if (onLoadedGameData == null)
         {

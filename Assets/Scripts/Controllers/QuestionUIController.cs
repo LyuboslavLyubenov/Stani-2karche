@@ -23,6 +23,8 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
     RectTransform leftColumn = null;
     RectTransform rightColumn = null;
 
+    GameObject answerPrefab;
+
     public EventHandler<AnswerEventArgs> OnAnswerClick
     {
         get;
@@ -54,6 +56,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 
     void Start()
     {
+        answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
         StartCoroutine(InitializeCoroutine());
     }
 
@@ -99,7 +102,6 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
 
     GameObject[] GenerateAnswers(int count)
     {
-        var answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
         var answers = new GameObject[count];
 
         for (int i = 0; i < answers.Length; i++)
@@ -359,6 +361,7 @@ public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
         {
             ShowCorrectAnswer();
 
+            //TODO: Get correct answer animation length and wait
             CoroutineUtils.WaitForSeconds(3f, () =>
                 {
                     OnAnswerClick(this, new AnswerEventArgs(answer, false));

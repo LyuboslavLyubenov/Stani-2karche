@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class ReceivedBasicExamGameEndCommand : INetworkManagerCommand
+public class BasicExamGameEndCommand : INetworkManagerCommand
 {
     const int LoadLeaderboardTimeoutInSeconds = 10;
 
     GameObject endGameUI;
     GameObject leaderboardUI;
 
-    public ReceivedBasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
+    public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
     {
         if (endGameUI == null)
         {

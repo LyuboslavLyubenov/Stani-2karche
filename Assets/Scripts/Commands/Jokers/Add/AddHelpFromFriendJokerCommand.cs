@@ -5,11 +5,11 @@ using System.Collections;
 //Mediator
 using System.Collections.Generic;
 
-public class ReceivedAddHelpFromFriendJokerCommand : ReceivedAddJokerAbstractCommand
+public class AddHelpFromFriendJokerCommand : ReceivedAddJokerAbstractCommand
 {
     IJoker joker;
 
-    public ReceivedAddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
+    public AddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
                                                  ClientNetworkManager networkManager,
                                                  GameObject callAFriendUI, 
                                                  GameObject friendAnswerUI, 

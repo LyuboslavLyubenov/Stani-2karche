@@ -5,11 +5,11 @@ using System.Collections;
 //Mediator
 using System.Collections.Generic;
 
-public class ReceivedAddDisableRandomAnswersJokerCommand : ReceivedAddJokerAbstractCommand
+public class AddDisableRandomAnswersJokerCommand : ReceivedAddJokerAbstractCommand
 {
     IJoker joker;
 
-    public ReceivedAddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, IGameData gameData, QuestionUIController questionUIController)
+    public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, IGameData gameData, QuestionUIController questionUIController)
         : base(availableJokersUIController)
     {
         this.joker = new DisableRandomAnswersJoker(networkManager, gameData, questionUIController);
