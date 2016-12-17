@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class ReceivedMarkCommand : INetworkManagerCommand
+public class GameDataMarkCommand : INetworkManagerCommand
 {
     Action<int> onReceivedMark;
 
-    public ReceivedMarkCommand(Action<int> onReceivedMark)
+    public GameDataMarkCommand(Action<int> onReceivedMark)
     {
         if (onReceivedMark == null)
         {

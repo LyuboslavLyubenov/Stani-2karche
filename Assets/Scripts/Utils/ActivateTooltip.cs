@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections;
 using UnityEngine.UI;
 
 /// <summary>
@@ -30,7 +29,6 @@ public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPoi
         Tooltip = Instantiate(tooltipPrefab);
         Tooltip.transform.SetParent(this.transform, false);
         Tooltip.name = "Tooltip " + transform.name;
-
 
         var rectTransform = Tooltip.GetComponent<RectTransform>();
         var anchorsMin = new Vector2();

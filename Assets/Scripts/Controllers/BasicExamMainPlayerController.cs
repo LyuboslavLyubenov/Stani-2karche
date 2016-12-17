@@ -61,20 +61,26 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         LoadingUI.SetActive(true);
     }
 
+    void OnFoundServerIP(string ip)
+    {
+        try
+        {
+            NetworkManager.ConnectToHost(ip);
+        }
+        catch
+        {
+            OnFoundServerIPError();
+        }
+    }
+
+    void OnFoundServerIPError()
+    {
+        CoroutineUtils.WaitForSeconds(1f, ConnectToServer);
+    }
+
     void ConnectToServer()
     {
-        var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
-        var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
-
-        CoroutineUtils.WaitForFrames(1, () =>
-            {
-                NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
-                    {
-                        var serverIp = isRunning ? localIp : externalIp;
-                        unableToConnectUIController.ServerIP = serverIp;
-                        NetworkManager.ConnectToHost(serverIp);
-                    });
-            });
+        NetworkManagerUtils.Instance.GetServerIp(OnFoundServerIP, OnFoundServerIPError);
     }
 
     void InitializeCommands()
@@ -83,10 +89,9 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI, NotificationService));
         NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
-        NetworkManager.CommandsManager.AddCommand(new LoadedGameDataCommand(OnLoadedGameData));
     }
 
-    void OnLoadedGameData(string levelCategory)
+    void OnLoadedGameData(object sender, EventArgs args)
     {
         LoadingUI.SetActive(false);
         ChooseCategoryUIController.gameObject.SetActive(false);
@@ -114,6 +119,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 
         AvailableJokersUIController.OnAddedJoker += OnAddedJoker;
         AvailableJokersUIController.OnUsedJoker += OnUsedJoker;
+
+        gameData.OnLoaded += OnLoadedGameData;
     }
 
     void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)

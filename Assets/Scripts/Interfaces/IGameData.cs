@@ -8,6 +8,12 @@ public interface IGameData
         set;
     }
 
+    EventHandler OnLoaded
+    {
+        get;
+        set;
+    }
+
     bool Loaded
     {
         get;

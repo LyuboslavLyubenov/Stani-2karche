@@ -4,9 +4,17 @@ using UnityEngine;
 
 public class RemoteGameData : IGameData
 {
-    public EventHandler OnLoadedGameData = delegate
+    public EventHandler OnLoaded
     {
-    };
+        get;
+        set;
+    }
+
+    public EventHandler<MarkEventArgs> OnMarkIncrease
+    {
+        get;
+        set;
+    }
 
     public bool Loaded
     {
@@ -58,16 +66,20 @@ public class RemoteGameData : IGameData
 
     void InitializeCommands()
     {
-        networkManager.CommandsManager.AddCommand("LoadedGameData", new LoadedGameDataCommand(_OnLoadedGameData));
-        networkManager.CommandsManager.AddCommand("GameDataQuestion", new ReceivedQuestionCommand(OnReceivedQuestion));
-        networkManager.CommandsManager.AddCommand("GameDataMark", new ReceivedMarkCommand(OnReceivedMark));
-        networkManager.CommandsManager.AddCommand("GameDataNoMoreQuestions", new ReceivedNoMoreQuestionsCommand(OnNoMoreQuestions));
+        networkManager.CommandsManager.AddCommand(new LoadedGameDataCommand(_OnLoadedGameData));
+        networkManager.CommandsManager.AddCommand(new GameDataQuestionCommand(OnReceivedQuestion));
+        networkManager.CommandsManager.AddCommand(new GameDataMarkCommand(OnReceivedMark));
+        networkManager.CommandsManager.AddCommand(new GameDataNoMoreQuestionsCommand(OnNoMoreQuestions));
     }
 
     void _OnLoadedGameData(string levelCategory)
     {
         this.LevelCategory = levelCategory;
-        OnLoadedGameData(this, EventArgs.Empty);
+
+        if (OnLoaded != null)
+        {
+            OnLoaded(this, EventArgs.Empty);    
+        }
     }
 
     void OnNoMoreQuestions()

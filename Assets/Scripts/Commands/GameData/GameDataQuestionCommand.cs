@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ReceivedQuestionCommand : INetworkManagerCommand
+public class GameDataQuestionCommand : INetworkManagerCommand
 {
     public delegate void ReceivedQuestionDelegate(QuestionRequestType requestType,ISimpleQuestion question,int questionsRemainingToNextMark,int secondsForAnswerQuestion);
 
     ReceivedQuestionDelegate receivedQuestion;
 
-    public ReceivedQuestionCommand(ReceivedQuestionDelegate receivedQuestion)
+    public GameDataQuestionCommand(ReceivedQuestionDelegate receivedQuestion)
     {
         if (receivedQuestion == null)
         {

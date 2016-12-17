@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Timers;
-using CielaSpike;
 using System.Linq;
 
 public class DisableRandomAnswersJoker : IJoker
@@ -31,6 +29,11 @@ public class DisableRandomAnswersJoker : IJoker
     {
         get;
         private set;
+    }
+
+    public DisableRandomAnswersJoker()
+    {
+        Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
     }
 
     public DisableRandomAnswersJoker(ClientNetworkManager networkManager, IGameData gameData, IQuestionUIController questionUIController)
