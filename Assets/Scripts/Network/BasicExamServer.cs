@@ -23,6 +23,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public AskPlayerQuestionRouter AskPlayerQuestionRouter;
     public AudienceAnswerPollRouter AudiencePollRouter;
     public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
+    public AddRandomJokerRouter AddRandomJokerCommandRouter;
 
     public ConnectedClientsUIController ConnectedClientsUIController;
     public BasicExamClientOptionsUIController ClientOptionsUIController;
@@ -125,8 +126,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
             }
         };
         
-        AskPlayerQuestionRouter.OnFinished += (sender, args) => paused = false;
-        AudiencePollRouter.OnSentResult += (sender, args) => paused = false;
+        AskPlayerQuestionRouter.OnSent += (sender, args) => paused = false;
+        AudiencePollRouter.OnSent += (sender, args) => paused = false;
         ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => OnClientSelected(args.ConnectionId);
         GameDataSender.OnBeforeSend += OnBeforeSendQuestion;
     }

@@ -3,6 +3,7 @@ using System.Net;
 using System;
 using System.Collections;
 using CielaSpike;
+using System.Collections.Generic;
 
 public class ValidationUtils
 {
@@ -24,6 +25,14 @@ public class ValidationUtils
         if (obj == null)
         {
             throw new ArgumentNullException(paramName + " cannot be null");
+        }
+    }
+
+    public static void ValidateObjOfType(object obj, Type type, string paramName)
+    {
+        if (obj.GetType() != type)
+        {
+            throw new ArgumentException(paramName + " is not of type " + type.Name);
         }
     }
 }
