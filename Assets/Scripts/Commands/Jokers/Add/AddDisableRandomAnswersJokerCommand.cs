@@ -5,7 +5,7 @@ using System.Collections;
 //Mediator
 using System.Collections.Generic;
 
-public class AddDisableRandomAnswersJokerCommand : ReceivedAddJokerAbstractCommand
+public class AddDisableRandomAnswersJokerCommand : AddJokerAbstractCommand
 {
     IJoker joker;
 

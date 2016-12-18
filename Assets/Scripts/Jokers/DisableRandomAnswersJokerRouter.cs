@@ -1,39 +1,14 @@
 using System;
 
-public class DisableRandomAnswersJokerRouter : ExtendedMonoBehaviour, IJokerRouter
+public class DisableRandomAnswersJokerRouter : ExtendedMonoBehaviour
 {
-    public EventHandler OnActivated
+    public EventHandler OnActivated = delegate
     {
-        get;
-        set;
-    }
+    };
 
-    public EventHandler OnFinished
+    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
     {
-        get;
-        set;
-    }
-
-    public EventHandler<UnhandledExceptionEventArgs> OnError
-    {
-        get;
-        set;
-    }
-
-    void Awake()
-    {
-        OnActivated = delegate
-        {
-        };
-
-        OnFinished = delegate
-        {
-        };
-
-        OnError = delegate
-        {
-        };
-    }
+    };
 
     public void Activate(int answersToDisableCount, IPlayerData playerData, ServerNetworkManager networkManager)
     {
@@ -57,6 +32,5 @@ public class DisableRandomAnswersJokerRouter : ExtendedMonoBehaviour, IJokerRout
         networkManager.SendClientCommand(playerData.ConnectionId, settingsCommand);
 
         OnActivated(this, EventArgs.Empty);
-        OnFinished(this, EventArgs.Empty);
     }
 }

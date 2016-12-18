@@ -1,20 +1,18 @@
 using UnityEngine;
-using System;
-using System.Collections;
 
 //Mediator
 using System.Collections.Generic;
 
-public class AddHelpFromFriendJokerCommand : ReceivedAddJokerAbstractCommand
+public class AddHelpFromFriendJokerCommand : AddJokerAbstractCommand
 {
     IJoker joker;
 
     public AddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
-                                                 ClientNetworkManager networkManager,
-                                                 GameObject callAFriendUI, 
-                                                 GameObject friendAnswerUI, 
-                                                 GameObject waitingToAnswerUI, 
-                                                 GameObject loadingUI)
+                                         ClientNetworkManager networkManager,
+                                         GameObject callAFriendUI, 
+                                         GameObject friendAnswerUI, 
+                                         GameObject waitingToAnswerUI, 
+                                         GameObject loadingUI)
         : base(jokersUIController)
     {
         joker = new HelpFromFriendJoker(networkManager, callAFriendUI, friendAnswerUI, waitingToAnswerUI, loadingUI);

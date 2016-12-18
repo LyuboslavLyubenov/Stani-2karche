@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AddAskAudienceJokerCommand : ReceivedAddJokerAbstractCommand
+public class AddAskAudienceJokerCommand : AddJokerAbstractCommand
 {
     IJoker joker;
 

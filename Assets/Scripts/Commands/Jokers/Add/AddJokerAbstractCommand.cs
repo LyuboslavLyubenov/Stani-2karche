@@ -5,11 +5,11 @@ using System.Collections;
 //Mediator
 using System.Collections.Generic;
 
-public abstract class ReceivedAddJokerAbstractCommand : INetworkManagerCommand
+public abstract class AddJokerAbstractCommand : INetworkManagerCommand
 {
     AvailableJokersUIController jokersUIController;
 
-    protected ReceivedAddJokerAbstractCommand(AvailableJokersUIController jokersUIController)
+    protected AddJokerAbstractCommand(AvailableJokersUIController jokersUIController)
     {
         if (jokersUIController == null)
         {

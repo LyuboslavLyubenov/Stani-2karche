@@ -5,22 +5,6 @@ using System.Linq;
 
 public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 {
-    public EventHandler OnActivated = delegate
-    {
-    };
-
-    public EventHandler OnBeforeSendResult = delegate
-    {
-    };
-
-    public EventHandler OnSentResult = delegate
-    {
-    };
-    
-    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
-    {
-    };
-
     public const int MinTimeToAnswerInSeconds = 10;
 
     const float MinCorrectAnswerVoteProcentage = 0.45f;
@@ -29,6 +13,22 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
     const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
     const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
 
+    public EventHandler OnBeforeSend = delegate
+    {
+    };
+
+    public EventHandler OnActivated = delegate
+    {
+    };
+
+    public EventHandler OnSent = delegate
+    {
+    };
+
+    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+    {
+    };
+    
     public ServerNetworkManager NetworkManager;
     public LocalGameData LocalGameData;
    
@@ -39,6 +39,7 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
     List<int> clientsThatMustVote = new List<int>();
     List<int> votedClientsConnectionId = new List<int>();
     Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+
 
     public bool Activated
     {
@@ -77,7 +78,7 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 
     void SendMainPlayerVoteResult()
     {
-        OnBeforeSendResult(this, EventArgs.Empty);
+        OnBeforeSend(this, EventArgs.Empty);
 
         LocalGameData.GetCurrentQuestion(SendVoteResult, 
             (exception) =>
@@ -104,7 +105,7 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 
         NetworkManager.SendClientCommand(senderConnectionId, voteResultCommandData);
 
-        OnSentResult(this, EventArgs.Empty);
+        OnSent(this, EventArgs.Empty);
 
         Deactivate();
     }

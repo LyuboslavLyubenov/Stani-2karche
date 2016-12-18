@@ -2,26 +2,8 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-public class AskPlayerQuestionRouter : ExtendedMonoBehaviour, IJokerRouter
+public class AskPlayerQuestionRouter : ExtendedMonoBehaviour
 {
-    public EventHandler OnActivated
-    {
-        get;
-        set;
-    }
-
-    public EventHandler OnFinished
-    {
-        get;
-        set;
-    }
-
-    public EventHandler<UnhandledExceptionEventArgs> OnError
-    {
-        get;
-        set;
-    }
-
     public const int MinTimeToAnswerInSeconds = 10;
 
     const float ChanceToGenerateCorrectAnswer = 0.8f;
@@ -47,19 +29,21 @@ public class AskPlayerQuestionRouter : ExtendedMonoBehaviour, IJokerRouter
         }
     }
 
-    void Awake()
+    public EventHandler OnActivated = delegate
     {
-        OnActivated = delegate
-        {
-        };
+    };
 
-        OnFinished = delegate
-        {
-        };
+    public EventHandler OnSent = delegate
+    {
+    };
 
-        OnError = delegate
-        {
-        };
+    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+    {
+    };
+
+    void Start()
+    {
+        base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
     }
 
     void OnReceivedFriendResponse(int connectionId, string answer)
@@ -87,7 +71,7 @@ public class AskPlayerQuestionRouter : ExtendedMonoBehaviour, IJokerRouter
 
         NetworkManager.SendClientCommand(senderConnectionId, sendFriendResponseCommand);
 
-        OnFinished(this, EventArgs.Empty);
+        OnSent(this, EventArgs.Empty);
 
         Deactivate();
     }
@@ -152,12 +136,6 @@ public class AskPlayerQuestionRouter : ExtendedMonoBehaviour, IJokerRouter
 
                 NetworkManager.SendClientCommand(friendConnectionId, sendQuestionToFriend);
                 NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
-
-                base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
-
-                OnActivated(this, EventArgs.Empty);
-
-                activated = true;
             }, (exception) =>
             {
                 Debug.LogException(exception);
@@ -199,6 +177,9 @@ public class AskPlayerQuestionRouter : ExtendedMonoBehaviour, IJokerRouter
         {
             SendQuestionToFriend();    
         }
+
+        OnActivated(this, EventArgs.Empty);
+        activated = true;
     }
 
     public void Deactivate()
