@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class BasicExamMainPlayerController : ExtendedMonoBehaviour
 {
@@ -30,6 +31,8 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     public QuestionsRemainingUIController QuestionsRemainingUIController;
     public ClientChooseCategoryUIController ChooseCategoryUIController;
     public SecondsRemainingUIController SecondsRemainingUIController;
+
+    public SelectRandomJokerUIController SelectRandomJokerUIController;
 
     IGameData gameData;
 
@@ -89,6 +92,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
         NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI, NotificationService));
         NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
+        NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(SelectRandomJokerUIController, NetworkManager));
     }
 
     void OnLoadedGameData(object sender, EventArgs args)
