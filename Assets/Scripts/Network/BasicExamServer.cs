@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System;
+using System.Reflection;
 
 public class BasicExamServer : ExtendedMonoBehaviour
 {
+    const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
     const int DefaultServerMaxPlayers = 40;
 
     public EventHandler OnGameOver = delegate
@@ -23,7 +25,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
     public AskPlayerQuestionRouter AskPlayerQuestionRouter;
     public AudienceAnswerPollRouter AudiencePollRouter;
     public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
-    public AddRandomJokerRouter AddRandomJokerCommandRouter;
+    public AddRandomJokerRouter AddRandomJokerRouter;
 
     public ConnectedClientsUIController ConnectedClientsUIController;
     public BasicExamClientOptionsUIController ClientOptionsUIController;
@@ -51,6 +53,8 @@ public class BasicExamServer : ExtendedMonoBehaviour
     }
 
     MainPlayerJokersDataSynchronizer mainPlayerJokersDataSynchronizer;
+
+    float chanceToAddRandomJoker = DefaultChanceToAddRandomJokerOnMarkChange;
 
     int remainingTimeToAnswerMainQuestion = -1;
     // when using joker
@@ -257,6 +261,7 @@ public class BasicExamServer : ExtendedMonoBehaviour
 
                 if (isCorrect)
                 {
+                    OnMainPlayerAnsweredCorrectly();
                     return;
                 }
 
@@ -265,6 +270,15 @@ public class BasicExamServer : ExtendedMonoBehaviour
             Debug.LogException);
 
         playerSentAnswer = true;
+    }
+
+    void OnMainPlayerAnsweredCorrectly()
+    {
+        if (UnityEngine.Random.value < chanceToAddRandomJoker)
+        {
+            var jokers = JokerUtils.AllJokersTypes;
+            AddRandomJokerRouter.Activate(MainPlayerData.ConnectionId, jokers, MainPlayerData.JokersData);   
+        }
     }
 
     void SendEndGameInfo()

@@ -8,6 +8,14 @@ public class JokerUtils
     {
         get
         {
+            if (allJokerTypes == null)
+            {
+                allJokerTypes = Assembly.GetExecutingAssembly()
+                    .GetTypes()
+                    .Where(JokerUtils.IsValidJokerType)
+                    .ToArray(); 
+            }
+
             return allJokerTypes;
         }
     }
@@ -16,10 +24,6 @@ public class JokerUtils
 
     JokerUtils()
     {
-        allJokerTypes = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(JokerUtils.IsValidJokerType)
-            .ToArray();  
     }
 
     public static void ValidateJokerType(Type joker)
@@ -32,6 +36,6 @@ public class JokerUtils
 
     public static bool IsValidJokerType(Type joker)
     {
-        return allJokerTypes.Contains(joker);
+        return joker.GetInterface("IJoker") != null;
     }
 }
