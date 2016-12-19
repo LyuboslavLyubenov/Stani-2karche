@@ -17,6 +17,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     public GameObject AudienceAnswerUI;
     public GameObject UnableToConnectUI;
     public GameObject ChooseCategoryUI;
+    public GameObject MarkChangedConfetti;
 
     public ClientNetworkManager NetworkManager;
 
@@ -69,6 +70,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         try
         {
             NetworkManager.ConnectToHost(ip);
+            unableToConnectUIController.ServerIP = ip;
         }
         catch
         {
@@ -114,7 +116,7 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         QuestionUIController.OnAnswerClick += OnAnswerClick;
         QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
 
-        gameData.OnMarkIncrease += (sender, args) => MarkPanelController.SetMark(args.Mark.ToString());
+        gameData.OnMarkIncrease += OnMarkIncrease;
 
         ChooseCategoryUIController.OnLoadedCategories += (sender, args) => LoadingUI.SetActive(false);
         ChooseCategoryUIController.OnChoosedCategory += OnChoosedCategory;
@@ -125,6 +127,12 @@ public class BasicExamMainPlayerController : ExtendedMonoBehaviour
         AvailableJokersUIController.OnUsedJoker += OnUsedJoker;
 
         gameData.OnLoaded += OnLoadedGameData;
+    }
+
+    void OnMarkIncrease(object sender, MarkEventArgs args)
+    {
+        MarkChangedConfetti.SetActive(true);
+        MarkPanelController.SetMark(args.Mark.ToString());
     }
 
     void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)

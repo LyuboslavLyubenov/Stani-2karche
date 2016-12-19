@@ -7,8 +7,8 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 {
     public const int MinTimeToAnswerInSeconds = 10;
 
-    const float MinCorrectAnswerVoteProcentage = 0.45f;
-    const float MaxCorrectAnswerVoteProcentage = 0.85f;
+    const float MinCorrectAnswerVoteProcentage = 0.40f;
+    const float MaxCorrectAnswerVoteProcentage = 0.80f;
 
     const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
     const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
@@ -50,6 +50,8 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
     void Start()
     {
         CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
+
+        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerSelectedAnswerCommand(OnReceivedVote));
     }
 
     void UpdateTimer()
@@ -79,19 +81,10 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
     void SendMainPlayerVoteResult()
     {
         OnBeforeSend(this, EventArgs.Empty);
-
-        LocalGameData.GetCurrentQuestion(SendVoteResult, 
-            (exception) =>
-            {
-                //TODO:
-                Debug.LogException(exception);
-                Deactivate();
-
-                OnError(this, new UnhandledExceptionEventArgs(this, true));
-            });
+        SendVoteResult();
     }
 
-    void SendVoteResult(ISimpleQuestion currentQuestion)
+    void SendVoteResult()
     {
         var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
         var answersVotesPairs = answersVotes.ToArray();
@@ -105,18 +98,13 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 
         NetworkManager.SendClientCommand(senderConnectionId, voteResultCommandData);
 
-        OnSent(this, EventArgs.Empty);
-
         Deactivate();
-    }
 
-    void BeginReceiveVote()
-    {
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedVote));
+        OnSent(this, EventArgs.Empty);
     }
 
     void OnReceivedVote(int connectionId, string answer)
-    {
+    { 
         if (!Activated)
         {
             return;
@@ -124,7 +112,6 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 
         if (!clientsThatMustVote.Contains(connectionId))
         {
-            BeginReceiveVote();
             return;
         }
 
@@ -137,8 +124,6 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
             SendMainPlayerVoteResult();
             return;
         }
-
-        BeginReceiveVote();
     }
 
     bool AreFinishedVoting()
@@ -211,19 +196,17 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
 
         answersVotes.Add(correctAnswer, correctAnswerChance); 
 
-        for (int i = 0; i < question.Answers.Length - 1; i++)
-        { 
-            if (i == question.CorrectAnswerIndex)
-            { 
-                continue; 
-            } 
+        var incorrectAnswers = question.Answers.ToList();
+        incorrectAnswers.Remove(correctAnswer);
 
+        for (int i = 0; i < incorrectAnswers.Count - 1; i++)
+        { 
             var wrongAnswerChance = UnityEngine.Random.Range(0, wrongAnswersLeftOverChance); 
-            answersVotes.Add(question.Answers[i], wrongAnswersLeftOverChance); 
+            answersVotes.Add(incorrectAnswers[i], wrongAnswersLeftOverChance); 
             wrongAnswersLeftOverChance -= wrongAnswerChance; 
         }  
 
-        answersVotes.Add(question.Answers.Last(), wrongAnswersLeftOverChance);
+        answersVotes.Add(incorrectAnswers.Last(), wrongAnswersLeftOverChance);
     }
 
     void SendGeneratedResultToMainPlayer()
@@ -235,6 +218,7 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
                     {
                         GenerateAudienceVotes(question);
                         SendMainPlayerVoteResult();
+                        Deactivate();
                     }, (exception) =>
                     {
                         Debug.LogException(exception);
@@ -296,9 +280,7 @@ public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
                 ResetAnswerVotes(question);
                 SendJokerSettings();
                 SendQuestionToAudience(question);
-                BeginReceiveVote();
                 Activated = true;
-
                 OnActivated(this, EventArgs.Empty);
             }, (exception) =>
             {
