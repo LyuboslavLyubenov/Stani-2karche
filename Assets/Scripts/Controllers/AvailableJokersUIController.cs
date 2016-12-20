@@ -76,11 +76,13 @@ public class AvailableJokersUIController : MonoBehaviour
             
         var jokerObj = Instantiate(dummyJokerButtonPrefab);
 
+        jokerObj.name = joker.GetType().Name.Replace("Joker", "");
         jokerObj.SetParent(Container, false);
 
         var jokerRect = jokerObj.GetComponent<RectTransform>();
         var x = jokerStartPosition.x;
         var y = jokerStartPosition.y + SpawnOffset + (jokers.Count * (jokerButtonSize.y + distanceBetweenJokers));
+
         jokerRect.anchoredPosition = new Vector2(x, y);
 
         var jokerButton = jokerObj.GetComponent<Button>();
