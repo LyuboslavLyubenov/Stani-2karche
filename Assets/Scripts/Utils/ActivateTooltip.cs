@@ -17,20 +17,43 @@ public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPoi
     public int SizeY = 300;
     public string Text;
     public TooltipPosition TooltipPosition = TooltipPosition.Top;
+    /// <summary>
+    /// Calls initialize method on start.
+    /// </summary>
+    public bool InitializeOnStart = true;
 
     //should show tooltip
     bool showTooltip = false;
-    GameObject Tooltip = null;
+    GameObject tooltip = null;
+
+    GameObject tooltipPrefab;
 
     void Start()
     {
-        GameObject tooltipPrefab = Resources.Load<GameObject>("Prefabs\\Tooltip");
+        tooltipPrefab = Resources.Load<GameObject>("Prefabs\\Tooltip");
 
-        Tooltip = Instantiate(tooltipPrefab);
-        Tooltip.transform.SetParent(this.transform, false);
-        Tooltip.name = "Tooltip " + transform.name;
+        if (InitializeOnStart)
+        {
+            Initialize();
+        }
+    }
 
-        var rectTransform = Tooltip.GetComponent<RectTransform>();
+    /// <summary>
+    /// Creates tooltip window (with the given text.) 
+    /// </summary>
+    public void Initialize()
+    {
+        if (tooltip != null)
+        {
+            Destroy(tooltip);
+            tooltip = null;
+        }
+
+        tooltip = Instantiate(tooltipPrefab);
+        tooltip.transform.SetParent(this.transform, false);
+        tooltip.name = "Tooltip " + transform.name;
+
+        var rectTransform = tooltip.GetComponent<RectTransform>();
         var anchorsMin = new Vector2();
         var anchorsMax = new Vector2();
         var size = new Vector2();
@@ -56,7 +79,7 @@ public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPoi
                 break;
 
             case TooltipPosition.Top:
-                
+
                 anchorsMin = new Vector2(0, 1);
                 anchorsMax = new Vector2(1, 1);
                 size = new Vector2(rectTransform.sizeDelta.x, SizeY);
@@ -79,7 +102,7 @@ public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPoi
         rectTransform.sizeDelta = size;
         rectTransform.anchoredPosition = position;
 
-        Tooltip.GetComponentInChildren<Text>().text = Text;
+        tooltip.GetComponentInChildren<Text>().text = Text;
     }
 
     //if mouse hover or finger is holding on current object
@@ -88,7 +111,7 @@ public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPoi
     {
         //we should show tooltip
         showTooltip = true;
-        CoroutineUtils.WaitForSeconds(1f, () => Tooltip.SetActive(showTooltip));
+        CoroutineUtils.WaitForSeconds(1f, () => tooltip.SetActive(showTooltip));
     }
 
     //disable tooltip on mouse/finger exiting object
@@ -96,7 +119,7 @@ public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPoi
     {
         StopAllCoroutines();
         showTooltip = false;
-        Tooltip.SetActive(false);
+        tooltip.SetActive(false);
     }
         
 }
