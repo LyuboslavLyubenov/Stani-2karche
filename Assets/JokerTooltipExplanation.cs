@@ -8,8 +8,8 @@ public class JokerTooltipExplanation : MonoBehaviour
 
         tooltip.DelayInSeconds = 3;
         tooltip.TooltipPosition = TooltipPosition.Left;
-        tooltip.SizeX = 400;
-        tooltip.SizeY = 300;
+        tooltip.SizeX = 250;
+        tooltip.SizeY = 100;
 
         var jokerName = gameObject.name;
         var jokerExplanationText = LanguagesManager.Instance.GetValue("Jokers/" + jokerName + "/Text");

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System;
-using System.Linq;
 
 public class AvailableJokersUIController : MonoBehaviour
 {
@@ -19,6 +18,14 @@ public class AvailableJokersUIController : MonoBehaviour
 
     public Transform Container;
 
+    public int JokersCount
+    {
+        get
+        {
+            return jokerObjs.Count;
+        }
+    }
+
     RectTransform containerRectTransform;
 
     List<Transform> jokerObjs = new List<Transform>();
@@ -29,14 +36,6 @@ public class AvailableJokersUIController : MonoBehaviour
     Vector2 jokerButtonSize;
 
     float distanceBetweenJokers = 0;
-
-    public IJoker[] Jokers
-    {
-        get
-        {
-            return jokers.ToArray();
-        }
-    }
 
     void Start()
     {

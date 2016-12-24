@@ -128,6 +128,8 @@ public class SelectRandomJokerUIController : ExtendedMonoBehaviour
 
         Destroy(selectedJokerObj);
 
+        yield return new WaitForSeconds(1f);
+
         OnFinishedAnimation(this, new JokerTypeEventArgs(joker));
 
         this.gameObject.SetActive(false);
