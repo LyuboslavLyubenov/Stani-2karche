@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class GameDataNoMoreQuestionsCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.GameData
 {
-    Action onNoMoreQuestionsCommand;
 
-    public GameDataNoMoreQuestionsCommand(Action onNoMoreQuestionsCommand)
+    using Assets.Scripts.Interfaces;
+
+    public class GameDataNoMoreQuestionsCommand : INetworkManagerCommand
     {
-        if (onNoMoreQuestionsCommand == null)
+        Action onNoMoreQuestionsCommand;
+
+        public GameDataNoMoreQuestionsCommand(Action onNoMoreQuestionsCommand)
         {
-            throw new ArgumentNullException("onNoMoreQuestionsCommand");
+            if (onNoMoreQuestionsCommand == null)
+            {
+                throw new ArgumentNullException("onNoMoreQuestionsCommand");
+            }
+
+            this.onNoMoreQuestionsCommand = onNoMoreQuestionsCommand;
         }
 
-        this.onNoMoreQuestionsCommand = onNoMoreQuestionsCommand;
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            this.onNoMoreQuestionsCommand();
+        }
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        onNoMoreQuestionsCommand();
-    }
 }

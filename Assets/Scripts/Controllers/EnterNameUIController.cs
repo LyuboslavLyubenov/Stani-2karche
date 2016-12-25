@@ -1,49 +1,58 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class EnterNameUIController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public GameObject UsernameTextField;
-    public EventHandler<UserNameEventArgs> OnUsernameSet = delegate
-    {
-    };
 
-    void Start()
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Utils;
+
+    public class EnterNameUIController : ExtendedMonoBehaviour
     {
-        if (UsernameTextField == null)
+        public GameObject UsernameTextField;
+        public EventHandler<UserNameEventArgs> OnUsernameSet = delegate
+            {
+            };
+
+        void Start()
         {
-            throw new NullReferenceException("UsernameTextField is null on EnterNameUIController obj");
+            if (this.UsernameTextField == null)
+            {
+                throw new NullReferenceException("UsernameTextField is null on EnterNameUIController obj");
+            }
+
+            this.CoroutineUtils.WaitForFrames(0, this.Initialize);
         }
 
-        CoroutineUtils.WaitForFrames(0, Initialize);
-    }
-
-    void Initialize()
-    {
-        if (PlayerPrefsEncryptionUtils.HasKey("Username"))
+        void Initialize()
         {
-            var username = PlayerPrefsEncryptionUtils.GetString("Username");
-            OnUsernameSet(this, new UserNameEventArgs(username));
-            gameObject.SetActive(false);
+            if (PlayerPrefsEncryptionUtils.HasKey("Username"))
+            {
+                var username = PlayerPrefsEncryptionUtils.GetString("Username");
+                this.OnUsernameSet(this, new UserNameEventArgs(username));
+                this.gameObject.SetActive(false);
+            }
+        }
+
+        void Deactivate()
+        {
+            this.GetComponent<Animator>().SetTrigger("disable");
+        }
+
+        public void SaveUsername()
+        {
+            var usernameText = this.UsernameTextField.GetComponent<Text>();
+            this.SaveUsername(usernameText.text);
+        }
+
+        public void SaveUsername(string username)
+        {
+            PlayerPrefsEncryptionUtils.SetString("Username", username);
+            this.Deactivate();
+            this.OnUsernameSet(this, new UserNameEventArgs(username));        
         }
     }
 
-    void Deactivate()
-    {
-        GetComponent<Animator>().SetTrigger("disable");
-    }
-
-    public void SaveUsername()
-    {
-        var usernameText = UsernameTextField.GetComponent<Text>();
-        SaveUsername(usernameText.text);
-    }
-
-    public void SaveUsername(string username)
-    {
-        PlayerPrefsEncryptionUtils.SetString("Username", username);
-        Deactivate();
-        OnUsernameSet(this, new UserNameEventArgs(username));        
-    }
 }

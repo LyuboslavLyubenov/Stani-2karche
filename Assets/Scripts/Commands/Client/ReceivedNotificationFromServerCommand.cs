@@ -1,74 +1,83 @@
 ﻿using System;
-using System.Linq;
-using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
-public class ReceivedNotificationFromServerCommand : INetworkManagerCommand
+using UnityEngine;
+
+namespace Assets.Scripts.Commands.Client
 {
-    readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Notifications;
+
+    public class ReceivedNotificationFromServerCommand : INetworkManagerCommand
     {
-        { "black", Color.black },
-        { "white", Color.white },
-        { "red", Color.red },
-        { "green", Color.green },
-        { "blue", Color.blue },
-        { "yellow", Color.yellow },
-        { "clear", Color.clear },
-        { "cyan", Color.cyan },
-        { "gray", Color.gray },
-        { "magenta", Color.magenta }
-    };
+        readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+                                                           {
+                                                               { "black", Color.black },
+                                                               { "white", Color.white },
+                                                               { "red", Color.red },
+                                                               { "green", Color.green },
+                                                               { "blue", Color.blue },
+                                                               { "yellow", Color.yellow },
+                                                               { "clear", Color.clear },
+                                                               { "cyan", Color.cyan },
+                                                               { "gray", Color.gray },
+                                                               { "magenta", Color.magenta }
+                                                           };
 
-    public static IList<Color> SupportedColors
-    {
-        get
+        public static IList<Color> SupportedColors
         {
-            return Colors.Values.ToList();
-        }
-    }
-
-    NotificationsServiceController notificationsService;
-
-    public ReceivedNotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
-    {
-        if (notificationsServiceController == null)
-        {
-            throw new ArgumentNullException("notificationsServiceController");
+            get
+            {
+                return Colors.Values.ToList();
+            }
         }
 
-        this.notificationsService = notificationsServiceController;
-    }
+        NotificationsServiceController notificationsService;
 
-    public void Execute(Dictionary<string, string> commandsParamsValues)
-    {
-        if (!commandsParamsValues.ContainsKey("Color"))
+        public ReceivedNotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
         {
-            throw new ArgumentException("Missing notification color");
+            if (notificationsServiceController == null)
+            {
+                throw new ArgumentNullException("notificationsServiceController");
+            }
+
+            this.notificationsService = notificationsServiceController;
         }
 
-        if (!commandsParamsValues.ContainsKey("Message"))
+        public void Execute(Dictionary<string, string> commandsParamsValues)
         {
-            throw new ArgumentException("Missing notification message");
+            if (!commandsParamsValues.ContainsKey("Color"))
+            {
+                throw new ArgumentException("Missing notification color");
+            }
+
+            if (!commandsParamsValues.ContainsKey("Message"))
+            {
+                throw new ArgumentException("Missing notification message");
+            }
+
+            var colorName = commandsParamsValues["Color"];
+            Color notificationColor = this.ParseColor(colorName);
+            var notificationMessage = commandsParamsValues["Message"];
+
+            if (this.notificationsService != null)
+            {
+                this.notificationsService.AddNotification(notificationColor, notificationMessage);          
+            }
         }
 
-        var colorName = commandsParamsValues["Color"];
-        Color notificationColor = ParseColor(colorName);
-        var notificationMessage = commandsParamsValues["Message"];
-
-        if (notificationsService != null)
+        Color ParseColor(string color)
         {
-            notificationsService.AddNotification(notificationColor, notificationMessage);          
-        }
-    }
+            if (!Colors.ContainsKey(color))
+            {
+                return Colors["white"];
+            }
 
-    Color ParseColor(string color)
-    {
-        if (!Colors.ContainsKey(color))
-        {
-            return Colors["white"];
+            return Colors[color];
         }
 
-        return Colors[color];
     }
 
 }

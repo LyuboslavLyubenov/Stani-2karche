@@ -1,297 +1,318 @@
-﻿using UnityEngine;
-using System;
-using System.Collections;
+﻿using System.Collections;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Linq;
 
-public class BasicExamMainPlayerController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    const string ServerBinaryName = "stani2karcheserver";
 
-    public GameObject LeaderboardUI;
-    public GameObject LoadingUI;
-    public GameObject EndGameUI;
-    public GameObject CallAFriendUI;
-    public GameObject FriendAnswerUI;
-    public GameObject WaitingToAnswerUI;
-    public GameObject AudienceAnswerUI;
-    public GameObject UnableToConnectUI;
-    public GameObject ChooseCategoryUI;
-    public GameObject MarkChangedConfetti;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers.Add;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Controllers.Jokers;
+    using Assets.Scripts.DialogSwitchers;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Jokers;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
+    using Assets.Scripts.Utils;
 
-    public ClientNetworkManager NetworkManager;
+    using Debug = UnityEngine.Debug;
+    using EventArgs = System.EventArgs;
 
-    public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
-    public BasicExamPlayerTutorialUIController TutorialUIController;
-
-    public NotificationsServiceController NotificationService;
-
-    public AvailableJokersUIController AvailableJokersUIController;
-    public QuestionUIController QuestionUIController;
-    public MarkPanelController MarkPanelController;
-    public QuestionsRemainingUIController QuestionsRemainingUIController;
-    public ClientChooseCategoryUIController ChooseCategoryUIController;
-    public SecondsRemainingUIController SecondsRemainingUIController;
-
-    public SelectRandomJokerUIController SelectRandomJokerUIController;
-
-    IGameData gameData;
-
-    UnableToConnectUIController unableToConnectUIController;
-
-    void Start()
+    public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
-        PlayerPrefs.DeleteKey("LoadedGameData");
+        const string ServerBinaryName = "stani2karcheserver";
 
-        gameData = new RemoteGameData(NetworkManager);
+        public GameObject LeaderboardUI;
+        public GameObject LoadingUI;
+        public GameObject EndGameUI;
+        public GameObject CallAFriendUI;
+        public GameObject FriendAnswerUI;
+        public GameObject WaitingToAnswerUI;
+        public GameObject AudienceAnswerUI;
+        public GameObject UnableToConnectUI;
+        public GameObject ChooseCategoryUI;
+        public GameObject MarkChangedConfetti;
 
-        unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
+        public ClientNetworkManager NetworkManager;
 
-        InitializeCommands();
-        AttachEventHandlers();
-        StartServerIfPlayerIsHost();
+        public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
+        public BasicExamPlayerTutorialUIController TutorialUIController;
 
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+        public NotificationsServiceController NotificationService;
+
+        public AvailableJokersUIController AvailableJokersUIController;
+        public QuestionUIController QuestionUIController;
+        public MarkPanelController MarkPanelController;
+        public QuestionsRemainingUIController QuestionsRemainingUIController;
+        public ClientChooseCategoryUIController ChooseCategoryUIController;
+        public SecondsRemainingUIController SecondsRemainingUIController;
+
+        public SelectRandomJokerUIController SelectRandomJokerUIController;
+
+        IGameData gameData;
+
+        UnableToConnectUIController unableToConnectUIController;
+
+        void Start()
         {
-            PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
-            //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-            CoroutineUtils.WaitForSeconds(9, ConnectToServer);
-        }
-        else
-        {
-            ConnectToServer();
-        }
+            PlayerPrefs.DeleteKey("LoadedGameData");
 
-        LoadingUI.SetActive(true);
-    }
+            this.gameData = new RemoteGameData(this.NetworkManager);
 
-    void OnFoundServerIP(string ip)
-    {
-        try
-        {
-            NetworkManager.ConnectToHost(ip);
-            unableToConnectUIController.ServerIP = ip;
-        }
-        catch
-        {
-            OnFoundServerIPError();
-        }
-    }
+            this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
-    void OnFoundServerIPError()
-    {
-        CoroutineUtils.WaitForSeconds(1f, ConnectToServer);
-    }
+            this.InitializeCommands();
+            this.AttachEventHandlers();
+            this.StartServerIfPlayerIsHost();
 
-    void ConnectToServer()
-    {
-        NetworkManagerUtils.Instance.GetServerIp(OnFoundServerIP, OnFoundServerIPError);
-    }
-
-    void InitializeCommands()
-    {
-        NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(EndGameUI, LeaderboardUI));
-        NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(AvailableJokersUIController, NetworkManager, CallAFriendUI, FriendAnswerUI, WaitingToAnswerUI, LoadingUI));
-        NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(AvailableJokersUIController, NetworkManager, WaitingToAnswerUI, AudienceAnswerUI, LoadingUI, NotificationService));
-        NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(AvailableJokersUIController, NetworkManager, gameData, QuestionUIController));
-        NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(SelectRandomJokerUIController, NetworkManager));
-    }
-
-    void OnLoadedGameData(object sender, EventArgs args)
-    {
-        LoadingUI.SetActive(false);
-        ChooseCategoryUIController.gameObject.SetActive(false);
-        QuestionUIController.HideAllAnswers();
-        SecondsRemainingUIController.Paused = false;
-        gameData.GetCurrentQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
-
-        PlayerPrefs.SetString("LoadedGameData", "true");
-    }
-
-    void AttachEventHandlers()
-    {
-        NetworkManager.OnConnectedEvent += OnConnectedToServer;
-        NetworkManager.OnDisconnectedEvent += OnDisconnectedFromServer;
-
-        QuestionUIController.OnAnswerClick += OnAnswerClick;
-        QuestionUIController.OnQuestionLoaded += OnQuestionLoaded;
-
-        gameData.OnMarkIncrease += OnMarkIncrease;
-
-        ChooseCategoryUIController.OnLoadedCategories += (sender, args) => LoadingUI.SetActive(false);
-        ChooseCategoryUIController.OnChoosedCategory += OnChoosedCategory;
-
-        unableToConnectUIController.OnTryingAgainToConnectToServer += (s, a) => LoadingUI.SetActive(true);
-
-        AvailableJokersUIController.OnAddedJoker += OnAddedJoker;
-        AvailableJokersUIController.OnUsedJoker += OnUsedJoker;
-
-        gameData.OnLoaded += OnLoadedGameData;
-    }
-
-    void OnMarkIncrease(object sender, MarkEventArgs args)
-    {
-        MarkChangedConfetti.SetActive(true);
-        MarkPanelController.SetMark(args.Mark.ToString());
-    }
-
-    void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
-    {
-        var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
-        selectedCategoryCommand.AddOption("Category", args.Name);
-        NetworkManager.SendServerCommand(selectedCategoryCommand);
-    }
-
-    void OnAddedJoker(object sender, JokerEventArgs args)
-    {
-        //TODO REFACTOR
-        var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
-
-        if (jokerExecutedCallback == null)
-        {
-            return;
-        }
-
-        jokerExecutedCallback.OnExecuted += (s, a) =>
-        {
-            SecondsRemainingUIController.Paused = false;
-        };
-    }
-
-    void OnUsedJoker(object sender, JokerEventArgs args)
-    {
-        var jokerTypeNameUpper = args.Joker.GetType().Name.ToUpperInvariant();
-
-        if (jokerTypeNameUpper == typeof(DisableRandomAnswersJoker).Name.ToUpperInvariant())
-        {
-            return;
-        }
-
-        SecondsRemainingUIController.Paused = true;  
-    }
-
-    void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
-    {
-        QuestionsRemainingUIController.SetRemainingQuestions(gameData.RemainingQuestionsToNextMark);
-        SecondsRemainingUIController.SetSeconds(gameData.SecondsForAnswerQuestion);
-    }
-
-    void OnActivateSceneChanged(Scene oldScene, Scene newScene)
-    {
-        KillLocalServer();
-        CleanUp();
-        SceneManager.activeSceneChanged -= OnActivateSceneChanged;
-    }
-
-    void OnApplicationQuit()
-    {
-        KillLocalServer();
-        CleanUp();
-    }
-
-    void OnDisconnectedFromServer(object sender, EventArgs args)
-    {
-        ChooseCategoryUIController.gameObject.SetActive(false);
-        LoadingUI.SetActive(false);
-        SecondsRemainingUIController.Paused = true;
-        UnableToConnectUI.SetActive(true);   
-    }
-
-    void OnConnectedToServer(object sender, EventArgs args)
-    {
-        AvailableJokersUIController.ClearAll();
-
-        LoadingUI.SetActive(false);
-        UnableToConnectUI.SetActive(false);   
-        ChooseCategoryUIController.gameObject.SetActive(false);
-
-        var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
-        NetworkManager.SendServerCommand(commandData);
-
-        if (PlayerPrefs.HasKey("LoadedGameData"))
-        {
-            var loadedGameData = new NetworkCommandData("LoadedGameData");
-            loadedGameData.AddOption("LevelCategory", gameData.LevelCategory);
-            NetworkManager.CommandsManager.Execute(loadedGameData);
-            return;
-        }
-
-        ChooseCategoryUIController.gameObject.SetActive(true);
-    }
-
-    void OnAnswerClick(object sender, AnswerEventArgs args)
-    {
-        StartCoroutine(OnAnswerClickCoroutine(args.Answer, args.IsCorrect));
-    }
-
-    IEnumerator OnAnswerClickCoroutine(string answer, bool isCorrect)
-    {
-        var commandData = new NetworkCommandData("AnswerSelected");
-        commandData.AddOption("Answer", answer);
-
-        NetworkManager.SendServerCommand(commandData);
-
-        yield return null;
-
-        if (isCorrect)
-        {
-            gameData.GetNextQuestion(QuestionUIController.LoadQuestion, Debug.LogException);
-        }
-        else
-        {
-            AvailableJokersUIController.ClearAll();
-        }
-    }
-
-    void ShowNotification(Color color, string message)
-    {
-        if (NotificationService != null)
-        {
-            NotificationService.AddNotification(color, message);
-        }
-    }
-
-    void StartLoadingCategories()
-    {
-        var remoteCategoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, () =>
+            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
             {
-                var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
-                Debug.LogError(errorMsg);
-                ShowNotification(Color.red, errorMsg);
-
-                ChooseCategoryUI.SetActive(false);
-                NetworkManager.Disconnect();
-            }, 10);
-
-        ChooseCategoryUIController.gameObject.SetActive(true);
-    }
-
-    void StartServerIfPlayerIsHost()
-    {
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-        {
-            var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
-            System.Diagnostics.Process.Start(serverPath);
-            SceneManager.activeSceneChanged += OnActivateSceneChanged;
-        }
-    }
-
-    void CleanUp()
-    {
-        PlayerPrefs.DeleteKey("LoadedGameData");
-        PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
-    }
-
-    void KillLocalServer()
-    {
-        if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-        {
-            var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
-
-            for (int i = 0; i < serverProcesses.Length; i++)
+                PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
+                //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
+                this.CoroutineUtils.WaitForSeconds(9, this.ConnectToServer);
+            }
+            else
             {
-                serverProcesses[i].Kill();
+                this.ConnectToServer();
+            }
+
+            this.LoadingUI.SetActive(true);
+        }
+
+        void OnFoundServerIP(string ip)
+        {
+            try
+            {
+                this.NetworkManager.ConnectToHost(ip);
+                this.unableToConnectUIController.ServerIP = ip;
+            }
+            catch
+            {
+                this.OnFoundServerIPError();
+            }
+        }
+
+        void OnFoundServerIPError()
+        {
+            this.CoroutineUtils.WaitForSeconds(1f, this.ConnectToServer);
+        }
+
+        void ConnectToServer()
+        {
+            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
+        }
+
+        void InitializeCommands()
+        {
+            this.NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI));
+            this.NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
+            this.NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI, this.NotificationService));
+            this.NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.gameData, this.QuestionUIController));
+            this.NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, this.NetworkManager));
+        }
+
+        void OnLoadedGameData(object sender, EventArgs args)
+        {
+            this.LoadingUI.SetActive(false);
+            this.ChooseCategoryUIController.gameObject.SetActive(false);
+            this.QuestionUIController.HideAllAnswers();
+            this.SecondsRemainingUIController.Paused = false;
+            this.gameData.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+
+            PlayerPrefs.SetString("LoadedGameData", "true");
+        }
+
+        void AttachEventHandlers()
+        {
+            this.NetworkManager.OnConnectedEvent += this.OnConnectedToServer;
+            this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+
+            this.QuestionUIController.OnAnswerClick += this.OnAnswerClick;
+            this.QuestionUIController.OnQuestionLoaded += this.OnQuestionLoaded;
+
+            this.gameData.OnMarkIncrease += this.OnMarkIncrease;
+
+            this.ChooseCategoryUIController.OnLoadedCategories += (sender, args) => this.LoadingUI.SetActive(false);
+            this.ChooseCategoryUIController.OnChoosedCategory += this.OnChoosedCategory;
+
+            this.unableToConnectUIController.OnTryingAgainToConnectToServer += (s, a) => this.LoadingUI.SetActive(true);
+
+            this.AvailableJokersUIController.OnAddedJoker += this.OnAddedJoker;
+            this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
+
+            this.gameData.OnLoaded += this.OnLoadedGameData;
+        }
+
+        void OnMarkIncrease(object sender, MarkEventArgs args)
+        {
+            this.MarkChangedConfetti.SetActive(true);
+            this.MarkPanelController.SetMark(args.Mark.ToString());
+        }
+
+        void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
+        {
+            var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
+            selectedCategoryCommand.AddOption("Category", args.Name);
+            this.NetworkManager.SendServerCommand(selectedCategoryCommand);
+        }
+
+        void OnAddedJoker(object sender, JokerEventArgs args)
+        {
+            //TODO REFACTOR
+            var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
+
+            if (jokerExecutedCallback == null)
+            {
+                return;
+            }
+
+            jokerExecutedCallback.OnExecuted += (s, a) =>
+                {
+                    this.SecondsRemainingUIController.Paused = false;
+                };
+        }
+
+        void OnUsedJoker(object sender, JokerEventArgs args)
+        {
+            var jokerTypeNameUpper = args.Joker.GetType().Name.ToUpperInvariant();
+
+            if (jokerTypeNameUpper == typeof(DisableRandomAnswersJoker).Name.ToUpperInvariant())
+            {
+                return;
+            }
+
+            this.SecondsRemainingUIController.Paused = true;  
+        }
+
+        void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
+        {
+            this.QuestionsRemainingUIController.SetRemainingQuestions(this.gameData.RemainingQuestionsToNextMark);
+            this.SecondsRemainingUIController.SetSeconds(this.gameData.SecondsForAnswerQuestion);
+        }
+
+        void OnActivateSceneChanged(Scene oldScene, Scene newScene)
+        {
+            this.KillLocalServer();
+            this.CleanUp();
+            SceneManager.activeSceneChanged -= this.OnActivateSceneChanged;
+        }
+
+        void OnApplicationQuit()
+        {
+            this.KillLocalServer();
+            this.CleanUp();
+        }
+
+        void OnDisconnectedFromServer(object sender, EventArgs args)
+        {
+            this.ChooseCategoryUIController.gameObject.SetActive(false);
+            this.LoadingUI.SetActive(false);
+            this.SecondsRemainingUIController.Paused = true;
+            this.UnableToConnectUI.SetActive(true);   
+        }
+
+        void OnConnectedToServer(object sender, EventArgs args)
+        {
+            this.AvailableJokersUIController.ClearAll();
+
+            this.LoadingUI.SetActive(false);
+            this.UnableToConnectUI.SetActive(false);   
+            this.ChooseCategoryUIController.gameObject.SetActive(false);
+
+            var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
+            this.NetworkManager.SendServerCommand(commandData);
+
+            if (PlayerPrefs.HasKey("LoadedGameData"))
+            {
+                var loadedGameData = new NetworkCommandData("LoadedGameData");
+                loadedGameData.AddOption("LevelCategory", this.gameData.LevelCategory);
+                this.NetworkManager.CommandsManager.Execute(loadedGameData);
+                return;
+            }
+
+            this.ChooseCategoryUIController.gameObject.SetActive(true);
+        }
+
+        void OnAnswerClick(object sender, AnswerEventArgs args)
+        {
+            this.StartCoroutine(this.OnAnswerClickCoroutine(args.Answer, args.IsCorrect));
+        }
+
+        IEnumerator OnAnswerClickCoroutine(string answer, bool isCorrect)
+        {
+            var commandData = new NetworkCommandData("AnswerSelected");
+            commandData.AddOption("Answer", answer);
+
+            this.NetworkManager.SendServerCommand(commandData);
+
+            yield return null;
+
+            if (isCorrect)
+            {
+                this.gameData.GetNextQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+            }
+            else
+            {
+                this.AvailableJokersUIController.ClearAll();
+            }
+        }
+
+        void ShowNotification(Color color, string message)
+        {
+            if (this.NotificationService != null)
+            {
+                this.NotificationService.AddNotification(color, message);
+            }
+        }
+
+        void StartLoadingCategories()
+        {
+            var remoteCategoriesReader = new RemoteAvailableCategoriesReader(this.NetworkManager, () =>
+                {
+                    var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
+                    Debug.LogError(errorMsg);
+                    this.ShowNotification(Color.red, errorMsg);
+
+                    this.ChooseCategoryUI.SetActive(false);
+                    this.NetworkManager.Disconnect();
+                }, 10);
+
+            this.ChooseCategoryUIController.gameObject.SetActive(true);
+        }
+
+        void StartServerIfPlayerIsHost()
+        {
+            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+            {
+                var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
+                System.Diagnostics.Process.Start(serverPath);
+                SceneManager.activeSceneChanged += this.OnActivateSceneChanged;
+            }
+        }
+
+        void CleanUp()
+        {
+            PlayerPrefs.DeleteKey("LoadedGameData");
+            PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
+        }
+
+        void KillLocalServer()
+        {
+            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+            {
+                var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
+
+                for (int i = 0; i < serverProcesses.Length; i++)
+                {
+                    serverProcesses[i].Kill();
+                }
             }
         }
     }
+
 }

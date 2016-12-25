@@ -1,29 +1,38 @@
 using System;
-
-//Mediator
 using System.Collections.Generic;
 
-public class DummyOneTimeCommand : IOneTimeExecuteCommand
+//Mediator
+
+namespace Assets.Scripts.Commands
 {
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
 
-    public bool FinishedExecution
-    {
-        get;
-        private set;
-    }
+    using Assets.Scripts.Interfaces;
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
+    using EventArgs = System.EventArgs;
+
+    public class DummyOneTimeCommand : IOneTimeExecuteCommand
     {
-        if (OnFinishedExecution != null)
+        public EventHandler OnFinishedExecution
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            get;
+            set;
         }
 
-        FinishedExecution = true;
+        public bool FinishedExecution
+        {
+            get;
+            private set;
+        }
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
+
+            this.FinishedExecution = true;
+        }
     }
+
 }

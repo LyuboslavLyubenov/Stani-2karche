@@ -1,20 +1,25 @@
 using System;
 
-public class TimeInSecondsEventArgs : System.EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public TimeInSecondsEventArgs(int seconds)
+
+    public class TimeInSecondsEventArgs : System.EventArgs
     {
-        if (seconds < 0)
+        public TimeInSecondsEventArgs(int seconds)
         {
-            throw new ArgumentOutOfRangeException("seconds");
+            if (seconds < 0)
+            {
+                throw new ArgumentOutOfRangeException("seconds");
+            }
+
+            this.Seconds = seconds;
         }
 
-        this.Seconds = seconds;
+        public int Seconds
+        {
+            get;
+            private set;
+        }
     }
 
-    public int Seconds
-    {
-        get;
-        private set;
-    }
 }

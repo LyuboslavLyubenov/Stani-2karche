@@ -1,34 +1,43 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
-using System;
 
-public class AnswerTimeoutCommand : INetworkManagerCommand
+using UnityEngine;
+
+namespace Assets.Scripts.Commands.Client
 {
-    const string AnsweTimeoutMessage = "Времето за отговор изтече";
 
-    GameObject questionPanelUI;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Notifications;
 
-    NotificationsServiceController notificationService;
-
-    public AnswerTimeoutCommand(GameObject questionPanelUI, NotificationsServiceController notificationService)
+    public class AnswerTimeoutCommand : INetworkManagerCommand
     {
-        if (notificationService == null)
+        const string AnsweTimeoutMessage = "Времето за отговор изтече";
+
+        GameObject questionPanelUI;
+
+        NotificationsServiceController notificationService;
+
+        public AnswerTimeoutCommand(GameObject questionPanelUI, NotificationsServiceController notificationService)
         {
-            throw new ArgumentNullException("notificationService");
-        }
+            if (notificationService == null)
+            {
+                throw new ArgumentNullException("notificationService");
+            }
             
-        if (questionPanelUI == null)
+            if (questionPanelUI == null)
+            {
+                throw new ArgumentNullException("questionPanelUI");
+            }
+            
+            this.questionPanelUI = questionPanelUI;
+            this.notificationService = notificationService;
+        }
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            throw new ArgumentNullException("questionPanelUI");
+            this.questionPanelUI.SetActive(false);
+            this.notificationService.AddNotification(Color.blue, AnsweTimeoutMessage);
         }
-            
-        this.questionPanelUI = questionPanelUI;
-        this.notificationService = notificationService;
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        questionPanelUI.SetActive(false);
-        notificationService.AddNotification(Color.blue, AnsweTimeoutMessage);
-    }
 }

@@ -1,21 +1,29 @@
 ﻿using System;
 
-
-public class SimpleQuestionEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public SimpleQuestionEventArgs(ISimpleQuestion question)
+
+    using Assets.Scripts.Interfaces;
+
+    using EventArgs = System.EventArgs;
+
+    public class SimpleQuestionEventArgs : EventArgs
     {
-        if (question == null)
+        public SimpleQuestionEventArgs(ISimpleQuestion question)
         {
-            throw new ArgumentNullException("question");
+            if (question == null)
+            {
+                throw new ArgumentNullException("question");
+            }
+
+            this.Question = question;
         }
 
-        this.Question = question;
+        public ISimpleQuestion Question
+        {
+            get;
+            set;
+        }
     }
 
-    public ISimpleQuestion Question
-    {
-        get;
-        set;
-    }
 }

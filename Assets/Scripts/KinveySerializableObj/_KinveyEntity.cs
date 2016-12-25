@@ -1,7 +1,10 @@
-using System;
-
-public class _KinveyEntity<T>
+namespace Assets.Scripts.KinveySerializableObj
 {
-    public _KinveyEntityDetails EntityDetails;
-    public T Entity;
+
+    public class _KinveyEntity<T>
+    {
+        public _KinveyEntityDetails EntityDetails;
+        public T Entity;
+    }
+
 }

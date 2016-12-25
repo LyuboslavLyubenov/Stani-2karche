@@ -1,9 +1,11 @@
-using UnityEngine.UI;
-using System;
-
-public enum GameType
+namespace Assets.Scripts
 {
-    BasicExam,
-    AudienceRevenge,
-    FastestWins
+
+    public enum GameType
+    {
+        BasicExam,
+        AudienceRevenge,
+        FastestWins
+    }
+
 }

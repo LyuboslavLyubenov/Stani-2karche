@@ -1,37 +1,43 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine.UI;
 
-public class GeneralSettingsUI : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    InputField usernameInputField;
 
-    void Awake()
+    using Assets.Scripts.Utils;
+
+    public class GeneralSettingsUI : ExtendedMonoBehaviour
     {
-        usernameInputField = transform.Find("ChangeUsername")
+        InputField usernameInputField;
+
+        void Awake()
+        {
+            this.usernameInputField = this.transform.Find("ChangeUsername")
                 .Find("InputField")
                 .GetComponent<InputField>();    
-    }
-
-    void OnEnable()
-    {
-        if (!PlayerPrefsEncryptionUtils.HasKey("Username"))
-        {
-            return;   
         }
+
+        void OnEnable()
+        {
+            if (!PlayerPrefsEncryptionUtils.HasKey("Username"))
+            {
+                return;   
+            }
         
-        var username = PlayerPrefsEncryptionUtils.GetString("Username");
-        usernameInputField.text = username;
-    }
-
-    void OnDisable()
-    {
-        var username = usernameInputField.text;
-
-        if (string.IsNullOrEmpty(username))
-        {
-            return;
+            var username = PlayerPrefsEncryptionUtils.GetString("Username");
+            this.usernameInputField.text = username;
         }
 
-        PlayerPrefsEncryptionUtils.SetString("Username", username);
+        void OnDisable()
+        {
+            var username = this.usernameInputField.text;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                return;
+            }
+
+            PlayerPrefsEncryptionUtils.SetString("Username", username);
+        }
     }
+
 }

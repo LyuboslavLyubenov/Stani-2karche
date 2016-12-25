@@ -1,21 +1,29 @@
 ﻿using System;
-using System.Net;
 
-public class IpEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public IpEventArgs(string ip)
+
+    using Assets.Scripts.Utils;
+
+    using EventArgs = System.EventArgs;
+
+    public class IpEventArgs : EventArgs
     {
-        if (!ip.IsValidIPV4())
+        public IpEventArgs(string ip)
         {
-            throw new ArgumentException("Invalid ipv4 address");  
+            if (!ip.IsValidIPV4())
+            {
+                throw new ArgumentException("Invalid ipv4 address");  
+            }
+
+            this.IPAddress = ip;
         }
 
-        this.IPAddress = ip;
+        public string IPAddress
+        {
+            get;
+            private set;
+        }
     }
 
-    public string IPAddress
-    {
-        get;
-        private set;
-    }
 }

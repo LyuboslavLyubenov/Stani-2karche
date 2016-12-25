@@ -1,67 +1,75 @@
 using System;
 using System.Linq;
 
-public class MainPlayerJokersDataSynchronizer
+namespace Assets.Scripts.Network
 {
-    ServerNetworkManager networkManager;
 
-    MainPlayerData mainPlayerData;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.EventArgs;
 
-    public MainPlayerJokersDataSynchronizer(ServerNetworkManager networkManager, MainPlayerData mainPlayerData)
+    public class MainPlayerJokersDataSynchronizer
     {
-        if (networkManager == null)
-        {
-            throw new ArgumentNullException("networkManager");
-        }
+        ServerNetworkManager networkManager;
 
-        if (mainPlayerData == null)
+        MainPlayerData mainPlayerData;
+
+        public MainPlayerJokersDataSynchronizer(ServerNetworkManager networkManager, MainPlayerData mainPlayerData)
         {
-            throw new ArgumentNullException("mainPlayerData");
-        }
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (mainPlayerData == null)
+            {
+                throw new ArgumentNullException("mainPlayerData");
+            }
             
-        this.networkManager = networkManager;
-        this.mainPlayerData = mainPlayerData;
+            this.networkManager = networkManager;
+            this.mainPlayerData = mainPlayerData;
 
-        mainPlayerData.OnConnected += OnMainPlayerConnected;
-        mainPlayerData.JokersData.OnAddedJoker += OnAddedJoker;
-    }
-
-    void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
-    {
-        SendAvailableJokersToMainPlayer(args.ConnectionId);
-    }
-
-    void OnAddedJoker(object sender, JokerTypeEventArgs args)
-    {
-        SendJokerToPlayer(args.JokerType, mainPlayerData.ConnectionId);
-    }
-
-    void SendAvailableJokersToMainPlayer(int connectionId)
-    {
-        if (!mainPlayerData.IsConnected)
-        {
-            return;
+            mainPlayerData.OnConnected += this.OnMainPlayerConnected;
+            mainPlayerData.JokersData.OnAddedJoker += this.OnAddedJoker;
         }
 
-        var jokers = mainPlayerData.JokersData.AvailableJokers.ToArray();
-
-        for (int i = 0; i < jokers.Length; i++)
+        void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
         {
-            var joker = jokers[i];
-            SendJokerToPlayer(joker, connectionId);
+            this.SendAvailableJokersToMainPlayer(args.ConnectionId);
+        }
+
+        void OnAddedJoker(object sender, JokerTypeEventArgs args)
+        {
+            this.SendJokerToPlayer(args.JokerType, this.mainPlayerData.ConnectionId);
+        }
+
+        void SendAvailableJokersToMainPlayer(int connectionId)
+        {
+            if (!this.mainPlayerData.IsConnected)
+            {
+                return;
+            }
+
+            var jokers = this.mainPlayerData.JokersData.AvailableJokers.ToArray();
+
+            for (int i = 0; i < jokers.Length; i++)
+            {
+                var joker = jokers[i];
+                this.SendJokerToPlayer(joker, connectionId);
+            }
+        }
+
+        void SendJokerToPlayer(Type jokerType, int connectionId)
+        {
+            if (!this.mainPlayerData.IsConnected)
+            {
+                return;
+            }
+
+            var jokerName = jokerType.Name;
+            var addJokerCommand = new NetworkCommandData("Add" + jokerName);
+
+            this.networkManager.SendClientCommand(connectionId, addJokerCommand);   
         }
     }
 
-    void SendJokerToPlayer(Type jokerType, int connectionId)
-    {
-        if (!mainPlayerData.IsConnected)
-        {
-            return;
-        }
-
-        var jokerName = jokerType.Name;
-        var addJokerCommand = new NetworkCommandData("Add" + jokerName);
-
-        networkManager.SendClientCommand(connectionId, addJokerCommand);   
-    }
 }

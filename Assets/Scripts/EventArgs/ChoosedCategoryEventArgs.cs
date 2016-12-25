@@ -1,20 +1,27 @@
 using System;
 
-public class ChoosedCategoryEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public string Name
-    {
-        get;
-        private set;
-    }
 
-    public ChoosedCategoryEventArgs(string name)
+    using EventArgs = System.EventArgs;
+
+    public class ChoosedCategoryEventArgs : EventArgs
     {
-        if (name == null)
+        public string Name
         {
-            throw new ArgumentNullException("name");
+            get;
+            private set;
         }
 
-        this.Name = name;
+        public ChoosedCategoryEventArgs(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            this.Name = name;
+        }
     }
+
 }

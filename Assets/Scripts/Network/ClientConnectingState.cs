@@ -1,14 +1,13 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System;
 using System.Net.Sockets;
-using System;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Net;
 
-public class ClientConnectingState
+namespace Assets.Scripts.Network
 {
-    public Action OnConnected;
-    public Socket Client;
+
+    public class ClientConnectingState
+    {
+        public Action OnConnected;
+        public Socket Client;
+    }
+
 }

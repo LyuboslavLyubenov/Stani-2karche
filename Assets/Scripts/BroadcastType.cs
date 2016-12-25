@@ -1,5 +1,10 @@
-﻿public enum BroadcastType
+﻿namespace Assets.Scripts
 {
-    Server,
-    Client
+
+    public enum BroadcastType
+    {
+        Server,
+        Client
+    }
+
 }

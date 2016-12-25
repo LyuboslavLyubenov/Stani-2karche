@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
-public class LoadScene : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    public void Load(string name)
+
+    public class LoadScene : MonoBehaviour
     {
-        SceneManager.LoadScene(name);
+        public void Load(string name)
+        {
+            SceneManager.LoadScene(name);
+        }
     }
+
 }

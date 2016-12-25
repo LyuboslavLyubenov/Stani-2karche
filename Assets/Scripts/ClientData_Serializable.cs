@@ -1,14 +1,19 @@
-﻿using System;
-
-[Serializable]
-public class ClientData_Serializable
+﻿namespace Assets.Scripts
 {
-    public int ConnectionId;
-    public string Username;
-}
 
-[Serializable]
-public class OnlineClientsData_Serializable
-{
-    public ClientData_Serializable[] OnlinePlayers;
+    using System;
+
+    [Serializable]
+    public class ClientData_Serializable
+    {
+        public int ConnectionId;
+        public string Username;
+    }
+
+    [Serializable]
+    public class OnlineClientsData_Serializable
+    {
+        public ClientData_Serializable[] OnlinePlayers;
+    }
+
 }

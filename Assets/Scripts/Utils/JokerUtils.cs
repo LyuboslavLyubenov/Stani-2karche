@@ -2,40 +2,45 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-public class JokerUtils
+namespace Assets.Scripts.Utils
 {
-    public static Type[] AllJokersTypes
+
+    public class JokerUtils
     {
-        get
+        public static Type[] AllJokersTypes
         {
-            if (allJokerTypes == null)
+            get
             {
-                allJokerTypes = Assembly.GetExecutingAssembly()
-                    .GetTypes()
-                    .Where(JokerUtils.IsValidJokerType)
-                    .ToArray(); 
+                if (allJokerTypes == null)
+                {
+                    allJokerTypes = Assembly.GetExecutingAssembly()
+                        .GetTypes()
+                        .Where(JokerUtils.IsValidJokerType)
+                        .ToArray(); 
+                }
+
+                return allJokerTypes;
             }
-
-            return allJokerTypes;
         }
-    }
 
-    static Type[] allJokerTypes;
+        static Type[] allJokerTypes;
 
-    JokerUtils()
-    {
-    }
-
-    public static void ValidateJokerType(Type joker)
-    {
-        if (!JokerUtils.IsValidJokerType(joker))
+        JokerUtils()
         {
-            throw new ArgumentException("Invalid joker");
+        }
+
+        public static void ValidateJokerType(Type joker)
+        {
+            if (!JokerUtils.IsValidJokerType(joker))
+            {
+                throw new ArgumentException("Invalid joker");
+            }
+        }
+
+        public static bool IsValidJokerType(Type joker)
+        {
+            return joker.GetInterface("IJoker") != null;
         }
     }
 
-    public static bool IsValidJokerType(Type joker)
-    {
-        return joker.GetInterface("IJoker") != null;
-    }
 }

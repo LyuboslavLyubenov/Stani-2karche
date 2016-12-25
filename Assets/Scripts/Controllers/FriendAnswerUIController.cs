@@ -1,60 +1,67 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class FriendAnswerUIController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public GameObject FriendUsername;
-    public GameObject FriendAnswer;
 
-    Text usernameText;
-    Text answerText;
+    using Assets.Scripts.Utils;
 
-    string[] offlineFriendNames = { "Гошо", "Пешо", "г-н Кидиков" };
-
-    void Start()
+    public class FriendAnswerUIController : ExtendedMonoBehaviour
     {
-        if (FriendUsername == null)
+        public GameObject FriendUsername;
+        public GameObject FriendAnswer;
+
+        Text usernameText;
+        Text answerText;
+
+        string[] offlineFriendNames = { "Гошо", "Пешо", "г-н Кидиков" };
+
+        void Start()
         {
-            throw new NullReferenceException("FriendUsername is null on FriendAnswerUIController obj");
+            if (this.FriendUsername == null)
+            {
+                throw new NullReferenceException("FriendUsername is null on FriendAnswerUIController obj");
+            }
+
+            if (this.FriendAnswer == null)
+            {
+                throw new NullReferenceException("FriendAnswer is null on FriendAnswerUIController obj");
+            }
+
+            this.usernameText = this.FriendUsername.GetComponent<Text>();
+            this.answerText = this.FriendAnswer.GetComponent<Text>();
+
+            if (this.usernameText == null)
+            {
+                throw new Exception("FriendUsername must have Text component");
+            }
+
+            if (this.answerText == null)
+            {
+                throw new Exception("FriendAnswer msut have Text component");
+            }
         }
 
-        if (FriendAnswer == null)
+        public void SetResponse(string answer)
         {
-            throw new NullReferenceException("FriendAnswer is null on FriendAnswerUIController obj");
+            var usernameIndex = UnityEngine.Random.Range(0, this.offlineFriendNames.Length);
+            var username = this.offlineFriendNames[usernameIndex];
+
+            this.CoroutineUtils.WaitForFrames(0, () => this._SetResponse(username, answer));
         }
 
-        usernameText = FriendUsername.GetComponent<Text>();
-        answerText = FriendAnswer.GetComponent<Text>();
-
-        if (usernameText == null)
+        public void SetResponse(string username, string answer)
         {
-            throw new Exception("FriendUsername must have Text component");
+            this.CoroutineUtils.WaitForFrames(0, () => this._SetResponse(username, answer));
         }
 
-        if (answerText == null)
+        void _SetResponse(string username, string answer)
         {
-            throw new Exception("FriendAnswer msut have Text component");
+            this.usernameText.text = username;
+            this.answerText.text = answer;
         }
     }
 
-    public void SetResponse(string answer)
-    {
-        var usernameIndex = UnityEngine.Random.Range(0, offlineFriendNames.Length);
-        var username = offlineFriendNames[usernameIndex];
-
-        CoroutineUtils.WaitForFrames(0, () => _SetResponse(username, answer));
-    }
-
-    public void SetResponse(string username, string answer)
-    {
-        CoroutineUtils.WaitForFrames(0, () => _SetResponse(username, answer));
-    }
-
-    void _SetResponse(string username, string answer)
-    {
-        usernameText.text = username;
-        answerText.text = answer;
-    }
 }

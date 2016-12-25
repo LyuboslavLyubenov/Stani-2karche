@@ -1,41 +1,48 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
-using System;
 using System.Reflection;
 
-public class LocalCategoriesReader : IAvailableCategoriesReader
+namespace Assets.Scripts
 {
-    readonly string[] RequiredFiles = new [] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
-    public void GetAllCategories(Action<string[]> onGetAllCategories)
+    using Assets.Scripts.Interfaces;
+
+    public class LocalCategoriesReader : IAvailableCategoriesReader
     {
-        if (onGetAllCategories == null)
+        readonly string[] RequiredFiles = new [] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
+
+        public void GetAllCategories(Action<string[]> onGetAllCategories)
         {
-            throw new ArgumentNullException("onGetAllCategories");
+            if (onGetAllCategories == null)
+            {
+                throw new ArgumentNullException("onGetAllCategories");
+            }
+
+            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
+            var themesPath = execPath + "LevelData\\теми\\";
+            var availableCategories = Directory.GetDirectories(themesPath)
+                .Where(this.IsValidLevel)
+                .Select((categoryFilePath) => this.GetNameOfCategory(categoryFilePath))
+                .ToArray();
+        
+            onGetAllCategories(availableCategories);
         }
 
-        var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
-        var themesPath = execPath + "LevelData\\теми\\";
-        var availableCategories = Directory.GetDirectories(themesPath)
-            .Where(IsValidLevel)
-            .Select((categoryFilePath) => GetNameOfCategory(categoryFilePath))
-            .ToArray();
-        
-        onGetAllCategories(availableCategories);
+        string GetNameOfCategory(string category)
+        {
+            var categoryNameStartIndex = category.LastIndexOf('\\') + 1;
+            var categoryName = category.Substring(categoryNameStartIndex);
+
+            return categoryName;
+        }
+
+        bool IsValidLevel(string path)
+        {
+            var files = Directory.GetFiles(path).Select(f => f.Substring(path.Length + 1)).ToArray(); 
+            var isValidLevel = this.RequiredFiles.All(rf => files.Contains(rf));
+            return isValidLevel;
+        }
     }
 
-    string GetNameOfCategory(string category)
-    {
-        var categoryNameStartIndex = category.LastIndexOf('\\') + 1;
-        var categoryName = category.Substring(categoryNameStartIndex);
-
-        return categoryName;
-    }
-
-    bool IsValidLevel(string path)
-    {
-        var files = Directory.GetFiles(path).Select(f => f.Substring(path.Length + 1)).ToArray(); 
-        var isValidLevel = RequiredFiles.All(rf => files.Contains(rf));
-        return isValidLevel;
-    }
 }

@@ -1,407 +1,417 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using UnityEngine.UI;
-using System;
 using System.Linq;
 
-public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Assets.Scripts.Controllers
 {
-    const int DistanceBetweenAnswerButton = 10;
 
-    public int AnswersCount = 4;
-    public bool ShouldPlayButtonAnimation = true;
-    public bool ShowCorrectAnswerAfterError = false;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Utils;
 
-    bool initialized = false;
-
-    Text questionText = null;
-    Text[] answersTexts = null;
-    Button[] answersButtons = null;
-    Animator[] answersAnimators = null;
-
-    Transform answersPanel = null;
-    RectTransform leftColumn = null;
-    RectTransform rightColumn = null;
-
-    GameObject answerPrefab;
-
-    public EventHandler<AnswerEventArgs> OnAnswerClick
+    public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
     {
-        get;
-        set;
-    }
+        const int DistanceBetweenAnswerButton = 10;
 
-    public EventHandler<SimpleQuestionEventArgs> OnQuestionLoaded
-    {
-        get;
-        set;
-    }
+        public int AnswersCount = 4;
+        public bool ShouldPlayButtonAnimation = true;
+        public bool ShowCorrectAnswerAfterError = false;
 
-    public ISimpleQuestion CurrentlyLoadedQuestion
-    {
-        get;
-        private set;
-    }
+        bool initialized = false;
 
-    public QuestionUIController()
-    {
-        OnAnswerClick = delegate
+        Text questionText = null;
+        Text[] answersTexts = null;
+        Button[] answersButtons = null;
+        Animator[] answersAnimators = null;
+
+        Transform answersPanel = null;
+        RectTransform leftColumn = null;
+        RectTransform rightColumn = null;
+
+        GameObject answerPrefab;
+
+        public EventHandler<AnswerEventArgs> OnAnswerClick
         {
-        };
+            get;
+            set;
+        }
 
-        OnQuestionLoaded = delegate
+        public EventHandler<SimpleQuestionEventArgs> OnQuestionLoaded
         {
-        };
-    }
+            get;
+            set;
+        }
 
-    void Start()
-    {
-        answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
-        StartCoroutine(InitializeCoroutine());
-    }
-
-    void InitializeAnswers(int answersCount)
-    {
-        var answers = GenerateAnswers(answersCount);
-        LoadAnswersComponents(answers);
-        this.AnswersCount = answersCount;
-    }
-
-    void LoadAnswersComponents(GameObject[] answers)
-    {
-        answersTexts = new Text[answers.Length];
-        answersButtons = new Button[answers.Length];
-        answersAnimators = new Animator[answers.Length];
-
-        for (int i = 0; i < answers.Length; i++)
+        public ISimpleQuestion CurrentlyLoadedQuestion
         {
-            var answerButton = answers[i].GetComponent<Button>();
-            var answerText = answers[i].transform.GetComponentInChildren<Text>();
-            var answerAnimator = answers[i].GetComponent<Animator>();
+            get;
+            private set;
+        }
 
-            if (answerButton == null)
+        public QuestionUIController()
+        {
+            this.OnAnswerClick = delegate
+                {
+                };
+
+            this.OnQuestionLoaded = delegate
+                {
+                };
+        }
+
+        void Start()
+        {
+            this.answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
+            this.StartCoroutine(this.InitializeCoroutine());
+        }
+
+        void InitializeAnswers(int answersCount)
+        {
+            var answers = this.GenerateAnswers(answersCount);
+            this.LoadAnswersComponents(answers);
+            this.AnswersCount = answersCount;
+        }
+
+        void LoadAnswersComponents(GameObject[] answers)
+        {
+            this.answersTexts = new Text[answers.Length];
+            this.answersButtons = new Button[answers.Length];
+            this.answersAnimators = new Animator[answers.Length];
+
+            for (int i = 0; i < answers.Length; i++)
             {
-                throw new Exception("Answer must be button");
+                var answerButton = answers[i].GetComponent<Button>();
+                var answerText = answers[i].transform.GetComponentInChildren<Text>();
+                var answerAnimator = answers[i].GetComponent<Animator>();
+
+                if (answerButton == null)
+                {
+                    throw new Exception("Answer must be button");
+                }
+
+                if (answerText == null)
+                {
+                    throw new Exception("Answer must have text component");
+                }
+
+                if (answerAnimator == null)
+                {
+                    throw new Exception("Answer must have animator component");
+                }
+
+                this.answersButtons[i] = answerButton;
+                this.answersTexts[i] = answerText;
+                this.answersAnimators[i] = answerAnimator;
+            }
+        }
+
+        GameObject[] GenerateAnswers(int count)
+        {
+            var answers = new GameObject[count];
+
+            for (int i = 0; i < answers.Length; i++)
+            {
+                var parent = (i % 2 == 0) ? this.leftColumn : this.rightColumn;
+                var parentRectTransform = (i % 2 == 0) ? this.leftColumn : this.rightColumn;
+                var parentHeight = parentRectTransform.rect.size.y;
+                var answerObjsInColumn = (int)Math.Ceiling(count / 2d);
+                var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
+                var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
+                var y = (sizeY / 2) + (parent.childCount * (DistanceBetweenAnswerButton + (int)sizeY));
+                var answer = (GameObject)Instantiate(this.answerPrefab, parent, false);
+                var answerRectTransform = answer.GetComponent<RectTransform>();
+
+                answerRectTransform.sizeDelta = new Vector2(answerRectTransform.sizeDelta.x, (float)sizeY);
+                answerRectTransform.anchoredPosition = new Vector2(answerRectTransform.anchoredPosition.x, (float)-y);
+                answers[i] = answer;
             }
 
-            if (answerText == null)
-            {
-                throw new Exception("Answer must have text component");
-            }
-
-            if (answerAnimator == null)
-            {
-                throw new Exception("Answer must have animator component");
-            }
-
-            answersButtons[i] = answerButton;
-            answersTexts[i] = answerText;
-            answersAnimators[i] = answerAnimator;
-        }
-    }
-
-    GameObject[] GenerateAnswers(int count)
-    {
-        var answers = new GameObject[count];
-
-        for (int i = 0; i < answers.Length; i++)
-        {
-            var parent = (i % 2 == 0) ? leftColumn : rightColumn;
-            var parentRectTransform = (i % 2 == 0) ? leftColumn : rightColumn;
-            var parentHeight = parentRectTransform.rect.size.y;
-            var answerObjsInColumn = (int)Math.Ceiling(count / 2d);
-            var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
-            var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
-            var y = (sizeY / 2) + (parent.childCount * (DistanceBetweenAnswerButton + (int)sizeY));
-            var answer = (GameObject)Instantiate(answerPrefab, parent, false);
-            var answerRectTransform = answer.GetComponent<RectTransform>();
-
-            answerRectTransform.sizeDelta = new Vector2(answerRectTransform.sizeDelta.x, (float)sizeY);
-            answerRectTransform.anchoredPosition = new Vector2(answerRectTransform.anchoredPosition.x, (float)-y);
-            answers[i] = answer;
+            return answers;
         }
 
-        return answers;
-    }
-
-    IEnumerator InitializeCoroutine()
-    {
-        yield return null;
-
-        questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
-        answersPanel = transform.Find("Answers").GetComponent<RectTransform>();
-        leftColumn = answersPanel.transform.Find("Left Column").GetComponent<RectTransform>();
-        rightColumn = answersPanel.transform.Find("Right Column").GetComponent<RectTransform>();
-
-        yield return null;
-
-        InitializeAnswers(AnswersCount);
-
-        yield return null;
-
-        initialized = true;
-    }
-
-    void DestroyOldAnswerObjs()
-    {
-        for (int i = 0; i < leftColumn.childCount; i++)
-        {
-            var answerObj = leftColumn.GetChild(i).gameObject;
-            Destroy(answerObj);
-        }
-
-        for (int i = 0; i < rightColumn.childCount; i++)
-        {
-            var answerObj = rightColumn.GetChild(i).gameObject;
-            Destroy(answerObj);
-        }
-    }
-
-    IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
-    {
-        yield return new WaitUntil(() => initialized);
-        yield return new WaitForEndOfFrame();
-
-        questionText.text = question.Text;
-
-        DisableAllAnswersInteractivity();
-        HideAllAnswers();
-
-        yield return StartCoroutine(WaitUntilAnswersAreHiddenCoroutine());
-
-        if (question.Answers.Length != AnswersCount)
+        IEnumerator InitializeCoroutine()
         {
             yield return null;
 
-            DestroyOldAnswerObjs();
+            this.questionText = GameObject.FindWithTag("QuestionText").GetComponent<Text>();
+            this.answersPanel = this.transform.Find("Answers").GetComponent<RectTransform>();
+            this.leftColumn = this.answersPanel.transform.Find("Left Column").GetComponent<RectTransform>();
+            this.rightColumn = this.answersPanel.transform.Find("Right Column").GetComponent<RectTransform>();
 
             yield return null;
 
-            InitializeAnswers(question.Answers.Length);
+            this.InitializeAnswers(this.AnswersCount);
 
             yield return null;
+
+            this.initialized = true;
         }
 
-        for (int i = 0; i < AnswersCount; i++)
+        void DestroyOldAnswerObjs()
         {
-            var buttonIndex = i;
-            var isCorrect = (buttonIndex == question.CorrectAnswerIndex);
-
-            answersTexts[buttonIndex].text = question.Answers[buttonIndex];
-            answersButtons[buttonIndex].interactable = true;
-            answersButtons[buttonIndex].onClick.RemoveAllListeners();
-
-            AttachButtonListener(buttonIndex, isCorrect);
-        }
-
-        ShowAllAnswers();
-
-        CurrentlyLoadedQuestion = question;
-
-        if (OnQuestionLoaded != null)
-        {
-            OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));    
-        }
-    }
-
-    IEnumerator WaitUntilAnswersAreHiddenCoroutine()
-    {
-        for (int i = 0; i < AnswersCount; i++)
-        {
-            while (true)
+            for (int i = 0; i < this.leftColumn.childCount; i++)
             {
-                var stateInfo = answersAnimators[i].GetCurrentAnimatorStateInfo(0);
-
-                if (stateInfo.IsTag("Hidden"))
-                {
-                    break;
-                }
-
-                yield return new WaitForEndOfFrame();
+                var answerObj = this.leftColumn.GetChild(i).gameObject;
+                Destroy(answerObj);
             }
-        }
-    }
 
-    void AttachButtonListener(int buttonIndex, bool isCorrect)
-    {
-        var button = answersButtons[buttonIndex];
-        button.onClick.AddListener(() =>
+            for (int i = 0; i < this.rightColumn.childCount; i++)
             {
-                DisableAllAnswersInteractivity();
-
-                if (ShouldPlayButtonAnimation)
-                {
-                    var answerText = answersTexts[buttonIndex].text;
-                    ColorAnswer(answerText, true);   
-                }
-                else
-                {
-                    var answer = answersTexts[buttonIndex].text;
-                    OnAnswerClick(this, new AnswerEventArgs(answer, isCorrect));
-                }
-            });
-    }
-
-    void ColorAnswer(string answer, bool fireClickEvent)
-    {
-        var correctAnswerIndex = CurrentlyLoadedQuestion.CorrectAnswerIndex;
-        var answerIndex = CurrentlyLoadedQuestion.Answers.ToList().FindIndex(a => a == answer);
-        var isCorrect = (correctAnswerIndex == answerIndex);
-        var answerAnimator = answersAnimators[answerIndex];
-
-        answerAnimator.SetTrigger("clicked");
-        answerAnimator.SetBool("fireClickEvent", fireClickEvent);
-        answerAnimator.SetBool("isCorrect", isCorrect);
-    }
-
-    void ShowCorrectAnswer()
-    {
-        var correctAnswerIndex = CurrentlyLoadedQuestion.CorrectAnswerIndex;
-        var correctAnswer = CurrentlyLoadedQuestion.Answers[correctAnswerIndex];
-        ColorAnswer(correctAnswer, false);
-    }
-
-    void ShowAnswer(int index)
-    {
-        if (index < 0 || index >= AnswersCount)
-        {
-            throw new ArgumentOutOfRangeException("index");
-        }
-
-        var currentState = answersAnimators[index].GetCurrentAnimatorStateInfo(0);
-
-        if (!currentState.IsTag("Visible"))
-        {
-            answersAnimators[index].SetTrigger("show");
-        }
-    }
-
-    int GetAnswerIndex(string answer)
-    {        
-        for (int i = 0; i < AnswersCount; i++)
-        {
-            var answerText = answersTexts[i].text;
-
-            if (answerText == answer)
-            {
-                return i;
+                var answerObj = this.rightColumn.GetChild(i).gameObject;
+                Destroy(answerObj);
             }
         }
 
-        return -1;
-    }
-
-    public void ChangeAnswersCount(int count)
-    {
-        if (this.answersButtons.Length == count)
+        IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
         {
-            return;
+            yield return new WaitUntil(() => this.initialized);
+            yield return new WaitForEndOfFrame();
+
+            this.questionText.text = question.Text;
+
+            this.DisableAllAnswersInteractivity();
+            this.HideAllAnswers();
+
+            yield return this.StartCoroutine(this.WaitUntilAnswersAreHiddenCoroutine());
+
+            if (question.Answers.Length != this.AnswersCount)
+            {
+                yield return null;
+
+                this.DestroyOldAnswerObjs();
+
+                yield return null;
+
+                this.InitializeAnswers(question.Answers.Length);
+
+                yield return null;
+            }
+
+            for (int i = 0; i < this.AnswersCount; i++)
+            {
+                var buttonIndex = i;
+                var isCorrect = (buttonIndex == question.CorrectAnswerIndex);
+
+                this.answersTexts[buttonIndex].text = question.Answers[buttonIndex];
+                this.answersButtons[buttonIndex].interactable = true;
+                this.answersButtons[buttonIndex].onClick.RemoveAllListeners();
+
+                this.AttachButtonListener(buttonIndex, isCorrect);
+            }
+
+            this.ShowAllAnswers();
+
+            this.CurrentlyLoadedQuestion = question;
+
+            if (this.OnQuestionLoaded != null)
+            {
+                this.OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));    
+            }
         }
 
-        for (int i = 0; i < answersButtons.Length; i++)
+        IEnumerator WaitUntilAnswersAreHiddenCoroutine()
         {
-            var answerObj = answersButtons[i].gameObject;
-            Destroy(answerObj);
-        }
-
-        InitializeAnswers(count);
-    }
-
-    public void HideAnswer(int index)
-    {
-        if (index < 0 || index >= AnswersCount)
-        {
-            throw new ArgumentOutOfRangeException("index");
-        }
-
-        var currentState = answersAnimators[index].GetCurrentAnimatorStateInfo(0);
-
-        if (!currentState.IsTag("Hidden"))
-        {
-            answersAnimators[index].SetTrigger("hide");    
-        }
-    }
-
-    public void HideAnswer(string answer)
-    {
-        int answerIndex = GetAnswerIndex(answer);
-
-        if (answerIndex == -1)
-        {
-            throw new ArgumentException("Answer doesnt exists");
-        }
-
-        HideAnswer(answerIndex);
-    }
-
-    public void HideAllAnswers()
-    {
-        for (int i = 0; i < AnswersCount; i++)
-        {
-            HideAnswer(i);
-        }
-    }
-
-    public void ShowAllAnswers()
-    {
-        for (int i = 0; i < AnswersCount; i++)
-        {
-            ShowAnswer(i);  
-        }
-    }
-
-    public void LoadQuestion(ISimpleQuestion question)
-    {
-        StartCoroutine(LoadQuestionCoroutine(question));
-    }
-
-    public void _OnIncorrectAnswerAnimEnd(string answer)
-    {
-        if (ShowCorrectAnswerAfterError)
-        {
-            ShowCorrectAnswer();
-
-            //TODO: Get correct answer animation length and wait
-            CoroutineUtils.WaitForSeconds(3f, () =>
+            for (int i = 0; i < this.AnswersCount; i++)
+            {
+                while (true)
                 {
-                    OnAnswerClick(this, new AnswerEventArgs(answer, false));
+                    var stateInfo = this.answersAnimators[i].GetCurrentAnimatorStateInfo(0);
+
+                    if (stateInfo.IsTag("Hidden"))
+                    {
+                        break;
+                    }
+
+                    yield return new WaitForEndOfFrame();
+                }
+            }
+        }
+
+        void AttachButtonListener(int buttonIndex, bool isCorrect)
+        {
+            var button = this.answersButtons[buttonIndex];
+            button.onClick.AddListener(() =>
+                {
+                    this.DisableAllAnswersInteractivity();
+
+                    if (this.ShouldPlayButtonAnimation)
+                    {
+                        var answerText = this.answersTexts[buttonIndex].text;
+                        this.ColorAnswer(answerText, true);   
+                    }
+                    else
+                    {
+                        var answer = this.answersTexts[buttonIndex].text;
+                        this.OnAnswerClick(this, new AnswerEventArgs(answer, isCorrect));
+                    }
                 });
+        }
+
+        void ColorAnswer(string answer, bool fireClickEvent)
+        {
+            var correctAnswerIndex = this.CurrentlyLoadedQuestion.CorrectAnswerIndex;
+            var answerIndex = this.CurrentlyLoadedQuestion.Answers.ToList().FindIndex(a => a == answer);
+            var isCorrect = (correctAnswerIndex == answerIndex);
+            var answerAnimator = this.answersAnimators[answerIndex];
+
+            answerAnimator.SetTrigger("clicked");
+            answerAnimator.SetBool("fireClickEvent", fireClickEvent);
+            answerAnimator.SetBool("isCorrect", isCorrect);
+        }
+
+        void ShowCorrectAnswer()
+        {
+            var correctAnswerIndex = this.CurrentlyLoadedQuestion.CorrectAnswerIndex;
+            var correctAnswer = this.CurrentlyLoadedQuestion.Answers[correctAnswerIndex];
+            this.ColorAnswer(correctAnswer, false);
+        }
+
+        void ShowAnswer(int index)
+        {
+            if (index < 0 || index >= this.AnswersCount)
+            {
+                throw new ArgumentOutOfRangeException("index");
+            }
+
+            var currentState = this.answersAnimators[index].GetCurrentAnimatorStateInfo(0);
+
+            if (!currentState.IsTag("Visible"))
+            {
+                this.answersAnimators[index].SetTrigger("show");
+            }
+        }
+
+        int GetAnswerIndex(string answer)
+        {        
+            for (int i = 0; i < this.AnswersCount; i++)
+            {
+                var answerText = this.answersTexts[i].text;
+
+                if (answerText == answer)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public void ChangeAnswersCount(int count)
+        {
+            if (this.answersButtons.Length == count)
+            {
+                return;
+            }
+
+            for (int i = 0; i < this.answersButtons.Length; i++)
+            {
+                var answerObj = this.answersButtons[i].gameObject;
+                Destroy(answerObj);
+            }
+
+            this.InitializeAnswers(count);
+        }
+
+        public void HideAnswer(int index)
+        {
+            if (index < 0 || index >= this.AnswersCount)
+            {
+                throw new ArgumentOutOfRangeException("index");
+            }
+
+            var currentState = this.answersAnimators[index].GetCurrentAnimatorStateInfo(0);
+
+            if (!currentState.IsTag("Hidden"))
+            {
+                this.answersAnimators[index].SetTrigger("hide");    
+            }
+        }
+
+        public void HideAnswer(string answer)
+        {
+            int answerIndex = this.GetAnswerIndex(answer);
+
+            if (answerIndex == -1)
+            {
+                throw new ArgumentException("Answer doesnt exists");
+            }
+
+            this.HideAnswer(answerIndex);
+        }
+
+        public void HideAllAnswers()
+        {
+            for (int i = 0; i < this.AnswersCount; i++)
+            {
+                this.HideAnswer(i);
+            }
+        }
+
+        public void ShowAllAnswers()
+        {
+            for (int i = 0; i < this.AnswersCount; i++)
+            {
+                this.ShowAnswer(i);  
+            }
+        }
+
+        public void LoadQuestion(ISimpleQuestion question)
+        {
+            this.StartCoroutine(this.LoadQuestionCoroutine(question));
+        }
+
+        public void _OnIncorrectAnswerAnimEnd(string answer)
+        {
+            if (this.ShowCorrectAnswerAfterError)
+            {
+                this.ShowCorrectAnswer();
+
+                //TODO: Get correct answer animation length and wait
+                this.CoroutineUtils.WaitForSeconds(3f, () =>
+                    {
+                        this.OnAnswerClick(this, new AnswerEventArgs(answer, false));
+                    });
             
+            }
+            else
+            {
+                this.OnAnswerClick(this, new AnswerEventArgs(answer, false));
+            }
+
         }
-        else
+
+        public void _OnCorrectAnswerAnimEnd(string answer)
         {
-            OnAnswerClick(this, new AnswerEventArgs(answer, false));
+            this.OnAnswerClick(this, new AnswerEventArgs(answer, true));
         }
 
-    }
-
-    public void _OnCorrectAnswerAnimEnd(string answer)
-    {
-        OnAnswerClick(this, new AnswerEventArgs(answer, true));
-    }
-
-    public void DisableAnswerInteractivity(string answer)
-    {
-        var answerIndex = GetAnswerIndex(answer);
-
-        if (answerIndex == -1)
+        public void DisableAnswerInteractivity(string answer)
         {
-            throw new ArgumentException("Answer doesnt exists");
+            var answerIndex = this.GetAnswerIndex(answer);
+
+            if (answerIndex == -1)
+            {
+                throw new ArgumentException("Answer doesnt exists");
+            }
+
+            this.DisableAnswerInteractivity(answerIndex);
         }
 
-        DisableAnswerInteractivity(answerIndex);
-    }
-
-    public void DisableAnswerInteractivity(int answerIndex)
-    {
-        answersButtons[answerIndex].interactable = false;
-    }
-
-    public void DisableAllAnswersInteractivity()
-    {
-        for (int i = 0; i < AnswersCount; i++)
+        public void DisableAnswerInteractivity(int answerIndex)
         {
-            DisableAnswerInteractivity(i);
+            this.answersButtons[answerIndex].interactable = false;
+        }
+
+        public void DisableAllAnswersInteractivity()
+        {
+            for (int i = 0; i < this.AnswersCount; i++)
+            {
+                this.DisableAnswerInteractivity(i);
+            }
         }
     }
+
 }

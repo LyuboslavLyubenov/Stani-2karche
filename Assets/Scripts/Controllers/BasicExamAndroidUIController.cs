@@ -1,151 +1,161 @@
 ﻿using UnityEngine;
-using System;
 
 //Mediator
-public class BasicExamAndroidUIController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public GameObject QuestionPanelUI;
-    public GameObject ConnectionSettingsUI;
-    public GameObject ConnectingUI;
-    public GameObject EndGameUI;
-    public GameObject LeaderboardUI;
-    public GameObject UnableToConnectUI;
-    public GameObject SecondsRemainingUI;
-    public GameObject MainPlayerDialogUI;
 
-    public ClientNetworkManager NetworkManager;
-    public NotificationsServiceController NotificationsController;
-    public ConnectionSettingsUIController ConnectionSettingsUIController;
-    public SecondsRemainingUIController SecondsRemainingUIController;
-    public DialogController MainPlayerDialogController;
+    using Commands;
+    using Commands.Client;
+    using EventArgs;
+    using Exceptions;
+    using Interfaces;
+    using Network;
+    using Notifications;
+    using Utils;
 
-    public Animator QuestionPanelAnimator;
+    using EventArgs = System.EventArgs;
 
-    QuestionUIController questionUIController = null;
-    UnableToConnectUIController unableToConnectUIController = null;
-
-    void Start()
+    public class BasicExamAndroidUIController : ExtendedMonoBehaviour
     {
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        public GameObject QuestionPanelUI;
+        public GameObject ConnectingUI;
+        public GameObject EndGameUI;
+        public GameObject LeaderboardUI;
+        public GameObject UnableToConnectUI;
+        public GameObject SecondsRemainingUI;
+        public GameObject MainPlayerDialogUI;
 
-        LoadControllers();
-        LoadCommands();
-        AttachEventsHooks();
-        ConnectToServer();
-    }
+        public ClientNetworkManager NetworkManager;
+        public NotificationsServiceController NotificationsController;
+        public SecondsRemainingUIController SecondsRemainingUIController;
+        public DialogController MainPlayerDialogController;
+        
+        QuestionUIController questionUIController = null;
+        UnableToConnectUIController unableToConnectUIController = null;
 
-    void ConnectToServer()
-    {
-        var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
-        var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
+        void Start()
+        {
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        //TODO: use NetworkManager.GetServerIp()
-        CoroutineUtils.WaitForFrames(1, () =>
-            {
-                NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
-                    {
-                        var serverIp = isRunning ? localIp : externalIp;
-                        unableToConnectUIController.ServerIP = serverIp;
-                        ConnectTo(serverIp);
-                    });
-            });
-    }
+            this.LoadControllers();
+            this.LoadCommands();
+            this.AttachEventsHooks();
+            this.ConnectToServer();
+        }
 
-    void LoadControllers()
-    {
-        questionUIController = QuestionPanelUI.GetComponent<QuestionUIController>();
-        unableToConnectUIController = UnableToConnectUI.GetComponent<UnableToConnectUIController>();
-    }
+        void ConnectToServer()
+        {
+            var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
+            var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
 
-    void LoadCommands()
-    {
-        var answerTimeout = new AnswerTimeoutCommand(QuestionPanelUI, NotificationsController);
-        var loadQuestion = new LoadQuestionCommand(LoadQuestion);
-        var basicExamGameEnd = new BasicExamGameEndCommand(EndGameUI, LeaderboardUI);
+            //TODO: use NetworkManager.GetServerIp()
+            this.CoroutineUtils.WaitForFrames(1, () =>
+                {
+                    NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
+                        {
+                            var serverIp = isRunning ? localIp : externalIp;
+                            this.unableToConnectUIController.ServerIP = serverIp;
+                            this.ConnectTo(serverIp);
+                        });
+                });
+        }
 
-        NetworkManager.CommandsManager.AddCommand(answerTimeout);
-        NetworkManager.CommandsManager.AddCommand(loadQuestion);
-        NetworkManager.CommandsManager.AddCommand(basicExamGameEnd);
-    }
+        void LoadControllers()
+        {
+            this.questionUIController = this.QuestionPanelUI.GetComponent<QuestionUIController>();
+            this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
+        }
 
-    void AttachEventsHooks()
-    {
-        NetworkManager.OnConnectedEvent += OnConnected;
-        NetworkManager.OnDisconnectedEvent += OnDisconnectFromServer;
-        questionUIController.OnAnswerClick += OnAnswerClick;
-        ConnectionSettingsUIController.OnConnectToServer += ((sender, e) => ConnectTo(e.IPAddress));
-    }
+        void LoadCommands()
+        {
+            var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, this.NotificationsController);
+            var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
+            var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI);
 
-    void OnAnswerClick(object sender, AnswerEventArgs args)
-    {
-        var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
-        answerSelectedCommand.AddOption("Answer", args.Answer);
-        NetworkManager.SendServerCommand(answerSelectedCommand);
+            this.NetworkManager.CommandsManager.AddCommand(answerTimeout);
+            this.NetworkManager.CommandsManager.AddCommand(loadQuestion);
+            this.NetworkManager.CommandsManager.AddCommand(basicExamGameEnd);
+        }
 
-        QuestionPanelUI.SetActive(false);
-        SecondsRemainingUI.SetActive(false);
-        //MainPlayerDialogUI.SetActive(true);
-    }
+        void AttachEventsHooks()
+        {
+            this.NetworkManager.OnConnectedEvent += this.OnConnected;
+            this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectFromServer;
+            this.questionUIController.OnAnswerClick += this.OnAnswerClick;
+        }
 
-    void OnConnected(object sender, EventArgs args)
-    {
-        ConnectingUI.SetActive(false);
-        Vibrate();
-    }
+        void OnAnswerClick(object sender, AnswerEventArgs args)
+        {
+            var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+            answerSelectedCommand.AddOption("Answer", args.Answer);
+            this.NetworkManager.SendServerCommand(answerSelectedCommand);
 
-    /// <summary>
-    /// Vibrate if mobile.
-    /// </summary>
-    void Vibrate()
-    {
-        #if UNITY_ANDROID
+            this.QuestionPanelUI.SetActive(false);
+            this.SecondsRemainingUI.SetActive(false);
+            //MainPlayerDialogUI.SetActive(true);
+        }
+
+        void OnConnected(object sender, EventArgs args)
+        {
+            this.ConnectingUI.SetActive(false);
+            this.Vibrate();
+        }
+
+        /// <summary>
+        /// Vibrate if mobile.
+        /// </summary>
+        void Vibrate()
+        {
+#if UNITY_ANDROID
         Handheld.Vibrate();
         #endif
-    }
-
-    void OnDisconnectFromServer(object sender, EventArgs args)
-    {
-        ConnectingUI.SetActive(false);
-        UnableToConnectUI.SetActive(true);
-    }
-
-    void LoadQuestion(ISimpleQuestion question, int timeToAnswer)
-    {
-        QuestionPanelUI.SetActive(true);
-        questionUIController.LoadQuestion(question);
-
-        SecondsRemainingUI.SetActive(true);
-        SecondsRemainingUIController.SetSeconds(timeToAnswer);
-        SecondsRemainingUIController.Paused = false;
-    }
-
-    public void ConnectTo(string ip)
-    {
-        ConnectingUI.SetActive(true);
-
-        try
-        {
-            NetworkManager.ConnectToHost(ip);    
         }
-        catch (NetworkException e)
+
+        void OnDisconnectFromServer(object sender, EventArgs args)
         {
-            var error = (NetworkConnectionError)e.ErrorN;
-            var errorMessage = NetworkErrorUtils.GetMessage(error);
-            NotificationsController.AddNotification(Color.red, errorMessage);
+            this.ConnectingUI.SetActive(false);
+            this.UnableToConnectUI.SetActive(true);
+        }
+
+        void LoadQuestion(ISimpleQuestion question, int timeToAnswer)
+        {
+            this.QuestionPanelUI.SetActive(true);
+            this.questionUIController.LoadQuestion(question);
+
+            this.SecondsRemainingUI.SetActive(true);
+            this.SecondsRemainingUIController.SetSeconds(timeToAnswer);
+            this.SecondsRemainingUIController.Paused = false;
+        }
+
+        public void ConnectTo(string ip)
+        {
+            this.ConnectingUI.SetActive(true);
+
+            try
+            {
+                this.NetworkManager.ConnectToHost(ip);    
+            }
+            catch (NetworkException e)
+            {
+                var error = (NetworkConnectionError)e.ErrorN;
+                var errorMessage = NetworkErrorUtils.GetMessage(error);
+                this.NotificationsController.AddNotification(Color.red, errorMessage);
+            }
+        }
+
+        public void Disconnect()
+        {
+            try
+            {
+                this.NetworkManager.Disconnect();
+            }
+            catch (NetworkException e)
+            {
+                var error = (NetworkConnectionError)e.ErrorN;
+                var errorMessage = NetworkErrorUtils.GetMessage(error);
+                this.NotificationsController.AddNotification(Color.red, errorMessage);
+            }
         }
     }
 
-    public void Disconnect()
-    {
-        try
-        {
-            NetworkManager.Disconnect();
-        }
-        catch (NetworkException e)
-        {
-            var error = (NetworkConnectionError)e.ErrorN;
-            var errorMessage = NetworkErrorUtils.GetMessage(error);
-            NotificationsController.AddNotification(Color.red, errorMessage);
-        }
-    }
 }

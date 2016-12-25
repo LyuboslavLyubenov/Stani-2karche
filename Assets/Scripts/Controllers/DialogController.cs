@@ -1,24 +1,31 @@
 ﻿using UnityEngine.UI;
 
-public class DialogController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    Text text;
 
-    bool initialized = false;
+    using Assets.Scripts.Utils;
 
-    void Start()
+    public class DialogController : ExtendedMonoBehaviour
     {
-        CoroutineUtils.WaitForSeconds(1, Initialize);
+        Text text;
+
+        bool initialized = false;
+
+        void Start()
+        {
+            this.CoroutineUtils.WaitForSeconds(1, this.Initialize);
+        }
+
+        void Initialize()
+        {
+            this.text = this.GetComponentInChildren<Text>();
+            this.initialized = true;
+        }
+
+        public void SetMessage(string message)
+        {
+            this.CoroutineUtils.WaitUntil(() => this.initialized, () => this.text.text = message);
+        }
     }
 
-    void Initialize()
-    {
-        text = GetComponentInChildren<Text>();
-        initialized = true;
-    }
-
-    public void SetMessage(string message)
-    {
-        CoroutineUtils.WaitUntil(() => initialized, () => text.text = message);
-    }
 }

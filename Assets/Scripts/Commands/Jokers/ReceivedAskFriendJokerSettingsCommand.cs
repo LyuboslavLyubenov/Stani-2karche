@@ -1,52 +1,60 @@
-using System.Linq;
 using System;
-using UnityEngine;
 using System.Collections.Generic;
 
-public class ReceivedAskFriendJokerSettingsCommand : IOneTimeExecuteCommand
+namespace Assets.Scripts.Commands.Jokers
 {
-    DisableAfterDelay disableAfterDelay;
 
-    Action onAppliedSettings;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Utils;
 
-    public bool FinishedExecution
+    using EventArgs = System.EventArgs;
+
+    public class ReceivedAskFriendJokerSettingsCommand : IOneTimeExecuteCommand
     {
-        get;
-        private set;
-    }
+        DisableAfterDelay disableAfterDelay;
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
+        Action onAppliedSettings;
 
-    public ReceivedAskFriendJokerSettingsCommand(DisableAfterDelay disableAfterDelay, Action onAppliedSettings)
-    {
-        if (disableAfterDelay == null)
+        public bool FinishedExecution
         {
-            throw new ArgumentNullException("disableAfterDelay");
+            get;
+            private set;
         }
 
-        if (onAppliedSettings == null)
+        public EventHandler OnFinishedExecution
         {
-            throw new ArgumentNullException("onAppliedSettings");
+            get;
+            set;
         }
+
+        public ReceivedAskFriendJokerSettingsCommand(DisableAfterDelay disableAfterDelay, Action onAppliedSettings)
+        {
+            if (disableAfterDelay == null)
+            {
+                throw new ArgumentNullException("disableAfterDelay");
+            }
+
+            if (onAppliedSettings == null)
+            {
+                throw new ArgumentNullException("onAppliedSettings");
+            }
             
-        this.disableAfterDelay = disableAfterDelay;
-        this.onAppliedSettings = onAppliedSettings;
-    }
+            this.disableAfterDelay = disableAfterDelay;
+            this.onAppliedSettings = onAppliedSettings;
+        }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var timeToAnswerInSeconds = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
-        disableAfterDelay.DelayInSeconds = timeToAnswerInSeconds;
-        onAppliedSettings();
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            var timeToAnswerInSeconds = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
+            this.disableAfterDelay.DelayInSeconds = timeToAnswerInSeconds;
+            this.onAppliedSettings();
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
+
 }

@@ -1,102 +1,112 @@
 using System;
 using System.Timers;
 
-public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisposable
+namespace Assets.Scripts.Network
 {
-    ClientNetworkManager networkManager;
 
-    Action onTimeout;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Utils;
 
-    Timer timeoutTimer = new Timer();
-
-    public bool Receiving
+    public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisposable
     {
-        get;
-        private set;
-    }
+        ClientNetworkManager networkManager;
 
-    int timeoutInSeconds;
+        Action onTimeout;
 
-    public RemoteAvailableCategoriesReader(ClientNetworkManager networkManager, Action onTimeout, int timeoutInSeconds)
-    {
-        if (networkManager == null)
+        Timer timeoutTimer = new Timer();
+
+        public bool Receiving
         {
-            throw new ArgumentNullException("networkManager");
+            get;
+            private set;
         }
 
-        if (onTimeout == null)
+        int timeoutInSeconds;
+
+        public RemoteAvailableCategoriesReader(ClientNetworkManager networkManager, Action onTimeout, int timeoutInSeconds)
         {
-            throw new ArgumentNullException("onTimeout");
-        }
-
-        if (timeoutInSeconds <= 0)
-        {
-            throw new ArgumentOutOfRangeException("timeoutInSeconds");
-        }
-   
-        this.networkManager = networkManager;
-        this.onTimeout = onTimeout; 
-        this.timeoutInSeconds = timeoutInSeconds;
-
-        var threadUtils = ThreadUtils.Instance;
-    }
-
-    void OnTimeout()
-    {
-        ThreadUtils.Instance.RunOnMainThread(() =>
+            if (networkManager == null)
             {
-                if (!Receiving)
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (onTimeout == null)
+            {
+                throw new ArgumentNullException("onTimeout");
+            }
+
+            if (timeoutInSeconds <= 0)
+            {
+                throw new ArgumentOutOfRangeException("timeoutInSeconds");
+            }
+   
+            this.networkManager = networkManager;
+            this.onTimeout = onTimeout; 
+            this.timeoutInSeconds = timeoutInSeconds;
+
+            var threadUtils = ThreadUtils.Instance;
+        }
+
+        void OnTimeout()
+        {
+            ThreadUtils.Instance.RunOnMainThread(() =>
                 {
-                    return;
-                }
+                    if (!this.Receiving)
+                    {
+                        return;
+                    }
 
-                StopReceivingAvailableCategories();
-                onTimeout();   
-            });
-    }
-
-    void StopReceivingAvailableCategories()
-    {
-        try
-        {
-            Receiving = false;
-            networkManager.CommandsManager.RemoveCommand("AvailableCategories");
-        }
-        catch
-        {
-
-        }
-    }
-
-    public void Dispose()
-    {
-        timeoutTimer.Dispose();
-        StopReceivingAvailableCategories();
-    }
-
-    public void GetAllCategories(Action<string[]> onGetAllCategories)
-    {
-        if (onGetAllCategories == null)
-        {
-            throw new ArgumentNullException("onGetAllCategories");
+                    this.StopReceivingAvailableCategories();
+                    this.onTimeout();   
+                });
         }
 
-        var commandData = new NetworkCommandData("GetAvailableCategories");
-        var receivedAvailableCategoriesCommand = new ReceivedAvailableCategoriesCommand(onGetAllCategories);
-
-        receivedAvailableCategoriesCommand.OnFinishedExecution += (sender, args) =>
+        void StopReceivingAvailableCategories()
         {
-            Receiving = false;
-        };
+            try
+            {
+                this.Receiving = false;
+                this.networkManager.CommandsManager.RemoveCommand("AvailableCategories");
+            }
+            catch
+            {
 
-        networkManager.SendServerCommand(commandData);
-        networkManager.CommandsManager.AddCommand("AvailableCategories", receivedAvailableCategoriesCommand);
+            }
+        }
 
-        Receiving = true;
+        public void Dispose()
+        {
+            this.timeoutTimer.Dispose();
+            this.StopReceivingAvailableCategories();
+        }
 
-        timeoutTimer = new Timer();
-        timeoutTimer.AutoReset = false;
-        timeoutTimer.Interval = timeoutInSeconds * 1000;
-        timeoutTimer.Elapsed += (sender, args) => OnTimeout();
+        public void GetAllCategories(Action<string[]> onGetAllCategories)
+        {
+            if (onGetAllCategories == null)
+            {
+                throw new ArgumentNullException("onGetAllCategories");
+            }
+
+            var commandData = new NetworkCommandData("GetAvailableCategories");
+            var receivedAvailableCategoriesCommand = new ReceivedAvailableCategoriesCommand(onGetAllCategories);
+
+            receivedAvailableCategoriesCommand.OnFinishedExecution += (sender, args) =>
+                {
+                    this.Receiving = false;
+                };
+
+            this.networkManager.SendServerCommand(commandData);
+            this.networkManager.CommandsManager.AddCommand("AvailableCategories", receivedAvailableCategoriesCommand);
+
+            this.Receiving = true;
+
+            this.timeoutTimer = new Timer();
+            this.timeoutTimer.AutoReset = false;
+            this.timeoutTimer.Interval = this.timeoutInSeconds * 1000;
+            this.timeoutTimer.Elapsed += (sender, args) => this.OnTimeout();
+        }
     }
+
 }

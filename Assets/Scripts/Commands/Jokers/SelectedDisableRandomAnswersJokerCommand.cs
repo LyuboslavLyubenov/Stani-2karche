@@ -1,66 +1,75 @@
-using UnityEngine;
-using System.Collections.Generic;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
-public class SelectedDisableRandomAnswersJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+namespace Assets.Scripts.Commands.Jokers
 {
-    public EventHandler OnExecuted
-    {
-        get;
-        set;
-    }
 
-    MainPlayerData mainPlayerData;
-    DisableRandomAnswersJokerRouter jokerRouter;
-    ServerNetworkManager networkManager;
-    int answersToDisableCount;
-    Type jokerType;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Jokers;
+    using Assets.Scripts.Network;
 
-    public SelectedDisableRandomAnswersJokerCommand(
-        MainPlayerData mainPlayerData, 
-        DisableRandomAnswersJokerRouter jokerRouter, 
-        ServerNetworkManager networkManager,
-        int answersToDisableCount
-    )
+    using EventArgs = System.EventArgs;
+
+    public class SelectedDisableRandomAnswersJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
-        if (mainPlayerData == null)
+        public EventHandler OnExecuted
         {
-            throw new ArgumentNullException("mainPlayerData");   
+            get;
+            set;
         }
 
-        if (jokerRouter == null)
+        MainPlayerData mainPlayerData;
+        DisableRandomAnswersJokerRouter jokerRouter;
+        ServerNetworkManager networkManager;
+        int answersToDisableCount;
+        Type jokerType;
+
+        public SelectedDisableRandomAnswersJokerCommand(
+            MainPlayerData mainPlayerData, 
+            DisableRandomAnswersJokerRouter jokerRouter, 
+            ServerNetworkManager networkManager,
+            int answersToDisableCount
+            )
         {
-            throw new ArgumentNullException("jokerRouter");
-        }
+            if (mainPlayerData == null)
+            {
+                throw new ArgumentNullException("mainPlayerData");   
+            }
+
+            if (jokerRouter == null)
+            {
+                throw new ArgumentNullException("jokerRouter");
+            }
             
-        if (networkManager == null)
-        {
-            throw new ArgumentNullException("networkManager");
-        }
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
             
-        this.mainPlayerData = mainPlayerData;
-        this.jokerRouter = jokerRouter;
-        this.networkManager = networkManager;
-        this.answersToDisableCount = answersToDisableCount;
-        this.jokerType = typeof(DisableRandomAnswersJoker);
-    }
-
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-
-        if (!mainPlayerData.JokersData.AvailableJokers.Contains(jokerType))
-        {
-            return;
+            this.mainPlayerData = mainPlayerData;
+            this.jokerRouter = jokerRouter;
+            this.networkManager = networkManager;
+            this.answersToDisableCount = answersToDisableCount;
+            this.jokerType = typeof(DisableRandomAnswersJoker);
         }
 
-        mainPlayerData.JokersData.RemoveJoker(jokerType);
-        jokerRouter.Activate(answersToDisableCount, mainPlayerData, networkManager);
-
-        if (OnExecuted != null)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            OnExecuted(this, EventArgs.Empty);
+            var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+
+            if (!this.mainPlayerData.JokersData.AvailableJokers.Contains(this.jokerType))
+            {
+                return;
+            }
+
+            this.mainPlayerData.JokersData.RemoveJoker(this.jokerType);
+            this.jokerRouter.Activate(this.answersToDisableCount, this.mainPlayerData, this.networkManager);
+
+            if (this.OnExecuted != null)
+            {
+                this.OnExecuted(this, EventArgs.Empty);
+            }
         }
     }
+
 }

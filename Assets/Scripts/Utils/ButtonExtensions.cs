@@ -1,11 +1,16 @@
-﻿using UnityEngine.UI;
-using UnityEngine.EventSystems;
+﻿using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public static class ButtonExtensions
+namespace Assets.Scripts.Utils
 {
-    public static void SimulateClick(this Button btn)
+
+    public static class ButtonExtensions
     {
-        var pointer = new PointerEventData(EventSystem.current);
-        ExecuteEvents.Execute(btn.gameObject, pointer, ExecuteEvents.submitHandler);
+        public static void SimulateClick(this Button btn)
+        {
+            var pointer = new PointerEventData(EventSystem.current);
+            ExecuteEvents.Execute(btn.gameObject, pointer, ExecuteEvents.submitHandler);
+        }
     }
+
 }

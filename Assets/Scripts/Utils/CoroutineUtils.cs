@@ -1,85 +1,91 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using System;
 
-public class CoroutineUtils
+using UnityEngine;
+
+namespace Assets.Scripts.Utils
 {
-    MonoBehaviour instance;
 
-    public CoroutineUtils(MonoBehaviour instance)
+    public class CoroutineUtils
     {
-        if (instance == null)
+        MonoBehaviour instance;
+
+        public CoroutineUtils(MonoBehaviour instance)
         {
-            throw new ArgumentNullException("instance");
+            if (instance == null)
+            {
+                throw new ArgumentNullException("instance");
+            }
+
+            this.instance = instance;
         }
 
-        this.instance = instance;
-    }
+        public void WaitForSeconds(float seconds, Action callback)
+        {
+            this.instance.StartCoroutine(WaitForSecondsCoroutine(seconds, callback));
+        }
 
-    public void WaitForSeconds(float seconds, Action callback)
-    {
-        instance.StartCoroutine(WaitForSecondsCoroutine(seconds, callback));
-    }
+        public void WaitForFrames(int frames, Action callback)
+        {
+            this.instance.StartCoroutine(WaitForSecondsCoroutine(frames, callback));
+        }
 
-    public void WaitForFrames(int frames, Action callback)
-    {
-        instance.StartCoroutine(WaitForSecondsCoroutine(frames, callback));
-    }
+        public void WaitForRenderGUIFrames(int frames, Action callback)
+        {
+            this.instance.StartCoroutine(this.WaitForGUIRenderFrameCoroutine(frames, callback));
+        }
 
-    public void WaitForRenderGUIFrames(int frames, Action callback)
-    {
-        instance.StartCoroutine(WaitForGUIRenderFrameCoroutine(frames, callback));
-    }
+        public void WaitUntil(Func<bool> condition, Action callback)
+        {
+            this.instance.StartCoroutine(this.WaitUntilCoroutine(condition, callback));
+        }
 
-    public void WaitUntil(Func<bool> condition, Action callback)
-    {
-        instance.StartCoroutine(WaitUntilCoroutine(condition, callback));
-    }
+        public void RepeatEverySeconds(float seconds, Action callback)
+        {
+            this.instance.StartCoroutine(this.RepeatEverySecondsCoroutine(seconds, callback));
+        }
 
-    public void RepeatEverySeconds(float seconds, Action callback)
-    {
-        instance.StartCoroutine(RepeatEverySecondsCoroutine(seconds, callback));
-    }
+        IEnumerator RepeatEverySecondsCoroutine(float seconds, Action callback)
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(seconds);
+                callback();
+            }
+        }
 
-    IEnumerator RepeatEverySecondsCoroutine(float seconds, Action callback)
-    {
-        while (true)
+        IEnumerator WaitUntilCoroutine(Func<bool> condition, Action callback)
+        {
+            yield return new WaitUntil(condition);
+            callback();
+        }
+
+        IEnumerator WaitForGUIRenderFrameCoroutine(int frames, Action callback)
+        {
+            for (int i = 0; i < frames; i++)
+            {
+                yield return new WaitForEndOfFrame();    
+            }
+
+            callback();
+        }
+
+        IEnumerator WaitForFramesCoroutine(int frames, Action callback)
+        {
+            for (int i = 0; i < frames; i++)
+            {
+                yield return null;    
+            }
+
+            callback();
+        }
+
+        static IEnumerator WaitForSecondsCoroutine(float seconds, Action callback)
         {
             yield return new WaitForSeconds(seconds);
             callback();
         }
     }
 
-    IEnumerator WaitUntilCoroutine(Func<bool> condition, Action callback)
-    {
-        yield return new WaitUntil(condition);
-        callback();
-    }
-
-    IEnumerator WaitForGUIRenderFrameCoroutine(int frames, Action callback)
-    {
-        for (int i = 0; i < frames; i++)
-        {
-            yield return new WaitForEndOfFrame();    
-        }
-
-        callback();
-    }
-
-    IEnumerator WaitForFramesCoroutine(int frames, Action callback)
-    {
-        for (int i = 0; i < frames; i++)
-        {
-            yield return null;    
-        }
-
-        callback();
-    }
-
-    static IEnumerator WaitForSecondsCoroutine(float seconds, Action callback)
-    {
-        yield return new WaitForSeconds(seconds);
-        callback();
-    }
 }
 

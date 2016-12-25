@@ -1,87 +1,96 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameInfoFactory : MonoBehaviour
+namespace Assets.Scripts
 {
-    const string BasicExam = "BasicExam";
-    const string AudienceRevenge = "AudienceRevenge";
-    const string FastestWins = "FastestWins";
 
-    public ServerNetworkManager ServerNetworkManager;
-    public BasicExamServer BasicExamServer;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Utils;
 
-    string externalIp = "";
-
-    void Awake()
+    public class GameInfoFactory : MonoBehaviour
     {
-        NetworkUtils.GetExternalIP((ip) => externalIp = ip);
-    }
+        const string BasicExam = "BasicExam";
+        const string AudienceRevenge = "AudienceRevenge";
+        const string FastestWins = "FastestWins";
 
-    public CreatedGameInfo_Serializable Get()
-    {
-        var sceneName = SceneManager.GetActiveScene().name;
-        return Get(sceneName);
-    }
+        public ServerNetworkManager ServerNetworkManager;
+        public BasicExamServer BasicExamServer;
 
-    public CreatedGameInfo_Serializable Get(string levelName)
-    {
-        var levelNameUpper = levelName.ToUpperInvariant();
+        string externalIp = "";
 
-        if (levelNameUpper.Contains(BasicExam.ToUpperInvariant()))
+        void Awake()
         {
-            return GetBasicExamGameInfo();
+            NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
         }
-        else if (levelNameUpper.Contains(AudienceRevenge.ToUpperInvariant()))
+
+        public CreatedGameInfo_Serializable Get()
         {
-            //TODO
-            throw new NotImplementedException();
+            var sceneName = SceneManager.GetActiveScene().name;
+            return this.Get(sceneName);
         }
-        else if (levelNameUpper.Contains(FastestWins.ToUpperInvariant()))
+
+        public CreatedGameInfo_Serializable Get(string levelName)
         {
-            //TODO
-            throw new NotImplementedException();
+            var levelNameUpper = levelName.ToUpperInvariant();
+
+            if (levelNameUpper.Contains(BasicExam.ToUpperInvariant()))
+            {
+                return this.GetBasicExamGameInfo();
+            }
+            else if (levelNameUpper.Contains(AudienceRevenge.ToUpperInvariant()))
+            {
+                //TODO
+                throw new NotImplementedException();
+            }
+            else if (levelNameUpper.Contains(FastestWins.ToUpperInvariant()))
+            {
+                //TODO
+                throw new NotImplementedException();
+            }
+            else
+            {
+                //TODO
+                throw new NotImplementedException();
+            }
         }
-        else
+
+        BasicExamGameInfo_Serializable GetBasicExamGameInfo()
         {
-            //TODO
-            throw new NotImplementedException();
+            var canConnectAsMainPlayer = !this.BasicExamServer.MainPlayerData.IsConnected;
+            var canConnectAsAudience = this.ServerNetworkManager.ConnectedClientsCount < (this.ServerNetworkManager.MaxConnections - 1);
+            var gameType = GameType.BasicExam;
+            var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
+            var serverInfo = this.GetServerInfo();
+
+            var gameInfo = new BasicExamGameInfo_Serializable()
+                           {
+                               CanConnectAsMainPlayer = canConnectAsMainPlayer,
+                               CanConnectAsAudience = canConnectAsAudience,
+                               GameType = gameType,
+                               HostUsername = hostUsername,
+                               ServerInfo = serverInfo
+                           };
+
+            return gameInfo;
+        }
+
+        ServerInfo_Serializable GetServerInfo()
+        {
+            var localIPAddress = NetworkUtils.GetLocalIP();
+            var connectedClientsCount = this.ServerNetworkManager.ConnectedClientsCount;
+            var maxConnections = this.ServerNetworkManager.MaxConnections;
+            var serverInfo = new ServerInfo_Serializable()
+                             {
+                                 ExternalIpAddress = this.externalIp,
+                                 LocalIPAddress = localIPAddress,
+                                 ConnectedClientsCount = connectedClientsCount,
+                                 MaxConnectionsAllowed = maxConnections
+                             };
+
+            return serverInfo;
         }
     }
 
-    BasicExamGameInfo_Serializable GetBasicExamGameInfo()
-    {
-        var canConnectAsMainPlayer = !BasicExamServer.MainPlayerData.IsConnected;
-        var canConnectAsAudience = ServerNetworkManager.ConnectedClientsCount < (ServerNetworkManager.MaxConnections - 1);
-        var gameType = GameType.BasicExam;
-        var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
-        var serverInfo = GetServerInfo();
-
-        var gameInfo = new BasicExamGameInfo_Serializable()
-        {
-            CanConnectAsMainPlayer = canConnectAsMainPlayer,
-            CanConnectAsAudience = canConnectAsAudience,
-            GameType = gameType,
-            HostUsername = hostUsername,
-            ServerInfo = serverInfo
-        };
-
-        return gameInfo;
-    }
-
-    ServerInfo_Serializable GetServerInfo()
-    {
-        var localIPAddress = NetworkUtils.GetLocalIP();
-        var connectedClientsCount = ServerNetworkManager.ConnectedClientsCount;
-        var maxConnections = ServerNetworkManager.MaxConnections;
-        var serverInfo = new ServerInfo_Serializable()
-        {
-            ExternalIpAddress = externalIp,
-            LocalIPAddress = localIPAddress,
-            ConnectedClientsCount = connectedClientsCount,
-            MaxConnectionsAllowed = maxConnections
-        };
-
-        return serverInfo;
-    }
 }

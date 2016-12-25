@@ -1,196 +1,212 @@
-using UnityEngine;
 using System;
 using System.Linq;
 
-public class AskPlayerQuestionRouter : ExtendedMonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts.Jokers.AskPlayerQuestion
 {
-    public const int MinTimeToAnswerInSeconds = 10;
 
-    const float ChanceToGenerateCorrectAnswer = 0.8f;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Utils;
 
-    const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
-    const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
+    using Debug = UnityEngine.Debug;
+    using EventArgs = System.EventArgs;
 
-    public ServerNetworkManager NetworkManager;
-    public LocalGameData LocalGameData;
-
-    int timeToAnswerInSeconds;
-    int senderConnectionId;
-    int friendConnectionId;
-    int elapsedTime;
-
-    bool activated = false;
-
-    public bool Activated
+    public class AskPlayerQuestionRouter : ExtendedMonoBehaviour
     {
-        get
+        public const int MinTimeToAnswerInSeconds = 10;
+
+        const float ChanceToGenerateCorrectAnswer = 0.8f;
+
+        const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
+        const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
+
+        public ServerNetworkManager NetworkManager;
+        public LocalGameData LocalGameData;
+
+        int timeToAnswerInSeconds;
+        int senderConnectionId;
+        int friendConnectionId;
+        int elapsedTime;
+
+        bool activated = false;
+
+        public bool Activated
         {
-            return activated;
-        }
-    }
-
-    public EventHandler OnActivated = delegate
-    {
-    };
-
-    public EventHandler OnSent = delegate
-    {
-    };
-
-    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
-    {
-    };
-
-    void Start()
-    {
-        base.CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
-    }
-
-    void OnReceivedFriendResponse(int connectionId, string answer)
-    {
-        if (connectionId != friendConnectionId)
-        {
-            NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
-            return;
-        }
-
-        if (elapsedTime >= timeToAnswerInSeconds || !NetworkManager.IsConnected(senderConnectionId))
-        {
-            return;
-        }
-
-        SendMainPlayerAnswerResponse(connectionId, answer);
-    }
-
-    void SendMainPlayerAnswerResponse(int connectionId, string answer)
-    {
-        var sendFriendResponseCommand = NetworkCommandData.From<AskPlayerResponseCommand>();
-        var friendUsername = NetworkManager.GetClientUsername(connectionId);
-        sendFriendResponseCommand.AddOption("Username", friendUsername);
-        sendFriendResponseCommand.AddOption("Answer", answer);
-
-        NetworkManager.SendClientCommand(senderConnectionId, sendFriendResponseCommand);
-
-        OnSent(this, EventArgs.Empty);
-
-        Deactivate();
-    }
-
-    void UpdateTimer()
-    {
-        if (!Activated)
-        {
-            return;
-        }
-
-        elapsedTime++;
-
-        if (elapsedTime >= timeToAnswerInSeconds)
-        {
-            Deactivate();
-
-            var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
-            NetworkManager.SendClientCommand(senderConnectionId, answerTimeoutCommandData);
-            NetworkManager.SendClientCommand(friendConnectionId, answerTimeoutCommandData);
-        }
-    }
-
-    void SendComputerGeneratedAnswer()
-    {
-        var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
-
-        CoroutineUtils.WaitForSeconds(secondsToWait, () =>
+            get
             {
-                LocalGameData.GetCurrentQuestion((question) =>
-                    {
-                        var shouldSendCorrect = UnityEngine.Random.value <= ChanceToGenerateCorrectAnswer;
-                        var correctAnswer = question.Answers[question.CorrectAnswerIndex];
+                return this.activated;
+            }
+        }
 
-                        if (shouldSendCorrect)
+        public EventHandler OnActivated = delegate
+            {
+            };
+
+        public EventHandler OnSent = delegate
+            {
+            };
+
+        public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+            {
+            };
+
+        void Start()
+        {
+            base.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
+        }
+
+        void OnReceivedFriendResponse(int connectionId, string answer)
+        {
+            if (connectionId != this.friendConnectionId)
+            {
+                this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
+                return;
+            }
+
+            if (this.elapsedTime >= this.timeToAnswerInSeconds || !this.NetworkManager.IsConnected(this.senderConnectionId))
+            {
+                return;
+            }
+
+            this.SendMainPlayerAnswerResponse(connectionId, answer);
+        }
+
+        void SendMainPlayerAnswerResponse(int connectionId, string answer)
+        {
+            var sendFriendResponseCommand = NetworkCommandData.From<AskPlayerResponseCommand>();
+            var friendUsername = this.NetworkManager.GetClientUsername(connectionId);
+            sendFriendResponseCommand.AddOption("Username", friendUsername);
+            sendFriendResponseCommand.AddOption("Answer", answer);
+
+            this.NetworkManager.SendClientCommand(this.senderConnectionId, sendFriendResponseCommand);
+
+            this.OnSent(this, EventArgs.Empty);
+
+            this.Deactivate();
+        }
+
+        void UpdateTimer()
+        {
+            if (!this.Activated)
+            {
+                return;
+            }
+
+            this.elapsedTime++;
+
+            if (this.elapsedTime >= this.timeToAnswerInSeconds)
+            {
+                this.Deactivate();
+
+                var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
+                this.NetworkManager.SendClientCommand(this.senderConnectionId, answerTimeoutCommandData);
+                this.NetworkManager.SendClientCommand(this.friendConnectionId, answerTimeoutCommandData);
+            }
+        }
+
+        void SendComputerGeneratedAnswer()
+        {
+            var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
+
+            this.CoroutineUtils.WaitForSeconds(secondsToWait, () =>
+                {
+                    this.LocalGameData.GetCurrentQuestion((question) =>
                         {
-                            SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, correctAnswer);    
-                        }
-                        else
-                        {
-                            var rndWrongAnswer = question.Answers.Where(a => a != correctAnswer).ToArray().GetRandomElement();
-                            SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, rndWrongAnswer);
-                        }
-                    }, (exception) =>
+                            var shouldSendCorrect = UnityEngine.Random.value <= ChanceToGenerateCorrectAnswer;
+                            var correctAnswer = question.Answers[question.CorrectAnswerIndex];
+
+                            if (shouldSendCorrect)
+                            {
+                                this.SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, correctAnswer);    
+                            }
+                            else
+                            {
+                                var rndWrongAnswer = question.Answers.Where(a => a != correctAnswer).ToArray().GetRandomElement();
+                                this.SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, rndWrongAnswer);
+                            }
+                        }, (exception) =>
+                            {
+                                Debug.LogException(exception);
+                                this.Deactivate();
+                                this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                            });
+               
+                });
+        }
+
+        void SendQuestionToFriend()
+        {
+            this.LocalGameData.GetCurrentQuestion((question) =>
+                {
+                    var sendQuestionToFriend = NetworkCommandData.From<LoadQuestionCommand>(); 
+                    var questionJSON = JsonUtility.ToJson(question.Serialize());
+                    sendQuestionToFriend.AddOption("TimeToAnswer", this.LocalGameData.SecondsForAnswerQuestion.ToString());
+                    sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
+
+                    this.NetworkManager.SendClientCommand(this.friendConnectionId, sendQuestionToFriend);
+                    this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
+                }, (exception) =>
                     {
                         Debug.LogException(exception);
-                        Deactivate();
-                        OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                        this.Deactivate();
+                        this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
                     });
-               
-            });
-    }
+        }
 
-    void SendQuestionToFriend()
-    {
-        LocalGameData.GetCurrentQuestion((question) =>
+        void SendJokerSettings(int connectionId)
+        {
+            var settingsCommandData = NetworkCommandData.From<HelpFromFriendJokerSettingsCommand>();
+            settingsCommandData.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
+            this.NetworkManager.SendClientCommand(connectionId, settingsCommandData);
+        }
+
+        public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
+        {
+            if (this.Activated)
             {
-                var sendQuestionToFriend = NetworkCommandData.From<LoadQuestionCommand>(); 
-                var questionJSON = JsonUtility.ToJson(question.Serialize());
-                sendQuestionToFriend.AddOption("TimeToAnswer", LocalGameData.SecondsForAnswerQuestion.ToString());
-                sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
+                throw new InvalidOperationException("Already active");
+            }
 
-                NetworkManager.SendClientCommand(friendConnectionId, sendQuestionToFriend);
-                NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(OnReceivedFriendResponse));
-            }, (exception) =>
+            if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
             {
-                Debug.LogException(exception);
-                Deactivate();
-                OnError(this, new UnhandledExceptionEventArgs(exception, true));
-            });
-    }
+                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
+            }
 
-    void SendJokerSettings(int connectionId)
-    {
-        var settingsCommandData = NetworkCommandData.From<HelpFromFriendJokerSettingsCommand>();
-        settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
-        NetworkManager.SendClientCommand(connectionId, settingsCommandData);
-    }
+            this.senderConnectionId = senderConnectionId;
+            this.friendConnectionId = friendConnectionId;
+            this.timeToAnswerInSeconds = this.LocalGameData.SecondsForAnswerQuestion;
 
-    public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
-    {
-        if (Activated)
-        {
-            throw new InvalidOperationException("Already active");
+            this.SendJokerSettings(senderConnectionId);
+
+            if (friendConnectionId == NetworkCommandData.CODE_Option_ClientConnectionId_AI)
+            {
+                this.SendComputerGeneratedAnswer();
+            }
+            else
+            {
+                this.SendQuestionToFriend();    
+            }
+
+            this.OnActivated(this, EventArgs.Empty);
+            this.activated = true;
         }
 
-        if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
+        public void Deactivate()
         {
-            throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
+            this.StopAllCoroutines();
+
+            this.timeToAnswerInSeconds = 0;
+            this.senderConnectionId = 0;
+            this.friendConnectionId = 0;
+            this.elapsedTime = 0;
+
+            this.activated = false;
         }
-
-        this.senderConnectionId = senderConnectionId;
-        this.friendConnectionId = friendConnectionId;
-        this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
-
-        SendJokerSettings(senderConnectionId);
-
-        if (friendConnectionId == NetworkCommandData.CODE_Option_ClientConnectionId_AI)
-        {
-            SendComputerGeneratedAnswer();
-        }
-        else
-        {
-            SendQuestionToFriend();    
-        }
-
-        OnActivated(this, EventArgs.Empty);
-        activated = true;
     }
 
-    public void Deactivate()
-    {
-        StopAllCoroutines();
-
-        timeToAnswerInSeconds = 0;
-        senderConnectionId = 0;
-        friendConnectionId = 0;
-        elapsedTime = 0;
-
-        activated = false;
-    }
 }

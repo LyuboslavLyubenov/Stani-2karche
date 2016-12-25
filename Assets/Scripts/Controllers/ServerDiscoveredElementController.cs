@@ -1,37 +1,45 @@
-﻿using UnityEngine.UI;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
-public class ServerDiscoveredElementController : ExtendedMonoBehaviour
+using UnityEngine.UI;
+
+namespace Assets.Scripts.Controllers
 {
-    Text category;
-    Text creatorName;
-    Text connectedClients;
 
-    public string ServerIPAddress
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Utils;
+
+    public class ServerDiscoveredElementController : ExtendedMonoBehaviour
     {
-        get;
-        private set;
+        Text category;
+        Text creatorName;
+        Text connectedClients;
+
+        public string ServerIPAddress
+        {
+            get;
+            private set;
+        }
+
+        void Start()
+        {
+            this.category = this.transform.Find("CategoryType").GetComponent<Text>();
+            this.creatorName = this.transform.Find("CreatorName").GetComponent<Text>();
+            this.connectedClients = this.transform.Find("ConnectedClients").GetComponent<Text>();
+        }
+
+        public void SetData(CreatedGameInfo_Serializable gameInfo)
+        {
+            this.category.text = this.TranslateGameType(gameInfo.GameType);
+            this.creatorName.text = gameInfo.HostUsername;
+            this.connectedClients.text = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
+            this.ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
+        }
+
+        string TranslateGameType(GameType gameType)
+        {
+            var enumName = Enum.GetName(typeof(GameType), gameType);
+            return LanguagesManager.Instance.GetValue(enumName);
+        }
     }
 
-    void Start()
-    {
-        category = transform.Find("CategoryType").GetComponent<Text>();
-        creatorName = transform.Find("CreatorName").GetComponent<Text>();
-        connectedClients = transform.Find("ConnectedClients").GetComponent<Text>();
-    }
-
-    public void SetData(CreatedGameInfo_Serializable gameInfo)
-    {
-        category.text = TranslateGameType(gameInfo.GameType);
-        creatorName.text = gameInfo.HostUsername;
-        connectedClients.text = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
-        ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
-    }
-
-    string TranslateGameType(GameType gameType)
-    {
-        var enumName = Enum.GetName(typeof(GameType), gameType);
-        return LanguagesManager.Instance.GetValue(enumName);
-    }
 }

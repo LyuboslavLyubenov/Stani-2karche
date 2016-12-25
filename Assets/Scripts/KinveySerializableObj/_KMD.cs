@@ -1,9 +1,14 @@
 ﻿using System;
 
-[Serializable]
-public class _KMD
+namespace Assets.Scripts.KinveySerializableObj
 {
-    public string lmt;
-    public string etc;
-    public string authtoken;
+
+    [Serializable]
+    public class _KMD
+    {
+        public string lmt;
+        public string etc;
+        public string authtoken;
+    }
+
 }

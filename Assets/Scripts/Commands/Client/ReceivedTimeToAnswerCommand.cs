@@ -1,24 +1,30 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System;
 
-public class ReceivedTimeToAnswerCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.Client
 {
-    Action<int> onReceivedRemainingTime;
 
-    public ReceivedTimeToAnswerCommand(Action<int> onReceivedRemainingTime)
-    { 
-        if (onReceivedRemainingTime == null)
-        {
-            throw new ArgumentNullException("onReceivedRemainingTime");
+    using Assets.Scripts.Interfaces;
+
+    public class ReceivedTimeToAnswerCommand : INetworkManagerCommand
+    {
+        Action<int> onReceivedRemainingTime;
+
+        public ReceivedTimeToAnswerCommand(Action<int> onReceivedRemainingTime)
+        { 
+            if (onReceivedRemainingTime == null)
+            {
+                throw new ArgumentNullException("onReceivedRemainingTime");
+            }
+
+            this.onReceivedRemainingTime = onReceivedRemainingTime;
         }
 
-        this.onReceivedRemainingTime = onReceivedRemainingTime;
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var secondsRemaining = int.Parse(commandsOptionsValues["TimeInSeconds"]);
+            this.onReceivedRemainingTime(secondsRemaining);
+        }
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var secondsRemaining = int.Parse(commandsOptionsValues["TimeInSeconds"]);
-        onReceivedRemainingTime(secondsRemaining);
-    }
 }

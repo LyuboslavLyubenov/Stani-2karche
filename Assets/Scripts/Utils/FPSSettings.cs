@@ -1,18 +1,23 @@
 ﻿using UnityEngine;
 
-public class FPSSettings : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    void Start()
+
+    public class FPSSettings : MonoBehaviour
     {
-        DontDestroyOnLoad(this);
+        void Start()
+        {
+            DontDestroyOnLoad(this);
 
-        Application.targetFrameRate = 60;
+            Application.targetFrameRate = 60;
 
-        #if !UNITY_STANDALONE 
+#if !UNITY_STANDALONE 
         QualitySettings.vSyncCount = 2;
         #else
-        QualitySettings.vSyncCount = 1;
-        Application.runInBackground = true;
-        #endif
+            QualitySettings.vSyncCount = 1;
+            Application.runInBackground = true;
+#endif
+        }
     }
+
 }

@@ -1,33 +1,39 @@
-using UnityEngine;
 using System;
-using System.Collections;
-
-//Mediator
 using System.Collections.Generic;
 
-public abstract class AddJokerAbstractCommand : INetworkManagerCommand
+//Mediator
+
+namespace Assets.Scripts.Commands.Jokers.Add
 {
-    AvailableJokersUIController jokersUIController;
 
-    protected AddJokerAbstractCommand(AvailableJokersUIController jokersUIController)
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Interfaces;
+
+    public abstract class AddJokerAbstractCommand : INetworkManagerCommand
     {
-        if (jokersUIController == null)
+        AvailableJokersUIController jokersUIController;
+
+        protected AddJokerAbstractCommand(AvailableJokersUIController jokersUIController)
         {
-            throw new ArgumentNullException("jokersUIController");
+            if (jokersUIController == null)
+            {
+                throw new ArgumentNullException("jokersUIController");
+            }
+
+            this.jokersUIController = jokersUIController;
         }
 
-        this.jokersUIController = jokersUIController;
-    }
-
-    protected void AddJoker(IJoker joker)
-    {
-        if (joker == null)
+        protected void AddJoker(IJoker joker)
         {
-            throw new ArgumentNullException("joker");
+            if (joker == null)
+            {
+                throw new ArgumentNullException("joker");
+            }
+
+            this.jokersUIController.AddJoker(joker);
         }
 
-        jokersUIController.AddJoker(joker);
+        public abstract void Execute(Dictionary<string, string> commandsOptionsValues);
     }
 
-    public abstract void Execute(Dictionary<string, string> commandsOptionsValues);
 }

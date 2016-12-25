@@ -2,58 +2,66 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class GameDataGetQuestionRouterCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.GameData
 {
-    ServerNetworkManager networkManager;
 
-    public GameDataGetQuestionRouterCommand(ServerNetworkManager networkManager)
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
+
+    public class GameDataGetQuestionRouterCommand : INetworkManagerCommand
     {
-        if (networkManager == null)
+        ServerNetworkManager networkManager;
+
+        public GameDataGetQuestionRouterCommand(ServerNetworkManager networkManager)
         {
-            throw new ArgumentNullException("networkManager");
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            this.networkManager = networkManager;
         }
 
-        this.networkManager = networkManager;
-    }
-
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var requestType = (QuestionRequestType)Enum.Parse(typeof(QuestionRequestType), commandsOptionsValues["RequestType"]);
-
-        switch (requestType)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            case QuestionRequestType.Current:
-                var currentQuestionCommandData = new NetworkCommandData("GameDataGetCurrentQuestion");
-                MapOptionsToCommand(currentQuestionCommandData, commandsOptionsValues);
-                networkManager.CommandsManager.Execute(currentQuestionCommandData);
-                break;
+            var requestType = (QuestionRequestType)Enum.Parse(typeof(QuestionRequestType), commandsOptionsValues["RequestType"]);
 
-            case QuestionRequestType.Next:
-                var nextQuestionCommandData = new NetworkCommandData("GameDataGetNextQuestion");
-                MapOptionsToCommand(nextQuestionCommandData, commandsOptionsValues);
-                networkManager.CommandsManager.Execute(nextQuestionCommandData);
-                break;
+            switch (requestType)
+            {
+                case QuestionRequestType.Current:
+                    var currentQuestionCommandData = new NetworkCommandData("GameDataGetCurrentQuestion");
+                    this.MapOptionsToCommand(currentQuestionCommandData, commandsOptionsValues);
+                    this.networkManager.CommandsManager.Execute(currentQuestionCommandData);
+                    break;
 
-            case QuestionRequestType.Random:
-                var randomQuestionCommandData = new NetworkCommandData("GameDataGetRandomQuestion");
-                MapOptionsToCommand(randomQuestionCommandData, commandsOptionsValues);
-                networkManager.CommandsManager.Execute(randomQuestionCommandData);
-                break;
+                case QuestionRequestType.Next:
+                    var nextQuestionCommandData = new NetworkCommandData("GameDataGetNextQuestion");
+                    this.MapOptionsToCommand(nextQuestionCommandData, commandsOptionsValues);
+                    this.networkManager.CommandsManager.Execute(nextQuestionCommandData);
+                    break;
 
-            default:
-                throw new NotImplementedException();
-                break;
+                case QuestionRequestType.Random:
+                    var randomQuestionCommandData = new NetworkCommandData("GameDataGetRandomQuestion");
+                    this.MapOptionsToCommand(randomQuestionCommandData, commandsOptionsValues);
+                    this.networkManager.CommandsManager.Execute(randomQuestionCommandData);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+                    break;
+            }
+        }
+
+        void MapOptionsToCommand(NetworkCommandData commandData, Dictionary<string, string> options)
+        {
+            var optionsList = options.ToArray();
+
+            for (int i = 0; i < optionsList.Length; i++)
+            {
+                var optionData = optionsList[i];
+                commandData.AddOption(optionData.Key, optionData.Value);
+            }
         }
     }
 
-    void MapOptionsToCommand(NetworkCommandData commandData, Dictionary<string, string> options)
-    {
-        var optionsList = options.ToArray();
-
-        for (int i = 0; i < optionsList.Length; i++)
-        {
-            var optionData = optionsList[i];
-            commandData.AddOption(optionData.Key, optionData.Value);
-        }
-    }
 }

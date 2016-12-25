@@ -1,23 +1,29 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 
-public interface IJoker
+using UnityEngine;
+
+namespace Assets.Scripts.Interfaces
 {
-    Sprite Image
+
+    public interface IJoker
     {
-        get;
+        Sprite Image
+        {
+            get;
+        }
+
+        EventHandler OnActivated
+        {
+            get;
+            set;
+        }
+
+        bool Activated
+        {
+            get;
+        }
+
+        void Activate();
     }
 
-    EventHandler OnActivated
-    {
-        get;
-        set;
-    }
-
-    bool Activated
-    {
-        get;
-    }
-
-    void Activate();
 }

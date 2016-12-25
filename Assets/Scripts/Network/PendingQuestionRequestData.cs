@@ -1,31 +1,38 @@
 ﻿using System;
 
-public class PendingQuestionRequestData
+namespace Assets.Scripts.Network
 {
-    public delegate void OnSuccessfullyLoadedDelegate(ISimpleQuestion question);
 
-    public delegate void OnExceptionDelegate(Exception exception);
+    using Assets.Scripts.Interfaces;
 
-    public OnSuccessfullyLoadedDelegate OnLoaded
+    public class PendingQuestionRequestData
     {
-        get;
-        private set;
-    }
+        public delegate void OnSuccessfullyLoadedDelegate(ISimpleQuestion question);
 
-    public OnExceptionDelegate OnException
-    {
-        get;
-        private set;
-    }
+        public delegate void OnExceptionDelegate(Exception exception);
 
-    public PendingQuestionRequestData(OnSuccessfullyLoadedDelegate onSuccessfullyLoaded, OnExceptionDelegate onException)
-    {
-        if (onSuccessfullyLoaded == null)
+        public OnSuccessfullyLoadedDelegate OnLoaded
         {
-            throw new ArgumentNullException("onSuccessfullyLoaded");
+            get;
+            private set;
         }
 
-        this.OnLoaded = onSuccessfullyLoaded;
-        this.OnException = onException;
+        public OnExceptionDelegate OnException
+        {
+            get;
+            private set;
+        }
+
+        public PendingQuestionRequestData(OnSuccessfullyLoadedDelegate onSuccessfullyLoaded, OnExceptionDelegate onException)
+        {
+            if (onSuccessfullyLoaded == null)
+            {
+                throw new ArgumentNullException("onSuccessfullyLoaded");
+            }
+
+            this.OnLoaded = onSuccessfullyLoaded;
+            this.OnException = onException;
+        }
     }
+
 }

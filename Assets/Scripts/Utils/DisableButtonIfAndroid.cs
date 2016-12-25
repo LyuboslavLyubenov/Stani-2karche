@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
-public class DisableButtonIfAndroid : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    void Start()
+
+    public class DisableButtonIfAndroid : MonoBehaviour
     {
-        #if UNITY_ANDROID
+        void Start()
+        {
+#if UNITY_ANDROID
         GetComponent<Button>().interactable = false;
         #endif
+        }
     }
+
 }

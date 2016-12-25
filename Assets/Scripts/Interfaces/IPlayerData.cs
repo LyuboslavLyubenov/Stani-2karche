@@ -1,31 +1,38 @@
 using System;
 
-public interface IPlayerData
+namespace Assets.Scripts.Interfaces
 {
-    EventHandler<ClientConnectionDataEventArgs> OnConnected
+
+    using Assets.Scripts.EventArgs;
+
+    public interface IPlayerData
     {
-        get;
-        set;
+        EventHandler<ClientConnectionDataEventArgs> OnConnected
+        {
+            get;
+            set;
+        }
+
+        EventHandler<ClientConnectionDataEventArgs> OnDisconnected
+        {
+            get;
+            set;
+        }
+
+        bool IsConnected
+        {
+            get;
+        }
+
+        int ConnectionId
+        {
+            get;
+        }
+
+        string Username
+        {
+            get;
+        }
     }
 
-    EventHandler<ClientConnectionDataEventArgs> OnDisconnected
-    {
-        get;
-        set;
-    }
-
-    bool IsConnected
-    {
-        get;
-    }
-
-    int ConnectionId
-    {
-        get;
-    }
-
-    string Username
-    {
-        get;
-    }
 }

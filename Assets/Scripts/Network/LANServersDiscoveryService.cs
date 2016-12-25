@@ -1,32 +1,39 @@
 ﻿using System;
 
-public class LANServersDiscoveryService : LANBroadcastService
+namespace Assets.Scripts.Network
 {
-    public EventHandler<IpEventArgs> OnFound = delegate
-    {
-    };
 
-    const int RetrieveMessageDelayInSeconds = 1;
+    using Assets.Scripts.EventArgs;
 
-    void Start()
+    public class LANServersDiscoveryService : LANBroadcastService
     {
-        base.Initialize();
-        CoroutineUtils.WaitForFrames(1, ReceiveIsServerOnlineMessage);
-    }
+        public EventHandler<IpEventArgs> OnFound = delegate
+            {
+            };
 
-    void ReceiveIsServerOnlineMessage()
-    {
-        base.ReceiveBroadcastMessageAsync(ReceivedBroadcastMessage);
-    }
+        const int RetrieveMessageDelayInSeconds = 1;
 
-    void ReceivedBroadcastMessage(string ip, string message)
-    {
-        if (message.Equals(LANServerOnlineBroadcastService.MessageIAmServer))
+        void Start()
         {
-            OnFound(this, new IpEventArgs(ip));
+            base.Initialize();
+            this.CoroutineUtils.WaitForFrames(1, this.ReceiveIsServerOnlineMessage);
         }
 
-        CoroutineUtils.WaitForSeconds(RetrieveMessageDelayInSeconds, ReceiveIsServerOnlineMessage);
-    }
+        void ReceiveIsServerOnlineMessage()
+        {
+            base.ReceiveBroadcastMessageAsync(this.ReceivedBroadcastMessage);
+        }
+
+        void ReceivedBroadcastMessage(string ip, string message)
+        {
+            if (message.Equals(LANServerOnlineBroadcastService.MessageIAmServer))
+            {
+                this.OnFound(this, new IpEventArgs(ip));
+            }
+
+            this.CoroutineUtils.WaitForSeconds(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
+        }
 	
+    }
+
 }

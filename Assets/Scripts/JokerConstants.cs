@@ -1,10 +1,9 @@
-using UnityEngine;
-using System;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using System.Linq;
-
-public class JokerConstants
+namespace Assets.Scripts
 {
-    public const string JokerImagesPath = "Images/Buttons/Jokers/";
+
+    public class JokerConstants
+    {
+        public const string JokerImagesPath = "Images/Buttons/Jokers/";
+    }
+
 }

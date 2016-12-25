@@ -1,24 +1,31 @@
-﻿using System.Net.Sockets;
-using System;
+﻿using System;
+using System.Net.Sockets;
 
-public class DisconnectState
+namespace Assets.Scripts.Network
 {
-    public string IPAddress;
-    public Socket Socket;
 
-    public DisconnectState(string IPAddress, Socket socket)
+    using Assets.Scripts.Utils;
+
+    public class DisconnectState
     {
-        if (!IPAddress.IsValidIPV4())
-        {
-            throw new ArgumentException("Invalid ipv4 address", "IPAddress");
-        }
+        public string IPAddress;
+        public Socket Socket;
 
-        if (socket == null)
+        public DisconnectState(string IPAddress, Socket socket)
         {
-            throw new NullReferenceException("Socket cannot be null");
-        }
+            if (!IPAddress.IsValidIPV4())
+            {
+                throw new ArgumentException("Invalid ipv4 address", "IPAddress");
+            }
 
-        this.IPAddress = IPAddress;
-        this.Socket = socket;
+            if (socket == null)
+            {
+                throw new NullReferenceException("Socket cannot be null");
+            }
+
+            this.IPAddress = IPAddress;
+            this.Socket = socket;
+        }
     }
+
 }

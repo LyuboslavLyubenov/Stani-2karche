@@ -1,46 +1,55 @@
 ﻿using UnityEngine;
-using System;
 
-public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
+namespace Assets.Scripts.Network
 {
-    public const string GameInfoTag = "[CreatedGameInfo]";
-    public const string SendGameInfoCommandTag = "[SendGameInfo]";
 
-    public SimpleTcpClient TcpClient;
-    public SimpleTcpServer TcpServer;
-    public GameInfoFactory GameInfoFactory;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Utils;
 
-    void Start()
+    using Debug = UnityEngine.Debug;
+
+    public class CreatedGameInfoSenderService : ExtendedMonoBehaviour
     {
-        if (!TcpClient.Initialized)
+        public const string GameInfoTag = "[CreatedGameInfo]";
+        public const string SendGameInfoCommandTag = "[SendGameInfo]";
+
+        public SimpleTcpClient TcpClient;
+        public SimpleTcpServer TcpServer;
+        public GameInfoFactory GameInfoFactory;
+
+        void Start()
         {
-            TcpClient.Initialize();
+            if (!this.TcpClient.Initialized)
+            {
+                this.TcpClient.Initialize();
+            }
+
+            if (!this.TcpServer.Initialized)
+            {
+                this.TcpServer.Initialize(7774);
+            }
+
+            this.TcpServer.OnReceivedMessage += this.OnReceivedMessage;
+
+            Debug.Log("Created game info inizialized");
         }
 
-        if (!TcpServer.Initialized)
+        void OnReceivedMessage(object sender, MessageEventArgs args)
         {
-            TcpServer.Initialize(7774);
+            if (!args.Message.Contains(SendGameInfoCommandTag))
+            {   
+                return;
+            }
+
+            var gameInfo = this.GameInfoFactory.Get();
+            var gameInfoJSON = JsonUtility.ToJson(gameInfo);
+            var messageToSend = GameInfoTag + gameInfoJSON;
+
+            this.TcpClient.ConnectTo(args.IPAddress, this.TcpServer.Port, () => this.TcpClient.Send(args.IPAddress, messageToSend));
+
+            Debug.Log("Sending game info to " + args.IPAddress);
         }
-
-        TcpServer.OnReceivedMessage += OnReceivedMessage;
-
-        Debug.Log("Created game info inizialized");
     }
 
-    void OnReceivedMessage(object sender, MessageEventArgs args)
-    {
-        if (!args.Message.Contains(SendGameInfoCommandTag))
-        {   
-            return;
-        }
-
-        var gameInfo = GameInfoFactory.Get();
-        var gameInfoJSON = JsonUtility.ToJson(gameInfo);
-        var messageToSend = GameInfoTag + gameInfoJSON;
-
-        TcpClient.ConnectTo(args.IPAddress, TcpServer.Port, () => TcpClient.Send(args.IPAddress, messageToSend));
-
-        Debug.Log("Sending game info to " + args.IPAddress);
-    }
 }
 

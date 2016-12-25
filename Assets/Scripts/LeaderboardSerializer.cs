@@ -1,158 +1,165 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEngine;
-using System.Collections;
-using CielaSpike;
 using System.Reflection;
 
-public class LeaderboardSerializer : MonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts
 {
-    const string FilePath = "LevelData\\теми";
-    const string FileName = "Rating.csv";
 
-    public string LevelCategory = "философия";
-    public bool AllowDublicates = false;
+    using Assets.CielaSpike.Thread_Ninja;
 
-    List<PlayerScore> leaderboard = new List<PlayerScore>();
-    bool loaded = false;
-
-    public IList<PlayerScore> Leaderboard
+    public class LeaderboardSerializer : MonoBehaviour
     {
-        get
+        const string FilePath = "LevelData\\теми";
+        const string FileName = "Rating.csv";
+
+        public string LevelCategory = "философия";
+        public bool AllowDublicates = false;
+
+        List<PlayerScore> leaderboard = new List<PlayerScore>();
+        bool loaded = false;
+
+        public IList<PlayerScore> Leaderboard
         {
-            return !loaded ? null : leaderboard;
-        }
-    }
-
-    public bool Loaded
-    {
-        get
-        {
-            return loaded;
-        }
-    }
-
-    string GetEndPath()
-    {
-        var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
-        return string.Format("{0}\\{1}\\{2}\\{3}", execPath, FilePath, LevelCategory, FileName);
-    }
-
-    IEnumerator LoadLeaderboardAsync()
-    {
-        yield return null;
-
-        var endPath = GetEndPath();
-
-        if (!File.Exists(endPath))
-        {
-            File.Create(endPath).Close();
-        }
-
-        var sr = new StreamReader(endPath);
-
-        while (true)
-        {
-            var line = sr.ReadLine();
-
-            if (string.IsNullOrEmpty(line))
+            get
             {
-                break;
+                return !this.loaded ? null : this.leaderboard;
+            }
+        }
+
+        public bool Loaded
+        {
+            get
+            {
+                return this.loaded;
+            }
+        }
+
+        string GetEndPath()
+        {
+            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
+            return string.Format("{0}\\{1}\\{2}\\{3}", execPath, FilePath, this.LevelCategory, FileName);
+        }
+
+        IEnumerator LoadLeaderboardAsync()
+        {
+            yield return null;
+
+            var endPath = this.GetEndPath();
+
+            if (!File.Exists(endPath))
+            {
+                File.Create(endPath).Close();
             }
 
-            var playerScoreData = line.Split(',');
-            var name = playerScoreData[0];
-            var score = int.Parse(playerScoreData[1]);
-            PlayerScore playerScore;
+            var sr = new StreamReader(endPath);
 
-            if (playerScoreData.Length == 3)
+            while (true)
             {
-                var creationDate = DateTime.Parse(playerScoreData[2]);
-                playerScore = new PlayerScore(name, score, creationDate);
+                var line = sr.ReadLine();
+
+                if (string.IsNullOrEmpty(line))
+                {
+                    break;
+                }
+
+                var playerScoreData = line.Split(',');
+                var name = playerScoreData[0];
+                var score = int.Parse(playerScoreData[1]);
+                PlayerScore playerScore;
+
+                if (playerScoreData.Length == 3)
+                {
+                    var creationDate = DateTime.Parse(playerScoreData[2]);
+                    playerScore = new PlayerScore(name, score, creationDate);
+                }
+                else
+                {
+                    playerScore = new PlayerScore(name, score);
+                }
+
+                this.leaderboard.Add(playerScore);
+            }
+
+            sr.Close();
+
+            this.leaderboard = this.leaderboard.OrderByDescending(ps => ps.Score).ToList();
+            this.loaded = true;
+        }
+
+        IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
+        {
+            if (!this.loaded)
+            {
+                throw new Exception("Still loading score");
+            }
+            
+            var path = this.GetEndPath();
+            var scores = File.ReadAllLines(path).ToList();
+
+            int playerIndex = -1;
+
+            if (!this.AllowDublicates)
+            {
+                for (int i = 0; i < scores.Count; i++)
+                {
+                    var scoreData = scores[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (scoreData[0] == playerScore.PlayerName && int.Parse(scoreData[1]) < playerScore.Score)
+                    {
+                        playerIndex = i;
+                        break;
+                    }
+                }    
+            }
+
+            if (playerIndex == -1)
+            {
+                yield break;
+            }
+
+            var data = new List<string>();
+            var propertyInfos = playerScore.GetType().GetProperties();
+
+            for (int i = 0; i < propertyInfos.Length; i++)
+            {
+                var propertyValue = propertyInfos[i].GetValue(playerScore, null);
+                data.Add(propertyValue.ToString());
+            }
+
+            var score = string.Join(",", data.ToArray());
+
+            if (playerIndex > -1)
+            {
+                scores[playerIndex] = score;
             }
             else
             {
-                playerScore = new PlayerScore(name, score);
+                scores.Add(score);
             }
 
-            leaderboard.Add(playerScore);
+            File.WriteAllLines(path, scores.ToArray());
+
+            yield return null;
         }
 
-        sr.Close();
+        /// <summary>
+        /// Sets the player score in the leaderboard file
+        /// </summary>
+        public void SavePlayerScore(PlayerScore playerScore)
+        {
+            this.leaderboard.Add(playerScore);
+            this.StartCoroutineAsync(this.SavePlayerScoreAsync(playerScore));
+        }
 
-        leaderboard = leaderboard.OrderByDescending(ps => ps.Score).ToList();
-        loaded = true;
+        public void LoadDataAsync()
+        {
+            this.StartCoroutineAsync(this.LoadLeaderboardAsync());
+        }
     }
 
-    IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
-    {
-        if (!loaded)
-        {
-            throw new Exception("Still loading score");
-        }
-            
-        var path = GetEndPath();
-        var scores = File.ReadAllLines(path).ToList();
-
-        int playerIndex = -1;
-
-        if (!AllowDublicates)
-        {
-            for (int i = 0; i < scores.Count; i++)
-            {
-                var scoreData = scores[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (scoreData[0] == playerScore.PlayerName && int.Parse(scoreData[1]) < playerScore.Score)
-                {
-                    playerIndex = i;
-                    break;
-                }
-            }    
-        }
-
-        if (playerIndex == -1)
-        {
-            yield break;
-        }
-
-        var data = new List<string>();
-        var propertyInfos = playerScore.GetType().GetProperties();
-
-        for (int i = 0; i < propertyInfos.Length; i++)
-        {
-            var propertyValue = propertyInfos[i].GetValue(playerScore, null);
-            data.Add(propertyValue.ToString());
-        }
-
-        var score = string.Join(",", data.ToArray());
-
-        if (playerIndex > -1)
-        {
-            scores[playerIndex] = score;
-        }
-        else
-        {
-            scores.Add(score);
-        }
-
-        File.WriteAllLines(path, scores.ToArray());
-
-        yield return null;
-    }
-
-    /// <summary>
-    /// Sets the player score in the leaderboard file
-    /// </summary>
-    public void SavePlayerScore(PlayerScore playerScore)
-    {
-        this.leaderboard.Add(playerScore);
-        this.StartCoroutineAsync(SavePlayerScoreAsync(playerScore));
-    }
-
-    public void LoadDataAsync()
-    {
-        this.StartCoroutineAsync(LoadLeaderboardAsync());
-    }
 }

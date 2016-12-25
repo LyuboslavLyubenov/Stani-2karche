@@ -1,23 +1,28 @@
-﻿public class LANServerOnlineBroadcastService : LANBroadcastService
+﻿namespace Assets.Scripts.Network
 {
-    public const string MessageIAmServer = "Stani2karcheIAmServer";
 
-    const float TimeDelaySendServerIsOnlineInSeconds = 1f;
-
-    public void Start()
+    public class LANServerOnlineBroadcastService : LANBroadcastService
     {
-        base.Initialize();
-        CoroutineUtils.WaitForSeconds(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
+        public const string MessageIAmServer = "Stani2karcheIAmServer";
+
+        const float TimeDelaySendServerIsOnlineInSeconds = 1f;
+
+        public void Start()
+        {
+            base.Initialize();
+            this.CoroutineUtils.WaitForSeconds(TimeDelaySendServerIsOnlineInSeconds, this.SendServerOnline);
+        }
+
+        void SendServerOnline()
+        {
+            base.BroadcastMessageAsync(MessageIAmServer, this.OnMessageSent);
+        }
+
+        void OnMessageSent()
+        {
+            this.CoroutineUtils.WaitForSeconds(TimeDelaySendServerIsOnlineInSeconds, this.SendServerOnline);
+        }
     }
 
-    void SendServerOnline()
-    {
-        base.BroadcastMessageAsync(MessageIAmServer, OnMessageSent);
-    }
-
-    void OnMessageSent()
-    {
-        CoroutineUtils.WaitForSeconds(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
-    }
 }
 

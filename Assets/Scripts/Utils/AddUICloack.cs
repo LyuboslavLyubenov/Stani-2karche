@@ -1,39 +1,44 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class AddUICloack : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    Image cloackImage = null;
 
-    public float Opacity = 0.5f;
-
-    void Start()
+    public class AddUICloack : MonoBehaviour
     {
-        var prefab = Resources.Load<Transform>("Prefabs/Cloack");
-        var cloack = Instantiate(prefab);
+        Image cloackImage = null;
 
-        cloackImage = cloack.GetComponent<Image>();
-        cloackImage.color = new Color(cloackImage.color.r, cloackImage.color.g, cloackImage.color.b, Opacity);
+        public float Opacity = 0.5f;
 
-        cloack.name = "Cloack " + transform.name;
-
-        cloack.SetParent(transform.parent, false);
-        transform.SetParent(cloack, false);
-    }
-
-    void OnDisable()
-    {
-        if (cloackImage != null)
+        void Start()
         {
-            cloackImage.enabled = false;
+            var prefab = Resources.Load<Transform>("Prefabs/Cloack");
+            var cloack = Instantiate(prefab);
+
+            this.cloackImage = cloack.GetComponent<Image>();
+            this.cloackImage.color = new Color(this.cloackImage.color.r, this.cloackImage.color.g, this.cloackImage.color.b, this.Opacity);
+
+            cloack.name = "Cloack " + this.transform.name;
+
+            cloack.SetParent(this.transform.parent, false);
+            this.transform.SetParent(cloack, false);
+        }
+
+        void OnDisable()
+        {
+            if (this.cloackImage != null)
+            {
+                this.cloackImage.enabled = false;
+            }
+        }
+
+        void OnEnable()
+        {
+            if (this.cloackImage != null)
+            {
+                this.cloackImage.enabled = true;    
+            }
         }
     }
 
-    void OnEnable()
-    {
-        if (cloackImage != null)
-        {
-            cloackImage.enabled = true;    
-        }
-    }
 }

@@ -1,9 +1,10 @@
-using System;
-using System.Collections;
-using UnityEngine;
-
-namespace CielaSpike
+namespace Assets.CielaSpike.Thread_Ninja
 {
+
+    using System.Collections;
+
+    using UnityEngine;
+
     public static class ThreadNinjaMonoBehaviourExtensions
     {
         /// <summary>

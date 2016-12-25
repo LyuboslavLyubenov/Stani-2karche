@@ -1,22 +1,24 @@
 ﻿using UnityEngine;
-using System;
-using CielaSpike;
-using System.Collections;
 
-public abstract class ExtendedMonoBehaviour : MonoBehaviour
+namespace Assets.Scripts.Utils
 {
-    CoroutineUtils coroutineUtils;
 
-    public CoroutineUtils CoroutineUtils
+    public abstract class ExtendedMonoBehaviour : MonoBehaviour
     {
-        get
-        {
-            if (coroutineUtils == null)
-            {
-                coroutineUtils = new CoroutineUtils(this);
-            }
+        CoroutineUtils coroutineUtils;
 
-            return coroutineUtils;
+        public CoroutineUtils CoroutineUtils
+        {
+            get
+            {
+                if (this.coroutineUtils == null)
+                {
+                    this.coroutineUtils = new CoroutineUtils(this);
+                }
+
+                return this.coroutineUtils;
+            }
         }
     }
+
 }

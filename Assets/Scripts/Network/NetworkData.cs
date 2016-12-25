@@ -1,35 +1,41 @@
-﻿using UnityEngine.Networking;
-using System;
+﻿using System;
 
-public class NetworkData
+using UnityEngine.Networking;
+
+namespace Assets.Scripts.Network
 {
-    public NetworkData(int connectionId, string message, NetworkEventType networkEventType)
+
+    public class NetworkData
     {
-        if (connectionId < 0)
+        public NetworkData(int connectionId, string message, NetworkEventType networkEventType)
         {
-            throw new ArgumentOutOfRangeException("connectionId");
+            if (connectionId < 0)
+            {
+                throw new ArgumentOutOfRangeException("connectionId");
+            }
+
+            this.ConnectionId = connectionId;
+            this.Message = message;
+            this.NetworkEventType = networkEventType;
         }
 
-        this.ConnectionId = connectionId;
-        this.Message = message;
-        this.NetworkEventType = networkEventType;
+        public int ConnectionId
+        {
+            get;
+            private set;
+        }
+
+        public string Message
+        {
+            get;
+            set;
+        }
+
+        public NetworkEventType NetworkEventType
+        {
+            get;
+            private set;
+        }
     }
 
-    public int ConnectionId
-    {
-        get;
-        private set;
-    }
-
-    public string Message
-    {
-        get;
-        set;
-    }
-
-    public NetworkEventType NetworkEventType
-    {
-        get;
-        private set;
-    }
 }

@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class GameDataMarkCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.GameData
 {
-    Action<int> onReceivedMark;
 
-    public GameDataMarkCommand(Action<int> onReceivedMark)
+    using Assets.Scripts.Interfaces;
+
+    public class GameDataMarkCommand : INetworkManagerCommand
     {
-        if (onReceivedMark == null)
+        Action<int> onReceivedMark;
+
+        public GameDataMarkCommand(Action<int> onReceivedMark)
         {
-            throw new ArgumentNullException("onReceivedMark");
+            if (onReceivedMark == null)
+            {
+                throw new ArgumentNullException("onReceivedMark");
+            }
+
+            this.onReceivedMark = onReceivedMark;
         }
 
-        this.onReceivedMark = onReceivedMark;
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var mark = int.Parse(commandsOptionsValues["Mark"]);
+            this.onReceivedMark(mark);
+        }
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var mark = int.Parse(commandsOptionsValues["Mark"]);
-        onReceivedMark(mark);
-    }
 }

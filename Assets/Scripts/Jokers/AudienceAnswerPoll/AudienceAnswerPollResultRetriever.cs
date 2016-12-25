@@ -1,141 +1,156 @@
 using System;
 using System.Timers;
+
 using UnityEngine;
 
-public class AudienceAnswerPollResultRetriever : MonoBehaviour
+namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 {
-    public const int MinClientsForOnlineVote_Release = 4;
-    public const int MinClientsForOnlineVote_Development = 1;
 
-    const int SettingsReceiveTimeoutInSeconds = 10;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Utils;
 
-    static AudienceAnswerPollResultRetriever instance;
+    using EventArgs = System.EventArgs;
 
-    public static AudienceAnswerPollResultRetriever Instance
+    public class AudienceAnswerPollResultRetriever : MonoBehaviour
     {
-        get
+        public const int MinClientsForOnlineVote_Release = 4;
+        public const int MinClientsForOnlineVote_Development = 1;
+
+        const int SettingsReceiveTimeoutInSeconds = 10;
+
+        static AudienceAnswerPollResultRetriever instance;
+
+        public static AudienceAnswerPollResultRetriever Instance
         {
-            if (instance == null)
+            get
             {
-                var obj = new GameObject();
-                obj.name = typeof(AudienceAnswerPollResultRetriever).Name;
-                instance = obj.AddComponent<AudienceAnswerPollResultRetriever>();
+                if (instance == null)
+                {
+                    var obj = new GameObject();
+                    obj.name = typeof(AudienceAnswerPollResultRetriever).Name;
+                    instance = obj.AddComponent<AudienceAnswerPollResultRetriever>();
+                }
+
+                return instance;        
+            }
+        }
+
+        public EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
+            {
+            };
+
+        public EventHandler<JokerSettingsEventArgs> OnReceivedSettings = delegate
+            {
+            };
+
+        public EventHandler OnReceiveSettingsTimeout = delegate
+            {
+            };
+    
+        public EventHandler OnReceiveAudienceVoteTimeout = delegate
+            {
+            };
+    
+        ClientNetworkManager networkManager;
+
+        Timer timer;
+
+        public EventHandler OnActivated
+        {
+            get;
+            set;
+        }
+
+        public bool Activated
+        {
+            get;
+            private set;
+        }
+
+        void Awake()
+        {
+            this.networkManager = GameObject.FindObjectOfType<ClientNetworkManager>();
+            this.networkManager.OnDisconnectedEvent += this.OnDisconnected;
+        }
+
+        void OnDisconnected(object sender, EventArgs args)
+        {
+            if (!this.Activated)
+            {
+                return;
             }
 
-            return instance;        
-        }
-    }
-
-    public EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
-    {
-    };
-
-    public EventHandler<JokerSettingsEventArgs> OnReceivedSettings = delegate
-    {
-    };
-
-    public EventHandler OnReceiveSettingsTimeout = delegate
-    {
-    };
-    
-    public EventHandler OnReceiveAudienceVoteTimeout = delegate
-    {
-    };
-    
-    ClientNetworkManager networkManager;
-
-    Timer timer;
-
-    public EventHandler OnActivated
-    {
-        get;
-        set;
-    }
-
-    public bool Activated
-    {
-        get;
-        private set;
-    }
-
-    void Awake()
-    {
-        this.networkManager = GameObject.FindObjectOfType<ClientNetworkManager>();
-        this.networkManager.OnDisconnectedEvent += OnDisconnected;
-    }
-
-    void OnDisconnected(object sender, EventArgs args)
-    {
-        if (!Activated)
-        {
-            return;
-        }
-
-        try
-        {
-            timer.Close();
-            networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
-        }
-        catch
-        {
-        }
-    }
-
-    void OnReceivedJokerSettings(int timeToAnswerInSeconds)
-    {
-        var receivedAskAudienceVoteResultCommand = 
-            new AudiencePollResultCommand(
-                (votes) => OnAudienceVoted(this, new AudienceVoteEventArgs(votes)));
-
-        networkManager.CommandsManager.AddCommand(receivedAskAudienceVoteResultCommand);
-
-        timer.Close();
-
-        timer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-        timer.AutoReset = false;
-        timer.Elapsed += Timer_OnReceiveAudienceVoteTimeout;
-
-        OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));
-    }
-
-    void Timer_OnReceiveAudienceVoteTimeout(object sender, ElapsedEventArgs args)
-    {
-        ThreadUtils.Instance.RunOnMainThread(() =>
+            try
             {
-                Activated = false;
-                networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
-                OnReceiveAudienceVoteTimeout(this, EventArgs.Empty);
-            });
-    }
-
-    void Timer_OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
-    {
-        ThreadUtils.Instance.RunOnMainThread(() =>
+                this.timer.Close();
+                this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
+            }
+            catch
             {
-                timer.Close();
-                Activated = false;
-                networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
-                OnReceiveSettingsTimeout(this, EventArgs.Empty);
-            });
-    }
+            }
+        }
 
-    public void Activate()
-    {
-        var selected = NetworkCommandData.From<SelectedAudiencePollCommand>();
-        networkManager.SendServerCommand(selected);
-
-        var receiveSettingsCommand = new AudiencePollSettingsCommand(OnReceivedJokerSettings);
-        networkManager.CommandsManager.AddCommand(receiveSettingsCommand);
-
-        timer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-        timer.AutoReset = false;
-        timer.Elapsed += Timer_OnReceiveSettingsTimeout;
-
-        Activated = true;
-
-        if (OnActivated != null)
+        void OnReceivedJokerSettings(int timeToAnswerInSeconds)
         {
-            OnActivated(this, EventArgs.Empty);
+            var receivedAskAudienceVoteResultCommand = 
+                new AudiencePollResultCommand(
+                    (votes) => this.OnAudienceVoted(this, new AudienceVoteEventArgs(votes)));
+
+            this.networkManager.CommandsManager.AddCommand(receivedAskAudienceVoteResultCommand);
+
+            this.timer.Close();
+
+            this.timer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
+            this.timer.AutoReset = false;
+            this.timer.Elapsed += this.Timer_OnReceiveAudienceVoteTimeout;
+
+            this.OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));
+        }
+
+        void Timer_OnReceiveAudienceVoteTimeout(object sender, ElapsedEventArgs args)
+        {
+            ThreadUtils.Instance.RunOnMainThread(() =>
+                {
+                    this.Activated = false;
+                    this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
+                    this.OnReceiveAudienceVoteTimeout(this, EventArgs.Empty);
+                });
+        }
+
+        void Timer_OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
+        {
+            ThreadUtils.Instance.RunOnMainThread(() =>
+                {
+                    this.timer.Close();
+                    this.Activated = false;
+                    this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
+                    this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
+                });
+        }
+
+        public void Activate()
+        {
+            var selected = NetworkCommandData.From<SelectedAudiencePollCommand>();
+            this.networkManager.SendServerCommand(selected);
+
+            var receiveSettingsCommand = new AudiencePollSettingsCommand(this.OnReceivedJokerSettings);
+            this.networkManager.CommandsManager.AddCommand(receiveSettingsCommand);
+
+            this.timer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
+            this.timer.AutoReset = false;
+            this.timer.Elapsed += this.Timer_OnReceiveSettingsTimeout;
+
+            this.Activated = true;
+
+            if (this.OnActivated != null)
+            {
+                this.OnActivated(this, EventArgs.Empty);
+            }
         }
     }
+
 }

@@ -1,45 +1,54 @@
 using System;
 using System.Collections.Generic;
 
-public class HelpFromFriendJokerSettingsCommand : IOneTimeExecuteCommand
+namespace Assets.Scripts.Commands.Jokers
 {
-    public delegate void OnReceivedSettings(int timeToAnswerInSeconds);
 
-    public bool FinishedExecution
+    using Assets.Scripts.Interfaces;
+
+    using EventArgs = System.EventArgs;
+
+    public class HelpFromFriendJokerSettingsCommand : IOneTimeExecuteCommand
     {
-        get;
-        private set;
-    }
+        public delegate void OnReceivedSettings(int timeToAnswerInSeconds);
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
-
-    OnReceivedSettings onReceivedSettings;
-
-    public HelpFromFriendJokerSettingsCommand(OnReceivedSettings onReceivedSettings)
-    {
-        if (onReceivedSettings == null)
+        public bool FinishedExecution
         {
-            throw new ArgumentNullException("onReceivedSettings");
+            get;
+            private set;
         }
 
-        this.onReceivedSettings = onReceivedSettings;
-    }
-
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var timeToAnswerInSeconds = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
-
-        onReceivedSettings(timeToAnswerInSeconds);
-
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
+        public EventHandler OnFinishedExecution
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            get;
+            set;
+        }
+
+        OnReceivedSettings onReceivedSettings;
+
+        public HelpFromFriendJokerSettingsCommand(OnReceivedSettings onReceivedSettings)
+        {
+            if (onReceivedSettings == null)
+            {
+                throw new ArgumentNullException("onReceivedSettings");
+            }
+
+            this.onReceivedSettings = onReceivedSettings;
+        }
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var timeToAnswerInSeconds = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
+
+            this.onReceivedSettings(timeToAnswerInSeconds);
+
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
+
 }

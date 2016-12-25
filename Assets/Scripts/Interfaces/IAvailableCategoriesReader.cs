@@ -1,6 +1,11 @@
 ﻿using System;
 
-public interface IAvailableCategoriesReader
+namespace Assets.Scripts.Interfaces
 {
-    void GetAllCategories(Action<string[]> onGetAllCategories);
+
+    public interface IAvailableCategoriesReader
+    {
+        void GetAllCategories(Action<string[]> onGetAllCategories);
+    }
+
 }

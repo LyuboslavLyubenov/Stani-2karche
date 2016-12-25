@@ -1,49 +1,58 @@
 ﻿using UnityEngine;
-using System;
 
-public class GameDataInfoUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public LocalGameData GameData;
-    public GameDataSender GameDataSender;
-    public BasicExamServer Server;
 
-    FieldUIController categoryField;
-    FieldUIController currentQuestionField;
-    FieldUIController currentMarkField;
-    FieldUIController remainingQuestionsField;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network;
 
-    void Start()
+    using EventArgs = System.EventArgs;
+
+    public class GameDataInfoUIController : MonoBehaviour
     {
-        categoryField = transform.Find("CategoryField").GetComponent<FieldUIController>();
-        currentQuestionField = transform.Find("CurrentQuestionField").GetComponent<FieldUIController>();
-        currentMarkField = transform.Find("CurrentMarkField").GetComponent<FieldUIController>();
-        remainingQuestionsField = transform.Find("RemainingQuestionsField").GetComponent<FieldUIController>();
+        public LocalGameData GameData;
+        public GameDataSender GameDataSender;
+        public BasicExamServer Server;
 
-        GameData.OnLoaded += OnGameDataLoaded;
-        GameData.OnMarkIncrease += OnMarkIncrease;
-        GameDataSender.OnSentQuestion += OnSentQuestion;
-    }
+        FieldUIController categoryField;
+        FieldUIController currentQuestionField;
+        FieldUIController currentMarkField;
+        FieldUIController remainingQuestionsField;
 
-    void OnGameDataLoaded(object sender, EventArgs args)
-    {
-        categoryField.Value = GameData.LevelCategory;
-        currentMarkField.Value = GameData.CurrentMark.ToString();
-        remainingQuestionsField.Value = GameData.RemainingQuestionsToNextMark.ToString();
-    }
-
-    void OnMarkIncrease(object sender, MarkEventArgs args)
-    {
-        currentMarkField.Value = GameData.CurrentMark.ToString();
-    }
-
-    void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
-    {
-        if (args.QuestionType == QuestionRequestType.Random)
+        void Start()
         {
-            return;
-        }    
+            this.categoryField = this.transform.Find("CategoryField").GetComponent<FieldUIController>();
+            this.currentQuestionField = this.transform.Find("CurrentQuestionField").GetComponent<FieldUIController>();
+            this.currentMarkField = this.transform.Find("CurrentMarkField").GetComponent<FieldUIController>();
+            this.remainingQuestionsField = this.transform.Find("RemainingQuestionsField").GetComponent<FieldUIController>();
 
-        remainingQuestionsField.Value = GameData.RemainingQuestionsToNextMark.ToString();
-        currentQuestionField.Value = args.Question.Text;
+            this.GameData.OnLoaded += this.OnGameDataLoaded;
+            this.GameData.OnMarkIncrease += this.OnMarkIncrease;
+            this.GameDataSender.OnSentQuestion += this.OnSentQuestion;
+        }
+
+        void OnGameDataLoaded(object sender, EventArgs args)
+        {
+            this.categoryField.Value = this.GameData.LevelCategory;
+            this.currentMarkField.Value = this.GameData.CurrentMark.ToString();
+            this.remainingQuestionsField.Value = this.GameData.RemainingQuestionsToNextMark.ToString();
+        }
+
+        void OnMarkIncrease(object sender, MarkEventArgs args)
+        {
+            this.currentMarkField.Value = this.GameData.CurrentMark.ToString();
+        }
+
+        void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
+        {
+            if (args.QuestionType == QuestionRequestType.Random)
+            {
+                return;
+            }    
+
+            this.remainingQuestionsField.Value = this.GameData.RemainingQuestionsToNextMark.ToString();
+            this.currentQuestionField.Value = args.Question.Text;
+        }
     }
+
 }

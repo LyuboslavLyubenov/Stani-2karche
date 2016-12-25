@@ -1,28 +1,31 @@
 ﻿using UnityEngine;
-using System;
-using UnityEngine.SceneManagement;
 
-public class StartScreenController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public GameObject CreateOrJoinUI;
-    public EnterNameUIController EnterNameUIController;
 
-    void Start()
+    public class StartScreenController : MonoBehaviour
     {
-        if (PlayerPrefs.HasKey("Username"))
+        public GameObject CreateOrJoinUI;
+        public EnterNameUIController EnterNameUIController;
+
+        void Start()
         {
-            EnterNameUIController.gameObject.SetActive(false);
-            OnUsernameSet(null, System.EventArgs.Empty);
+            if (PlayerPrefs.HasKey("Username"))
+            {
+                this.EnterNameUIController.gameObject.SetActive(false);
+                this.OnUsernameSet(null, System.EventArgs.Empty);
+            }
+            else
+            {
+                this.EnterNameUIController.gameObject.SetActive(true);
+                this.EnterNameUIController.OnUsernameSet += this.OnUsernameSet;    
+            }
         }
-        else
+
+        void OnUsernameSet(object sender, System.EventArgs args)
         {
-            EnterNameUIController.gameObject.SetActive(true);
-            EnterNameUIController.OnUsernameSet += OnUsernameSet;    
+            this.CreateOrJoinUI.SetActive(true);
         }
     }
 
-    void OnUsernameSet(object sender, System.EventArgs args)
-    {
-        CreateOrJoinUI.SetActive(true);
-    }
 }

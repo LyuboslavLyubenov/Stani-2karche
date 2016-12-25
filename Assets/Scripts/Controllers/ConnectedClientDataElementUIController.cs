@@ -1,45 +1,51 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class ConnectedClientDataElementUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    Text connectionIdText;
-    Text usernameText;
 
-    public int ConnectionId
+    public class ConnectedClientDataElementUIController : MonoBehaviour
     {
-        get
+        Text connectionIdText;
+        Text usernameText;
+
+        public int ConnectionId
         {
-            return int.Parse(connectionIdText.text);
+            get
+            {
+                return int.Parse(this.connectionIdText.text);
+            }
+        }
+
+        public string Username
+        {
+            get
+            {
+                return this.usernameText.text;
+            }
+        }
+
+        void Start()
+        {
+            var connectionIdTextObj = this.transform.Find("ConnectionId");
+            var usernameTextObj = this.transform.Find("Username");
+
+            this.connectionIdText = connectionIdTextObj.GetComponent<Text>();
+            this.usernameText = usernameTextObj.GetComponent<Text>();
+        }
+
+        public void Fill(ConnectedClientData clientData)
+        {
+            if (clientData == null)
+            {
+                throw new ArgumentNullException("clientData");
+            }
+
+            this.connectionIdText.text = clientData.ConnectionId.ToString();
+            this.usernameText.text = clientData.Username;
         }
     }
 
-    public string Username
-    {
-        get
-        {
-            return usernameText.text;
-        }
-    }
-
-    void Start()
-    {
-        var connectionIdTextObj = transform.Find("ConnectionId");
-        var usernameTextObj = transform.Find("Username");
-
-        connectionIdText = connectionIdTextObj.GetComponent<Text>();
-        usernameText = usernameTextObj.GetComponent<Text>();
-    }
-
-    public void Fill(ConnectedClientData clientData)
-    {
-        if (clientData == null)
-        {
-            throw new ArgumentNullException("clientData");
-        }
-
-        connectionIdText.text = clientData.ConnectionId.ToString();
-        usernameText.text = clientData.Username;
-    }
 }

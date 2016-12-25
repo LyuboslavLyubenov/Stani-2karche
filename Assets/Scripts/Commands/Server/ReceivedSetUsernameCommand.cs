@@ -1,56 +1,65 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 
-public class ReceivedSetUsernameCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.Server
 {
-    ServerNetworkManager networkManager;
 
-    const string BannedWordsInUsernameFileName = "bannedWordsInUsernames.txt";
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Network;
 
-    public ReceivedSetUsernameCommand(ServerNetworkManager networkManager)
+    public class ReceivedSetUsernameCommand : INetworkManagerCommand
     {
-        if (networkManager == null)
+        ServerNetworkManager networkManager;
+
+        const string BannedWordsInUsernameFileName = "bannedWordsInUsernames.txt";
+
+        public ReceivedSetUsernameCommand(ServerNetworkManager networkManager)
         {
-            throw new ArgumentNullException("networkManager");
-        }
-
-        this.networkManager = networkManager;
-    }
-
-    public void Execute(Dictionary<string, string> commandsParamsValues)
-    {
-        var connectionId = int.Parse(commandsParamsValues["ConnectionId"]);
-
-        if (!commandsParamsValues.ContainsKey("Username"))
-        {
-            //empty username :(
-            networkManager.SetClientUsername(connectionId, "Играч " + connectionId);
-            return;
-        }
-        else
-        {
-            var username = commandsParamsValues["Username"];
-
-            if (DoesUsernameContaisForbiddenWords(username))
+            if (networkManager == null)
             {
-                var message = LanguagesManager.Instance.GetValue("KickMessages/UsernameContainsBannedWords");
-                networkManager.KickPlayer(connectionId, message);
-                return;
+                throw new ArgumentNullException("networkManager");
             }
 
-            networkManager.SetClientUsername(connectionId, username);
-            return;
+            this.networkManager = networkManager;
+        }
+
+        public void Execute(Dictionary<string, string> commandsParamsValues)
+        {
+            var connectionId = int.Parse(commandsParamsValues["ConnectionId"]);
+
+            if (!commandsParamsValues.ContainsKey("Username"))
+            {
+                //empty username :(
+                this.networkManager.SetClientUsername(connectionId, "Играч " + connectionId);
+                return;
+            }
+            else
+            {
+                var username = commandsParamsValues["Username"];
+
+                if (this.DoesUsernameContaisForbiddenWords(username))
+                {
+                    var message = LanguagesManager.Instance.GetValue("KickMessages/UsernameContainsBannedWords");
+                    this.networkManager.KickPlayer(connectionId, message);
+                    return;
+                }
+
+                this.networkManager.SetClientUsername(connectionId, username);
+                return;
+            }
+        }
+
+        bool DoesUsernameContaisForbiddenWords(string username)
+        {
+            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\LevelData\\" + BannedWordsInUsernameFileName;
+            var forbiddenUsernames = File.ReadAllLines(execPath);
+            var usernameLower = username.ToLowerInvariant();
+            return forbiddenUsernames.Any(u => u.ToLowerInvariant().Contains(usernameLower));
         }
     }
 
-    bool DoesUsernameContaisForbiddenWords(string username)
-    {
-        var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\LevelData\\" + BannedWordsInUsernameFileName;
-        var forbiddenUsernames = File.ReadAllLines(execPath);
-        var usernameLower = username.ToLowerInvariant();
-        return forbiddenUsernames.Any(u => u.ToLowerInvariant().Contains(usernameLower));
-    }
 }

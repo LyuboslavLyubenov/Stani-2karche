@@ -1,70 +1,75 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class FieldUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    Text keyText;
-    Text delimiterText;
-    Text valueText;
 
-    public string Key
+    public class FieldUIController : MonoBehaviour
     {
-        get
+        Text keyText;
+        Text delimiterText;
+        Text valueText;
+
+        public string Key
         {
-            return keyText.text;
-        }
-        set
-        {
-            if (string.IsNullOrEmpty(value))
+            get
             {
-                throw new ArgumentNullException("value");
+                return this.keyText.text;
             }
-
-            transform.name = value;
-            this.keyText.text = value;
-        }
-    }
-
-    public string Delimiter
-    {
-        get
-        {
-            return delimiterText.text;
-        }
-        set
-        {
-            if (string.IsNullOrEmpty(value))
+            set
             {
-                throw new ArgumentNullException("value");
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException("value");
+                }
+
+                this.transform.name = value;
+                this.keyText.text = value;
             }
-
-            this.delimiterText.text = value;
         }
-    }
 
-    public string Value
-    {
-        get
+        public string Delimiter
         {
-            return valueText.text;
-        }
-        set
-        {
-            if (string.IsNullOrEmpty(value))
+            get
             {
-                throw new ArgumentNullException("value");
+                return this.delimiterText.text;
             }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException("value");
+                }
 
-            this.valueText.text = value;
+                this.delimiterText.text = value;
+            }
+        }
+
+        public string Value
+        {
+            get
+            {
+                return this.valueText.text;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException("value");
+                }
+
+                this.valueText.text = value;
+            }
+        }
+
+        void Start()
+        {
+            this.keyText = this.transform.Find("Key").GetComponent<Text>();
+            this.delimiterText = this.transform.Find("Delimiter").GetComponent<Text>();
+            this.valueText = this.transform.Find("Value").GetComponent<Text>();
         }
     }
 
-    void Start()
-    {
-        keyText = transform.Find("Key").GetComponent<Text>();
-        delimiterText = transform.Find("Delimiter").GetComponent<Text>();
-        valueText = transform.Find("Value").GetComponent<Text>();
-    }
 }

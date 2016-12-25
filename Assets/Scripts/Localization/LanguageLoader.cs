@@ -1,17 +1,24 @@
-﻿public class LanguageLoader : ExtendedMonoBehaviour
+﻿namespace Assets.Scripts.Localization
 {
-    void Start()
+
+    using Assets.Scripts.Utils;
+
+    public class LanguageLoader : ExtendedMonoBehaviour
     {
-        CoroutineUtils.WaitForFrames(0, () =>
-            {
-                var language = "Bulgarian";
-
-                if (PlayerPrefsEncryptionUtils.HasKey("Language"))
+        void Start()
+        {
+            this.CoroutineUtils.WaitForFrames(0, () =>
                 {
-                    language = PlayerPrefsEncryptionUtils.GetString("Language");    
-                }
+                    var language = "Bulgarian";
 
-                LanguagesManager.Instance.LoadLanguage(language);
-            });
+                    if (PlayerPrefsEncryptionUtils.HasKey("Language"))
+                    {
+                        language = PlayerPrefsEncryptionUtils.GetString("Language");    
+                    }
+
+                    LanguagesManager.Instance.LoadLanguage(language);
+                });
+        }
     }
+
 }

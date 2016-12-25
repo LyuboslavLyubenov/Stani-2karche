@@ -1,14 +1,19 @@
 ﻿using System;
 
-public class NoMoreQuestionsException : Exception
+namespace Assets.Scripts.Exceptions
 {
-    public NoMoreQuestionsException(string message)
-        : base(message)
+
+    public class NoMoreQuestionsException : Exception
     {
+        public NoMoreQuestionsException(string message)
+            : base(message)
+        {
+        }
+
+        public NoMoreQuestionsException()
+        {
+        
+        }
     }
 
-    public NoMoreQuestionsException()
-    {
-        
-    }
 }

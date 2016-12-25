@@ -1,7 +1,12 @@
 ﻿using System;
 
-[Serializable]
-public class _ACL
+namespace Assets.Scripts.KinveySerializableObj
 {
-    public string creator;
+
+    [Serializable]
+    public class _ACL
+    {
+        public string creator;
+    }
+
 }

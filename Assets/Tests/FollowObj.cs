@@ -1,39 +1,43 @@
 using UnityEngine;
-using System.Collections;
 
-public class FollowObj : MonoBehaviour
+namespace Assets.Tests
 {
-    public RectTransform ObjToFollow;
 
-    public int XOffset = 0;
-    public int YOffset = 0;
-
-    public bool FollowX = true;
-    public bool FollowY = true;
-
-    RectTransform rectTransform;
-
-    void Start()
+    public class FollowObj : MonoBehaviour
     {
-        rectTransform = this.gameObject.GetComponent<RectTransform>();
-    }
+        public RectTransform ObjToFollow;
 
-    void Update()
-    {
-        var newX = rectTransform.position.x;
-        var newY = rectTransform.position.y;
+        public int XOffset = 0;
+        public int YOffset = 0;
 
-        if (FollowX)
+        public bool FollowX = true;
+        public bool FollowY = true;
+
+        RectTransform rectTransform;
+
+        void Start()
         {
-            newX = ObjToFollow.position.x + XOffset;
+            this.rectTransform = this.gameObject.GetComponent<RectTransform>();
         }
 
-        if (FollowY)
+        void Update()
         {
-            newY = ObjToFollow.position.y + YOffset;
-        }
+            var newX = this.rectTransform.position.x;
+            var newY = this.rectTransform.position.y;
 
-        var newPos = new Vector2(newX, newY);
-        rectTransform.position = newPos;
+            if (this.FollowX)
+            {
+                newX = this.ObjToFollow.position.x + this.XOffset;
+            }
+
+            if (this.FollowY)
+            {
+                newY = this.ObjToFollow.position.y + this.YOffset;
+            }
+
+            var newPos = new Vector2(newX, newY);
+            this.rectTransform.position = newPos;
+        }
     }
+
 }

@@ -1,10 +1,16 @@
 ﻿using System;
-using UnityEngine;
 
-public class DebugUtils
+namespace Assets.Scripts.Utils
 {
-    public static void LogException(Exception e)
+
+    using Debug = UnityEngine.Debug;
+
+    public class DebugUtils
     {
-        Debug.LogErrorFormat("Error {0} of type {1} stacktrace {2}", e.Message, e.GetType().Name, e.StackTrace);
+        public static void LogException(Exception e)
+        {
+            Debug.LogErrorFormat("Error {0} of type {1} stacktrace {2}", e.Message, e.GetType().Name, e.StackTrace);
+        }
     }
+
 }

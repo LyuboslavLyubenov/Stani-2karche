@@ -1,28 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 
-public class LoadQuestionCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.Client
 {
-    public delegate void OnReceivedQuestion(ISimpleQuestion question,int timeToAnswer);
 
-    OnReceivedQuestion onReceivedQuestion;
+    using Assets.Scripts.Interfaces;
 
-    public LoadQuestionCommand(OnReceivedQuestion onReceivedQuestion)
+    public class LoadQuestionCommand : INetworkManagerCommand
     {
-        if (onReceivedQuestion == null)
+        public delegate void OnReceivedQuestion(ISimpleQuestion question,int timeToAnswer);
+
+        OnReceivedQuestion onReceivedQuestion;
+
+        public LoadQuestionCommand(OnReceivedQuestion onReceivedQuestion)
         {
-            throw new ArgumentNullException("onReceivedQuestion");
-        }
+            if (onReceivedQuestion == null)
+            {
+                throw new ArgumentNullException("onReceivedQuestion");
+            }
             
-        this.onReceivedQuestion = onReceivedQuestion;
+            this.onReceivedQuestion = onReceivedQuestion;
+        }
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var questionJSON = commandsOptionsValues["QuestionJSON"];
+            var timeToAnswer = int.Parse(commandsOptionsValues["TimeToAnswer"]);
+            var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
+            this.onReceivedQuestion(question.Deserialize(), timeToAnswer);
+        }
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var questionJSON = commandsOptionsValues["QuestionJSON"];
-        var timeToAnswer = int.Parse(commandsOptionsValues["TimeToAnswer"]);
-        var question = JsonUtility.FromJson<SimpleQuestion_Serializable>(questionJSON);
-        onReceivedQuestion(question.Deserialize(), timeToAnswer);
-    }
 }

@@ -1,16 +1,25 @@
 using System;
 
-public class JokerTypeEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public Type JokerType
+
+    using Assets.Scripts.Utils;
+
+    using EventArgs = System.EventArgs;
+
+    public class JokerTypeEventArgs : EventArgs
     {
-        get;
-        private set;
+        public Type JokerType
+        {
+            get;
+            private set;
+        }
+
+        public JokerTypeEventArgs(Type jokerType)
+        {
+            JokerUtils.ValidateJokerType(jokerType);
+            this.JokerType = jokerType;
+        }
     }
 
-    public JokerTypeEventArgs(Type jokerType)
-    {
-        JokerUtils.ValidateJokerType(jokerType);
-        this.JokerType = jokerType;
-    }
 }

@@ -1,22 +1,29 @@
-using UnityEngine;
-using System;
-using System.Collections;
-
-//Mediator
 using System.Collections.Generic;
 
-public class AddDisableRandomAnswersJokerCommand : AddJokerAbstractCommand
+//Mediator
+
+namespace Assets.Scripts.Commands.Jokers.Add
 {
-    IJoker joker;
 
-    public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, IGameData gameData, QuestionUIController questionUIController)
-        : base(availableJokersUIController)
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Jokers;
+    using Assets.Scripts.Network;
+
+    public class AddDisableRandomAnswersJokerCommand : AddJokerAbstractCommand
     {
-        this.joker = new DisableRandomAnswersJoker(networkManager, gameData, questionUIController);
+        IJoker joker;
+
+        public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, IGameData gameData, QuestionUIController questionUIController)
+            : base(availableJokersUIController)
+        {
+            this.joker = new DisableRandomAnswersJoker(networkManager, gameData, questionUIController);
+        }
+
+        public override void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            base.AddJoker(this.joker);
+        }
     }
 
-    public override void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        base.AddJoker(joker);
-    }
 }

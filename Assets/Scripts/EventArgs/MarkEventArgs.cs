@@ -1,22 +1,28 @@
 ﻿using System;
 
-
-[Serializable]
-public sealed class MarkEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public MarkEventArgs(int mark)
+
+    using EventArgs = System.EventArgs;
+
+    [Serializable]
+    public sealed class MarkEventArgs : EventArgs
     {
-        if (mark < 2 || mark > 6)
+        public MarkEventArgs(int mark)
         {
-            throw new ArgumentOutOfRangeException("mark", "Оценката трябва да е между 2 и 6 (включително)");
+            if (mark < 2 || mark > 6)
+            {
+                throw new ArgumentOutOfRangeException("mark", "Оценката трябва да е между 2 и 6 (включително)");
+            }
+
+            this.Mark = mark;
         }
 
-        this.Mark = mark;
+        public int Mark
+        {
+            get;
+            private set;
+        }
     }
 
-    public int Mark
-    {
-        get;
-        private set;
-    }
 }

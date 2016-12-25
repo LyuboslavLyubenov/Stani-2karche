@@ -1,10 +1,15 @@
-﻿using System.Net;
-using System.Linq;
+﻿using System.Linq;
+using System.Net;
 
-public static class IPAddressExtensions
+namespace Assets.Scripts.Utils
 {
-    public static string GetIPAddress(this IPAddress ipAddress)
+
+    public static class IPAddressExtensions
     {
-        return ipAddress.ToString().Split(':').First();
+        public static string GetIPAddress(this IPAddress ipAddress)
+        {
+            return ipAddress.ToString().Split(':').First();
+        }
     }
+
 }

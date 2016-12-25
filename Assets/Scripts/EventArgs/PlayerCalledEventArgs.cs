@@ -1,16 +1,21 @@
-﻿using System;
-
-public class PlayerCalledEventArgs : EventArgs
+﻿namespace Assets.Scripts.EventArgs
 {
-    public PlayerCalledEventArgs(int playerConnectionId)
-    {
-        this.PlayerConnectionId = playerConnectionId;
-    }
 
-    public int PlayerConnectionId
+    using EventArgs = System.EventArgs;
+
+    public class PlayerCalledEventArgs : EventArgs
     {
-        get;
-        private set;
+        public PlayerCalledEventArgs(int playerConnectionId)
+        {
+            this.PlayerConnectionId = playerConnectionId;
+        }
+
+        public int PlayerConnectionId
+        {
+            get;
+            private set;
+        }
+
     }
 
 }

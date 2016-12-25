@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Net;
-using System.IO;
-using System;
-using CielaSpike;
 using UnityEngine.UI;
 
-public class LoginUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public InputField UsernameInputField;
-    public InputField PasswordInputField;
 
-    void OnLoggedIn(_UserReceivedData userData)
+    using Assets.Scripts.KinveySerializableObj;
+
+    using Debug = UnityEngine.Debug;
+
+    public class LoginUIController : MonoBehaviour
     {
-        Debug.Log("Logged in successfuly ");
+        public InputField UsernameInputField;
+        public InputField PasswordInputField;
+
+        void OnLoggedIn(_UserReceivedData userData)
+        {
+            Debug.Log("Logged in successfuly ");
+        }
+
+        public void Login()
+        {
+            var username = this.UsernameInputField.text;
+            var password = this.PasswordInputField.text;
+            KinveyWrapper.Instance.LoginAsync(username, password, this.OnLoggedIn, Debug.LogException);
+        }
     }
 
-    public void Login()
-    {
-        var username = UsernameInputField.text;
-        var password = PasswordInputField.text;
-        KinveyWrapper.Instance.LoginAsync(username, password, OnLoggedIn, Debug.LogException);
-    }
 }
 

@@ -1,20 +1,27 @@
 ﻿using System;
 
-public class ClientConnectionDataEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public int ConnectionId
-    {
-        get;
-        private set;
-    }
 
-    public ClientConnectionDataEventArgs(int connectionId)
+    using EventArgs = System.EventArgs;
+
+    public class ClientConnectionDataEventArgs : EventArgs
     {
-        if (connectionId <= 0)
+        public int ConnectionId
         {
-            throw new ArgumentOutOfRangeException("connectionId");
+            get;
+            private set;
         }
 
-        this.ConnectionId = connectionId;
+        public ClientConnectionDataEventArgs(int connectionId)
+        {
+            if (connectionId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("connectionId");
+            }
+
+            this.ConnectionId = connectionId;
+        }
     }
+
 }

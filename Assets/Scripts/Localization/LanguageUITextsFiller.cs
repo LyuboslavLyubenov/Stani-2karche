@@ -1,44 +1,50 @@
-﻿using UnityEngine;
+﻿using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
-public class LanguageUITextsFiller : ExtendedMonoBehaviour
+namespace Assets.Scripts.Localization
 {
-    void Awake()
-    {
-        DontDestroyOnLoad(this);
-        LanguagesManager.Instance.OnLoadedLanguage += (sender, args) => TranslateAllTextComponentsInScene();
-        SceneManager.activeSceneChanged += OnSceneChanged;
-    }
 
-    void OnSceneChanged(Scene oldScene, Scene newScene)
-    {
-        CoroutineUtils.WaitForFrames(1, TranslateAllTextComponentsInScene);
-    }
+    using Assets.Scripts.Utils;
 
-    void TranslateAllTextComponentsInScene()
+    public class LanguageUITextsFiller : ExtendedMonoBehaviour
     {
-        if (!LanguagesManager.Instance.IsLoadedLanguage)
+        void Awake()
         {
-            return;  
+            DontDestroyOnLoad(this);
+            LanguagesManager.Instance.OnLoadedLanguage += (sender, args) => this.TranslateAllTextComponentsInScene();
+            SceneManager.activeSceneChanged += this.OnSceneChanged;
         }
 
-        var allObjectsInScene = GameObjectUtils.GetAllObjectsIncludingInactive();
-
-        for (var i = 0; i < allObjectsInScene.Length; i++)
+        void OnSceneChanged(Scene oldScene, Scene newScene)
         {
-            var obj = allObjectsInScene[i];
-            var textComponent = obj.GetComponent<Text>();
+            this.CoroutineUtils.WaitForFrames(1, this.TranslateAllTextComponentsInScene);
+        }
 
-            if (textComponent == null)
+        void TranslateAllTextComponentsInScene()
+        {
+            if (!LanguagesManager.Instance.IsLoadedLanguage)
             {
-                continue;
+                return;  
             }
 
-            var path = textComponent.text;
-            var translated = LanguagesManager.Instance.GetValue(path);
+            var allObjectsInScene = GameObjectUtils.GetAllObjectsIncludingInactive();
 
-            textComponent.text = translated;
+            for (var i = 0; i < allObjectsInScene.Length; i++)
+            {
+                var obj = allObjectsInScene[i];
+                var textComponent = obj.GetComponent<Text>();
+
+                if (textComponent == null)
+                {
+                    continue;
+                }
+
+                var path = textComponent.text;
+                var translated = LanguagesManager.Instance.GetValue(path);
+
+                textComponent.text = translated;
+            }
         }
     }
+
 }

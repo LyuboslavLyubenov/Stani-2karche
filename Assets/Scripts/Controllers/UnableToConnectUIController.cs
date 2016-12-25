@@ -1,30 +1,40 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
 
-public class UnableToConnectUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public EventHandler OnTryingAgainToConnectToServer = delegate
-    {
-    };
 
-    public string ServerIP
+    using Assets.Scripts.Network;
+
+    using EventArgs = System.EventArgs;
+
+    public class UnableToConnectUIController : MonoBehaviour
     {
-        get;
-        set;
+        public EventHandler OnTryingAgainToConnectToServer = delegate
+            {
+            };
+
+        public string ServerIP
+        {
+            get;
+            set;
+        }
+
+        public ClientNetworkManager NetworkManager;
+
+        public void TryAgainToConnectToServer()
+        {
+            this.NetworkManager.ConnectToHost(this.ServerIP);
+            this.OnTryingAgainToConnectToServer(this, new EventArgs());
+            this.gameObject.SetActive(false);
+        }
+
+        public void ReturnToLobby()
+        {
+            SceneManager.LoadScene("Lobby");
+        }
     }
 
-    public ClientNetworkManager NetworkManager;
-
-    public void TryAgainToConnectToServer()
-    {
-        NetworkManager.ConnectToHost(ServerIP);
-        OnTryingAgainToConnectToServer(this, new EventArgs());
-        gameObject.SetActive(false);
-    }
-
-    public void ReturnToLobby()
-    {
-        SceneManager.LoadScene("Lobby");
-    }
 }

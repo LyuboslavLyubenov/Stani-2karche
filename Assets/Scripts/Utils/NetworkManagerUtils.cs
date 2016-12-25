@@ -1,106 +1,114 @@
-﻿using UnityEngine.Networking;
-using UnityEngine;
+﻿using System;
 using System.Collections;
-using System;
 
-public class NetworkManagerUtils : MonoBehaviour
+using UnityEngine;
+using UnityEngine.Networking;
+
+namespace Assets.Scripts.Utils
 {
-    static NetworkManagerUtils instance;
 
-    public static NetworkManagerUtils Instance
+    using Assets.Scripts.Network;
+
+    public class NetworkManagerUtils : MonoBehaviour
     {
-        get
+        static NetworkManagerUtils instance;
+
+        public static NetworkManagerUtils Instance
         {
-            if (instance == null)
+            get
             {
-                var obj = new GameObject();
-                obj.name = "NetworkManagerUtils";
-                instance = obj.AddComponent<NetworkManagerUtils>();
-            }
-
-            return instance;
-        }
-    }
-
-    NetworkManagerUtils()
-    {
-        
-    }
-
-    /// <summary>
-    /// Get ip needed to connect to the server from PlayerPrefsEncryptionUtils. 
-    /// If server is available and user internet connection is ok should return ip that can be used to connect to the server. 
-    /// Otherwise onError 
-    /// </summary>
-    public void GetServerIp(Action<string> onFound, Action onError)
-    {
-        var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
-        var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
-
-        NetworkManagerUtils.Instance.IsServerUp(externalIp, ClientNetworkManager.Port, (isRunningExternal) =>
-            {
-
-                if (isRunningExternal)
+                if (instance == null)
                 {
-                    onFound(externalIp);
-                    return;
+                    var obj = new GameObject();
+                    obj.name = "NetworkManagerUtils";
+                    instance = obj.AddComponent<NetworkManagerUtils>();
                 }
 
-                NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunningLocal) =>
+                return instance;
+            }
+        }
+
+        NetworkManagerUtils()
+        {
+        
+        }
+
+        /// <summary>
+        /// Get ip needed to connect to the server from PlayerPrefsEncryptionUtils. 
+        /// If server is available and user internet connection is ok should return ip that can be used to connect to the server. 
+        /// Otherwise onError 
+        /// </summary>
+        public void GetServerIp(Action<string> onFound, Action onError)
+        {
+            var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
+            var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
+
+            NetworkManagerUtils.Instance.IsServerUp(externalIp, ClientNetworkManager.Port, (isRunningExternal) =>
+                {
+
+                    if (isRunningExternal)
                     {
-                        if (isRunningLocal)
+                        onFound(externalIp);
+                        return;
+                    }
+
+                    NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunningLocal) =>
                         {
-                            onFound(localIp);
-                            return;
-                        }
+                            if (isRunningLocal)
+                            {
+                                onFound(localIp);
+                                return;
+                            }
 
-                        onError();
-                    });    
-            });
-    }
+                            onError();
+                        });    
+                });
+        }
 
-    public void IsServerUp(string ip, int port, Action<bool> isUp)
-    {
-        StartCoroutine(IsServerUpCoroutine(ip, port, isUp));
-    }
+        public void IsServerUp(string ip, int port, Action<bool> isUp)
+        {
+            this.StartCoroutine(this.IsServerUpCoroutine(ip, port, isUp));
+        }
 
-    IEnumerator IsServerUpCoroutine(string ip, int port, Action<bool> isRunning)
-    {
-        const int MaxConnectionAttempts = 5;
+        IEnumerator IsServerUpCoroutine(string ip, int port, Action<bool> isRunning)
+        {
+            const int MaxConnectionAttempts = 5;
 
-        var connectionConfig = new ConnectionConfig();
-        connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts; 
+            var connectionConfig = new ConnectionConfig();
+            connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts; 
 
-        var communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
-        var topology = new HostTopology(connectionConfig, 2);
-        var genericHostId = NetworkTransport.AddHost(topology, 0);
+            var communicationChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
+            var topology = new HostTopology(connectionConfig, 2);
+            var genericHostId = NetworkTransport.AddHost(topology, 0);
 
-        byte error;
-        var connectionId = NetworkTransport.Connect(genericHostId, ip, port, 0, out error);
+            byte error;
+            var connectionId = NetworkTransport.Connect(genericHostId, ip, port, 0, out error);
 
-        var networkError = (NetworkConnectionError)error;
-        bool isUp = false;
+            var networkError = (NetworkConnectionError)error;
+            bool isUp = false;
 
-        yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1f);
 
-        int recvConnectionId;
-        int recvChannelId;
-        byte[] buffer = new byte[512];
-        int recSize;
-        byte recError;
-        var eventType = NetworkTransport.ReceiveFromHost(genericHostId, out recvConnectionId, out recvChannelId, buffer, buffer.Length, out recSize, out recError);
+            int recvConnectionId;
+            int recvChannelId;
+            byte[] buffer = new byte[512];
+            int recSize;
+            byte recError;
+            var eventType = NetworkTransport.ReceiveFromHost(genericHostId, out recvConnectionId, out recvChannelId, buffer, buffer.Length, out recSize, out recError);
 
-        isUp = eventType == NetworkEventType.ConnectEvent;
+            isUp = eventType == NetworkEventType.ConnectEvent;
 
-        yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
 
-        byte disconnectError;
-        NetworkTransport.Disconnect(genericHostId, connectionId, out disconnectError);
-        NetworkTransport.RemoveHost(genericHostId);
+            byte disconnectError;
+            NetworkTransport.Disconnect(genericHostId, connectionId, out disconnectError);
+            NetworkTransport.RemoveHost(genericHostId);
 
-        yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
 
-        isRunning(isUp);
+            isRunning(isUp);
+        }
+
     }
 
 }

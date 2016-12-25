@@ -1,54 +1,59 @@
 ﻿using System;
 
-public class ConnectedClientData
+namespace Assets.Scripts
 {
-    const int MinUsernameLength = 3;
 
-    int connectionId;
-    string username;
-
-    public int ConnectionId
+    public class ConnectedClientData
     {
-        get
-        {
-            return this.connectionId;
-        }
-        set
-        {
-            if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException();
-            }    
+        const int MinUsernameLength = 3;
 
-            this.connectionId = value;
-        }
-    }
+        int connectionId;
+        string username;
 
-    public string Username
-    {
-        get
+        public int ConnectionId
         {
-            return this.username;
-        }
-        set
-        {
-            if (string.IsNullOrEmpty(value) || value.Length < MinUsernameLength)
+            get
             {
-                throw new ArgumentException("Username must be at least " + MinUsernameLength + " symbols long.");
+                return this.connectionId;
             }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }    
 
-            this.username = value;
+                this.connectionId = value;
+            }
+        }
+
+        public string Username
+        {
+            get
+            {
+                return this.username;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value) || value.Length < MinUsernameLength)
+                {
+                    throw new ArgumentException("Username must be at least " + MinUsernameLength + " symbols long.");
+                }
+
+                this.username = value;
+            }
+        }
+
+        public ConnectedClientData(int connectionId, string username)
+        {
+            this.ConnectionId = connectionId;
+            this.Username = username;
+        }
+
+        public bool Equals(ConnectedClientData data)
+        {
+            return (this.ConnectionId == data.ConnectionId && this.Username == data.Username);
         }
     }
 
-    public ConnectedClientData(int connectionId, string username)
-    {
-        this.ConnectionId = connectionId;
-        this.Username = username;
-    }
-
-    public bool Equals(ConnectedClientData data)
-    {
-        return (this.ConnectionId == data.ConnectionId && this.Username == data.Username);
-    }
 }

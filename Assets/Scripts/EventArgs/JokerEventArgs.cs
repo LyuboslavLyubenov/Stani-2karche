@@ -1,20 +1,27 @@
 using System;
 
-public class JokerEventArgs : System.EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public IJoker Joker
+
+    using Assets.Scripts.Interfaces;
+
+    public class JokerEventArgs : System.EventArgs
     {
-        get;
-        private set;
+        public IJoker Joker
+        {
+            get;
+            private set;
+        }
+
+        public JokerEventArgs(IJoker joker)
+        {
+            if (joker == null)
+            {
+                throw new ArgumentNullException("joker");
+            }
+            
+            this.Joker = joker;    
+        }
     }
 
-    public JokerEventArgs(IJoker joker)
-    {
-        if (joker == null)
-        {
-            throw new ArgumentNullException("joker");
-        }
-            
-        this.Joker = joker;    
-    }
 }

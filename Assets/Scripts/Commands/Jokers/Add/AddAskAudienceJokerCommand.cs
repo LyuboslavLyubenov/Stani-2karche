@@ -1,26 +1,36 @@
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
-public class AddAskAudienceJokerCommand : AddJokerAbstractCommand
+using UnityEngine;
+
+namespace Assets.Scripts.Commands.Jokers.Add
 {
-    IJoker joker;
 
-    public AddAskAudienceJokerCommand(
-        AvailableJokersUIController availableJokersUIController, 
-        ClientNetworkManager networkManager, 
-        GameObject waitingToAnswerUI, 
-        GameObject audienceAnswerUI, 
-        GameObject loadingUI,
-        NotificationsServiceController notificationService)
-        : base(availableJokersUIController)
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Jokers;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
+
+    public class AddAskAudienceJokerCommand : AddJokerAbstractCommand
     {
-        this.joker = new AskAudienceJoker(networkManager, waitingToAnswerUI, audienceAnswerUI, loadingUI, notificationService);
+        IJoker joker;
+
+        public AddAskAudienceJokerCommand(
+            AvailableJokersUIController availableJokersUIController, 
+            ClientNetworkManager networkManager, 
+            GameObject waitingToAnswerUI, 
+            GameObject audienceAnswerUI, 
+            GameObject loadingUI,
+            NotificationsServiceController notificationService)
+            : base(availableJokersUIController)
+        {
+            this.joker = new AskAudienceJoker(networkManager, waitingToAnswerUI, audienceAnswerUI, loadingUI, notificationService);
+        }
+
+        public override void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            base.AddJoker(this.joker);
+        }
     }
 
-    public override void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        base.AddJoker(joker);
-    }
 }

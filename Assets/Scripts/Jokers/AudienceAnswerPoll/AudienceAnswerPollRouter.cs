@@ -1,292 +1,309 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 {
-    public const int MinTimeToAnswerInSeconds = 10;
 
-    const float MinCorrectAnswerVoteProcentage = 0.40f;
-    const float MaxCorrectAnswerVoteProcentage = 0.80f;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Utils;
 
-    const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
-    const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
+    using Debug = UnityEngine.Debug;
+    using EventArgs = System.EventArgs;
 
-    public EventHandler OnBeforeSend = delegate
+    public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
     {
-    };
+        public const int MinTimeToAnswerInSeconds = 10;
 
-    public EventHandler OnActivated = delegate
-    {
-    };
+        const float MinCorrectAnswerVoteProcentage = 0.40f;
+        const float MaxCorrectAnswerVoteProcentage = 0.80f;
 
-    public EventHandler OnSent = delegate
-    {
-    };
+        const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
+        const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
 
-    public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
-    {
-    };
-    
-    public ServerNetworkManager NetworkManager;
-    public LocalGameData LocalGameData;
-   
-    int timeToAnswerInSeconds;
-    int senderConnectionId;
-    int elapsedTime;
-
-    List<int> clientsThatMustVote = new List<int>();
-    List<int> votedClientsConnectionId = new List<int>();
-    Dictionary<string, int> answersVotes = new Dictionary<string, int>();
-
-
-    public bool Activated
-    {
-        get;
-        private set;
-    }
-
-    void Start()
-    {
-        CoroutineUtils.RepeatEverySeconds(1f, UpdateTimer);
-
-        NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerSelectedAnswerCommand(OnReceivedVote));
-    }
-
-    void UpdateTimer()
-    {
-        if (!Activated)
-        {
-            return;
-        }
-
-        elapsedTime++;
-
-        if (!AreFinishedVoting())
-        {
-            return;
-        }
-            
-        TellClientsThatJokerIsDeactivated();
-        SendMainPlayerVoteResult();
-    }
-
-    void NoMoreTimeToAnswer()
-    {
-        var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
-        NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, senderConnectionId);
-    }
-
-    void SendMainPlayerVoteResult()
-    {
-        OnBeforeSend(this, EventArgs.Empty);
-        SendVoteResult();
-    }
-
-    void SendVoteResult()
-    {
-        var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
-        var answersVotesPairs = answersVotes.ToArray();
-
-        for (int i = 0; i < answersVotesPairs.Length; i++)
-        {
-            var answer = answersVotesPairs[i].Key;
-            var answerVoteCount = answersVotesPairs[i].Value;
-            voteResultCommandData.AddOption(answer, answerVoteCount.ToString());
-        }
-
-        NetworkManager.SendClientCommand(senderConnectionId, voteResultCommandData);
-
-        Deactivate();
-
-        OnSent(this, EventArgs.Empty);
-    }
-
-    void OnReceivedVote(int connectionId, string answer)
-    { 
-        if (!Activated)
-        {
-            return;
-        }
-
-        if (!clientsThatMustVote.Contains(connectionId))
-        {
-            return;
-        }
-
-        answersVotes[answer]++;
-        votedClientsConnectionId.Add(connectionId);
-
-        if (AreFinishedVoting())
-        {
-            NoMoreTimeToAnswer();
-            SendMainPlayerVoteResult();
-            return;
-        }
-    }
-
-    bool AreFinishedVoting()
-    {
-        if (elapsedTime >= timeToAnswerInSeconds)
-        {
-            return true;
-        }
-
-        for (int i = 0; i < clientsThatMustVote.Count; i++)
-        {
-            var connectionId = clientsThatMustVote[i];
-            
-            if (!votedClientsConnectionId.Contains(connectionId))
+        public EventHandler OnBeforeSend = delegate
             {
-                return false;
+            };
+
+        public EventHandler OnActivated = delegate
+            {
+            };
+
+        public EventHandler OnSent = delegate
+            {
+            };
+
+        public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+            {
+            };
+    
+        public ServerNetworkManager NetworkManager;
+        public LocalGameData LocalGameData;
+   
+        int timeToAnswerInSeconds;
+        int senderConnectionId;
+        int elapsedTime;
+
+        List<int> clientsThatMustVote = new List<int>();
+        List<int> votedClientsConnectionId = new List<int>();
+        Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+
+
+        public bool Activated
+        {
+            get;
+            private set;
+        }
+
+        void Start()
+        {
+            this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
+
+            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerSelectedAnswerCommand(this.OnReceivedVote));
+        }
+
+        void UpdateTimer()
+        {
+            if (!this.Activated)
+            {
+                return;
+            }
+
+            this.elapsedTime++;
+
+            if (!this.AreFinishedVoting())
+            {
+                return;
+            }
+            
+            this.TellClientsThatJokerIsDeactivated();
+            this.SendMainPlayerVoteResult();
+        }
+
+        void NoMoreTimeToAnswer()
+        {
+            var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
+            this.NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, this.senderConnectionId);
+        }
+
+        void SendMainPlayerVoteResult()
+        {
+            this.OnBeforeSend(this, EventArgs.Empty);
+            this.SendVoteResult();
+        }
+
+        void SendVoteResult()
+        {
+            var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
+            var answersVotesPairs = this.answersVotes.ToArray();
+
+            for (int i = 0; i < answersVotesPairs.Length; i++)
+            {
+                var answer = answersVotesPairs[i].Key;
+                var answerVoteCount = answersVotesPairs[i].Value;
+                voteResultCommandData.AddOption(answer, answerVoteCount.ToString());
+            }
+
+            this.NetworkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
+
+            this.Deactivate();
+
+            this.OnSent(this, EventArgs.Empty);
+        }
+
+        void OnReceivedVote(int connectionId, string answer)
+        { 
+            if (!this.Activated)
+            {
+                return;
+            }
+
+            if (!this.clientsThatMustVote.Contains(connectionId))
+            {
+                return;
+            }
+
+            this.answersVotes[answer]++;
+            this.votedClientsConnectionId.Add(connectionId);
+
+            if (this.AreFinishedVoting())
+            {
+                this.NoMoreTimeToAnswer();
+                this.SendMainPlayerVoteResult();
+                return;
             }
         }
 
-        return true;
-    }
-
-    void SendJokerSettings()
-    {
-        var setAskAudienceJokerSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
-        setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
-        NetworkManager.SendClientCommand(senderConnectionId, setAskAudienceJokerSettingsCommand);
-    }
-
-    void SendQuestionToAudience(ISimpleQuestion question)
-    {
-        var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
-        var questionJSON = JsonUtility.ToJson(question.Serialize());
-        sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
-        NetworkManager.SendAllClientsCommand(sendQuestionCommand, senderConnectionId);
-    }
-
-    void TellClientsThatJokerIsDeactivated()
-    {
-        var clients = clientsThatMustVote.ToList();
-        clients.Add(senderConnectionId);
-
-        var notificationCommand = new NetworkCommandData("ShowNotification");
-        notificationCommand.AddOption("Color", "yellow");
-        notificationCommand.AddOption("Message", "Voting is over!");
-
-        for (int i = 0; i < clients.Count; i++)
+        bool AreFinishedVoting()
         {
-            var connectionId = clients[i];
-            NetworkManager.SendClientCommand(connectionId, notificationCommand);
-        }
-    }
-
-    void ResetAnswerVotes(ISimpleQuestion question)
-    {
-        answersVotes.Clear();
-
-        for (int i = 0; i < question.Answers.Length; i++)
-        {
-            var answer = question.Answers[i];
-            answersVotes.Add(answer, 0);
-        }
-    }
-
-    void GenerateAudienceVotes(ISimpleQuestion question)
-    { 
-        var correctAnswer = question.Answers[question.CorrectAnswerIndex]; 
-        var correctAnswerChance = (int)(UnityEngine.Random.Range(MinCorrectAnswerVoteProcentage, MaxCorrectAnswerVoteProcentage) * 100); 
-        var wrongAnswersLeftOverChance = 100 - correctAnswerChance; 
-
-        answersVotes.Add(correctAnswer, correctAnswerChance); 
-
-        var incorrectAnswers = question.Answers.ToList();
-        incorrectAnswers.Remove(correctAnswer);
-
-        for (int i = 0; i < incorrectAnswers.Count - 1; i++)
-        { 
-            var wrongAnswerChance = UnityEngine.Random.Range(0, wrongAnswersLeftOverChance); 
-            answersVotes.Add(incorrectAnswers[i], wrongAnswersLeftOverChance); 
-            wrongAnswersLeftOverChance -= wrongAnswerChance; 
-        }  
-
-        answersVotes.Add(incorrectAnswers.Last(), wrongAnswersLeftOverChance);
-    }
-
-    void SendGeneratedResultToMainPlayer()
-    {
-        var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
-        CoroutineUtils.WaitForSeconds(secondsToWait, () =>
+            if (this.elapsedTime >= this.timeToAnswerInSeconds)
             {
-                LocalGameData.GetCurrentQuestion((question) =>
-                    {
-                        GenerateAudienceVotes(question);
-                        SendMainPlayerVoteResult();
-                        Deactivate();
-                    }, (exception) =>
+                return true;
+            }
+
+            for (int i = 0; i < this.clientsThatMustVote.Count; i++)
+            {
+                var connectionId = this.clientsThatMustVote[i];
+            
+                if (!this.votedClientsConnectionId.Contains(connectionId))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        void SendJokerSettings()
+        {
+            var setAskAudienceJokerSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
+            setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
+            this.NetworkManager.SendClientCommand(this.senderConnectionId, setAskAudienceJokerSettingsCommand);
+        }
+
+        void SendQuestionToAudience(ISimpleQuestion question)
+        {
+            var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
+            var questionJSON = JsonUtility.ToJson(question.Serialize());
+            sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
+            this.NetworkManager.SendAllClientsCommand(sendQuestionCommand, this.senderConnectionId);
+        }
+
+        void TellClientsThatJokerIsDeactivated()
+        {
+            var clients = this.clientsThatMustVote.ToList();
+            clients.Add(this.senderConnectionId);
+
+            var notificationCommand = new NetworkCommandData("ShowNotification");
+            notificationCommand.AddOption("Color", "yellow");
+            notificationCommand.AddOption("Message", "Voting is over!");
+
+            for (int i = 0; i < clients.Count; i++)
+            {
+                var connectionId = clients[i];
+                this.NetworkManager.SendClientCommand(connectionId, notificationCommand);
+            }
+        }
+
+        void ResetAnswerVotes(ISimpleQuestion question)
+        {
+            this.answersVotes.Clear();
+
+            for (int i = 0; i < question.Answers.Length; i++)
+            {
+                var answer = question.Answers[i];
+                this.answersVotes.Add(answer, 0);
+            }
+        }
+
+        void GenerateAudienceVotes(ISimpleQuestion question)
+        { 
+            var correctAnswer = question.Answers[question.CorrectAnswerIndex]; 
+            var correctAnswerChance = (int)(UnityEngine.Random.Range(MinCorrectAnswerVoteProcentage, MaxCorrectAnswerVoteProcentage) * 100); 
+            var wrongAnswersLeftOverChance = 100 - correctAnswerChance; 
+
+            this.answersVotes.Add(correctAnswer, correctAnswerChance); 
+
+            var incorrectAnswers = question.Answers.ToList();
+            incorrectAnswers.Remove(correctAnswer);
+
+            for (int i = 0; i < incorrectAnswers.Count - 1; i++)
+            { 
+                var wrongAnswerChance = UnityEngine.Random.Range(0, wrongAnswersLeftOverChance); 
+                this.answersVotes.Add(incorrectAnswers[i], wrongAnswersLeftOverChance); 
+                wrongAnswersLeftOverChance -= wrongAnswerChance; 
+            }  
+
+            this.answersVotes.Add(incorrectAnswers.Last(), wrongAnswersLeftOverChance);
+        }
+
+        void SendGeneratedResultToMainPlayer()
+        {
+            var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
+            this.CoroutineUtils.WaitForSeconds(secondsToWait, () =>
+                {
+                    this.LocalGameData.GetCurrentQuestion((question) =>
+                        {
+                            this.GenerateAudienceVotes(question);
+                            this.SendMainPlayerVoteResult();
+                            this.Deactivate();
+                        }, (exception) =>
+                            {
+                                Debug.LogException(exception);
+                                this.Deactivate();
+                                this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                            });    
+                });
+        }
+
+        public void Deactivate()
+        {
+            this.TellClientsThatJokerIsDeactivated();
+
+            this.StopAllCoroutines();
+
+            this.clientsThatMustVote.Clear();
+            this.votedClientsConnectionId.Clear();
+            this.answersVotes.Clear();
+
+            this.timeToAnswerInSeconds = 0;
+            this.senderConnectionId = 0;
+            this.elapsedTime = -1;
+
+            this.Activated = false;
+        }
+
+        public void Activate(int senderConnectionId, MainPlayerData mainPlayerData)
+        {
+            if (this.Activated)
+            {
+                throw new InvalidOperationException("Already active");
+            }
+
+            if (mainPlayerData == null)
+            {
+                throw new ArgumentNullException("mainPlayerData");
+            }
+
+            var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
+
+            this.timeToAnswerInSeconds = this.LocalGameData.SecondsForAnswerQuestion;
+            this.senderConnectionId = senderConnectionId;
+
+            if (this.NetworkManager.ConnectedClientsCount < minClients)
+            {
+                this.answersVotes.Clear();
+                this.SendJokerSettings();
+                this.SendGeneratedResultToMainPlayer();
+                return;
+            }
+
+            this.elapsedTime = 1;
+
+            var audienceConnectionIds = this.NetworkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
+            this.clientsThatMustVote.AddRange(audienceConnectionIds);
+
+            this.LocalGameData.GetCurrentQuestion((question) =>
+                {
+                    this.ResetAnswerVotes(question);
+                    this.SendJokerSettings();
+                    this.SendQuestionToAudience(question);
+                    this.Activated = true;
+                    this.OnActivated(this, EventArgs.Empty);
+                }, (exception) =>
                     {
                         Debug.LogException(exception);
-                        Deactivate();
-                        OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                    });    
-            });
+                        this.Deactivate();
+                        this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                    });
+        }
     }
 
-    public void Deactivate()
-    {
-        TellClientsThatJokerIsDeactivated();
-
-        StopAllCoroutines();
-
-        clientsThatMustVote.Clear();
-        votedClientsConnectionId.Clear();
-        answersVotes.Clear();
-
-        timeToAnswerInSeconds = 0;
-        senderConnectionId = 0;
-        elapsedTime = -1;
-
-        Activated = false;
-    }
-
-    public void Activate(int senderConnectionId, MainPlayerData mainPlayerData)
-    {
-        if (Activated)
-        {
-            throw new InvalidOperationException("Already active");
-        }
-
-        if (mainPlayerData == null)
-        {
-            throw new ArgumentNullException("mainPlayerData");
-        }
-
-        var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
-
-        this.timeToAnswerInSeconds = LocalGameData.SecondsForAnswerQuestion;
-        this.senderConnectionId = senderConnectionId;
-
-        if (NetworkManager.ConnectedClientsCount < minClients)
-        {
-            answersVotes.Clear();
-            SendJokerSettings();
-            SendGeneratedResultToMainPlayer();
-            return;
-        }
-
-        elapsedTime = 1;
-
-        var audienceConnectionIds = NetworkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
-        clientsThatMustVote.AddRange(audienceConnectionIds);
-
-        LocalGameData.GetCurrentQuestion((question) =>
-            {
-                ResetAnswerVotes(question);
-                SendJokerSettings();
-                SendQuestionToAudience(question);
-                Activated = true;
-                OnActivated(this, EventArgs.Empty);
-            }, (exception) =>
-            {
-                Debug.LogException(exception);
-                Deactivate();
-                OnError(this, new UnhandledExceptionEventArgs(exception, true));
-            });
-    }
 }

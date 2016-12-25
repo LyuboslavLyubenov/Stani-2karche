@@ -1,8 +1,13 @@
 ﻿using System;
 
-[Serializable]
-public class _UserCredentials
+namespace Assets.Scripts.KinveySerializableObj
 {
-    public string username;
-    public string password;
+
+    [Serializable]
+    public class _UserCredentials
+    {
+        public string username;
+        public string password;
+    }
+
 }

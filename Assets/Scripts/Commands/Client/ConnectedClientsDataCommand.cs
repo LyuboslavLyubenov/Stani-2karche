@@ -1,45 +1,54 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System;
 
-public class ConnectedClientsDataCommand : IOneTimeExecuteCommand
+using UnityEngine;
+
+namespace Assets.Scripts.Commands.Client
 {
-    Action<OnlineClientsData_Serializable> onReceivedOnlineClients;
 
-    public bool FinishedExecution
-    {
-        get;
-        private set;
-    }
+    using Assets.Scripts.Interfaces;
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
+    using EventArgs = System.EventArgs;
 
-    public ConnectedClientsDataCommand(Action<OnlineClientsData_Serializable> onReceivedOnlineClientsData)
+    public class ConnectedClientsDataCommand : IOneTimeExecuteCommand
     {
-        if (onReceivedOnlineClientsData == null)
+        Action<OnlineClientsData_Serializable> onReceivedOnlineClients;
+
+        public bool FinishedExecution
         {
-            throw new ArgumentNullException("onReceivedOnlineClientsData");
+            get;
+            private set;
         }
+
+        public EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
+
+        public ConnectedClientsDataCommand(Action<OnlineClientsData_Serializable> onReceivedOnlineClientsData)
+        {
+            if (onReceivedOnlineClientsData == null)
+            {
+                throw new ArgumentNullException("onReceivedOnlineClientsData");
+            }
             
-        this.onReceivedOnlineClients = onReceivedOnlineClientsData;
-        FinishedExecution = false;
-    }
+            this.onReceivedOnlineClients = onReceivedOnlineClientsData;
+            this.FinishedExecution = false;
+        }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var connectedClientsDataJSON = commandsOptionsValues["ConnectedClientsDataJSON"];
-        var onlineClientsData = JsonUtility.FromJson<OnlineClientsData_Serializable>(connectedClientsDataJSON);
-        onReceivedOnlineClients(onlineClientsData);
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            var connectedClientsDataJSON = commandsOptionsValues["ConnectedClientsDataJSON"];
+            var onlineClientsData = JsonUtility.FromJson<OnlineClientsData_Serializable>(connectedClientsDataJSON);
+            this.onReceivedOnlineClients(onlineClientsData);
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
+
 }

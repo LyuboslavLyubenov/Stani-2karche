@@ -1,22 +1,27 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
-public class AudienceVoteEventArgs : System.EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public AudienceVoteEventArgs(Dictionary<string, int> answersVotes)
+
+    public class AudienceVoteEventArgs : System.EventArgs
     {
-        if (answersVotes == null)
+        public AudienceVoteEventArgs(Dictionary<string, int> answersVotes)
         {
-            throw new ArgumentNullException("answersVotes");
+            if (answersVotes == null)
+            {
+                throw new ArgumentNullException("answersVotes");
+            }
+
+            this.AnswersVotes = answersVotes;
         }
 
-        this.AnswersVotes = answersVotes;
-    }
+        public Dictionary<string,int> AnswersVotes
+        {
+            get;
+            private set;
+        }
 
-    public Dictionary<string,int> AnswersVotes
-    {
-        get;
-        private set;
     }
 
 }

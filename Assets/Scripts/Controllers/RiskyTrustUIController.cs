@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 
-public class RiskyTrustUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public void ActivateDisabledAnimation()
+
+    public class RiskyTrustUIController : MonoBehaviour
     {
-        //TODO:
-        gameObject.SetActive(false);
+        public void ActivateDisabledAnimation()
+        {
+            //TODO:
+            this.gameObject.SetActive(false);
+        }
     }
+
 }

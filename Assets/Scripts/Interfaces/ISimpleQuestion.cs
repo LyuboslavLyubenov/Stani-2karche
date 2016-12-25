@@ -1,24 +1,29 @@
-public interface ISimpleQuestion
+namespace Assets.Scripts.Interfaces
 {
-    string Text
+
+    public interface ISimpleQuestion
     {
-        get;
+        string Text
+        {
+            get;
+        }
+
+        string[] Answers
+        {
+            get;
+        }
+
+        int CorrectAnswerIndex
+        {
+            get;
+        }
+
+        string CorrectAnswer
+        {
+            get;
+        }
+
+        SimpleQuestion_Serializable Serialize();
     }
 
-    string[] Answers
-    {
-        get;
-    }
-
-    int CorrectAnswerIndex
-    {
-        get;
-    }
-
-    string CorrectAnswer
-    {
-        get;
-    }
-
-    SimpleQuestion_Serializable Serialize();
 }

@@ -1,47 +1,55 @@
-﻿using UnityEngine.UI;
-using System;
+﻿using System;
 
-public class SecondsRemainingUIController : ExtendedMonoBehaviour
+using UnityEngine.UI;
+
+namespace Assets.Scripts.Controllers
 {
-    public Text SecondsText;
 
-    public int RemainingSecondsToAnswer
+    using Assets.Scripts.Utils;
+
+    public class SecondsRemainingUIController : ExtendedMonoBehaviour
     {
-        get;
-        private set;
-    }
+        public Text SecondsText;
 
-    public bool Paused
-    {
-        get;
-        set;
-    }
-
-    void Start()
-    {
-        Paused = false;
-
-        CoroutineUtils.RepeatEverySeconds(1, () =>
-            {
-                if (RemainingSecondsToAnswer > 0 && !Paused)
-                {
-                    RemainingSecondsToAnswer--;
-                }
-
-                SecondsText.text = RemainingSecondsToAnswer.ToString();
-            });
-    }
-
-    public void SetSeconds(int seconds)
-    {
-        if (seconds <= 0)
+        public int RemainingSecondsToAnswer
         {
-            throw new ArgumentOutOfRangeException("seconds");
+            get;
+            private set;
         }
 
-        Paused = false;
+        public bool Paused
+        {
+            get;
+            set;
+        }
 
-        RemainingSecondsToAnswer = seconds;
-        SecondsText.text = RemainingSecondsToAnswer.ToString();
+        void Start()
+        {
+            this.Paused = false;
+
+            this.CoroutineUtils.RepeatEverySeconds(1, () =>
+                {
+                    if (this.RemainingSecondsToAnswer > 0 && !this.Paused)
+                    {
+                        this.RemainingSecondsToAnswer--;
+                    }
+
+                    this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
+                });
+        }
+
+        public void SetSeconds(int seconds)
+        {
+            if (seconds <= 0)
+            {
+                throw new ArgumentOutOfRangeException("seconds");
+            }
+
+            this.Paused = false;
+
+            this.RemainingSecondsToAnswer = seconds;
+            this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
+        }
     }
+
 }

@@ -1,26 +1,33 @@
 using System;
 
-[Serializable]
-public class SimpleQuestion_Serializable
+namespace Assets.Scripts
 {
-    public string Text;
-    public string[] Answers;
-    public int CorrectAnswerIndex;
 
-    public SimpleQuestion_Serializable(ISimpleQuestion question)
-    {
-        this.Text = question.Text;
-        this.Answers = question.Answers;
-        this.CorrectAnswerIndex = question.CorrectAnswerIndex;
-    }
+    using Assets.Scripts.Interfaces;
 
-    public SimpleQuestion_Serializable()
+    [Serializable]
+    public class SimpleQuestion_Serializable
     {
+        public string Text;
+        public string[] Answers;
+        public int CorrectAnswerIndex;
+
+        public SimpleQuestion_Serializable(ISimpleQuestion question)
+        {
+            this.Text = question.Text;
+            this.Answers = question.Answers;
+            this.CorrectAnswerIndex = question.CorrectAnswerIndex;
+        }
+
+        public SimpleQuestion_Serializable()
+        {
         
+        }
+
+        public ISimpleQuestion Deserialize()
+        {
+            return new SimpleQuestion(this.Text, this.Answers, this.CorrectAnswerIndex);
+        }
     }
 
-    public ISimpleQuestion Deserialize()
-    {
-        return new SimpleQuestion(this.Text, this.Answers, this.CorrectAnswerIndex);
-    }
 }

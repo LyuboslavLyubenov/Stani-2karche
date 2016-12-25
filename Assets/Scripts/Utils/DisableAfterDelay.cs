@@ -1,95 +1,105 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using System;
 using System.Linq;
 
-public class DisableAfterDelay : MonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts.Utils
 {
-    public int DelayInSeconds;
-    public int PassedSeconds;
-    public bool DisableAfterClick = true;
-    public bool UseAnimator = false;
 
-    public event EventHandler<TimeInSecondsEventArgs> OnTimePass
+    using Assets.Scripts.EventArgs;
+
+    using EventArgs = System.EventArgs;
+
+    public class DisableAfterDelay : MonoBehaviour
     {
-        add
+        public int DelayInSeconds;
+        public int PassedSeconds;
+        public bool DisableAfterClick = true;
+        public bool UseAnimator = false;
+
+        public event EventHandler<TimeInSecondsEventArgs> OnTimePass
         {
-            if (onTimePass == null || !onTimePass.GetInvocationList().Contains(value))
+            add
             {
-                onTimePass += value;
+                if (this.onTimePass == null || !this.onTimePass.GetInvocationList().Contains(value))
+                {
+                    this.onTimePass += value;
+                }
+            }
+            remove
+            {
+                this.onTimePass -= value;
             }
         }
-        remove
-        {
-            onTimePass -= value;
-        }
-    }
 
-    public event EventHandler OnTimeEnd
-    {
-        add
+        public event EventHandler OnTimeEnd
         {
-            if (onTimeEnd == null || !onTimeEnd.GetInvocationList().Contains(value))
+            add
             {
-                onTimeEnd += value;
+                if (this.onTimeEnd == null || !this.onTimeEnd.GetInvocationList().Contains(value))
+                {
+                    this.onTimeEnd += value;
+                }
+            }
+            remove
+            {
+                this.onTimeEnd -= value;
             }
         }
-        remove
+
+        EventHandler<TimeInSecondsEventArgs> onTimePass = delegate
+            {
+            };
+
+        EventHandler onTimeEnd = delegate
+            {
+            };
+
+        void OnEnable()
         {
-            onTimeEnd -= value;
+            this.StartCoroutine(this.DisableWithDelay());
+        }
+
+        void OnDisable()
+        {
+            this.PassedSeconds = 0;
+            this.onTimeEnd(this, EventArgs.Empty);
+        }
+
+        void FixedUpdate()
+        {
+            if (this.DisableAfterClick && Input.GetMouseButton(0))
+            {
+                this.StopCoroutine(this.DisableWithDelay());
+                this.Disable();
+            }
+        }
+
+        void Disable()
+        {
+            if (this.UseAnimator)
+            {
+                this.GetComponent<Animator>().SetTrigger("disable");
+            }
+            else
+            {
+                this.gameObject.SetActive(false);
+            }
+        }
+
+        IEnumerator DisableWithDelay()
+        {
+            while (this.PassedSeconds < this.DelayInSeconds)
+            {
+                yield return new WaitForSeconds(1f);
+                this.PassedSeconds++;
+                this.onTimePass(this, new TimeInSecondsEventArgs(this.DelayInSeconds - this.PassedSeconds));
+            }
+
+            this.Disable();
         }
     }
 
-    EventHandler<TimeInSecondsEventArgs> onTimePass = delegate
-    {
-    };
-
-    EventHandler onTimeEnd = delegate
-    {
-    };
-
-    void OnEnable()
-    {
-        StartCoroutine(DisableWithDelay());
-    }
-
-    void OnDisable()
-    {
-        PassedSeconds = 0;
-        onTimeEnd(this, EventArgs.Empty);
-    }
-
-    void FixedUpdate()
-    {
-        if (DisableAfterClick && Input.GetMouseButton(0))
-        {
-            StopCoroutine(DisableWithDelay());
-            Disable();
-        }
-    }
-
-    void Disable()
-    {
-        if (UseAnimator)
-        {
-            GetComponent<Animator>().SetTrigger("disable");
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
-    }
-
-    IEnumerator DisableWithDelay()
-    {
-        while (PassedSeconds < DelayInSeconds)
-        {
-            yield return new WaitForSeconds(1f);
-            PassedSeconds++;
-            onTimePass(this, new TimeInSecondsEventArgs(DelayInSeconds - PassedSeconds));
-        }
-
-        Disable();
-    }
 }
 

@@ -1,8 +1,13 @@
 ﻿using UnityEngine;
 
-public interface INotificationService
+namespace Assets.Scripts.Interfaces
 {
-    void AddNotification(Color color, string message);
 
-    void AddNotification(Color color, string message, int disableDelayInSeconds);
+    public interface INotificationService
+    {
+        void AddNotification(Color color, string message);
+
+        void AddNotification(Color color, string message, int disableDelayInSeconds);
+    }
+
 }

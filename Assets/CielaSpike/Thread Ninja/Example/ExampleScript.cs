@@ -1,97 +1,102 @@
 ﻿using System;
-using UnityEngine;
 using System.Collections;
-using CielaSpike;
 using System.Threading;
 
-public class ExampleScript : MonoBehaviour {
+using UnityEngine;
 
-    void Start()
-    {
-        StartCoroutine(StartExamples());
-    }
+namespace Assets.CielaSpike.Thread_Ninja.Example
+{
 
-    void Update()
-    {
-        // rotate cube to see if main thread has been blocked;
-        transform.Rotate(Vector3.up, Time.deltaTime * 180);
-    }
+    public class ExampleScript : MonoBehaviour {
 
-    IEnumerator StartExamples()
-    {
-        Task task;
-        LogExample("Blocking Thread");
-        this.StartCoroutineAsync(Blocking(), out task);
-        yield return StartCoroutine(task.Wait());
-        LogState(task);
-
-        LogExample("Cancellation");
-        this.StartCoroutineAsync(Cancellation(), out task);
-        yield return new WaitForSeconds(2.0f);
-        task.Cancel();
-        LogState(task);
-
-        LogExample("Error Handling");
-        yield return this.StartCoroutineAsync(ErrorHandling(), out task);
-        LogState(task);
-    }
-
-    IEnumerator Blocking()
-    {
-        LogAsync("Thread.Sleep(5000); -> See if cube rotates.");
-        Thread.Sleep(5000);
-        LogAsync("Jump to main thread.");
-        yield return Ninja.JumpToUnity;
-        LogSync("Thread.Sleep(5000); -> See if cube rotates.");
-        yield return new WaitForSeconds(0.1f);
-        Thread.Sleep(5000);
-        LogSync("Jump to background.");
-        yield return Ninja.JumpBack;
-        LogAsync("Yield WaitForSeconds on background.");
-        yield return new WaitForSeconds(3.0f);
-    }
-
-    IEnumerator Cancellation()
-    {
-        LogAsync("Running heavy task...");
-        for (int i = 0; i < int.MaxValue; i++)
+        void Start()
         {
-            // do some heavy ops;
-            // ...
+            this.StartCoroutine(this.StartExamples());
         }
 
-        yield break;
-    }
-
-    IEnumerator ErrorHandling()
-    {
-        LogAsync("Running heavy task...");
-        for (int i = 0; i < int.MaxValue; i++)
+        void Update()
         {
-            if (i > int.MaxValue / 2)
-                throw new Exception("Some error from background thread...");
+            // rotate cube to see if main thread has been blocked;
+            this.transform.Rotate(Vector3.up, Time.deltaTime * 180);
         }
 
-        yield break;
+        IEnumerator StartExamples()
+        {
+            Task task;
+            this.LogExample("Blocking Thread");
+            this.StartCoroutineAsync(this.Blocking(), out task);
+            yield return this.StartCoroutine(task.Wait());
+            this.LogState(task);
+
+            this.LogExample("Cancellation");
+            this.StartCoroutineAsync(this.Cancellation(), out task);
+            yield return new WaitForSeconds(2.0f);
+            task.Cancel();
+            this.LogState(task);
+
+            this.LogExample("Error Handling");
+            yield return this.StartCoroutineAsync(this.ErrorHandling(), out task);
+            this.LogState(task);
+        }
+
+        IEnumerator Blocking()
+        {
+            this.LogAsync("Thread.Sleep(5000); -> See if cube rotates.");
+            Thread.Sleep(5000);
+            this.LogAsync("Jump to main thread.");
+            yield return Ninja.JumpToUnity;
+            this.LogSync("Thread.Sleep(5000); -> See if cube rotates.");
+            yield return new WaitForSeconds(0.1f);
+            Thread.Sleep(5000);
+            this.LogSync("Jump to background.");
+            yield return Ninja.JumpBack;
+            this.LogAsync("Yield WaitForSeconds on background.");
+            yield return new WaitForSeconds(3.0f);
+        }
+
+        IEnumerator Cancellation()
+        {
+            this.LogAsync("Running heavy task...");
+            for (int i = 0; i < int.MaxValue; i++)
+            {
+                // do some heavy ops;
+                // ...
+            }
+
+            yield break;
+        }
+
+        IEnumerator ErrorHandling()
+        {
+            this.LogAsync("Running heavy task...");
+            for (int i = 0; i < int.MaxValue; i++)
+            {
+                if (i > int.MaxValue / 2)
+                    throw new Exception("Some error from background thread...");
+            }
+
+            yield break;
+        }
+
+        private void LogAsync(string msg)
+        {
+            Debug.Log("[Async]" + msg);
+        }
+
+        private void LogState(Task task)
+        {
+            Debug.Log("[State]" + task.State);
+        }
+
+        private void LogSync(string msg)
+        {
+            Debug.Log("[Sync]" + msg);
+        }
+
+        private void LogExample(string msg)
+        {
+            Debug.Log("[Example]" + msg);
+        }
     }
 
-    private void LogAsync(string msg)
-    {
-        Debug.Log("[Async]" + msg);
-    }
-
-    private void LogState(Task task)
-    {
-        Debug.Log("[State]" + task.State);
-    }
-
-    private void LogSync(string msg)
-    {
-        Debug.Log("[Sync]" + msg);
-    }
-
-    private void LogExample(string msg)
-    {
-        Debug.Log("[Example]" + msg);
-    }
 }

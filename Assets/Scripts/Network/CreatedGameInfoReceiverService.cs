@@ -1,64 +1,72 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-public class CreatedGameInfoReceiverService : MonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts.Network
 {
-    public SimpleTcpClient TcpClient;
-    public SimpleTcpServer TcpServer;
 
-    public Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
+    using Assets.Scripts.EventArgs;
 
-    // Use this for initialization
-    void Start()
+    public class CreatedGameInfoReceiverService : MonoBehaviour
     {
-        if (!TcpClient.Initialized)
+        public SimpleTcpClient TcpClient;
+        public SimpleTcpServer TcpServer;
+
+        public Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
+
+        // Use this for initialization
+        void Start()
         {
-            TcpClient.Initialize();
-        }
-
-        if (!TcpServer.Initialized)
-        {
-            TcpServer.Initialize(7774);
-        }
-
-        TcpServer.OnReceivedMessage += OnReceivedMessage;
-    }
-
-    void OnReceivedMessage(object sender, MessageEventArgs args)
-    {
-        var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag);
-
-        if (!pendingRequests.ContainsKey(args.IPAddress) || gameInfoTagIndex < 0)
-        {
-            return;
-        }
-
-        var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSenderService.GameInfoTag.Length);
-        var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
-
-        pendingRequests[args.IPAddress](gameInfo);
-        pendingRequests.Remove(args.IPAddress);
-    }
-
-    public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo)
-    {
-        TcpClient.ConnectTo(ipAddress, TcpServer.Port, () =>
+            if (!this.TcpClient.Initialized)
             {
-                TcpClient.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag);
-                pendingRequests.Add(ipAddress, receivedGameInfo);
-            });
-    }
+                this.TcpClient.Initialize();
+            }
 
-    public void StopReceivingFrom(string ipAddress)
-    {
-        if (!pendingRequests.ContainsKey(ipAddress))
-        {
-            throw new InvalidOperationException("Not listening to this ipAddress");
+            if (!this.TcpServer.Initialized)
+            {
+                this.TcpServer.Initialize(7774);
+            }
+
+            this.TcpServer.OnReceivedMessage += this.OnReceivedMessage;
         }
 
-        pendingRequests.Remove(ipAddress);
-        TcpClient.DisconnectFrom(ipAddress);
-        TcpServer.Disconnect(ipAddress);
+        void OnReceivedMessage(object sender, MessageEventArgs args)
+        {
+            var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag);
+
+            if (!this.pendingRequests.ContainsKey(args.IPAddress) || gameInfoTagIndex < 0)
+            {
+                return;
+            }
+
+            var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSenderService.GameInfoTag.Length);
+            var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
+
+            this.pendingRequests[args.IPAddress](gameInfo);
+            this.pendingRequests.Remove(args.IPAddress);
+        }
+
+        public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo)
+        {
+            this.TcpClient.ConnectTo(ipAddress, this.TcpServer.Port, () =>
+                {
+                    this.TcpClient.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag);
+                    this.pendingRequests.Add(ipAddress, receivedGameInfo);
+                });
+        }
+
+        public void StopReceivingFrom(string ipAddress)
+        {
+            if (!this.pendingRequests.ContainsKey(ipAddress))
+            {
+                throw new InvalidOperationException("Not listening to this ipAddress");
+            }
+
+            this.pendingRequests.Remove(ipAddress);
+            this.TcpClient.DisconnectFrom(ipAddress);
+            this.TcpServer.Disconnect(ipAddress);
+        }
     }
+
 }

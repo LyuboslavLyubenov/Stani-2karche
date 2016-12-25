@@ -1,27 +1,35 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-public class ReceivedMainPlayerSelectedAnswerCommand : INetworkManagerCommand
+using UnityEngine;
+
+namespace Assets.Scripts.Commands.Server
 {
-    Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer;
 
-    public ReceivedMainPlayerSelectedAnswerCommand(Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer)
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+
+    public class ReceivedMainPlayerSelectedAnswerCommand : INetworkManagerCommand
     {
-        if (onReceivedClickedAnswer == null)
+        Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer;
+
+        public ReceivedMainPlayerSelectedAnswerCommand(Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer)
         {
-            throw new ArgumentNullException("onReceivedClickedAnswer");
-        }
+            if (onReceivedClickedAnswer == null)
+            {
+                throw new ArgumentNullException("onReceivedClickedAnswer");
+            }
             
-        this.onReceivedClickedAnswer = onReceivedClickedAnswer;
-    }
+            this.onReceivedClickedAnswer = onReceivedClickedAnswer;
+        }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var answerEventArgsJSON = commandsOptionsValues["AnswerEventArgsJSON"];
-        var answerEventArgs = JsonUtility.FromJson<AnswerEventArgs_Serializable>(answerEventArgsJSON);
-        onReceivedClickedAnswer(answerEventArgs);
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var answerEventArgsJSON = commandsOptionsValues["AnswerEventArgsJSON"];
+            var answerEventArgs = JsonUtility.FromJson<AnswerEventArgs_Serializable>(answerEventArgsJSON);
+            this.onReceivedClickedAnswer(answerEventArgs);
+        }
+
     }
 
 }

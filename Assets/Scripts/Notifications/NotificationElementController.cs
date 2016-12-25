@@ -1,36 +1,41 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
+﻿using System.Collections;
+
+using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class NotificationElementController : MonoBehaviour, IPointerUpHandler
+namespace Assets.Scripts.Notifications
 {
-    public int WaitBeforeDisableSeconds = 5;
 
-    void Start()
+    public class NotificationElementController : MonoBehaviour, IPointerUpHandler
     {
-        StartCoroutine(DismissAfterDelay());
+        public int WaitBeforeDisableSeconds = 5;
+
+        void Start()
+        {
+            this.StartCoroutine(this.DismissAfterDelay());
+        }
+
+        IEnumerator DismissAfterDelay()
+        {
+            yield return new WaitForSeconds(this.WaitBeforeDisableSeconds);
+            this.Dismiss();
+        }
+
+        void OnDisable()
+        {
+            this.StopAllCoroutines();
+            Destroy(this.gameObject);
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            this.Dismiss();
+        }
+
+        public void Dismiss()
+        {
+            this.GetComponent<Animator>().SetTrigger("Dismissed");
+        }
     }
 
-    IEnumerator DismissAfterDelay()
-    {
-        yield return new WaitForSeconds(WaitBeforeDisableSeconds);
-        Dismiss();
-    }
-
-    void OnDisable()
-    {
-        StopAllCoroutines();
-        Destroy(this.gameObject);
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        Dismiss();
-    }
-
-    public void Dismiss()
-    {
-        GetComponent<Animator>().SetTrigger("Dismissed");
-    }
 }

@@ -1,18 +1,23 @@
 ﻿using System;
 
-[Serializable]
-public class ServerInfo_Serializable
+namespace Assets.Scripts.Network
 {
-    public string ExternalIpAddress;
-    public string LocalIPAddress;
-    public int ConnectedClientsCount;
-    public int MaxConnectionsAllowed;
 
-    public bool IsFull
+    [Serializable]
+    public class ServerInfo_Serializable
     {
-        get
+        public string ExternalIpAddress;
+        public string LocalIPAddress;
+        public int ConnectedClientsCount;
+        public int MaxConnectionsAllowed;
+
+        public bool IsFull
         {
-            return ConnectedClientsCount >= MaxConnectionsAllowed;
+            get
+            {
+                return this.ConnectedClientsCount >= this.MaxConnectionsAllowed;
+            }
         }
     }
+
 }

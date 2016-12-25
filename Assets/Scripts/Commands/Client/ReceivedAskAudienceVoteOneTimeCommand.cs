@@ -1,45 +1,54 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
-public class ReceivedAskAudienceVoteOneTimeCommand : IOneTimeExecuteCommand
+namespace Assets.Scripts.Commands.Client
 {
-    public delegate void OnReceivedVote(int connectionId,string answer);
 
-    OnReceivedVote onReceivedVote;
+    using Assets.Scripts.Interfaces;
 
-    public bool FinishedExecution
+    using EventArgs = System.EventArgs;
+
+    public class ReceivedAskAudienceVoteOneTimeCommand : IOneTimeExecuteCommand
     {
-        get;
-        private set;
-    }
+        public delegate void OnReceivedVote(int connectionId,string answer);
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
+        OnReceivedVote onReceivedVote;
 
-    public ReceivedAskAudienceVoteOneTimeCommand(OnReceivedVote onReceivedVote)
-    {
-        if (onReceivedVote == null)
+        public bool FinishedExecution
         {
-            throw new ArgumentNullException("onReceivedVote");
+            get;
+            private set;
         }
+
+        public EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
+
+        public ReceivedAskAudienceVoteOneTimeCommand(OnReceivedVote onReceivedVote)
+        {
+            if (onReceivedVote == null)
+            {
+                throw new ArgumentNullException("onReceivedVote");
+            }
             
-        this.onReceivedVote = onReceivedVote;
-    }
+            this.onReceivedVote = onReceivedVote;
+        }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var connectionId = int.Parse(commandsOptionsValues["ClientConnectionId"]);
-        var answer = commandsOptionsValues["Answer"];
-        onReceivedVote(connectionId, answer);
-
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            var connectionId = int.Parse(commandsOptionsValues["ClientConnectionId"]);
+            var answer = commandsOptionsValues["Answer"];
+            this.onReceivedVote(connectionId, answer);
+
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
+
 }

@@ -1,4 +1,9 @@
-public interface IStatisticsExporter
+namespace Assets.Scripts.Interfaces
 {
-    void Export();
+
+    public interface IStatisticsExporter
+    {
+        void Export();
+    }
+
 }

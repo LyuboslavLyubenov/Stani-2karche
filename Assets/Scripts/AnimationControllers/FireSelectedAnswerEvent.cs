@@ -1,28 +1,34 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
-public class FireSelectedAnswerEvent : StateMachineBehaviour
+namespace Assets.Scripts.AnimationControllers
 {
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+
+    using Assets.Scripts.Controllers;
+
+    public class FireSelectedAnswerEvent : StateMachineBehaviour
     {
-        var questionPanel = GameObject.FindWithTag("QuestionPanel");
-        var questionUIController = questionPanel.GetComponent<QuestionUIController>();
-        var shouldFireClickEvent = animator.GetBool("fireClickEvent");
-
-        if (shouldFireClickEvent)
+        override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            var answer = animator.gameObject.GetComponentInChildren<Text>().text;
-            var isCorrect = animator.GetBool("isCorrect");
+            var questionPanel = GameObject.FindWithTag("QuestionPanel");
+            var questionUIController = questionPanel.GetComponent<QuestionUIController>();
+            var shouldFireClickEvent = animator.GetBool("fireClickEvent");
 
-            if (isCorrect)
+            if (shouldFireClickEvent)
             {
-                questionUIController._OnCorrectAnswerAnimEnd(answer);    
-            }
-            else
-            {
-                questionUIController._OnIncorrectAnswerAnimEnd(answer);
+                var answer = animator.gameObject.GetComponentInChildren<Text>().text;
+                var isCorrect = animator.GetBool("isCorrect");
+
+                if (isCorrect)
+                {
+                    questionUIController._OnCorrectAnswerAnimEnd(answer);    
+                }
+                else
+                {
+                    questionUIController._OnIncorrectAnswerAnimEnd(answer);
+                }
             }
         }
     }
+
 }

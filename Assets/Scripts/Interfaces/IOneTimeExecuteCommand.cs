@@ -1,19 +1,23 @@
-using System.Collections.Generic;
 using System;
 
-/// <summary>
-/// When executed is destroyed from commandsmanager class
-/// </summary>
-public interface IOneTimeExecuteCommand : INetworkManagerCommand
+namespace Assets.Scripts.Interfaces
 {
-    bool FinishedExecution
+
+    /// <summary>
+    /// When executed is destroyed from commandsmanager class
+    /// </summary>
+    public interface IOneTimeExecuteCommand : INetworkManagerCommand
     {
-        get;
+        bool FinishedExecution
+        {
+            get;
+        }
+
+        EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
     }
 
-    EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
 }

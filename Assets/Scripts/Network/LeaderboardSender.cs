@@ -1,50 +1,56 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class LeaderboardSender : ExtendedMonoBehaviour
+namespace Assets.Scripts.Network
 {
-    public ServerNetworkManager NetworkManager;
-    public LeaderboardSerializer LeaderboardSerializer;
 
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Utils;
 
-
-    void Start()
+    public class LeaderboardSender : ExtendedMonoBehaviour
     {
-        CoroutineUtils.WaitForFrames(0, () => Initialize());
-    }
+        public ServerNetworkManager NetworkManager;
+        public LeaderboardSerializer LeaderboardSerializer;
 
-    void Initialize()
-    {
-        //tODO FIX TIMEOUT
-        var sendLeaderboardEntitiesCommand = new DummyCommand();
 
-        sendLeaderboardEntitiesCommand.OnExecuted += (sender, args) =>
+
+        void Start()
         {
-            var connectionId = int.Parse(args.CommandsOptionsValues["ConnectionId"]);
-            StartSendingLeaderboardEntities(connectionId);
-        };
-        
-        NetworkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);   
-    }
-
-    void StartSendingLeaderboardEntities(int connectionId)
-    {
-        var allPlayersData = LeaderboardSerializer.Leaderboard;
-
-        for (int i = 0; i < allPlayersData.Count; i++)
-        {
-            var playerScore = allPlayersData[i];
-            var playerScoreSer = new PlayerScore_Serializable(playerScore);
-            var json = JsonUtility.ToJson(playerScoreSer);
-            var sendEntityCommand = new NetworkCommandData("LeaderboardEntity");
-            sendEntityCommand.AddOption("PlayerScoreJSON", json);
-
-            NetworkManager.SendClientCommand(connectionId, sendEntityCommand);
+            this.CoroutineUtils.WaitForFrames(0, () => this.Initialize());
         }
 
-        var noMoreEntitiesCommand = new NetworkCommandData("LeaderboardNoMoreEntities");
-        NetworkManager.SendClientCommand(connectionId, noMoreEntitiesCommand);
+        void Initialize()
+        {
+            //tODO FIX TIMEOUT
+            var sendLeaderboardEntitiesCommand = new DummyCommand();
+
+            sendLeaderboardEntitiesCommand.OnExecuted += (sender, args) =>
+                {
+                    var connectionId = int.Parse(args.CommandsOptionsValues["ConnectionId"]);
+                    this.StartSendingLeaderboardEntities(connectionId);
+                };
+        
+            this.NetworkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);   
+        }
+
+        void StartSendingLeaderboardEntities(int connectionId)
+        {
+            var allPlayersData = this.LeaderboardSerializer.Leaderboard;
+
+            for (int i = 0; i < allPlayersData.Count; i++)
+            {
+                var playerScore = allPlayersData[i];
+                var playerScoreSer = new PlayerScore_Serializable(playerScore);
+                var json = JsonUtility.ToJson(playerScoreSer);
+                var sendEntityCommand = new NetworkCommandData("LeaderboardEntity");
+                sendEntityCommand.AddOption("PlayerScoreJSON", json);
+
+                this.NetworkManager.SendClientCommand(connectionId, sendEntityCommand);
+            }
+
+            var noMoreEntitiesCommand = new NetworkCommandData("LeaderboardNoMoreEntities");
+            this.NetworkManager.SendClientCommand(connectionId, noMoreEntitiesCommand);
+        }
+
     }
 
 }

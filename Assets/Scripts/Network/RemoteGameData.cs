@@ -1,233 +1,246 @@
-﻿using System.Collections.Generic;
-using System;
-using UnityEngine;
-
-public class RemoteGameData : IGameData
+﻿namespace Assets.Scripts.Network
 {
-    public EventHandler OnLoaded
-    {
-        get;
-        set;
-    }
 
-    public EventHandler<MarkEventArgs> OnMarkIncrease
-    {
-        get;
-        set;
-    }
+    using System;
+    using System.Collections.Generic;
 
-    public bool Loaded
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.GameData;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Exceptions;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Utils;
+
+    using UnityEngine;
+
+    public class RemoteGameData : IGameData
     {
-        get
+        public EventHandler OnLoaded
         {
-            return loaded; 
+            get;
+            set;
         }
-    }
 
-    public int RemainingQuestionsToNextMark
-    {
-        get;
-        private set;
-    }
-
-    public int CurrentMark
-    {
-        get;
-        private set;
-    }
-
-    public int SecondsForAnswerQuestion
-    {
-        get;
-        private set;
-    }
-
-    public string LevelCategory
-    {
-        get;
-        private set;
-    }
-
-    ClientNetworkManager networkManager;
-
-    bool loaded = false;
-
-    Stack<PendingQuestionRequestData> currentQuestionRequests = new Stack<PendingQuestionRequestData>();
-    Stack<PendingQuestionRequestData> nextQuestionRequests = new Stack<PendingQuestionRequestData>();
-    Stack<PendingQuestionRequestData> randomQuestionRequests = new Stack<PendingQuestionRequestData>();
-
-    ISimpleQuestion currentQuestionCache = null;
-
-    public RemoteGameData(ClientNetworkManager networkManager)
-    {
-        this.networkManager = networkManager;
-        InitializeCommands();
-    }
-
-    void InitializeCommands()
-    {
-        networkManager.CommandsManager.AddCommand(new LoadedGameDataCommand(_OnLoadedGameData));
-        networkManager.CommandsManager.AddCommand(new GameDataQuestionCommand(OnReceivedQuestion));
-        networkManager.CommandsManager.AddCommand(new GameDataMarkCommand(OnReceivedMark));
-        networkManager.CommandsManager.AddCommand(new GameDataNoMoreQuestionsCommand(OnNoMoreQuestions));
-    }
-
-    void _OnLoadedGameData(string levelCategory)
-    {
-        this.LevelCategory = levelCategory;
-
-        if (OnLoaded != null)
+        public EventHandler<MarkEventArgs> OnMarkIncrease
         {
-            OnLoaded(this, EventArgs.Empty);    
+            get;
+            set;
         }
-    }
 
-    void OnNoMoreQuestions()
-    {
-        for (int i = 0; i < nextQuestionRequests.Count; i++)
+        public bool Loaded
         {
-            var questionRequest = nextQuestionRequests.Pop();
-            questionRequest.OnException(new NoMoreQuestionsException());
-        }
-    }
-
-    void LoadDataFromServer()
-    {
-        GetCurrentQuestion((question) =>
+            get
             {
-                currentQuestionCache = question;
-            }, 
-            Debug.LogException);
-    }
-
-    void OnReceivedMark(int mark)
-    {
-        CurrentMark = mark;
-
-        if (OnMarkIncrease != null)
-        {
-            OnMarkIncrease(this, new MarkEventArgs(mark));    
-        }
-    }
-
-    void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
-    {
-        PendingQuestionRequestData questionRequest = null;
-
-        switch (requestType)
-        {
-            case QuestionRequestType.Current:
-                questionRequest = currentQuestionRequests.PopOrDefault();
-                break;
-            case QuestionRequestType.Next:
-                questionRequest = nextQuestionRequests.PopOrDefault();
-                break;
-            case QuestionRequestType.Random:
-                questionRequest = randomQuestionRequests.PopOrDefault();
-                break;
+                return this.loaded; 
+            }
         }
 
-        if (questionRequest == null)
+        public int RemainingQuestionsToNextMark
         {
-            Debug.LogWarning("Received question from server but cant find request source.");
-            return;
+            get;
+            private set;
         }
+
+        public int CurrentMark
+        {
+            get;
+            private set;
+        }
+
+        public int SecondsForAnswerQuestion
+        {
+            get;
+            private set;
+        }
+
+        public string LevelCategory
+        {
+            get;
+            private set;
+        }
+
+        ClientNetworkManager networkManager;
+
+        bool loaded = false;
+
+        Stack<PendingQuestionRequestData> currentQuestionRequests = new Stack<PendingQuestionRequestData>();
+        Stack<PendingQuestionRequestData> nextQuestionRequests = new Stack<PendingQuestionRequestData>();
+        Stack<PendingQuestionRequestData> randomQuestionRequests = new Stack<PendingQuestionRequestData>();
+
+        ISimpleQuestion currentQuestionCache = null;
+
+        public RemoteGameData(ClientNetworkManager networkManager)
+        {
+            this.networkManager = networkManager;
+            this.InitializeCommands();
+        }
+
+        void InitializeCommands()
+        {
+            this.networkManager.CommandsManager.AddCommand(new LoadedGameDataCommand(this._OnLoadedGameData));
+            this.networkManager.CommandsManager.AddCommand(new GameDataQuestionCommand(this.OnReceivedQuestion));
+            this.networkManager.CommandsManager.AddCommand(new GameDataMarkCommand(this.OnReceivedMark));
+            this.networkManager.CommandsManager.AddCommand(new GameDataNoMoreQuestionsCommand(this.OnNoMoreQuestions));
+        }
+
+        void _OnLoadedGameData(string levelCategory)
+        {
+            this.LevelCategory = levelCategory;
+
+            if (this.OnLoaded != null)
+            {
+                this.OnLoaded(this, EventArgs.Empty);    
+            }
+        }
+
+        void OnNoMoreQuestions()
+        {
+            for (int i = 0; i < this.nextQuestionRequests.Count; i++)
+            {
+                var questionRequest = this.nextQuestionRequests.Pop();
+                questionRequest.OnException(new NoMoreQuestionsException());
+            }
+        }
+
+        void LoadDataFromServer()
+        {
+            this.GetCurrentQuestion((question) =>
+                {
+                    this.currentQuestionCache = question;
+                }, 
+                Debug.LogException);
+        }
+
+        void OnReceivedMark(int mark)
+        {
+            this.CurrentMark = mark;
+
+            if (this.OnMarkIncrease != null)
+            {
+                this.OnMarkIncrease(this, new MarkEventArgs(mark));    
+            }
+        }
+
+        void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
+        {
+            PendingQuestionRequestData questionRequest = null;
+
+            switch (requestType)
+            {
+                case QuestionRequestType.Current:
+                    questionRequest = this.currentQuestionRequests.PopOrDefault();
+                    break;
+                case QuestionRequestType.Next:
+                    questionRequest = this.nextQuestionRequests.PopOrDefault();
+                    break;
+                case QuestionRequestType.Random:
+                    questionRequest = this.randomQuestionRequests.PopOrDefault();
+                    break;
+            }
+
+            if (questionRequest == null)
+            {
+                Debug.LogWarning("Received question from server but cant find request source.");
+                return;
+            }
           
-        if (requestType != QuestionRequestType.Random)
-        {
-            currentQuestionCache = question;
+            if (requestType != QuestionRequestType.Random)
+            {
+                this.currentQuestionCache = question;
+            }
+
+            this.RemainingQuestionsToNextMark = remainingQuestionsToNextMark;
+            this.SecondsForAnswerQuestion = secondsForAnswerQuestion;
+
+            questionRequest.OnLoaded(question);
         }
 
-        RemainingQuestionsToNextMark = remainingQuestionsToNextMark;
-        SecondsForAnswerQuestion = secondsForAnswerQuestion;
+        void SendGetQuestionRequest(QuestionRequestType requestType)
+        {
+            var commandData = new NetworkCommandData("GameDataGetQuestion");
+            var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
+            commandData.AddOption("RequestType", requestTypeStr);
+            this.networkManager.SendServerCommand(commandData);
+        }
 
-        questionRequest.OnLoaded(question);
+        public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
+        {
+            if (this.currentQuestionCache != null)
+            {
+                onSuccessfullyLoaded(this.currentQuestionCache);
+                return;
+            }
+
+            try
+            {
+                this.SendGetQuestionRequest(QuestionRequestType.Current);
+
+                var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                this.currentQuestionRequests.Push(requestData);
+            }
+            catch (Exception ex)
+            {
+                if (onError != null)
+                {
+                    onError(ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
+        {
+            try
+            {
+                this.SendGetQuestionRequest(QuestionRequestType.Next);
+
+                var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                this.nextQuestionRequests.Push(requestData);
+            }
+            catch (Exception ex)
+            {
+                if (onError != null)
+                {
+                    onError(ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
+        {
+            try
+            {
+                this.SendGetQuestionRequest(QuestionRequestType.Random);
+
+                var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                this.randomQuestionRequests.Push(requestData);
+            }
+            catch (Exception ex)
+            {
+                if (onError != null)
+                {
+                    onError(ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
     }
 
-    void SendGetQuestionRequest(QuestionRequestType requestType)
+    public enum QuestionRequestType
     {
-        var commandData = new NetworkCommandData("GameDataGetQuestion");
-        var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
-        commandData.AddOption("RequestType", requestTypeStr);
-        networkManager.SendServerCommand(commandData);
+        Current,
+        Next,
+        Random
     }
 
-    public void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
-    {
-        if (currentQuestionCache != null)
-        {
-            onSuccessfullyLoaded(currentQuestionCache);
-            return;
-        }
-
-        try
-        {
-            SendGetQuestionRequest(QuestionRequestType.Current);
-
-            var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
-            currentQuestionRequests.Push(requestData);
-        }
-        catch (Exception ex)
-        {
-            if (onError != null)
-            {
-                onError(ex);
-            }
-            else
-            {
-                throw;
-            }
-        }
-    }
-
-    public void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
-    {
-        try
-        {
-            SendGetQuestionRequest(QuestionRequestType.Next);
-
-            var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
-            nextQuestionRequests.Push(requestData);
-        }
-        catch (Exception ex)
-        {
-            if (onError != null)
-            {
-                onError(ex);
-            }
-            else
-            {
-                throw;
-            }
-        }
-    }
-
-    public void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
-    {
-        try
-        {
-            SendGetQuestionRequest(QuestionRequestType.Random);
-
-            var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
-            randomQuestionRequests.Push(requestData);
-        }
-        catch (Exception ex)
-        {
-            if (onError != null)
-            {
-                onError(ex);
-            }
-            else
-            {
-                throw;
-            }
-        }
-    }
-}
-
-public enum QuestionRequestType
-{
-    Current,
-    Next,
-    Random
 }

@@ -1,26 +1,33 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
-public class LoadedGameDataCommand : INetworkManagerCommand
+namespace Assets.Scripts.Network
 {
-    public delegate void OnLoadedGameData(string levelCategory);
 
-    OnLoadedGameData onLoadedGameData;
+    using Assets.Scripts.Interfaces;
 
-    public LoadedGameDataCommand(OnLoadedGameData onLoadedGameData)
+    public class LoadedGameDataCommand : INetworkManagerCommand
     {
-        if (onLoadedGameData == null)
+        public delegate void OnLoadedGameData(string levelCategory);
+
+        OnLoadedGameData onLoadedGameData;
+
+        public LoadedGameDataCommand(OnLoadedGameData onLoadedGameData)
         {
-            throw new ArgumentNullException("onLoadedGameData");
-        }
+            if (onLoadedGameData == null)
+            {
+                throw new ArgumentNullException("onLoadedGameData");
+            }
             
-        this.onLoadedGameData = onLoadedGameData;
+            this.onLoadedGameData = onLoadedGameData;
+        }
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var category = commandsOptionsValues["LevelCategory"];
+            this.onLoadedGameData(category);
+        }
+    
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var category = commandsOptionsValues["LevelCategory"];
-        onLoadedGameData(category);
-    }
-    
 }

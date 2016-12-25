@@ -1,30 +1,35 @@
-﻿using System;
-
-public class DataSentEventArgs : EventArgs
+﻿namespace Assets.Scripts.EventArgs
 {
 
-    public DataSentEventArgs(int connectionId, string username, string message)
+    using EventArgs = System.EventArgs;
+
+    public class DataSentEventArgs : EventArgs
     {
-        this.ConnectionId = connectionId;
-        this.Username = username;
-        this.Message = message;
+
+        public DataSentEventArgs(int connectionId, string username, string message)
+        {
+            this.ConnectionId = connectionId;
+            this.Username = username;
+            this.Message = message;
+        }
+
+        public int ConnectionId
+        {
+            get;
+            private set;
+        }
+
+        public string Username
+        {
+            get;
+            private set;
+        }
+
+        public string Message
+        {
+            get;
+            private set;
+        }
     }
 
-    public int ConnectionId
-    {
-        get;
-        private set;
-    }
-
-    public string Username
-    {
-        get;
-        private set;
-    }
-
-    public string Message
-    {
-        get;
-        private set;
-    }
 }

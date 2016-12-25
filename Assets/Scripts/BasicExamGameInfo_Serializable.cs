@@ -1,8 +1,13 @@
 ﻿using System;
 
-[Serializable]
-public class BasicExamGameInfo_Serializable : CreatedGameInfo_Serializable
+namespace Assets.Scripts
 {
-    public bool CanConnectAsMainPlayer;
-    public bool CanConnectAsAudience;
+
+    [Serializable]
+    public class BasicExamGameInfo_Serializable : CreatedGameInfo_Serializable
+    {
+        public bool CanConnectAsMainPlayer;
+        public bool CanConnectAsAudience;
+    }
+
 }

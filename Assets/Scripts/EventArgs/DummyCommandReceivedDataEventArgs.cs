@@ -1,26 +1,30 @@
-using UnityEngine;
 using System;
-using System.Collections;
-using UnityEngine.SceneManagement;
-
-//Mediator
 using System.Collections.Generic;
 
-public class DummyCommandReceivedDataEventArgs : EventArgs
+//Mediator
+
+namespace Assets.Scripts.EventArgs
 {
-    public Dictionary<string, string> CommandsOptionsValues
+
+    using EventArgs = System.EventArgs;
+
+    public class DummyCommandReceivedDataEventArgs : EventArgs
     {
-        get;
-        private set;
+        public Dictionary<string, string> CommandsOptionsValues
+        {
+            get;
+            private set;
+        }
+
+        public DummyCommandReceivedDataEventArgs(Dictionary<string, string> commandsOptionsValues)
+        {
+            if (commandsOptionsValues == null)
+            {
+                throw new ArgumentNullException("commandsOptionsValues");
+            }
+            
+            this.CommandsOptionsValues = commandsOptionsValues;
+        }
     }
 
-    public DummyCommandReceivedDataEventArgs(Dictionary<string, string> commandsOptionsValues)
-    {
-        if (commandsOptionsValues == null)
-        {
-            throw new ArgumentNullException("commandsOptionsValues");
-        }
-            
-        this.CommandsOptionsValues = commandsOptionsValues;
-    }
 }

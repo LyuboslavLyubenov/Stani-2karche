@@ -1,30 +1,35 @@
 ﻿using System;
 
-/// <summary>
-/// Used for individual cell of the phone (Call A friend joker) 
-/// </summary>
-public class CallFriendPageElement
+namespace Assets.Scripts
 {
-    public CallFriendPageElement(int connectionId, string name)
+
+    /// <summary>
+    /// Used for individual cell of the phone (Call A friend joker) 
+    /// </summary>
+    public class CallFriendPageElement
     {
-        if (string.IsNullOrEmpty(name))
+        public CallFriendPageElement(int connectionId, string name)
         {
-            throw new ArgumentNullException("name");
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            this.ConnectionId = connectionId;
+            this.Name = name;
         }
 
-        this.ConnectionId = connectionId;
-        this.Name = name;
+        public int ConnectionId
+        {
+            get;
+            private set;
+        }
+
+        public string Name
+        {
+            get;
+            private set;
+        }
     }
 
-    public int ConnectionId
-    {
-        get;
-        private set;
-    }
-
-    public string Name
-    {
-        get;
-        private set;
-    }
 }

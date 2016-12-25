@@ -1,13 +1,11 @@
-using UnityEngine;
-
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-
-namespace CielaSpike
+namespace Assets.CielaSpike.Thread_Ninja
 {
+
+    using System.Collections;
+    using System.Threading;
+
+    using UnityEngine;
+
     /// <summary>
     /// Represents an async task.
     /// </summary>
@@ -26,7 +24,7 @@ namespace CielaSpike
         /// <returns><code>true</code> for continue, otherwise <code>false</code>.</returns>
         public bool MoveNext()
         {
-            return OnMoveNext();
+            return this.OnMoveNext();
         }
 
         public void Reset()
@@ -68,7 +66,7 @@ namespace CielaSpike
         {
             get
             {
-                switch (_state)
+                switch (this._state)
                 {
                     case RunningState.CancellationRequested:
                         return TaskState.Cancelled;
@@ -91,9 +89,9 @@ namespace CielaSpike
 
         public Task(IEnumerator routine)
         {
-            _innerRoutine = routine;
+            this._innerRoutine = routine;
             // runs into background first;
-            _state = RunningState.Init;
+            this._state = RunningState.Init;
         }
 
         /// <summary>
@@ -101,9 +99,9 @@ namespace CielaSpike
         /// </summary>
         public void Cancel()
         {
-            if (State == TaskState.Running)
+            if (this.State == TaskState.Running)
             {
-                GotoState(RunningState.CancellationRequested);
+                this.GotoState(RunningState.CancellationRequested);
             }
         }
 
@@ -112,20 +110,20 @@ namespace CielaSpike
         /// </summary>
         public IEnumerator Wait()
         {
-            while (State == TaskState.Running)
+            while (this.State == TaskState.Running)
                 yield return null;
         }
 
         // thread safely switch running state;
         private void GotoState(RunningState state)
         {
-            if (_state == state) return;
+            if (this._state == state) return;
 
             lock (this)
             {
                 // maintainance the previous state;
-                _previousState = _state;
-                _state = state;
+                this._previousState = this._state;
+                this._state = state;
             }
         }
 
@@ -134,7 +132,7 @@ namespace CielaSpike
         {
             lock (this)
             {
-                _pendingCurrent = current;
+                this._pendingCurrent = current;
             }
         }
 
@@ -142,21 +140,21 @@ namespace CielaSpike
         private bool OnMoveNext()
         {
             // no running for null;
-            if (_innerRoutine == null)
+            if (this._innerRoutine == null)
                 return false;
 
             // set current to null so that Unity not get same yield value twice;
-            Current = null;
+            this.Current = null;
 
             // loops until the inner routine yield something to Unity;
             while (true)
             {
                 // a simple state machine;
-                switch (_state)
+                switch (this._state)
                 {
                     // first, goto background;
                     case RunningState.Init:
-                        GotoState(RunningState.ToBackground);
+                        this.GotoState(RunningState.ToBackground);
                         break;
                     // running in background, wait a frame;
                     case RunningState.RunningAsync:
@@ -164,45 +162,45 @@ namespace CielaSpike
 
                     // runs on main thread;
                     case RunningState.RunningSync:
-                        MoveNextUnity();
+                        this.MoveNextUnity();
                         break;
 
                     // need switch to background;
                     case RunningState.ToBackground:
-                        GotoState(RunningState.RunningAsync);
+                        this.GotoState(RunningState.RunningAsync);
                         // call the thread launcher;
-                        MoveNextAsync();
+                        this.MoveNextAsync();
                         return true;
 
                     // something was yield returned;
                     case RunningState.PendingYield:
-                        if (_pendingCurrent == Ninja.JumpBack)
+                        if (this._pendingCurrent == Ninja.JumpBack)
                         {
                             // do not break the loop, switch to background;
-                            GotoState(RunningState.ToBackground);
+                            this.GotoState(RunningState.ToBackground);
                         }
-                        else if (_pendingCurrent == Ninja.JumpToUnity)
+                        else if (this._pendingCurrent == Ninja.JumpToUnity)
                         {
                             // do not break the loop, switch to main thread;
-                            GotoState(RunningState.RunningSync);
+                            this.GotoState(RunningState.RunningSync);
                         }
                         else
                         {
                             // not from the Ninja, then Unity should get noticed,
                             // Set to Current property to achieve this;
-                            Current = _pendingCurrent;
+                            this.Current = this._pendingCurrent;
 
                             // yield from background thread, or main thread?
-                            if (_previousState == RunningState.RunningAsync)
+                            if (this._previousState == RunningState.RunningAsync)
                             {
                                 // if from background thread, 
                                 // go back into background in the next loop;
-                                _pendingCurrent = Ninja.JumpBack;
+                                this._pendingCurrent = Ninja.JumpBack;
                             }
                             else
                             {
                                 // otherwise go back to main thread the next loop;
-                                _pendingCurrent = Ninja.JumpToUnity;
+                                this._pendingCurrent = Ninja.JumpToUnity;
                             }
 
                             // end this iteration and Unity get noticed;
@@ -223,14 +221,14 @@ namespace CielaSpike
         private void MoveNextAsync()
         {
             ThreadPool.QueueUserWorkItem(
-                new WaitCallback(BackgroundRunner));
+                new WaitCallback(this.BackgroundRunner));
         }
 
         // background thread function;
         private void BackgroundRunner(object state)
         {
             // just run the sync version on background thread;
-            MoveNextUnity();
+            this.MoveNextUnity();
         }
 
         // run next iteration on main thread;
@@ -239,18 +237,18 @@ namespace CielaSpike
             try
             {
                 // run next part of the user routine;
-                var result = _innerRoutine.MoveNext();
+                var result = this._innerRoutine.MoveNext();
 
                 if (result)
                 {
                     // something has been yield returned, handle it;
-                    SetPendingCurrentObject(_innerRoutine.Current);
-                    GotoState(RunningState.PendingYield);
+                    this.SetPendingCurrentObject(this._innerRoutine.Current);
+                    this.GotoState(RunningState.PendingYield);
                 }
                 else
                 {
                     // user routine simple done;
-                    GotoState(RunningState.Done);
+                    this.GotoState(RunningState.Done);
                 }
             }
             catch (System.Exception ex)
@@ -259,7 +257,7 @@ namespace CielaSpike
                 this.Exception = ex;
                 Debug.LogError(string.Format("{0}\n{1}", ex.Message, ex.StackTrace));
                 // then terminates the task;
-                GotoState(RunningState.Error);
+                this.GotoState(RunningState.Error);
             }
         }
     }

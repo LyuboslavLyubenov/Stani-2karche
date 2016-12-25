@@ -1,103 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-public class LeaderboardReceiver : ExtendedMonoBehaviour
+namespace Assets.Scripts.Network
 {
-    public ClientNetworkManager NetworkManager;
-    public LeaderboardUIController Leaderboard;
 
-    List<PlayerScore> playersScores = new List<PlayerScore>();
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Utils;
 
-    public bool Receiving
+    using EventArgs = System.EventArgs;
+
+    public class LeaderboardReceiver : ExtendedMonoBehaviour
     {
-        get;
-        private set;
-    }
+        public ClientNetworkManager NetworkManager;
+        public LeaderboardUIController Leaderboard;
 
-    int elapsedTimeReceivingInSeconds = 0;
-    int timeoutInSeconds = 0;
+        List<PlayerScore> playersScores = new List<PlayerScore>();
 
-    Action<PlayerScore[]> onReceived;
-    Action onError;
-
-    void Start()
-    {
-        CoroutineUtils.WaitForFrames(0, () => InitializeCommand());
-        CoroutineUtils.RepeatEverySeconds(1, () => UpdateElapsedTime());
-    }
-
-    void UpdateElapsedTime()
-    {
-        if (Receiving)
+        public bool Receiving
         {
-            elapsedTimeReceivingInSeconds++;
+            get;
+            private set;
+        }
 
-            if (timeoutInSeconds >= elapsedTimeReceivingInSeconds)
+        int elapsedTimeReceivingInSeconds = 0;
+        int timeoutInSeconds = 0;
+
+        Action<PlayerScore[]> onReceived;
+        Action onError;
+
+        void Start()
+        {
+            this.CoroutineUtils.WaitForFrames(0, () => this.InitializeCommand());
+            this.CoroutineUtils.RepeatEverySeconds(1, () => this.UpdateElapsedTime());
+        }
+
+        void UpdateElapsedTime()
+        {
+            if (this.Receiving)
             {
-                Timeout();
+                this.elapsedTimeReceivingInSeconds++;
+
+                if (this.timeoutInSeconds >= this.elapsedTimeReceivingInSeconds)
+                {
+                    this.Timeout();
+                }
             }
         }
-    }
 
-    void Timeout()
-    {
-        var timeoutCommand = new NetworkCommandData("LeaderboardReceiveTimeout");
-        NetworkManager.SendServerCommand(timeoutCommand);
-        Receiving = false;
-    }
-
-    void OnNoMoreEntities(object sender, EventArgs args)
-    {
-        onReceived(playersScores.ToArray());
-        playersScores.Clear();
-        Receiving = false;
-    }
-
-    void InitializeCommand()
-    {
-        var noMoreEntitiesCommand = new DummyCommand();
-        noMoreEntitiesCommand.OnExecuted += OnNoMoreEntities;
-
-        NetworkManager.CommandsManager.AddCommand("LeaderboardEntity", new ReceivedLeaderboardEntityCommand(playersScores));
-        NetworkManager.CommandsManager.AddCommand("LeaderboardNoMoreEntities", noMoreEntitiesCommand);
-    }
-
-    void StartReceiving()
-    {
-        var receiveLeaderboardEntities = new NetworkCommandData("SendLeaderboardEntities");
-        NetworkManager.SendServerCommand(receiveLeaderboardEntities);
-
-        Receiving = true;
-        elapsedTimeReceivingInSeconds = 0;
-    }
-
-    public void Receive(Action<PlayerScore[]> onReceived, Action onError, int timeoutInSeconds)
-    {
-        if (onReceived == null)
+        void Timeout()
         {
-            throw new ArgumentNullException("onReceived");
+            var timeoutCommand = new NetworkCommandData("LeaderboardReceiveTimeout");
+            this.NetworkManager.SendServerCommand(timeoutCommand);
+            this.Receiving = false;
         }
 
-        if (onError == null)
+        void OnNoMoreEntities(object sender, EventArgs args)
         {
-            throw new ArgumentNullException("onError");
+            this.onReceived(this.playersScores.ToArray());
+            this.playersScores.Clear();
+            this.Receiving = false;
         }
 
-        if (timeoutInSeconds <= 0)
+        void InitializeCommand()
         {
-            throw new ArgumentOutOfRangeException("timeoutInSeconds");
+            var noMoreEntitiesCommand = new DummyCommand();
+            noMoreEntitiesCommand.OnExecuted += this.OnNoMoreEntities;
+
+            this.NetworkManager.CommandsManager.AddCommand("LeaderboardEntity", new ReceivedLeaderboardEntityCommand(this.playersScores));
+            this.NetworkManager.CommandsManager.AddCommand("LeaderboardNoMoreEntities", noMoreEntitiesCommand);
         }
+
+        void StartReceiving()
+        {
+            var receiveLeaderboardEntities = new NetworkCommandData("SendLeaderboardEntities");
+            this.NetworkManager.SendServerCommand(receiveLeaderboardEntities);
+
+            this.Receiving = true;
+            this.elapsedTimeReceivingInSeconds = 0;
+        }
+
+        public void Receive(Action<PlayerScore[]> onReceived, Action onError, int timeoutInSeconds)
+        {
+            if (onReceived == null)
+            {
+                throw new ArgumentNullException("onReceived");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
+
+            if (timeoutInSeconds <= 0)
+            {
+                throw new ArgumentOutOfRangeException("timeoutInSeconds");
+            }
             
-        if (Receiving)
-        {
-            throw new InvalidOperationException("Already receiving leaderboard data");
+            if (this.Receiving)
+            {
+                throw new InvalidOperationException("Already receiving leaderboard data");
+            }
+
+            this.onReceived = onReceived;
+            this.onError = onError;
+            this.timeoutInSeconds = timeoutInSeconds;
+
+            this.StartReceiving();
         }
-
-        this.onReceived = onReceived;
-        this.onError = onError;
-        this.timeoutInSeconds = timeoutInSeconds;
-
-        StartReceiving();
     }
+
 }

@@ -1,83 +1,92 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class ConnectToExternalServerUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    const int ConnectionTimeoutInSeconds = 5;
 
-    public CreatedGameInfoReceiverService GameInfoReceiverService;
-    public NotificationsServiceController NotificationService;
-    public BasicExamServerSelectPlayerTypeUIController SelectPlayerTypeUIController;
-    public GameObject LoadingUI;
-    public Text IPText;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
 
-    float elapsedTimeTryingToConnect = 0;
-    string ip;
-    bool connecting = false;
-
-    public void TryToConnect(string ip)
+    public class ConnectToExternalServerUIController : MonoBehaviour
     {
-        elapsedTimeTryingToConnect = 0;
-        this.ip = ip;
-        connecting = true;
+        const int ConnectionTimeoutInSeconds = 5;
 
-        GameInfoReceiverService.ReceiveFrom(ip, OnReceivedGameInfo);
-        LoadingUI.SetActive(true);
-    }
+        public CreatedGameInfoReceiverService GameInfoReceiverService;
+        public NotificationsServiceController NotificationService;
+        public BasicExamServerSelectPlayerTypeUIController SelectPlayerTypeUIController;
+        public GameObject LoadingUI;
+        public Text IPText;
 
-    public void TryToConnect()
-    {
-        TryToConnect(IPText.text);
-    }
+        float elapsedTimeTryingToConnect = 0;
+        string ip;
+        bool connecting = false;
 
-    void Update()
-    {
-        if (!connecting)
+        public void TryToConnect(string ip)
         {
-            return;
+            this.elapsedTimeTryingToConnect = 0;
+            this.ip = ip;
+            this.connecting = true;
+
+            this.GameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
+            this.LoadingUI.SetActive(true);
         }
 
-        elapsedTimeTryingToConnect += Time.deltaTime;
-
-        if (elapsedTimeTryingToConnect >= ConnectionTimeoutInSeconds)
+        public void TryToConnect()
         {
-            LoadingUI.SetActive(false);
-            NotificationService.AddNotification(Color.red, "Няма връзка със сървъра");
+            this.TryToConnect(this.IPText.text);
+        }
 
-            try
+        void Update()
+        {
+            if (!this.connecting)
             {
-                GameInfoReceiverService.StopReceivingFrom(this.ip);
+                return;
             }
-            catch (System.Exception ex)
+
+            this.elapsedTimeTryingToConnect += Time.deltaTime;
+
+            if (this.elapsedTimeTryingToConnect >= ConnectionTimeoutInSeconds)
             {
+                this.LoadingUI.SetActive(false);
+                this.NotificationService.AddNotification(Color.red, "Няма връзка със сървъра");
+
+                try
+                {
+                    this.GameInfoReceiverService.StopReceivingFrom(this.ip);
+                }
+                catch (System.Exception ex)
+                {
                 
+                }
+
+                this.connecting = false;
             }
-
-            connecting = false;
         }
-    }
 
-    void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
-    {
-        LoadingUI.SetActive(false);
-        connecting = false;
-
-        switch (args.GameInfo.GameType)
+        void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
         {
-            case GameType.BasicExam:
-                var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_Serializable>(args.JSON);
-                OnConnectingToBasicExam(basicExamGameInfo);
-                break;
+            this.LoadingUI.SetActive(false);
+            this.connecting = false;
 
-            default:
-                NotificationService.AddNotification(Color.red, "Неподържан вид игра", 10);
-                break;
+            switch (args.GameInfo.GameType)
+            {
+                case GameType.BasicExam:
+                    var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_Serializable>(args.JSON);
+                    this.OnConnectingToBasicExam(basicExamGameInfo);
+                    break;
+
+                default:
+                    this.NotificationService.AddNotification(Color.red, "Неподържан вид игра", 10);
+                    break;
+            }
+        }
+
+        void OnConnectingToBasicExam(BasicExamGameInfo_Serializable gameInfo)
+        {
+            this.SelectPlayerTypeUIController.gameObject.SetActive(true);
+            this.SelectPlayerTypeUIController.Initialize(gameInfo);
         }
     }
 
-    void OnConnectingToBasicExam(BasicExamGameInfo_Serializable gameInfo)
-    {
-        SelectPlayerTypeUIController.gameObject.SetActive(true);
-        SelectPlayerTypeUIController.Initialize(gameInfo);
-    }
 }

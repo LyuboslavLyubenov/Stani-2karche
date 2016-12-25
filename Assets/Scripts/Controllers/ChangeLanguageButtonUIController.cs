@@ -1,30 +1,38 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
-public class ChangeLanguageButtonUIController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public GameObject AvailableLanguages;
 
-    void Awake()
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Utils;
+
+    public class ChangeLanguageButtonUIController : ExtendedMonoBehaviour
     {
-        CoroutineUtils.WaitUntil(IsLoadedLanguage, OnLoadedLanguage);
+        public GameObject AvailableLanguages;
 
-        GetComponent<Button>().onClick.AddListener(new UnityAction(OnMouseDown));
+        void Awake()
+        {
+            this.CoroutineUtils.WaitUntil(this.IsLoadedLanguage, this.OnLoadedLanguage);
+
+            this.GetComponent<Button>().onClick.AddListener(new UnityAction(this.OnMouseDown));
+        }
+
+        bool IsLoadedLanguage()
+        {
+            return LanguagesManager.Instance.IsLoadedLanguage;
+        }
+
+        void OnLoadedLanguage()
+        {
+            this.transform.GetComponentInChildren<Text>().text = LanguagesManager.Instance.Language;
+        }
+
+        void OnMouseDown()
+        {
+            this.AvailableLanguages.SetActive(true);    
+        }
     }
 
-    bool IsLoadedLanguage()
-    {
-        return LanguagesManager.Instance.IsLoadedLanguage;
-    }
-
-    void OnLoadedLanguage()
-    {
-        transform.GetComponentInChildren<Text>().text = LanguagesManager.Instance.Language;
-    }
-
-    void OnMouseDown()
-    {
-        AvailableLanguages.SetActive(true);    
-    }
 }

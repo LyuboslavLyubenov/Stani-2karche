@@ -1,12 +1,6 @@
-using UnityEngine;
-
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CielaSpike
+namespace Assets.CielaSpike.Thread_Ninja
 {
+
     /// <summary>
     /// Running state of a task.
     /// </summary>

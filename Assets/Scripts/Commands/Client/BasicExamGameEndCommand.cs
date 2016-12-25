@@ -1,45 +1,56 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-public class BasicExamGameEndCommand : INetworkManagerCommand
+using UnityEngine;
+
+namespace Assets.Scripts.Commands.Client
 {
-    const int LoadLeaderboardTimeoutInSeconds = 10;
 
-    GameObject endGameUI;
-    GameObject leaderboardUI;
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
 
-    public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
+    using Debug = UnityEngine.Debug;
+
+    public class BasicExamGameEndCommand : INetworkManagerCommand
     {
-        if (endGameUI == null)
+        const int LoadLeaderboardTimeoutInSeconds = 10;
+
+        GameObject endGameUI;
+        GameObject leaderboardUI;
+
+        public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
         {
-            throw new ArgumentNullException("endGameUI");
+            if (endGameUI == null)
+            {
+                throw new ArgumentNullException("endGameUI");
+            }
+
+            if (leaderboardUI == null)
+            {
+                throw new ArgumentNullException("leaderboardUI");
+            }
+
+            this.endGameUI = endGameUI;
+            this.leaderboardUI = leaderboardUI;
         }
 
-        if (leaderboardUI == null)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            throw new ArgumentNullException("leaderboardUI");
+            var mark = int.Parse(commandsOptionsValues["Mark"]);
+
+            var endGameUIController = this.endGameUI.GetComponent<EndGameUIController>();
+            this.endGameUI.SetActive(true);
+            endGameUIController.SetMark(mark);
+
+            var leaderboardUIController = this.leaderboardUI.GetComponent<LeaderboardUIController>();
+            var leaderboardReceiver = this.leaderboardUI.GetComponent<LeaderboardReceiver>();
+
+            leaderboardReceiver.Receive(
+                (scores) => leaderboardUIController.Populate(scores), 
+                () => Debug.LogError("Load leaderboard timeout"), 
+                LoadLeaderboardTimeoutInSeconds);
         }
-
-        this.endGameUI = endGameUI;
-        this.leaderboardUI = leaderboardUI;
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var mark = int.Parse(commandsOptionsValues["Mark"]);
-
-        var endGameUIController = endGameUI.GetComponent<EndGameUIController>();
-        endGameUI.SetActive(true);
-        endGameUIController.SetMark(mark);
-
-        var leaderboardUIController = leaderboardUI.GetComponent<LeaderboardUIController>();
-        var leaderboardReceiver = leaderboardUI.GetComponent<LeaderboardReceiver>();
-
-        leaderboardReceiver.Receive(
-            (scores) => leaderboardUIController.Populate(scores), 
-            () => Debug.LogError("Load leaderboard timeout"), 
-            LoadLeaderboardTimeoutInSeconds);
-    }
 }

@@ -1,79 +1,87 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System;
 using System.IO;
 
-public abstract class DialogSwitcher : ExtendedMonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts.DialogSwitchers
 {
-    public DialogController TeacherDialogController;
 
-    /// <summary>
-    /// Path to dialogs file starting from Resources folder
-    /// </summary>
-    public string DialogFilePath;
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Utils;
 
-    GameObject teacherDialogObj;
-
-    Dictionary<string, string> teacherDialogs = new Dictionary<string, string>();
-    bool initialized = false;
-
-    public bool Initialized
+    public abstract class DialogSwitcher : ExtendedMonoBehaviour
     {
-        get
-        {
-            return initialized;
-        }
-    }
+        public DialogController TeacherDialogController;
 
-    protected Dictionary<string,string> TeacherDialogs
-    {
-        get
+        /// <summary>
+        /// Path to dialogs file starting from Resources folder
+        /// </summary>
+        public string DialogFilePath;
+
+        GameObject teacherDialogObj;
+
+        Dictionary<string, string> teacherDialogs = new Dictionary<string, string>();
+        bool initialized = false;
+
+        public bool Initialized
         {
-            if (!initialized)
+            get
             {
-                return null;
+                return this.initialized;
             }
-
-            return teacherDialogs;
         }
-    }
 
-    protected virtual void Initialize()
-    {
-        teacherDialogObj = TeacherDialogController.gameObject;
+        protected Dictionary<string,string> TeacherDialogs
+        {
+            get
+            {
+                if (!this.initialized)
+                {
+                    return null;
+                }
 
-        string[] dialogFileLines;
+                return this.teacherDialogs;
+            }
+        }
 
-        #if UNITY_ANDROID
+        protected virtual void Initialize()
+        {
+            this.teacherDialogObj = this.TeacherDialogController.gameObject;
+
+            string[] dialogFileLines;
+
+#if UNITY_ANDROID
         var file = Resources.Load<TextAsset>(DialogFilePath).text;
         dialogFileLines = file.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
         #else
-        dialogFileLines = File.ReadAllLines(DialogFilePath);
-        #endif
+            dialogFileLines = File.ReadAllLines(this.DialogFilePath);
+#endif
             
-        for (int i = 0; i < dialogFileLines.Length - 2; i += 3)
-        {
-            var tutorialName = dialogFileLines[i];
-            var tutorialText = dialogFileLines[i + 1];
+            for (int i = 0; i < dialogFileLines.Length - 2; i += 3)
+            {
+                var tutorialName = dialogFileLines[i];
+                var tutorialText = dialogFileLines[i + 1];
 
-            teacherDialogs.Add(tutorialName, tutorialText);
+                this.teacherDialogs.Add(tutorialName, tutorialText);
+            }
+
+            this.initialized = true;
         }
 
-        initialized = true;
+        protected void DisplayMessage(string message, float delayInSeconds)
+        {
+            this.StartCoroutine(this.DisplayMessageCoroutine(message, delayInSeconds));
+        }
+
+        IEnumerator DisplayMessageCoroutine(string message, float delayInSeconds)
+        {
+            yield return new WaitUntil(() => this.initialized);
+            yield return new WaitForSeconds(delayInSeconds);
+
+            this.teacherDialogObj.SetActive(true);
+            this.TeacherDialogController.SetMessage(message);
+        }
     }
 
-    protected void DisplayMessage(string message, float delayInSeconds)
-    {
-        StartCoroutine(DisplayMessageCoroutine(message, delayInSeconds));
-    }
-
-    IEnumerator DisplayMessageCoroutine(string message, float delayInSeconds)
-    {
-        yield return new WaitUntil(() => initialized);
-        yield return new WaitForSeconds(delayInSeconds);
-
-        teacherDialogObj.SetActive(true);
-        TeacherDialogController.SetMessage(message);
-    }
 }

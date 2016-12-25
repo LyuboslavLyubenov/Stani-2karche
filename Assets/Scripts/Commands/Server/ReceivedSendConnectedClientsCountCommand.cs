@@ -1,26 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class ReceivedSendConnectedClientsCountCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.Server
 {
-    ServerNetworkManager networkManager;
 
-    public ReceivedSendConnectedClientsCountCommand(ServerNetworkManager networkManager)
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
+
+    public class ReceivedSendConnectedClientsCountCommand : INetworkManagerCommand
     {
-        if (networkManager == null)
+        ServerNetworkManager networkManager;
+
+        public ReceivedSendConnectedClientsCountCommand(ServerNetworkManager networkManager)
         {
-            throw new ArgumentNullException("networkManager");
-        }
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
             
-        this.networkManager = networkManager;
-    }
+            this.networkManager = networkManager;
+        }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-        var commandData = new NetworkCommandData("ConnectedClientsCount");
-        commandData.AddOption("ConnectedClientsCount", networkManager.ConnectedClientsCount.ToString());
-        networkManager.SendClientCommand(connectionId, commandData);
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+            var commandData = new NetworkCommandData("ConnectedClientsCount");
+            commandData.AddOption("ConnectedClientsCount", this.networkManager.ConnectedClientsCount.ToString());
+            this.networkManager.SendClientCommand(connectionId, commandData);
+        }
+
     }
 
 }

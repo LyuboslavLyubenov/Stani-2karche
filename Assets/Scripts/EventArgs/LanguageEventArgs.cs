@@ -1,23 +1,27 @@
 using System;
-using System.IO;
-using System.Xml;
-using UnityEngine;
 
-public class LanguageEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public string Language
+
+    using EventArgs = System.EventArgs;
+
+    public class LanguageEventArgs : EventArgs
     {
-        get;
-        private set;
+        public string Language
+        {
+            get;
+            private set;
+        }
+
+        public LanguageEventArgs(string language)
+        {
+            if (string.IsNullOrEmpty(language))
+            {
+                throw new ArgumentNullException(language);
+            }
+        
+            this.Language = language;
+        }
     }
 
-    public LanguageEventArgs(string language)
-    {
-        if (string.IsNullOrEmpty(language))
-        {
-            throw new ArgumentNullException(language);
-        }
-        
-        this.Language = language;
-    }
 }

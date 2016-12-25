@@ -1,32 +1,39 @@
 using System;
 
-public class AskPlayerResponseEventArgs : EventArgs
+namespace Assets.Scripts.Jokers
 {
-    public string Username
-    {
-        get;
-        private set;
-    }
 
-    public string Answer
-    {
-        get;
-        private set;
-    }
+    using EventArgs = System.EventArgs;
 
-    public AskPlayerResponseEventArgs(string username, string answer)
+    public class AskPlayerResponseEventArgs : EventArgs
     {
-        if (username == null)
+        public string Username
         {
-            throw new ArgumentNullException("username");
+            get;
+            private set;
         }
+
+        public string Answer
+        {
+            get;
+            private set;
+        }
+
+        public AskPlayerResponseEventArgs(string username, string answer)
+        {
+            if (username == null)
+            {
+                throw new ArgumentNullException("username");
+            }
             
-        if (answer == null)
-        {
-            throw new ArgumentNullException("answer");
-        }
+            if (answer == null)
+            {
+                throw new ArgumentNullException("answer");
+            }
 
-        this.Username = username;
-        this.Answer = answer;
+            this.Username = username;
+            this.Answer = answer;
+        }
     }
+
 }

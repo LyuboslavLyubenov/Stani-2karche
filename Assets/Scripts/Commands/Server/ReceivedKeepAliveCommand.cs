@@ -1,22 +1,29 @@
 ﻿using System.Collections.Generic;
 
-public class ReceivedKeepAliveCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.Server
 {
-    ICollection<int> aliveClientsIds;
 
-    public ReceivedKeepAliveCommand(ICollection<int> aliveClientsIds)
+    using Assets.Scripts.Interfaces;
+
+    public class ReceivedKeepAliveCommand : INetworkManagerCommand
     {
-        if (aliveClientsIds == null)
+        ICollection<int> aliveClientsIds;
+
+        public ReceivedKeepAliveCommand(ICollection<int> aliveClientsIds)
         {
-            throw new System.ArgumentNullException("aliveClientsIds");
+            if (aliveClientsIds == null)
+            {
+                throw new System.ArgumentNullException("aliveClientsIds");
+            }
+
+            this.aliveClientsIds = aliveClientsIds;
         }
 
-        this.aliveClientsIds = aliveClientsIds;
+        public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
+        {
+            var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+            this.aliveClientsIds.Add(connectionId);
+        }
     }
 
-    public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
-    {
-        var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-        aliveClientsIds.Add(connectionId);
-    }
 }

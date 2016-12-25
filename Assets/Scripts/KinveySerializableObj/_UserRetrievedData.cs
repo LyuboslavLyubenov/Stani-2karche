@@ -1,7 +1,12 @@
 ﻿using System;
 
-[Serializable]
-public class _UserReceivedData : _KinveyEntityDetails
+namespace Assets.Scripts.KinveySerializableObj
 {
-    public string username;
+
+    [Serializable]
+    public class _UserReceivedData : _KinveyEntityDetails
+    {
+        public string username;
+    }
+
 }

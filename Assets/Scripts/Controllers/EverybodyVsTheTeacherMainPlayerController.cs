@@ -1,74 +1,84 @@
 ﻿using UnityEngine;
-using System;
 
-public class EverybodyVsTheTeacherMainPlayerController : ExtendedMonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public GameObject LoadingUI;
-    public GameObject UnableToConnectUI;
 
-    public ClientNetworkManager NetworkManager;
-    public NotificationsServiceController NotificationController;
-    public AvailableJokersUIController JokersUI;
-    public SecondsRemainingUIController SecondsRemainingUIController;
-    public MarkPanelController MarkUIController;
-    public SurrenderConfirmUIController SurrenderConfirmUIController;
-    public ClientChooseCategoryUIController ChooseCategoryUIController;
-    public UnableToConnectUIController UnableToConnectUIController;
-    public QuestionUIController QuestionUIController;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
+    using Assets.Scripts.Utils;
 
-    void Start()
+    using EventArgs = System.EventArgs;
+
+    public class EverybodyVsTheTeacherMainPlayerController : ExtendedMonoBehaviour
     {
-        LoadControllers();
-        AttachEventHandlers();
-        ConnectToServer();
+        public GameObject LoadingUI;
+        public GameObject UnableToConnectUI;
 
-        LoadingUI.SetActive(true);
-        ConnectToServer();
-    }
+        public ClientNetworkManager NetworkManager;
+        public NotificationsServiceController NotificationController;
+        public AvailableJokersUIController JokersUI;
+        public SecondsRemainingUIController SecondsRemainingUIController;
+        public MarkPanelController MarkUIController;
+        public SurrenderConfirmUIController SurrenderConfirmUIController;
+        public ClientChooseCategoryUIController ChooseCategoryUIController;
+        public UnableToConnectUIController UnableToConnectUIController;
+        public QuestionUIController QuestionUIController;
 
-    void OnConnectedToServer(object sender, EventArgs args)
-    {
-        LoadingUI.SetActive(false);
-        UnableToConnectUI.SetActive(false);
-    }
-
-    void OnDisconnectedFromServer(object sender, EventArgs args)
-    {
-        UnableToConnectUI.SetActive(true);
-    }
-
-    void OnFoundServerIP(string ip)
-    {
-        UnableToConnectUIController.ServerIP = ip;
-
-        try
+        void Start()
         {
-            NetworkManager.ConnectToHost(ip);
+            this.LoadControllers();
+            this.AttachEventHandlers();
+            this.ConnectToServer();
+
+            this.LoadingUI.SetActive(true);
+            this.ConnectToServer();
         }
-        catch
+
+        void OnConnectedToServer(object sender, EventArgs args)
         {
-            OnFoundServerIPError();
+            this.LoadingUI.SetActive(false);
+            this.UnableToConnectUI.SetActive(false);
         }
-    }
 
-    void OnFoundServerIPError()
-    {
-        CoroutineUtils.WaitForSeconds(1f, ConnectToServer);
-    }
+        void OnDisconnectedFromServer(object sender, EventArgs args)
+        {
+            this.UnableToConnectUI.SetActive(true);
+        }
 
-    void LoadControllers()
-    {  
+        void OnFoundServerIP(string ip)
+        {
+            this.UnableToConnectUIController.ServerIP = ip;
+
+            try
+            {
+                this.NetworkManager.ConnectToHost(ip);
+            }
+            catch
+            {
+                this.OnFoundServerIPError();
+            }
+        }
+
+        void OnFoundServerIPError()
+        {
+            this.CoroutineUtils.WaitForSeconds(1f, this.ConnectToServer);
+        }
+
+        void LoadControllers()
+        {  
         
+        }
+
+        void AttachEventHandlers()
+        {
+            this.NetworkManager.OnConnectedEvent += this.OnConnectedToServer;
+            this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+        }
+
+        void ConnectToServer()
+        {
+            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
+        }
     }
 
-    void AttachEventHandlers()
-    {
-        NetworkManager.OnConnectedEvent += OnConnectedToServer;
-        NetworkManager.OnDisconnectedEvent += OnDisconnectedFromServer;
-    }
-
-    void ConnectToServer()
-    {
-        NetworkManagerUtils.Instance.GetServerIp(OnFoundServerIP, OnFoundServerIPError);
-    }
 }

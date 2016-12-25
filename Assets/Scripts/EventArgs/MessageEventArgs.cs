@@ -1,21 +1,26 @@
 using System;
 
-public class MessageEventArgs : IpEventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public MessageEventArgs(string ip, string message)
-        : base(ip)
+
+    public class MessageEventArgs : IpEventArgs
     {
-        if (string.IsNullOrEmpty(message))
+        public MessageEventArgs(string ip, string message)
+            : base(ip)
         {
-            throw new ArgumentNullException("message");
+            if (string.IsNullOrEmpty(message))
+            {
+                throw new ArgumentNullException("message");
+            }
+
+            this.Message = message;
         }
 
-        this.Message = message;
+        public string Message
+        {
+            get;
+            private set;
+        }
     }
 
-    public string Message
-    {
-        get;
-        private set;
-    }
 }

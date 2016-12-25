@@ -1,18 +1,21 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using System;
 
-public class NetworkException : Exception
+namespace Assets.Scripts.Exceptions
 {
-    public NetworkException(byte errorN)
-    {
-        this.ErrorN = errorN;
-    }
 
-    public byte ErrorN
+    public class NetworkException : Exception
     {
-        get;
-        private set;
+        public NetworkException(byte errorN)
+        {
+            this.ErrorN = errorN;
+        }
+
+        public byte ErrorN
+        {
+            get;
+            private set;
+        }
+
     }
 
 }

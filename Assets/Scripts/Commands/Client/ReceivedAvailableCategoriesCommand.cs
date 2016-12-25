@@ -1,43 +1,51 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class ReceivedAvailableCategoriesCommand : IOneTimeExecuteCommand
+namespace Assets.Scripts.Commands.Client
 {
-    Action<string[]> onGetAllCategories;
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
+    using Assets.Scripts.Interfaces;
 
-    public bool FinishedExecution
-    {
-        get;
-        private set;
-    }
+    using EventArgs = System.EventArgs;
 
-    public ReceivedAvailableCategoriesCommand(Action<string[]> onGetAllCategories)
+    public class ReceivedAvailableCategoriesCommand : IOneTimeExecuteCommand
     {
-        if (onGetAllCategories == null)
+        Action<string[]> onGetAllCategories;
+
+        public EventHandler OnFinishedExecution
         {
-            throw new ArgumentNullException("onGetAllCategories");
+            get;
+            set;
         }
+
+        public bool FinishedExecution
+        {
+            get;
+            private set;
+        }
+
+        public ReceivedAvailableCategoriesCommand(Action<string[]> onGetAllCategories)
+        {
+            if (onGetAllCategories == null)
+            {
+                throw new ArgumentNullException("onGetAllCategories");
+            }
             
-        this.onGetAllCategories = onGetAllCategories;
-    }
-
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var allCategories = commandsOptionsValues["AvailableCategories"].Split(',');
-        onGetAllCategories(allCategories);
-       
-        if (OnFinishedExecution != null)
-        {
-            OnFinishedExecution(this, EventArgs.Empty);
+            this.onGetAllCategories = onGetAllCategories;
         }
 
-        FinishedExecution = true;
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var allCategories = commandsOptionsValues["AvailableCategories"].Split(',');
+            this.onGetAllCategories(allCategories);
+       
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
+
+            this.FinishedExecution = true;
+        }
     }
+
 }

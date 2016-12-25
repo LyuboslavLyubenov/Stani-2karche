@@ -1,22 +1,28 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-public class LeaderboardDataEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public LeaderboardDataEventArgs(IList<PlayerScore> leaderboardData)
+
+    using EventArgs = System.EventArgs;
+
+    public class LeaderboardDataEventArgs : EventArgs
     {
-        if (leaderboardData == null)
+        public LeaderboardDataEventArgs(IList<PlayerScore> leaderboardData)
         {
-            throw new ArgumentNullException("leaderboardData");
+            if (leaderboardData == null)
+            {
+                throw new ArgumentNullException("leaderboardData");
+            }
+
+            this.LeaderboardData = leaderboardData;
         }
 
-        this.LeaderboardData = leaderboardData;
+        public IList<PlayerScore> LeaderboardData
+        {
+            get;
+            private set;
+        }
     }
 
-    public IList<PlayerScore> LeaderboardData
-    {
-        get;
-        private set;
-    }
 }

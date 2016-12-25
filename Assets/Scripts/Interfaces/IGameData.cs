@@ -1,47 +1,54 @@
 ﻿using System;
 
-public interface IGameData
+namespace Assets.Scripts.Interfaces
 {
-    EventHandler<MarkEventArgs> OnMarkIncrease
+
+    using Assets.Scripts.EventArgs;
+
+    public interface IGameData
     {
-        get;
-        set;
+        EventHandler<MarkEventArgs> OnMarkIncrease
+        {
+            get;
+            set;
+        }
+
+        EventHandler OnLoaded
+        {
+            get;
+            set;
+        }
+
+        bool Loaded
+        {
+            get;
+        }
+
+        int RemainingQuestionsToNextMark
+        {
+            get;
+        }
+
+        int CurrentMark
+        {
+            get;
+        }
+
+        int SecondsForAnswerQuestion
+        {
+            get;    
+        }
+
+        string LevelCategory
+        {
+            get;
+        }
+
+        void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
+
+        void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
+
+        void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
     }
 
-    EventHandler OnLoaded
-    {
-        get;
-        set;
-    }
-
-    bool Loaded
-    {
-        get;
-    }
-
-    int RemainingQuestionsToNextMark
-    {
-        get;
-    }
-
-    int CurrentMark
-    {
-        get;
-    }
-
-    int SecondsForAnswerQuestion
-    {
-        get;    
-    }
-
-    string LevelCategory
-    {
-        get;
-    }
-
-    void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
-
-    void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
-
-    void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 }

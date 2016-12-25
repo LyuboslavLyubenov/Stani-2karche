@@ -1,59 +1,65 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
-using System;
 using System.Net;
 
-public class NetworkUtils
+using UnityEngine;
+
+namespace Assets.Scripts.Utils
 {
-    /// <summary>
-    /// Usage 
-    /// StartCoroutine(
-    ///     CheckInternetConnectionPromise(
-    ///         (isCompleted) => {
-    /// 
-    ///         }));
-    /// </summary>
-    public static IEnumerator CheckInternetConnectionPromise(Action<bool> onCheckCompleted)
+
+    public class NetworkUtils
     {
-        WWW www = new WWW("http://icanhazip.com/");
-        yield return www;
-
-        var haveConnection = string.IsNullOrEmpty(www.error);
-        onCheckCompleted(haveConnection);
-    }
-
-    public static IEnumerator GetExternalIP(Action<string> onFound, Action<string> onNetworkError = null)
-    {
-        WWW www = new WWW("http://icanhazip.com/");
-        yield return www;
-
-        if (!string.IsNullOrEmpty(www.error))
+        /// <summary>
+        /// Usage 
+        /// StartCoroutine(
+        ///     CheckInternetConnectionPromise(
+        ///         (isCompleted) => {
+        /// 
+        ///         }));
+        /// </summary>
+        public static IEnumerator CheckInternetConnectionPromise(Action<bool> onCheckCompleted)
         {
-            if (onNetworkError != null)
+            WWW www = new WWW("http://icanhazip.com/");
+            yield return www;
+
+            var haveConnection = string.IsNullOrEmpty(www.error);
+            onCheckCompleted(haveConnection);
+        }
+
+        public static IEnumerator GetExternalIP(Action<string> onFound, Action<string> onNetworkError = null)
+        {
+            WWW www = new WWW("http://icanhazip.com/");
+            yield return www;
+
+            if (!string.IsNullOrEmpty(www.error))
             {
-                onNetworkError(www.error);    
+                if (onNetworkError != null)
+                {
+                    onNetworkError(www.error);    
+                }
+            }
+            else
+            {
+                onFound(www.text);
             }
         }
-        else
-        {
-            onFound(www.text);
-        }
-    }
 
-    public static string GetLocalIP()
-    {
-        string strHostName = Dns.GetHostName();
-        IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
+        public static string GetLocalIP()
+        {
+            string strHostName = Dns.GetHostName();
+            IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
      
-        foreach (IPAddress ipAddress in ipEntry.AddressList)
-        {
-            if (ipAddress.AddressFamily.ToString() == "InterNetwork")
+            foreach (IPAddress ipAddress in ipEntry.AddressList)
             {
-                return ipAddress.ToString();
+                if (ipAddress.AddressFamily.ToString() == "InterNetwork")
+                {
+                    return ipAddress.ToString();
+                }
             }
-        }
  
-        return null;
+            return null;
+        }
+
     }
 
 }

@@ -1,8 +1,13 @@
 using System.Net.Sockets;
 
-public class SendMessageState
+namespace Assets.Scripts.Network
 {
-    public int DataSentLength = 0;
-    public byte[] DataToSend;
-    public Socket Client;
+
+    public class SendMessageState
+    {
+        public int DataSentLength = 0;
+        public byte[] DataToSend;
+        public Socket Client;
+    }
+
 }

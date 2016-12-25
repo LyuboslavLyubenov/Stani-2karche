@@ -1,20 +1,28 @@
 ﻿using UnityEngine;
 
-public class JokerTooltipExplanation : MonoBehaviour
+namespace Assets
 {
-    void Start()
+
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Utils;
+
+    public class JokerTooltipExplanation : MonoBehaviour
     {
-        var tooltip = GetComponent<ActivateTooltip>();
+        void Start()
+        {
+            var tooltip = this.GetComponent<ActivateTooltip>();
 
-        tooltip.DelayInSeconds = 3;
-        tooltip.TooltipPosition = TooltipPosition.Left;
-        tooltip.SizeX = 250;
-        tooltip.SizeY = 100;
+            tooltip.DelayInSeconds = 3;
+            tooltip.TooltipPosition = TooltipPosition.Left;
+            tooltip.SizeX = 250;
+            tooltip.SizeY = 100;
 
-        var jokerName = gameObject.name;
-        var jokerExplanationText = LanguagesManager.Instance.GetValue("Jokers/" + jokerName + "/Text");
+            var jokerName = this.gameObject.name;
+            var jokerExplanationText = LanguagesManager.Instance.GetValue("Jokers/" + jokerName + "/Text");
 
-        tooltip.Text = jokerExplanationText.Trim();
-        tooltip.Initialize();
+            tooltip.Text = jokerExplanationText.Trim();
+            tooltip.Initialize();
+        }
     }
+
 }

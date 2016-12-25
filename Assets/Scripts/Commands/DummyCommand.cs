@@ -1,16 +1,24 @@
 using System;
-
-//Mediator
 using System.Collections.Generic;
 
-public class DummyCommand : INetworkManagerCommand
-{
-    public EventHandler<DummyCommandReceivedDataEventArgs> OnExecuted = delegate
-    {
-    };
+//Mediator
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
+namespace Assets.Scripts.Commands
+{
+
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+
+    public class DummyCommand : INetworkManagerCommand
     {
-        OnExecuted(this, new DummyCommandReceivedDataEventArgs(commandsOptionsValues));
+        public EventHandler<DummyCommandReceivedDataEventArgs> OnExecuted = delegate
+            {
+            };
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            this.OnExecuted(this, new DummyCommandReceivedDataEventArgs(commandsOptionsValues));
+        }
     }
+
 }

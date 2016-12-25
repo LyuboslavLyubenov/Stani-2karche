@@ -1,10 +1,15 @@
 using System;
 
-public interface INetworkOperationExecutedCallback
+namespace Assets.Scripts.Interfaces
 {
-    EventHandler OnExecuted
+
+    public interface INetworkOperationExecutedCallback
     {
-        get;
-        set;
+        EventHandler OnExecuted
+        {
+            get;
+            set;
+        }
     }
+
 }

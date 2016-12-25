@@ -1,47 +1,56 @@
 ﻿using System;
 
-public class AskPlayerResponseCommand : IOneTimeExecuteCommand
+namespace Assets.Scripts.Commands.Client
 {
-    public delegate void OnReceivedAnswer(string username,string answer);
 
-    public bool FinishedExecution
+    using Assets.Scripts.Interfaces;
+
+    using EventArgs = System.EventArgs;
+
+    public class AskPlayerResponseCommand : IOneTimeExecuteCommand
     {
-        get;
-        private set;
-    }
+        public delegate void OnReceivedAnswer(string username,string answer);
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
-
-    OnReceivedAnswer onReceivedAnswer;
-
-    public AskPlayerResponseCommand(OnReceivedAnswer onReceivedAnswer)
-    {
-        if (onReceivedAnswer == null)
+        public bool FinishedExecution
         {
-            throw new ArgumentNullException("onReceivedAnswer");
+            get;
+            private set;
         }
+
+        public EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
+
+        OnReceivedAnswer onReceivedAnswer;
+
+        public AskPlayerResponseCommand(OnReceivedAnswer onReceivedAnswer)
+        {
+            if (onReceivedAnswer == null)
+            {
+                throw new ArgumentNullException("onReceivedAnswer");
+            }
             
-        this.onReceivedAnswer = onReceivedAnswer;
+            this.onReceivedAnswer = onReceivedAnswer;
 
-        FinishedExecution = false;
-    }
+            this.FinishedExecution = false;
+        }
 
-    public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
-    {
-        var username = commandsOptionsValues["Username"];
-        var answer = commandsOptionsValues["Answer"];
-
-        onReceivedAnswer(username, answer);
-
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
+        public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            var username = commandsOptionsValues["Username"];
+            var answer = commandsOptionsValues["Answer"];
+
+            this.onReceivedAnswer(username, answer);
+
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
+
 }

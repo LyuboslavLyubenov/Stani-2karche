@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class EndGameUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public void SetMark(int mark)
+
+    public class EndGameUIController : MonoBehaviour
     {
-        var endScreenMark = transform.GetChild(0).GetChild(1).GetComponent<Text>();
-        endScreenMark.text = mark.ToString();
+        public void SetMark(int mark)
+        {
+            var endScreenMark = this.transform.GetChild(0).GetChild(1).GetComponent<Text>();
+            endScreenMark.text = mark.ToString();
+        }
     }
+
 }

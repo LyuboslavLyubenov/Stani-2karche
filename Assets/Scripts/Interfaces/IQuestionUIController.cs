@@ -1,34 +1,37 @@
-using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 using System;
-using System.Linq;
 
-public interface IQuestionUIController
+namespace Assets.Scripts.Interfaces
 {
-    EventHandler<AnswerEventArgs> OnAnswerClick
+
+    using Assets.Scripts.EventArgs;
+
+    public interface IQuestionUIController
     {
-        get;
-        set;
+        EventHandler<AnswerEventArgs> OnAnswerClick
+        {
+            get;
+            set;
+        }
+
+        EventHandler<SimpleQuestionEventArgs> OnQuestionLoaded
+        {
+            get;
+            set;
+        }
+
+        ISimpleQuestion CurrentlyLoadedQuestion
+        {
+            get;
+        }
+
+        void HideAnswer(int index);
+
+        void HideAllAnswers();
+
+        void ShowAllAnswers();
+
+        void LoadQuestion(ISimpleQuestion question);
+
     }
-
-    EventHandler<SimpleQuestionEventArgs> OnQuestionLoaded
-    {
-        get;
-        set;
-    }
-
-    ISimpleQuestion CurrentlyLoadedQuestion
-    {
-        get;
-    }
-
-    void HideAnswer(int index);
-
-    void HideAllAnswers();
-
-    void ShowAllAnswers();
-
-    void LoadQuestion(ISimpleQuestion question);
 
 }

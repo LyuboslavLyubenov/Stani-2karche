@@ -1,68 +1,74 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-public class ObjectsPool : MonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts
 {
-    public Transform Prefab;
-    public int StartSize = 20;
 
-    List<Transform> pool;
-
-    public int CurrentSize
+    public class ObjectsPool : MonoBehaviour
     {
-        get
+        public Transform Prefab;
+        public int StartSize = 20;
+
+        List<Transform> pool;
+
+        public int CurrentSize
         {
-            return transform.childCount;
-        }
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        pool = new List<Transform>();
-
-        for (var i = 0; i < StartSize; i++)
-        {
-            AddObjToThePool();
-        }
-    }
-
-    public Transform Get(Vector2 position)
-    {
-        Transform obj = null;
-
-        for (var i = 0; i < pool.Count; i++)
-        {
-            if (!pool[i].gameObject.activeSelf)
+            get
             {
-                obj = pool[i];
-                break;
-            }    
+                return this.transform.childCount;
+            }
         }
 
-        if (obj == null)
+        // Use this for initialization
+        void Start()
         {
-            obj = AddObjToThePool();
+            this.pool = new List<Transform>();
+
+            for (var i = 0; i < this.StartSize; i++)
+            {
+                this.AddObjToThePool();
+            }
         }
 
-        obj.position = position;
-        obj.gameObject.SetActive(true);
+        public Transform Get(Vector2 position)
+        {
+            Transform obj = null;
 
-        return obj;
+            for (var i = 0; i < this.pool.Count; i++)
+            {
+                if (!this.pool[i].gameObject.activeSelf)
+                {
+                    obj = this.pool[i];
+                    break;
+                }    
+            }
+
+            if (obj == null)
+            {
+                obj = this.AddObjToThePool();
+            }
+
+            obj.position = position;
+            obj.gameObject.SetActive(true);
+
+            return obj;
+        }
+
+        public Transform Get()
+        {
+            return this.Get(Vector2.zero);
+        }
+
+        Transform AddObjToThePool()
+        {
+            var poolObj = Instantiate(this.Prefab);
+            poolObj.gameObject.SetActive(false);
+            poolObj.SetParent(this.transform, false);
+            this.pool.Add(poolObj);
+
+            return poolObj;
+        }
     }
 
-    public Transform Get()
-    {
-        return Get(Vector2.zero);
-    }
-
-    Transform AddObjToThePool()
-    {
-        var poolObj = Instantiate(Prefab);
-        poolObj.gameObject.SetActive(false);
-        poolObj.SetParent(this.transform, false);
-        pool.Add(poolObj);
-
-        return poolObj;
-    }
 }

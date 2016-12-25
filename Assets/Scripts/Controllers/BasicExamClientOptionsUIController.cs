@@ -1,62 +1,71 @@
-﻿using UnityEngine;
-using System;
-using UnityEngine.UI;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
-public class BasicExamClientOptionsUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public ServerNetworkManager NetworkManager;
 
-    FieldUIController connectionIdField;
-    FieldUIController usernameField;
-    FieldUIController roleField;
-    InputField reasonInputField;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Network;
 
-    void Start()
+    public class BasicExamClientOptionsUIController : MonoBehaviour
     {
-        connectionIdField = transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
-        usernameField = transform.Find("UsernameField").GetComponent<FieldUIController>();
-        roleField = transform.Find("RoleField").GetComponent<FieldUIController>();
-        reasonInputField = transform.Find("KickBanGroup/ReasonInputField").GetComponent<InputField>();
+        public ServerNetworkManager NetworkManager;
 
-        var kickButton = transform.Find("KickBanGroup/KickButton").GetComponent<Button>();
-        var banButton = transform.Find("KickBanGroup/BanButton").GetComponent<Button>();
+        FieldUIController connectionIdField;
+        FieldUIController usernameField;
+        FieldUIController roleField;
+        InputField reasonInputField;
 
-        kickButton.onClick.AddListener(new UnityAction(OnKick));
-        banButton.onClick.AddListener(new UnityAction(OnBan));
-    }
-
-    void OnKick()
-    {
-        var connectionId = int.Parse(connectionIdField.Value);
-        var reason = reasonInputField.text;
-
-        if (string.IsNullOrEmpty(reason))
+        void Start()
         {
-            NetworkManager.KickPlayer(connectionId);    
-        }
-        else
-        {
-            NetworkManager.KickPlayer(connectionId, reason);    
+            this.connectionIdField = this.transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
+            this.usernameField = this.transform.Find("UsernameField").GetComponent<FieldUIController>();
+            this.roleField = this.transform.Find("RoleField").GetComponent<FieldUIController>();
+            this.reasonInputField = this.transform.Find("KickBanGroup/ReasonInputField").GetComponent<InputField>();
+
+            var kickButton = this.transform.Find("KickBanGroup/KickButton").GetComponent<Button>();
+            var banButton = this.transform.Find("KickBanGroup/BanButton").GetComponent<Button>();
+
+            kickButton.onClick.AddListener(new UnityAction(this.OnKick));
+            banButton.onClick.AddListener(new UnityAction(this.OnBan));
         }
 
-        gameObject.SetActive(false);
+        void OnKick()
+        {
+            var connectionId = int.Parse(this.connectionIdField.Value);
+            var reason = this.reasonInputField.text;
+
+            if (string.IsNullOrEmpty(reason))
+            {
+                this.NetworkManager.KickPlayer(connectionId);    
+            }
+            else
+            {
+                this.NetworkManager.KickPlayer(connectionId, reason);    
+            }
+
+            this.gameObject.SetActive(false);
+        }
+
+        void OnBan()
+        {
+            var connectionId = int.Parse(this.connectionIdField.Value);
+            this.NetworkManager.BanPlayer(connectionId);
+
+            this.gameObject.SetActive(false);
+        }
+
+        public void Set(ConnectedClientData clientData, BasicExamClientRole role)
+        {
+            var enumName = Enum.GetName(typeof(BasicExamClientRole), role);
+
+            this.connectionIdField.Value = clientData.ConnectionId.ToString();
+            this.usernameField.Value = clientData.Username;
+            this.roleField.Value = LanguagesManager.Instance.GetValue(enumName);
+        }
     }
 
-    void OnBan()
-    {
-        var connectionId = int.Parse(connectionIdField.Value);
-        NetworkManager.BanPlayer(connectionId);
-
-        gameObject.SetActive(false);
-    }
-
-    public void Set(ConnectedClientData clientData, BasicExamClientRole role)
-    {
-        var enumName = Enum.GetName(typeof(BasicExamClientRole), role);
-
-        connectionIdField.Value = clientData.ConnectionId.ToString();
-        usernameField.Value = clientData.Username;
-        roleField.Value = LanguagesManager.Instance.GetValue(enumName);
-    }
 }

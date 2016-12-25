@@ -1,46 +1,52 @@
-using UnityEngine;
-using System.Collections;
 using System;
 using System.Collections.Generic;
-using System.Timers;
 
-public class ReceivedDisableRandomAnswerJokerSettingsCommand : IOneTimeExecuteCommand
+namespace Assets.Scripts.Commands.Jokers
 {
-    public delegate void OnReceivedJokerSettings(int answersToDisableCount);
 
-    OnReceivedJokerSettings onReceivedJokerSettings;
+    using Assets.Scripts.Interfaces;
 
-    public bool FinishedExecution
+    using EventArgs = System.EventArgs;
+
+    public class ReceivedDisableRandomAnswerJokerSettingsCommand : IOneTimeExecuteCommand
     {
-        get;
-        private set;
-    }
+        public delegate void OnReceivedJokerSettings(int answersToDisableCount);
 
-    public EventHandler OnFinishedExecution
-    {
-        get;
-        set;
-    }
+        OnReceivedJokerSettings onReceivedJokerSettings;
 
-    public ReceivedDisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings onReceivedJokerSettings)
-    {
-        if (onReceivedJokerSettings == null)
+        public bool FinishedExecution
         {
-            throw new ArgumentNullException("onReceivedJokerSettings");
+            get;
+            private set;
         }
+
+        public EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
+
+        public ReceivedDisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings onReceivedJokerSettings)
+        {
+            if (onReceivedJokerSettings == null)
+            {
+                throw new ArgumentNullException("onReceivedJokerSettings");
+            }
             
-        this.onReceivedJokerSettings = onReceivedJokerSettings;
-    }
+            this.onReceivedJokerSettings = onReceivedJokerSettings;
+        }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var answersToDisableCount = int.Parse(commandsOptionsValues["AnswersToDisableCount"]);
-        onReceivedJokerSettings(answersToDisableCount);
-        FinishedExecution = true;
-
-        if (OnFinishedExecution != null)
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            OnFinishedExecution(this, EventArgs.Empty);
+            var answersToDisableCount = int.Parse(commandsOptionsValues["AnswersToDisableCount"]);
+            this.onReceivedJokerSettings(answersToDisableCount);
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
+
 }

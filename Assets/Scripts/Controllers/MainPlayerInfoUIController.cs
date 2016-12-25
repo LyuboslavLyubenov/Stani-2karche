@@ -1,31 +1,39 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class MainPlayerInfoUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public BasicExamServer Server;
 
-    FieldUIController connectionIdField;
-    FieldUIController isConnectedField;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Network;
 
-    void Start()
+    public class MainPlayerInfoUIController : MonoBehaviour
     {
-        connectionIdField = transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
-        isConnectedField = transform.Find("IsConnectedField").GetComponent<FieldUIController>();
+        public BasicExamServer Server;
 
-        Server.MainPlayerData.OnConnected += OnMainPlayerConnected;
-        Server.MainPlayerData.OnDisconnected += OnMainPlayerDisconnected;
+        FieldUIController connectionIdField;
+        FieldUIController isConnectedField;
+
+        void Start()
+        {
+            this.connectionIdField = this.transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
+            this.isConnectedField = this.transform.Find("IsConnectedField").GetComponent<FieldUIController>();
+
+            this.Server.MainPlayerData.OnConnected += this.OnMainPlayerConnected;
+            this.Server.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
+        }
+
+        void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        {
+            this.connectionIdField.Value = this.Server.MainPlayerData.ConnectionId.ToString();
+            this.isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/Yes");
+        }
+
+        void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        {
+            this.connectionIdField.Value = "-1";
+            this.isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/No");
+        }
     }
 
-    void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
-    {
-        connectionIdField.Value = Server.MainPlayerData.ConnectionId.ToString();
-        isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/Yes");
-    }
-
-    void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
-    {
-        connectionIdField.Value = "-1";
-        isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/No");
-    }
 }

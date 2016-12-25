@@ -1,34 +1,39 @@
-﻿using System;
-
-public class AnswerEventArgs : EventArgs
+﻿namespace Assets.Scripts.EventArgs
 {
-    public AnswerEventArgs(string answer, bool isCorrect)
+
+    using System;
+
+    public class AnswerEventArgs : EventArgs
     {
-        if (string.IsNullOrEmpty(answer))
+        public AnswerEventArgs(string answer, bool isCorrect)
         {
-            throw new ArgumentNullException("answer");
+            if (string.IsNullOrEmpty(answer))
+            {
+                throw new ArgumentNullException("answer");
+            }
+
+            this.Answer = answer;
+            this.IsCorrect = isCorrect;
         }
 
-        this.Answer = answer;
-        this.IsCorrect = isCorrect;
+        public string Answer
+        {
+            get;
+            private set;
+        }
+
+        public bool IsCorrect
+        {
+            get;
+            private set;
+        }
     }
 
-    public string Answer
+    [Serializable]
+    public class AnswerEventArgs_Serializable
     {
-        get;
-        private set;
+        public string Answer;
+        public bool IsCorrect;
     }
 
-    public bool IsCorrect
-    {
-        get;
-        private set;
-    }
-}
-
-[Serializable]
-public class AnswerEventArgs_Serializable
-{
-    public string Answer;
-    public bool IsCorrect;
 }

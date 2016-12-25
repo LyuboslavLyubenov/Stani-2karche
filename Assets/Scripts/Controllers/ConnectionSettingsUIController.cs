@@ -1,26 +1,34 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class ConnectionSettingsUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public Text IPText;
 
-    public EventHandler<IpEventArgs> OnConnectToServer = delegate
-    {
-    };
+    using Assets.Scripts.EventArgs;
 
-    void Start()
+    public class ConnectionSettingsUIController : MonoBehaviour
     {
-        if (IPText == null)
+        public Text IPText;
+
+        public EventHandler<IpEventArgs> OnConnectToServer = delegate
+            {
+            };
+
+        void Start()
         {
-            throw new NullReferenceException("IPText is null on ConnectionSettingsUIController obj");
+            if (this.IPText == null)
+            {
+                throw new NullReferenceException("IPText is null on ConnectionSettingsUIController obj");
+            }
+        }
+
+        public void ConnectToServer()
+        {
+            var ipEventArgs = new IpEventArgs(this.IPText.text);
+            this.OnConnectToServer(this, ipEventArgs);
         }
     }
 
-    public void ConnectToServer()
-    {
-        var ipEventArgs = new IpEventArgs(IPText.text);
-        OnConnectToServer(this, ipEventArgs);
-    }
 }

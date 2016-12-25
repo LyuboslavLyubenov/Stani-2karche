@@ -1,31 +1,35 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
+namespace Assets.Scripts.DialogSwitchers
 {
-    const string ExplainCategorySelectAlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTeacher - ExplainCategorySelect";
 
-    public bool RepeatTutorials = false;
-
-    protected override void Initialize()
+    public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
     {
-        string teacherDialogsFilePath = "Tutorials Texts\\basicExamPlayerTeacherDialogs";
-        base.DialogFilePath = teacherDialogsFilePath;
-        base.Initialize();
-    }
+        const string ExplainCategorySelectAlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTeacher - ExplainCategorySelect";
 
-    public void ExplainCategorySelect()
-    {
-        if (PlayerPrefs.HasKey(ExplainCategorySelectAlreadyPlayedKey) && !RepeatTutorials)
+        public bool RepeatTutorials = false;
+
+        protected override void Initialize()
         {
-            return;
+            string teacherDialogsFilePath = "Tutorials Texts\\basicExamPlayerTeacherDialogs";
+            base.DialogFilePath = teacherDialogsFilePath;
+            base.Initialize();
         }
 
-        CoroutineUtils.WaitForFrames(0, () =>
+        public void ExplainCategorySelect()
+        {
+            if (PlayerPrefs.HasKey(ExplainCategorySelectAlreadyPlayedKey) && !this.RepeatTutorials)
             {
-                var message = base.TeacherDialogs["ExplainCategorySelect"];
-                base.DisplayMessage(message, 1.5f);
-                PlayerPrefs.SetInt(ExplainCategorySelectAlreadyPlayedKey, 1);
-            });
+                return;
+            }
+
+            this.CoroutineUtils.WaitForFrames(0, () =>
+                {
+                    var message = base.TeacherDialogs["ExplainCategorySelect"];
+                    base.DisplayMessage(message, 1.5f);
+                    PlayerPrefs.SetInt(ExplainCategorySelectAlreadyPlayedKey, 1);
+                });
+        }
     }
+
 }

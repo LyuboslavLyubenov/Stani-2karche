@@ -1,40 +1,48 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
 using UnityEngine.UI;
 
-public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public Button HostButton;
-    public Button GuestButton;
 
-    public void Initialize(BasicExamGameInfo_Serializable gameInfo)
+    using Assets.Scripts.Utils;
+
+    public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
     {
-        if (gameInfo.ServerInfo.IsFull)
+        public Button HostButton;
+        public Button GuestButton;
+
+        public void Initialize(BasicExamGameInfo_Serializable gameInfo)
         {
-            throw new Exception("Server is full");
+            if (gameInfo.ServerInfo.IsFull)
+            {
+                throw new Exception("Server is full");
+            }
+
+            this.HostButton.gameObject.SetActive(gameInfo.CanConnectAsMainPlayer);
+            this.GuestButton.gameObject.SetActive(gameInfo.CanConnectAsAudience);
+
+            var serverInfo = gameInfo.ServerInfo;
+
+            if (!string.IsNullOrEmpty(serverInfo.ExternalIpAddress))
+            {
+                PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", serverInfo.ExternalIpAddress);    
+            }
+
+            PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", serverInfo.LocalIPAddress);
         }
 
-        HostButton.gameObject.SetActive(gameInfo.CanConnectAsMainPlayer);
-        GuestButton.gameObject.SetActive(gameInfo.CanConnectAsAudience);
-
-        var serverInfo = gameInfo.ServerInfo;
-
-        if (!string.IsNullOrEmpty(serverInfo.ExternalIpAddress))
+        public void OpenHostScene()
         {
-            PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", serverInfo.ExternalIpAddress);    
+            SceneManager.LoadScene("BasicExamMainPlayer");
         }
 
-        PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", serverInfo.LocalIPAddress);
+        public void OpenGuestScene()
+        {
+            SceneManager.LoadScene("BasicExamAudience");
+        }
     }
 
-    public void OpenHostScene()
-    {
-        SceneManager.LoadScene("BasicExamMainPlayer");
-    }
-
-    public void OpenGuestScene()
-    {
-        SceneManager.LoadScene("BasicExamAudience");
-    }
 }

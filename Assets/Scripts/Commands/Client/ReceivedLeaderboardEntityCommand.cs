@@ -1,26 +1,33 @@
-using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 
-public class ReceivedLeaderboardEntityCommand : INetworkManagerCommand
+namespace Assets.Scripts.Commands.Client
 {
-    ICollection<PlayerScore> playersScores;
 
-    public ReceivedLeaderboardEntityCommand(ICollection<PlayerScore> playersScores)
+    using Assets.Scripts.Interfaces;
+
+    public class ReceivedLeaderboardEntityCommand : INetworkManagerCommand
     {
-        if (playersScores == null)
+        ICollection<PlayerScore> playersScores;
+
+        public ReceivedLeaderboardEntityCommand(ICollection<PlayerScore> playersScores)
         {
-            throw new System.ArgumentNullException("playersScores");
-        }
+            if (playersScores == null)
+            {
+                throw new System.ArgumentNullException("playersScores");
+            }
             
-        this.playersScores = playersScores;
+            this.playersScores = playersScores;
+        }
+
+        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var playerScoreJSON = commandsOptionsValues["PlayerScoreJSON"];
+            var playerScoreSer = JsonUtility.FromJson<PlayerScore_Serializable>(playerScoreJSON);
+            var playerScore = PlayerScore.CreateFrom(playerScoreSer);
+            this.playersScores.Add(playerScore);
+        }
     }
 
-    public void Execute(Dictionary<string, string> commandsOptionsValues)
-    {
-        var playerScoreJSON = commandsOptionsValues["PlayerScoreJSON"];
-        var playerScoreSer = JsonUtility.FromJson<PlayerScore_Serializable>(playerScoreJSON);
-        var playerScore = PlayerScore.CreateFrom(playerScoreSer);
-        playersScores.Add(playerScore);
-    }
 }

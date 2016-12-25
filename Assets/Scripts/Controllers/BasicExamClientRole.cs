@@ -1,8 +1,10 @@
-using UnityEngine;
-using System.Collections;
-
-public enum BasicExamClientRole
+namespace Assets.Scripts.Controllers
 {
-    Audience,
-    MainPlayer
+
+    public enum BasicExamClientRole
+    {
+        Audience,
+        MainPlayer
+    }
+
 }

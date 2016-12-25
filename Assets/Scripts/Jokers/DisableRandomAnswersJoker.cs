@@ -1,125 +1,138 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Timers;
+﻿using System;
 using System.Linq;
+using System.Timers;
 
-public class DisableRandomAnswersJoker : IJoker
+using UnityEngine;
+
+namespace Assets.Scripts.Jokers
 {
-    const int SettingsReceiveTimeoutInSeconds = 5;
 
-    ClientNetworkManager networkManager;
-    IQuestionUIController questionUIController;
-    IGameData gameData;
-    Timer receiveSettingsTimeoutTimer;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Utils;
 
-    public Sprite Image
+    using EventArgs = System.EventArgs;
+
+    public class DisableRandomAnswersJoker : IJoker
     {
-        get;
-        private set;
-    }
+        const int SettingsReceiveTimeoutInSeconds = 5;
 
-    public EventHandler OnActivated
-    {
-        get;
-        set;
-    }
+        ClientNetworkManager networkManager;
+        IQuestionUIController questionUIController;
+        IGameData gameData;
+        Timer receiveSettingsTimeoutTimer;
 
-    public bool Activated
-    {
-        get;
-        private set;
-    }
-
-    public DisableRandomAnswersJoker()
-    {
-        Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
-    }
-
-    public DisableRandomAnswersJoker(ClientNetworkManager networkManager, IGameData gameData, IQuestionUIController questionUIController)
-    {
-        if (networkManager == null)
+        public Sprite Image
         {
-            throw new ArgumentNullException("networkManager");
+            get;
+            private set;
         }
 
-        if (gameData == null)
+        public EventHandler OnActivated
         {
-            throw new ArgumentNullException("gameData");
+            get;
+            set;
         }
+
+        public bool Activated
+        {
+            get;
+            private set;
+        }
+
+        public DisableRandomAnswersJoker()
+        {
+            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
+        }
+
+        public DisableRandomAnswersJoker(ClientNetworkManager networkManager, IGameData gameData, IQuestionUIController questionUIController)
+        {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (gameData == null)
+            {
+                throw new ArgumentNullException("gameData");
+            }
             
-        if (questionUIController == null)
-        {
-            throw new ArgumentNullException("questionUIController");
-        }
+            if (questionUIController == null)
+            {
+                throw new ArgumentNullException("questionUIController");
+            }
             
-        this.networkManager = networkManager;
-        this.questionUIController = questionUIController;
-        this.gameData = gameData;
+            this.networkManager = networkManager;
+            this.questionUIController = questionUIController;
+            this.gameData = gameData;
 
-        Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
-    }
-
-    public void Activate()
-    {
-        if (questionUIController.CurrentlyLoadedQuestion == null)
-        {
-            throw new InvalidOperationException();
+            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
         }
 
-        var selectedJokerCommand = new NetworkCommandData("SelectedDisableRandomAnswersJoker");
-        networkManager.SendServerCommand(selectedJokerCommand);
-
-        var receiveJokerSettings = new ReceivedDisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings);
-        networkManager.CommandsManager.AddCommand("DisableRandomAnswersJokerSettings", receiveJokerSettings);
-
-        receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-    }
-
-    void OnReceiveSettingsTimeout()
-    {
-        ThreadUtils.Instance.RunOnMainThread(() =>
-            { 
-                receiveSettingsTimeoutTimer.Dispose();
-                networkManager.CommandsManager.RemoveCommand("DisableRandomAnswersJokerSettings");
-            });
-    }
-
-    void OnReceivedJokerSettings(int answersToDisableCount)
-    {
-        ActivateJoker(answersToDisableCount);
-
-        Activated = true;
-
-        if (OnActivated != null)
+        public void Activate()
         {
-            OnActivated(this, EventArgs.Empty);
-        }
-    }
+            if (this.questionUIController.CurrentlyLoadedQuestion == null)
+            {
+                throw new InvalidOperationException();
+            }
 
-    void ActivateJoker(int answersToDisableCount)
-    {
-        var currentQuestion = questionUIController.CurrentlyLoadedQuestion;
+            var selectedJokerCommand = new NetworkCommandData("SelectedDisableRandomAnswersJoker");
+            this.networkManager.SendServerCommand(selectedJokerCommand);
 
-        if (answersToDisableCount >= currentQuestion.Answers.Length)
-        {
-            throw new ArgumentException("Answers to disable count must be less than answers count");
+            var receiveJokerSettings = new ReceivedDisableRandomAnswerJokerSettingsCommand(this.OnReceivedJokerSettings);
+            this.networkManager.CommandsManager.AddCommand("DisableRandomAnswersJokerSettings", receiveJokerSettings);
+
+            this.receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
         }
 
-        var allAnswers = currentQuestion.Answers.ToList();
-        var correctAnswerIndex = currentQuestion.CorrectAnswerIndex;
-        var correctAnswer = allAnswers[correctAnswerIndex];
-        var wrongAnswersIndexes = allAnswers.Where(a => a != correctAnswer)
-            .ToArray()
-            .GetRandomElements(answersToDisableCount)
-            .Select(a => allAnswers.FindIndex(answer => answer == a))
-            .ToArray();
+        void OnReceiveSettingsTimeout()
+        {
+            ThreadUtils.Instance.RunOnMainThread(() =>
+                { 
+                    this.receiveSettingsTimeoutTimer.Dispose();
+                    this.networkManager.CommandsManager.RemoveCommand("DisableRandomAnswersJokerSettings");
+                });
+        }
+
+        void OnReceivedJokerSettings(int answersToDisableCount)
+        {
+            this.ActivateJoker(answersToDisableCount);
+
+            this.Activated = true;
+
+            if (this.OnActivated != null)
+            {
+                this.OnActivated(this, EventArgs.Empty);
+            }
+        }
+
+        void ActivateJoker(int answersToDisableCount)
+        {
+            var currentQuestion = this.questionUIController.CurrentlyLoadedQuestion;
+
+            if (answersToDisableCount >= currentQuestion.Answers.Length)
+            {
+                throw new ArgumentException("Answers to disable count must be less than answers count");
+            }
+
+            var allAnswers = currentQuestion.Answers.ToList();
+            var correctAnswerIndex = currentQuestion.CorrectAnswerIndex;
+            var correctAnswer = allAnswers[correctAnswerIndex];
+            var wrongAnswersIndexes = allAnswers.Where(a => a != correctAnswer)
+                .ToArray()
+                .GetRandomElements(answersToDisableCount)
+                .Select(a => allAnswers.FindIndex(answer => answer == a))
+                .ToArray();
         
-        for (int i = 0; i < wrongAnswersIndexes.Length; i++)
-        {
-            var disabledAnswerIndex = wrongAnswersIndexes[i];
-            questionUIController.HideAnswer(disabledAnswerIndex);
+            for (int i = 0; i < wrongAnswersIndexes.Length; i++)
+            {
+                var disabledAnswerIndex = wrongAnswersIndexes[i];
+                this.questionUIController.HideAnswer(disabledAnswerIndex);
+            }
         }
     }
+
 }
 

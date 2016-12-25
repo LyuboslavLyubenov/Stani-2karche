@@ -1,18 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class QuestionsRemainingUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public Text QuestionsRemaining;
 
-    public void SetRemainingQuestions(int remainingQuestions)
+    public class QuestionsRemainingUIController : MonoBehaviour
     {
-        if (remainingQuestions < 0)
-        {
-            throw new ArgumentOutOfRangeException("remainingQuestions");
-        }
+        public Text QuestionsRemaining;
 
-        QuestionsRemaining.text = remainingQuestions.ToString();
+        public void SetRemainingQuestions(int remainingQuestions)
+        {
+            if (remainingQuestions < 0)
+            {
+                throw new ArgumentOutOfRangeException("remainingQuestions");
+            }
+
+            this.QuestionsRemaining.text = remainingQuestions.ToString();
+        }
     }
+
 }

@@ -1,75 +1,82 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
-public class CommandsManager
+namespace Assets.Scripts.Commands
 {
-    Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
 
-    public void AddCommand(INetworkManagerCommand commandToExecute)
-    {
-        var commandName = commandToExecute.GetType().Name.Replace("Command", "");
-        AddCommand(commandName, commandToExecute);
-    }
+    using Assets.Scripts.Interfaces;
 
-    public void AddCommand(string commandName, INetworkManagerCommand commandToExecute)
+    public class CommandsManager
     {
-        if (string.IsNullOrEmpty(commandName))
+        Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
+
+        public void AddCommand(INetworkManagerCommand commandToExecute)
         {
-            throw new ArgumentException("commandName cannot be empty");
+            var commandName = commandToExecute.GetType().Name.Replace("Command", "");
+            this.AddCommand(commandName, commandToExecute);
         }
 
-        if (commandToExecute == null)
+        public void AddCommand(string commandName, INetworkManagerCommand commandToExecute)
         {
-            throw new ArgumentNullException("commandToExecute");
-        }
-
-        if (!commands.ContainsKey(commandName))
-        {
-            var commandsToExecute = new List<INetworkManagerCommand>();
-            commands.Add(commandName, commandsToExecute);
-        }
-
-        commands[commandName].Add(commandToExecute);
-    }
-
-    public void RemoveCommand<T>()
-    {
-        var commandName = typeof(T).Name.Replace("Command", "");
-        RemoveCommand(commandName);
-    }
-
-    public void RemoveCommand(string commandName)
-    {
-        if (!commands.ContainsKey(commandName))
-        {
-            throw new ArgumentException("Command " + commandName + " cannot be found");
-        }
-
-        commands.Remove(commandName);
-    }
-
-    public void Execute(NetworkCommandData command)
-    {
-        var commandName = command.Name;
-
-        if (!commands.ContainsKey(commandName))
-        {
-            throw new ArgumentException("Command with name " + command.Name + " not found");
-        }
-
-        var commandsToExecute = commands[commandName];
-
-        for (int i = 0; i < commandsToExecute.Count; i++)
-        {
-            var commandToExecute = commandsToExecute[i];
-            commandToExecute.Execute(command.Options);    
-
-            var oneTimeExecuteCommand = commandToExecute as IOneTimeExecuteCommand;
-
-            if (oneTimeExecuteCommand != null && oneTimeExecuteCommand.FinishedExecution)
+            if (string.IsNullOrEmpty(commandName))
             {
-                commands[commandName].Remove(oneTimeExecuteCommand);
+                throw new ArgumentException("commandName cannot be empty");
+            }
+
+            if (commandToExecute == null)
+            {
+                throw new ArgumentNullException("commandToExecute");
+            }
+
+            if (!this.commands.ContainsKey(commandName))
+            {
+                var commandsToExecute = new List<INetworkManagerCommand>();
+                this.commands.Add(commandName, commandsToExecute);
+            }
+
+            this.commands[commandName].Add(commandToExecute);
+        }
+
+        public void RemoveCommand<T>()
+        {
+            var commandName = typeof(T).Name.Replace("Command", "");
+            this.RemoveCommand(commandName);
+        }
+
+        public void RemoveCommand(string commandName)
+        {
+            if (!this.commands.ContainsKey(commandName))
+            {
+                throw new ArgumentException("Command " + commandName + " cannot be found");
+            }
+
+            this.commands.Remove(commandName);
+        }
+
+        public void Execute(NetworkCommandData command)
+        {
+            var commandName = command.Name;
+
+            if (!this.commands.ContainsKey(commandName))
+            {
+                throw new ArgumentException("Command with name " + command.Name + " not found");
+            }
+
+            var commandsToExecute = this.commands[commandName];
+
+            for (int i = 0; i < commandsToExecute.Count; i++)
+            {
+                var commandToExecute = commandsToExecute[i];
+                commandToExecute.Execute(command.Options);    
+
+                var oneTimeExecuteCommand = commandToExecute as IOneTimeExecuteCommand;
+
+                if (oneTimeExecuteCommand != null && oneTimeExecuteCommand.FinishedExecution)
+                {
+                    this.commands[commandName].Remove(oneTimeExecuteCommand);
+                }
             }
         }
     }
+
 }

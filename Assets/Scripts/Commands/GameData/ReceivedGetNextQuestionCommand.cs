@@ -1,22 +1,30 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
-public class ReceivedGetNextQuestionCommand : GameDataGetQuestionAbstractCommand
+namespace Assets.Scripts.Commands.GameData
 {
-    public ReceivedGetNextQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
-        : base(gameData, networkManager)
-    {     
-    }
 
-    public override void Execute(Dictionary<string, string> commandsOptionsValues)
+    using Assets.Scripts.Network;
+
+    using Debug = UnityEngine.Debug;
+
+    public class ReceivedGetNextQuestionCommand : GameDataGetQuestionAbstractCommand
     {
-        var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+        public ReceivedGetNextQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
+            : base(gameData, networkManager)
+        {     
+        }
 
-        base.GameData.GetNextQuestion((question) =>
-            {
-                var requestType = QuestionRequestType.Next;
-                base.SendQuestion(connectionId, question, requestType);    
-            }, 
-            Debug.LogException);
+        public override void Execute(Dictionary<string, string> commandsOptionsValues)
+        {
+            var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+
+            base.GameData.GetNextQuestion((question) =>
+                {
+                    var requestType = QuestionRequestType.Next;
+                    base.SendQuestion(connectionId, question, requestType);    
+                }, 
+                Debug.LogException);
+        }
     }
+
 }

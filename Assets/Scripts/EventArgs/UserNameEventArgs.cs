@@ -1,21 +1,28 @@
 using System;
 
-public class UserNameEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public string UserName
-    {
-        get;
-        private set;
-    }
 
-    public UserNameEventArgs(string username)
-        : base()
+    using EventArgs = System.EventArgs;
+
+    public class UserNameEventArgs : EventArgs
     {
-        if (string.IsNullOrEmpty(username))
+        public string UserName
         {
-            throw new ArgumentException("Name cannot be empty");
+            get;
+            private set;
         }
 
-        this.UserName = username;
+        public UserNameEventArgs(string username)
+            : base()
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentException("Name cannot be empty");
+            }
+
+            this.UserName = username;
+        }
     }
+
 }

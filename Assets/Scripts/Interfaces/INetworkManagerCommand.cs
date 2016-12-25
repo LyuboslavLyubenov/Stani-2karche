@@ -1,7 +1,11 @@
 ﻿using System.Collections.Generic;
-using System;
 
-public interface INetworkManagerCommand
+namespace Assets.Scripts.Interfaces
 {
-    void Execute(Dictionary<string, string> commandsOptionsValues);
+
+    public interface INetworkManagerCommand
+    {
+        void Execute(Dictionary<string, string> commandsOptionsValues);
+    }
+
 }

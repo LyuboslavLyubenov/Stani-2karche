@@ -1,112 +1,119 @@
 ﻿using System;
 using System.IO;
-using System.Xml;
-using UnityEngine;
 using System.Linq;
-using System.Collections.Generic;
+using System.Xml;
 
-public class LanguagesManager : MonoBehaviour
+using UnityEngine;
+
+namespace Assets.Scripts.Localization
 {
-    const string DefaultLanguage = "Bulgarian";
 
-    public EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
+    using Assets.Scripts.EventArgs;
+
+    using Debug = UnityEngine.Debug;
+
+    public class LanguagesManager : MonoBehaviour
     {
-    };
+        const string DefaultLanguage = "Bulgarian";
 
-    static LanguagesManager instance = null;
-   
-    private XmlDocument mainDoc = null;
-    private XmlElement root = null;
-
-    private string languagePath = string.Empty;
-    private string[] languageFiles = null;
-
-    public static LanguagesManager Instance
-    {
-        get
-        {
-            if (instance == null)
+        public EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
             {
-                var obj = GameObject.Find("Localization");
+            };
 
-                if (obj == null)
+        static LanguagesManager instance = null;
+   
+        private XmlDocument mainDoc = null;
+        private XmlElement root = null;
+
+        private string languagePath = string.Empty;
+        private string[] languageFiles = null;
+
+        public static LanguagesManager Instance
+        {
+            get
+            {
+                if (instance == null)
                 {
-                    obj = new GameObject();
-                    obj.name = "Localization";
+                    var obj = GameObject.Find("Localization");
+
+                    if (obj == null)
+                    {
+                        obj = new GameObject();
+                        obj.name = "Localization";
+                    }
+
+                    var _instance = obj.GetComponent<LanguagesManager>() ?? obj.AddComponent<LanguagesManager>();             
+                    instance = _instance;
+
+                    DontDestroyOnLoad(obj);
                 }
 
-                var _instance = obj.GetComponent<LanguagesManager>() ?? obj.AddComponent<LanguagesManager>();             
-                instance = _instance;
-
-                DontDestroyOnLoad(obj);
+                return instance;
             }
-
-            return instance;
         }
-    }
 
-    public bool IsLoadedLanguage
-    {
-        get;
-        private set;
-    }
-
-    public string Language
-    {
-        get;
-        private set;
-    }
-
-    public string[] AvailableLanguages
-    {
-        get
+        public bool IsLoadedLanguage
         {
-            return this.languageFiles.Select(p => Path.GetFileName(p)).ToArray();
+            get;
+            private set;
         }
-    }
 
-    void Awake()
-    {
-        DontDestroyOnLoad(this);
-        languagePath = Environment.CurrentDirectory + "/Languages/";
-        CollectLanguages();
-    }
-
-    void OnDestroy()
-    {
-        mainDoc = null;
-        root = null;
-    }
-
-    #if UNITY_STANDALONE
-    
-    void CollectLanguages()
-    {
-        try
+        public string Language
         {
-            DirectoryInfo directory = new DirectoryInfo(languagePath);
-            FileInfo[] files = directory.GetFiles("*.xml");
-            languageFiles = new string[files.Length];
+            get;
+            private set;
+        }
 
-            for (var i = 0; i < files.Length; i++)
+        public string[] AvailableLanguages
+        {
+            get
             {
-                languageFiles[i] = files[i].FullName;
+                return this.languageFiles.Select(p => Path.GetFileName(p)).ToArray();
             }
         }
-        catch (Exception e)
+
+        void Awake()
         {
-            Debug.Log(e.Message);
+            DontDestroyOnLoad(this);
+            this.languagePath = Environment.CurrentDirectory + "/Languages/";
+            this.CollectLanguages();
         }
-    }
 
-    string GetLanguageFile(string language)
-    {
-        var languageUpper = language.ToUpperInvariant();
-        return languageFiles.FirstOrDefault(l => l.ToUpperInvariant().Contains(languageUpper));
-    }
+        void OnDestroy()
+        {
+            this.mainDoc = null;
+            this.root = null;
+        }
+
+#if UNITY_STANDALONE
+    
+        void CollectLanguages()
+        {
+            try
+            {
+                DirectoryInfo directory = new DirectoryInfo(this.languagePath);
+                FileInfo[] files = directory.GetFiles("*.xml");
+                this.languageFiles = new string[files.Length];
+
+                for (var i = 0; i < files.Length; i++)
+                {
+                    this.languageFiles[i] = files[i].FullName;
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log(e.Message);
+            }
+        }
+
+        string GetLanguageFile(string language)
+        {
+            var languageUpper = language.ToUpperInvariant();
+            return this.languageFiles.FirstOrDefault(l => l.ToUpperInvariant().Contains(languageUpper));
+        }
 
 
-    #else
+#else
     
     Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
 
@@ -124,28 +131,28 @@ public class LanguagesManager : MonoBehaviour
         
     #endif
 
-    public void LoadLanguage(string language)
-    {
-        IsLoadedLanguage = false;
-
-        try
+        public void LoadLanguage(string language)
         {
-            mainDoc = new XmlDocument();
+            this.IsLoadedLanguage = false;
 
-            #if UNITY_STANDALONE
-
-            var loadFile = GetLanguageFile(language);
-
-            if (string.IsNullOrEmpty(loadFile))
+            try
             {
-                loadFile = DefaultLanguage;
-            }
+                this.mainDoc = new XmlDocument();
 
-            var reader = new StreamReader(loadFile);
-            mainDoc.Load(reader);
-            reader.Close();
+#if UNITY_STANDALONE
+
+                var loadFile = this.GetLanguageFile(language);
+
+                if (string.IsNullOrEmpty(loadFile))
+                {
+                    loadFile = DefaultLanguage;
+                }
+
+                var reader = new StreamReader(loadFile);
+                this.mainDoc.Load(reader);
+                reader.Close();
            
-            #else
+#else
 
             if (string.IsNullOrEmpty(language))
             {
@@ -157,38 +164,40 @@ public class LanguagesManager : MonoBehaviour
 
             #endif
 
-            root = mainDoc.DocumentElement;
+                this.root = this.mainDoc.DocumentElement;
 
-            IsLoadedLanguage = true;
-            Language = language;
-            OnLoadedLanguage(this, new LanguageEventArgs(language));
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log(e.Message);
-        }
-    }
-
-    public string GetValue(string path)
-    {
-        try
-        {
-            XmlNode node = root.SelectSingleNode(path);
-
-            if (node == null)
+                this.IsLoadedLanguage = true;
+                this.Language = language;
+                this.OnLoadedLanguage(this, new LanguageEventArgs(language));
+            }
+            catch (System.Exception e)
             {
+                Debug.Log(e.Message);
+            }
+        }
+
+        public string GetValue(string path)
+        {
+            try
+            {
+                XmlNode node = this.root.SelectSingleNode(path);
+
+                if (node == null)
+                {
+                    return path;
+                }
+
+                var value = node.InnerText
+                    .Replace("\\n", "\n");
+         
+                return value;
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning(e.Message);
                 return path;
             }
-
-            var value = node.InnerText
-                .Replace("\\n", "\n");
-         
-            return value;
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogWarning(e.Message);
-            return path;
         }
     }
+
 }

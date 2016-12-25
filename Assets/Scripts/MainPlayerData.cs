@@ -1,97 +1,107 @@
 using System;
 
-public class MainPlayerData : IPlayerData
+namespace Assets.Scripts
 {
-    ServerNetworkManager networkManager;
 
-    public EventHandler<ClientConnectionDataEventArgs> OnConnected
-    {
-        get;
-        set;
-    }
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
 
-    public EventHandler<ClientConnectionDataEventArgs> OnDisconnected
+    public class MainPlayerData : IPlayerData
     {
-        get;
-        set;
-    }
+        ServerNetworkManager networkManager;
 
-    public JokersData JokersData
-    {
-        get;
-        private set;
-    }
-
-    public bool IsConnected
-    {
-        get;
-        private set;
-    }
-
-    public int ConnectionId
-    {
-        get;
-        private set;
-    }
-
-    public string Username
-    {
-        get
+        public EventHandler<ClientConnectionDataEventArgs> OnConnected
         {
-            if (!IsConnected)
+            get;
+            set;
+        }
+
+        public EventHandler<ClientConnectionDataEventArgs> OnDisconnected
+        {
+            get;
+            set;
+        }
+
+        public JokersData JokersData
+        {
+            get;
+            private set;
+        }
+
+        public bool IsConnected
+        {
+            get;
+            private set;
+        }
+
+        public int ConnectionId
+        {
+            get;
+            private set;
+        }
+
+        public string Username
+        {
+            get
             {
-                throw new Exception("MainPlayer not connected to server");
+                if (!this.IsConnected)
+                {
+                    throw new Exception("MainPlayer not connected to server");
+                }
+
+                return this.networkManager.GetClientUsername(this.ConnectionId);
+            }
+        }
+
+        public MainPlayerData(ServerNetworkManager networkManager)
+        {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
             }
 
-            return networkManager.GetClientUsername(ConnectionId);
+            this.networkManager = networkManager;
+            this.JokersData = new JokersData(networkManager);
+
+            networkManager.OnClientDisconnected += this.OnClientDisconnected;
+            networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+
+            //lazy motherf*cker
+            this.OnConnected = delegate
+                {
+                };
+
+            this.OnDisconnected = delegate
+                {
+                };
+
+            this.IsConnected = false;
+        }
+
+        void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
+        {
+            if (this.ConnectionId != args.ConnectionId)
+            {
+                return;
+            }
+
+            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+
+            this.IsConnected = false;
+            this.OnDisconnected(this, args);
+        }
+
+        void OnMainPlayerConnecting(int connectionId)
+        {
+            this.ConnectionId = connectionId;
+            this.IsConnected = true;
+
+            this.networkManager.CommandsManager.RemoveCommand<MainPlayerConnectingCommand>();
+
+            this.OnConnected(this, new ClientConnectionDataEventArgs(connectionId));
         }
     }
 
-    public MainPlayerData(ServerNetworkManager networkManager)
-    {
-        if (networkManager == null)
-        {
-            throw new ArgumentNullException("networkManager");
-        }
-
-        this.networkManager = networkManager;
-        JokersData = new JokersData(networkManager);
-
-        networkManager.OnClientDisconnected += OnClientDisconnected;
-        networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(OnMainPlayerConnecting));
-
-        //lazy motherf*cker
-        OnConnected = delegate
-        {
-        };
-
-        OnDisconnected = delegate
-        {
-        };
-
-        IsConnected = false;
-    }
-
-    void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
-    {
-        if (ConnectionId != args.ConnectionId)
-        {
-            return;
-        }
-
-        networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(OnMainPlayerConnecting));
-
-        IsConnected = false;
-        OnDisconnected(this, args);
-    }
-
-    void OnMainPlayerConnecting(int connectionId)
-    {
-        ConnectionId = connectionId;
-        IsConnected = true;
-
-        networkManager.CommandsManager.RemoveCommand<MainPlayerConnectingCommand>();
-
-        OnConnected(this, new ClientConnectionDataEventArgs(connectionId));
-    }
 }

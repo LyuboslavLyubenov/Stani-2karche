@@ -1,42 +1,49 @@
-using UnityEngine;
-using System.Collections.Generic;
 using System;
-using System.Linq;
 
-public class ServerSentQuestionEventArgs : EventArgs
+namespace Assets.Scripts.EventArgs
 {
-    public ISimpleQuestion Question
-    {
-        get;
-        private set;
-    }
 
-    public QuestionRequestType QuestionType
-    {
-        get;
-        private set;
-    }
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
 
-    public int ClientId
-    {
-        get;
-        private set;
-    }
+    using EventArgs = System.EventArgs;
 
-    public ServerSentQuestionEventArgs(ISimpleQuestion question, QuestionRequestType questionType, int clientId)
+    public class ServerSentQuestionEventArgs : EventArgs
     {
-        if (question == null)
+        public ISimpleQuestion Question
         {
-            throw new ArgumentNullException("question");
+            get;
+            private set;
         }
 
-        if (clientId <= 0)
+        public QuestionRequestType QuestionType
         {
-            throw new ArgumentOutOfRangeException("clientId");
+            get;
+            private set;
         }
+
+        public int ClientId
+        {
+            get;
+            private set;
+        }
+
+        public ServerSentQuestionEventArgs(ISimpleQuestion question, QuestionRequestType questionType, int clientId)
+        {
+            if (question == null)
+            {
+                throw new ArgumentNullException("question");
+            }
+
+            if (clientId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("clientId");
+            }
             
-        this.Question = question;
-        this.QuestionType = questionType;
-        this.ClientId = clientId;
+            this.Question = question;
+            this.QuestionType = questionType;
+            this.ClientId = clientId;
+        }
     }
+
 }

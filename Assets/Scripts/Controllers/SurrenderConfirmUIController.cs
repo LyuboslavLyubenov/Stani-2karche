@@ -1,14 +1,21 @@
 ﻿using UnityEngine;
-using System;
 
-public class SurrenderConfirmUIController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    public ClientNetworkManager NetworkManager;
 
-    public void Surrender()
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Network;
+
+    public class SurrenderConfirmUIController : MonoBehaviour
     {
-        var surrenderCommand = new NetworkCommandData("Surrender");
-        NetworkManager.SendServerCommand(surrenderCommand);
-        gameObject.SetActive(false);
+        public ClientNetworkManager NetworkManager;
+
+        public void Surrender()
+        {
+            var surrenderCommand = new NetworkCommandData("Surrender");
+            this.NetworkManager.SendServerCommand(surrenderCommand);
+            this.gameObject.SetActive(false);
+        }
     }
+
 }

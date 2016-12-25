@@ -2,15 +2,20 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class ExitButtonController : MonoBehaviour
+namespace Assets.Scripts.Controllers
 {
-    void Start()
+
+    public class ExitButtonController : MonoBehaviour
     {
-        GetComponent<Button>().onClick.AddListener(LoadMainScreen);
+        void Start()
+        {
+            this.GetComponent<Button>().onClick.AddListener(this.LoadMainScreen);
+        }
+
+        void LoadMainScreen()
+        {
+            SceneManager.LoadScene("StartScreen");        
+        }
     }
 
-    void LoadMainScreen()
-    {
-        SceneManager.LoadScene("StartScreen");        
-    }
 }

@@ -1,40 +1,48 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-using System;
+﻿using System;
 
-public class GameTypesUIController : MonoBehaviour
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Assets.Scripts.Controllers
 {
 
-    void Start()
+    using Assets.Scripts.Utils;
+
+    public class GameTypesUIController : MonoBehaviour
     {
-        transform.localScale = new Vector3(1, 0, 1);
+
+        void Start()
+        {
+            this.transform.localScale = new Vector3(1, 0, 1);
+        }
+
+        public void LoadNormalGame()
+        {
+            PlayerPrefsEncryptionUtils.SetString("MainPlayerHost", "true");
+            PlayerPrefsEncryptionUtils.SetString("ServerIP", "127.0.0.1");
+
+            PlayerPrefsEncryptionUtils.SetString("ServerMaxPlayers", "30");
+
+            SceneManager.LoadScene("BasicExamMainPlayer", LoadSceneMode.Single);    
+        }
+
+        public void LoadAudienceRevenge()
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public void LoadFastestWins()
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
+        public void QuizDuel()
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
     }
 
-    public void LoadNormalGame()
-    {
-        PlayerPrefsEncryptionUtils.SetString("MainPlayerHost", "true");
-        PlayerPrefsEncryptionUtils.SetString("ServerIP", "127.0.0.1");
-
-        PlayerPrefsEncryptionUtils.SetString("ServerMaxPlayers", "30");
-
-        SceneManager.LoadScene("BasicExamMainPlayer", LoadSceneMode.Single);    
-    }
-
-    public void LoadAudienceRevenge()
-    {
-        //TODO
-        throw new NotImplementedException();
-    }
-
-    public void LoadFastestWins()
-    {
-        //TODO
-        throw new NotImplementedException();
-    }
-
-    public void QuizDuel()
-    {
-        //TODO
-        throw new NotImplementedException();
-    }
 }
