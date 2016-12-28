@@ -1,18 +1,18 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Enums;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Assets.Scripts.DTOs.KinveySerializableObj;
+
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using DTOs;
+    using Enums;
+    using EventArgs;
+    using Network;
+    using Notifications;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
 
@@ -44,21 +44,25 @@ namespace Assets.Scripts.Controllers
         {
             NetworkUtils.CheckInternetConnection((isConnectedToInternet) =>
                 {
-                    if (!isConnectedToInternet || !KinveyWrapper.Instance.IsLoggedIn)
+                    var kinveyWrapper = new KinveyWrapper();
+
+                    if (!isConnectedToInternet || !kinveyWrapper.IsLoggedIn)
                     {
                         return;
                     }
 
-                    KinveyWrapper.Instance.RetrieveEntityAsync<ServerInfo_Serializable>("Servers", null, (servers) =>
-                        {
-                            for (int i = 0; i < servers.Length; i++)
-                            {
-                                var entity = servers[i].Entity;
-                                var ip = entity.ExternalIpAddress;
-                                this.BeginReceiveServerGameInfo(ip);
-                            }
-                        }, Debug.LogException);
+                    kinveyWrapper.RetrieveEntityAsync<ServerInfo_DTO>("Servers", null, this.OnLoadedServers, Debug.LogException);
                 });
+        }
+
+        void OnLoadedServers(_KinveyEntity<ServerInfo_DTO>[] servers)
+        {
+            for (int i = 0; i < servers.Length; i++)
+            {
+                var entity = servers[i].Entity;
+                var ip = entity.ExternalIpAddress;
+                this.BeginReceiveServerGameInfo(ip);
+            }
         }
 
         void OnLocalServerFound(object sender, IpEventArgs args)
@@ -85,35 +89,35 @@ namespace Assets.Scripts.Controllers
             switch (gameInfo.GameType)
             {
                 case GameType.BasicExam:
-                    var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_Serializable>(receivedData.JSON);
+                    var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_DTO>(receivedData.JSON);
                     this.OnFoundBasicExam(basicExamGameInfo);
                     break;    
             }
         }
 
-        void OnFoundBasicExam(BasicExamGameInfo_Serializable gameInfo)
+        void OnFoundBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
         {
             var obj = this.ServerFoundElementsPool.Get();
             var controller = obj.GetComponent<ServerDiscoveredElementController>();
 
             obj.SetParent(this.Container.transform, true);
-            this.CoroutineUtils.WaitForFrames(0, () => controller.SetData(gameInfo));
+            this.CoroutineUtils.WaitForFrames(0, () => controller.SetData(gameInfo_DTO));
 
             var button = obj.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => this.OpenBasicExamSelectMenu(gameInfo));
+            button.onClick.AddListener(() => this.OpenBasicExamSelectMenu(gameInfo_DTO));
         }
 
-        void OpenBasicExamSelectMenu(BasicExamGameInfo_Serializable gameInfo)
+        void OpenBasicExamSelectMenu(BasicExamGameInfo_DTO gameInfo_DTO)
         {
-            if (gameInfo.ServerInfo.IsFull)
+            if (gameInfo_DTO.ServerInfo.IsFull)
             {
                 this.NotificationsService.AddNotification(Color.red, "Server is full");
                 return;
             }
 
             this.BasicExamSelectPlayerTypeController.gameObject.SetActive(true);
-            this.CoroutineUtils.WaitForFrames(0, () => this.BasicExamSelectPlayerTypeController.Initialize(gameInfo));
+            this.CoroutineUtils.WaitForFrames(0, () => this.BasicExamSelectPlayerTypeController.Initialize(gameInfo_DTO));
         }
 
         void ClearFoundServerList()

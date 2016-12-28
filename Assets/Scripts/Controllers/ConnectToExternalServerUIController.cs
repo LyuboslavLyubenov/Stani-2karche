@@ -1,14 +1,13 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine;
+    using UnityEngine.UI;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Enums;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Notifications;
+    using DTOs;
+    using Enums;
+    using EventArgs;
+    using Network;
+    using Notifications;
 
     public class ConnectToExternalServerUIController : MonoBehaviour
     {
@@ -57,7 +56,7 @@ namespace Assets.Scripts.Controllers
                 {
                     this.GameInfoReceiverService.StopReceivingFrom(this.ip);
                 }
-                catch (System.Exception ex)
+                catch
                 {
                 
                 }
@@ -74,7 +73,7 @@ namespace Assets.Scripts.Controllers
             switch (args.GameInfo.GameType)
             {
                 case GameType.BasicExam:
-                    var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_Serializable>(args.JSON);
+                    var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_DTO>(args.JSON);
                     this.OnConnectingToBasicExam(basicExamGameInfo);
                     break;
 
@@ -84,10 +83,10 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void OnConnectingToBasicExam(BasicExamGameInfo_Serializable gameInfo)
+        void OnConnectingToBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
         {
             this.SelectPlayerTypeUIController.gameObject.SetActive(true);
-            this.SelectPlayerTypeUIController.Initialize(gameInfo);
+            this.SelectPlayerTypeUIController.Initialize(gameInfo_DTO);
         }
     }
 

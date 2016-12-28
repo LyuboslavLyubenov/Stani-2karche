@@ -1,22 +1,18 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts
 {
+    using System;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Enums;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
+    using DTOs;
+    using Enums;
+    using Network;
+    using Utils.Unity;
 
     public class GameInfoFactory : MonoBehaviour
     {
         const string BasicExam = "BasicExam";
-        const string AudienceRevenge = "AudienceRevenge";
-        const string FastestWins = "FastestWins";
 
         public ServerNetworkManager ServerNetworkManager;
         public BasicExamServer BasicExamServer;
@@ -28,13 +24,13 @@ namespace Assets.Scripts
             NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
         }
 
-        public CreatedGameInfo_Serializable Get()
+        public CreatedGameInfo_DTO Get()
         {
             var sceneName = SceneManager.GetActiveScene().name;
             return this.Get(sceneName);
         }
 
-        public CreatedGameInfo_Serializable Get(string levelName)
+        public CreatedGameInfo_DTO Get(string levelName)
         {
             var levelNameUpper = levelName.ToUpperInvariant();
 
@@ -42,24 +38,11 @@ namespace Assets.Scripts
             {
                 return this.GetBasicExamGameInfo();
             }
-            else if (levelNameUpper.Contains(AudienceRevenge.ToUpperInvariant()))
-            {
-                //TODO
-                throw new NotImplementedException();
-            }
-            else if (levelNameUpper.Contains(FastestWins.ToUpperInvariant()))
-            {
-                //TODO
-                throw new NotImplementedException();
-            }
-            else
-            {
-                //TODO
-                throw new NotImplementedException();
-            }
+
+            throw new NotImplementedException();
         }
 
-        BasicExamGameInfo_Serializable GetBasicExamGameInfo()
+        BasicExamGameInfo_DTO GetBasicExamGameInfo()
         {
             var canConnectAsMainPlayer = !this.BasicExamServer.MainPlayerData.IsConnected;
             var canConnectAsAudience = this.ServerNetworkManager.ConnectedClientsCount < (this.ServerNetworkManager.MaxConnections - 1);
@@ -67,7 +50,7 @@ namespace Assets.Scripts
             var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
             var serverInfo = this.GetServerInfo();
 
-            var gameInfo = new BasicExamGameInfo_Serializable()
+            var gameInfo = new BasicExamGameInfo_DTO()
                            {
                                CanConnectAsMainPlayer = canConnectAsMainPlayer,
                                CanConnectAsAudience = canConnectAsAudience,
@@ -79,12 +62,12 @@ namespace Assets.Scripts
             return gameInfo;
         }
 
-        ServerInfo_Serializable GetServerInfo()
+        ServerInfo_DTO GetServerInfo()
         {
             var localIPAddress = NetworkUtils.GetLocalIP();
             var connectedClientsCount = this.ServerNetworkManager.ConnectedClientsCount;
             var maxConnections = this.ServerNetworkManager.MaxConnections;
-            var serverInfo = new ServerInfo_Serializable()
+            var serverInfo = new ServerInfo_DTO()
                              {
                                  ExternalIpAddress = this.externalIp,
                                  LocalIPAddress = localIPAddress,

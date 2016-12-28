@@ -1,32 +1,30 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+    using UnityEngine.UI;
+
+    using DTOs;
+    using Utils.Unity;
 
     public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
     {
         public Button HostButton;
         public Button GuestButton;
 
-        public void Initialize(BasicExamGameInfo_Serializable gameInfo)
+        public void Initialize(BasicExamGameInfo_DTO gameInfo_DTO)
         {
-            if (gameInfo.ServerInfo.IsFull)
+            if (gameInfo_DTO.ServerInfo.IsFull)
             {
                 throw new Exception("Server is full");
             }
 
-            this.HostButton.gameObject.SetActive(gameInfo.CanConnectAsMainPlayer);
-            this.GuestButton.gameObject.SetActive(gameInfo.CanConnectAsAudience);
+            this.HostButton.gameObject.SetActive(gameInfo_DTO.CanConnectAsMainPlayer);
+            this.GuestButton.gameObject.SetActive(gameInfo_DTO.CanConnectAsAudience);
 
-            var serverInfo = gameInfo.ServerInfo;
+            var serverInfo = gameInfo_DTO.ServerInfo;
 
             if (!string.IsNullOrEmpty(serverInfo.ExternalIpAddress))
             {

@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
-
-    using Assets.Scripts.DTOs.KinveySerializableObj;
+    using UnityEngine;
+    using UnityEngine.UI;
+    using DTOs.KinveySerializableObj;
 
     using Debug = UnityEngine.Debug;
 
@@ -22,9 +20,9 @@ namespace Assets.Scripts.Controllers
         {
             var username = this.UsernameInputField.text;
             var password = this.PasswordInputField.text;
-            KinveyWrapper.Instance.LoginAsync(username, password, this.OnLoggedIn, Debug.LogException);
+            var kinveyWrapper = new KinveyWrapper();
+            kinveyWrapper.LoginAsync(username, password, this.OnLoggedIn, Debug.LogException);
         }
     }
 
 }
-

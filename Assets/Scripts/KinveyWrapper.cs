@@ -5,33 +5,15 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-
-    using Assets.Scripts.DTOs.KinveySerializableObj;
-    using Assets.Scripts.Extensions;
+    using DTOs.KinveySerializableObj;
+    using Extensions;
 
     using CielaSpike.Thread_Ninja;
 
     using Utils;
 
-    public class KinveyWrapper : MonoBehaviour
+    public class KinveyWrapper
     {
-        static KinveyWrapper instance;
-
-        public static KinveyWrapper Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    var obj = new GameObject();
-                    obj.name = "KinveyConnectorWrapper";
-                    instance = obj.AddComponent<KinveyWrapper>();
-                }
-
-                return instance;
-            }
-        }
-
         public bool IsLoggedIn
         {
             get
@@ -76,7 +58,8 @@ namespace Assets.Scripts
 
         IEnumerator LogoutCoroutine(Action onLogout, Action<Exception> onError)
         {
-            var url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey + "/_logout";
+            const string url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey + "/_logout";
+
             var requester = RequesterUtils.ConfigRequester(url, "POST", null, true);
             string requestResult = null;
             Exception exception = null;
@@ -88,6 +71,10 @@ namespace Assets.Scripts
             catch (Exception ex)
             {
                 exception = ex;
+            }
+            finally
+            {
+                RequesterUtils.RemoveSessionAuth();
             }
 
             if (exception != null)
@@ -139,6 +126,7 @@ namespace Assets.Scripts
         IEnumerator CreateEntityCoroutine(string tableName, string json, Action onCreated, Action<Exception> onError)
         {
             var url = RequesterUtils.KinveyUrl + "appdata/" + RequesterUtils.AppKey + "/" + tableName;
+
             var requester = RequesterUtils.ConfigRequester(url, "POST", json, true);
             string requestResult = null;
             Exception exception = null;
@@ -316,7 +304,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onRegistered, "onRegistered");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.RegisterCoroutine(username, password, onRegistered, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.RegisterCoroutine(username, password, onRegistered, onError));
         }
 
         public void LoginAsync(string username, string password, Action<_UserReceivedData> onLoggedIn, Action<Exception> onError)
@@ -326,7 +314,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onLoggedIn, "onLoggedIn");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.LoginCoroutine(username, password, onLoggedIn, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.LoginCoroutine(username, password, onLoggedIn, onError));
         }
 
         public void Logout(Action onLogout, Action<Exception> onError)
@@ -334,7 +322,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onLogout, "onLogout");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.LogoutCoroutine(onLogout, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.LogoutCoroutine(onLogout, onError));
         }
 
         public void CreateEntityAsync(string tableName, string json, Action onCreated, Action<Exception> onError)
@@ -344,7 +332,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onCreated, "onCreated");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.CreateEntityCoroutine(tableName, json, onCreated, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.CreateEntityCoroutine(tableName, json, onCreated, onError));
         }
 
         public void CreateEntityAsync<T>(string tableName, T entity, Action onCreated, Action<Exception> onError)
@@ -360,8 +348,8 @@ namespace Assets.Scripts
             ValidationUtils.ValidateStringNotNullOrEmpty(tableName, "tableName");
             ValidationUtils.ValidateObjectNotNull(onRetrieved, "onRetrieved");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
-        
-            this.StartCoroutineAsync(this.RetrieveEntityCoroutine<T>(tableName, id, onRetrieved, onError));
+
+            ThreadUtils.Instance.RunOnBackgroundThread(this.RetrieveEntityCoroutine<T>(tableName, id, onRetrieved, onError));
         }
 
         public void UpdateEntityAsync<T>(string tableName, string id, T entity, Action onSuccessfullyUpdated, Action<Exception> onError)
@@ -372,7 +360,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onSuccessfullyUpdated, "onSuccessfullyUpdated");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.UpdateEntityCoroutine<T>(tableName, id, entity, onSuccessfullyUpdated, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.UpdateEntityCoroutine<T>(tableName, id, entity, onSuccessfullyUpdated, onError));
         }
 
         public void DeleteEntityAsync(string tableName, string id, Action<_DeletedCount> onSuccessfullyDeleted, Action<Exception> onError)
@@ -381,7 +369,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onSuccessfullyDeleted, "onSuccessfullyDeleted");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.DeleteEntityCoroutine(tableName, id, onSuccessfullyDeleted, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.DeleteEntityCoroutine(tableName, id, onSuccessfullyDeleted, onError));
         }
 
         public void DoesUsernameExistsAsync(string username, Action<_UsersnameExistence> onSuccessfullyChecked, Action<Exception> onError)
@@ -390,9 +378,7 @@ namespace Assets.Scripts
             ValidationUtils.ValidateObjectNotNull(onSuccessfullyChecked, "onSuccessfullyChecked");
             ValidationUtils.ValidateObjectNotNull(onError, "onError");
 
-            this.StartCoroutineAsync(this.DoesUsernameExistsCoroutine(username, onSuccessfullyChecked, onError));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.DoesUsernameExistsCoroutine(username, onSuccessfullyChecked, onError));
         }
     }
-
 }
-

@@ -4,7 +4,7 @@
     using System;
 
     [Serializable]
-    public class BasicExamGameInfo_Serializable : CreatedGameInfo_Serializable
+    public class BasicExamGameInfo_DTO : CreatedGameInfo_DTO
     {
         public bool CanConnectAsMainPlayer;
         public bool CanConnectAsAudience;

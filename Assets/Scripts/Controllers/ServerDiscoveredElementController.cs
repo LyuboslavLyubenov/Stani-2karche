@@ -1,15 +1,13 @@
-﻿using System;
-
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Enums;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine.UI;
+
+    using DTOs;
+    using Enums;
+    using Localization;
+    using Utils.Unity;
 
     public class ServerDiscoveredElementController : ExtendedMonoBehaviour
     {
@@ -30,7 +28,7 @@ namespace Assets.Scripts.Controllers
             this.connectedClients = this.transform.Find("ConnectedClients").GetComponent<Text>();
         }
 
-        public void SetData(CreatedGameInfo_Serializable gameInfo)
+        public void SetData(CreatedGameInfo_DTO gameInfo)
         {
             this.category.text = this.TranslateGameType(gameInfo.GameType);
             this.creatorName.text = gameInfo.HostUsername;

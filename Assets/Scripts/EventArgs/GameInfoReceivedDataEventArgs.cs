@@ -1,11 +1,10 @@
-﻿using System;
-
-using UnityEngine;
-
-namespace Assets.Scripts.EventArgs
+﻿namespace Assets.Scripts.EventArgs
 {
+    using System;
 
-    using Assets.Scripts.DTOs;
+    using UnityEngine;
+
+    using DTOs;
 
     using EventArgs = System.EventArgs;
 
@@ -19,10 +18,10 @@ namespace Assets.Scripts.EventArgs
             }
 
             this.JSON = json;
-            this.GameInfo = JsonUtility.FromJson<CreatedGameInfo_Serializable>(json);
+            this.GameInfo = JsonUtility.FromJson<CreatedGameInfo_DTO>(json);
         }
 
-        public CreatedGameInfo_Serializable GameInfo
+        public CreatedGameInfo_DTO GameInfo
         {
             get;
             private set;

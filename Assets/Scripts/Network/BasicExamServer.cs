@@ -1,21 +1,28 @@
-﻿using System;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using System;
+
+    using UnityEngine;
+
+    using DTOs;
+
     using Commands;
     using Commands.Client;
     using Commands.Jokers;
     using Commands.Server;
+
     using Controllers;
     using EventArgs;
     using Interfaces;
+
     using Jokers;
     using Jokers.AskPlayerQuestion;
     using Jokers.AudienceAnswerPoll;
+
     using Statistics;
+
     using Utils;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;

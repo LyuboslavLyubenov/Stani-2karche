@@ -4,7 +4,7 @@ namespace Assets.Scripts.Network
 {
 
     [Serializable]
-    public class ServerInfo_Serializable
+    public class ServerInfo_DTO
     {
         public string ExternalIpAddress;
         public string LocalIPAddress;

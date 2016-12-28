@@ -17,7 +17,7 @@ namespace Assets.Scripts.Controllers
         void Start()
         {
             this.IPText.text = NetworkUtils.GetLocalIP(); 
-            this.StartCoroutine(NetworkUtils.GetExternalIP(this.OnFoundIP, this.OnNetworkError));
+            NetworkUtils.GetExternalIP(this.OnFoundIP, this.OnNetworkError);
         }
 
         void OnFoundIP(string ip)
