@@ -42,7 +42,7 @@ namespace Assets.Scripts.Controllers
 
         void StartLoadingExternalServersIfConnectedToInternet()
         {
-            NetworkUtils.CheckInternetConnectionPromise((isConnectedToInternet) =>
+            NetworkUtils.CheckInternetConnection((isConnectedToInternet) =>
                 {
                     if (!isConnectedToInternet || !KinveyWrapper.Instance.IsLoggedIn)
                     {

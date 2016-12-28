@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils
 {
+    using System;
+    using System.IO;
+    using System.Net;
+    using System.Net.Security;
+    using System.Security.Cryptography.X509Certificates;
 
     public class RequesterUtils
     {

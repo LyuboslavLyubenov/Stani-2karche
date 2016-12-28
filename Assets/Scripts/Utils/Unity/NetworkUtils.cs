@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections;
-using System.Net;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using System;
+    using System.Collections;
+    using System.Net;
+
+    using UnityEngine;
 
     public class NetworkUtils
     {
-        /// <summary>
-        /// Usage 
-        /// StartCoroutine(
-        ///     CheckInternetConnectionPromise(
-        ///         (isCompleted) => {
-        /// 
-        ///         }));
-        /// </summary>
-        public static IEnumerator CheckInternetConnectionPromise(Action<bool> onCheckCompleted)
+        public delegate void OnCheckCompleted(bool isConnectedToInternet);
+
+        static IEnumerator CheckInternetConnectionCoroutine(OnCheckCompleted onCheckCompleted)
         {
             WWW www = new WWW("http://icanhazip.com/");
             yield return www;
@@ -26,7 +20,7 @@ namespace Assets.Scripts.Utils
             onCheckCompleted(haveConnection);
         }
 
-        public static IEnumerator GetExternalIP(Action<string> onFound, Action<string> onNetworkError = null)
+        static IEnumerator GetExternalIPCoroutine(Action<string> onFound, Action<string> onNetworkError = null)
         {
             WWW www = new WWW("http://icanhazip.com/");
             yield return www;
@@ -42,6 +36,16 @@ namespace Assets.Scripts.Utils
             {
                 onFound(www.text);
             }
+        }
+
+        public static void GetExternalIP(Action<string> onFound, Action<string> onNetworkError = null)
+        {
+            ThreadUtils.Instance.RunOnBackgroundThread(GetExternalIPCoroutine(onFound, onNetworkError));
+        }
+
+        public static void CheckInternetConnection(OnCheckCompleted onCheckCompleted)
+        {
+            ThreadUtils.Instance.RunOnBackgroundThread(CheckInternetConnectionCoroutine(onCheckCompleted));
         }
 
         public static string GetLocalIP()
