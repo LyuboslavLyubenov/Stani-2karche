@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace Assets.Scripts.EventArgs
 {
 
+    using Assets.Scripts.DTOs;
+
     using EventArgs = System.EventArgs;
 
     public class LeaderboardDataEventArgs : EventArgs

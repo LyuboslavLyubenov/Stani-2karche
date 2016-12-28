@@ -13,6 +13,7 @@ namespace Assets.Scripts.Network
     using Assets.Scripts.Exceptions;
     using Assets.Scripts.Notifications;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;

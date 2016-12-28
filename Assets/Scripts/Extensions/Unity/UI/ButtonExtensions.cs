@@ -1,8 +1,8 @@
-﻿using UnityEngine.EventSystems;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Extensions.Unity.UI
 {
+
+    using UnityEngine.EventSystems;
+    using UnityEngine.UI;
 
     public static class ButtonExtensions
     {

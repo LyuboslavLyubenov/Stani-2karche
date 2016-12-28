@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity.UI
 {
 
     using Assets.Tests;

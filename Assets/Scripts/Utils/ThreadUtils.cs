@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
-    using Assets.CielaSpike.Thread_Ninja;
+    using UnityEngine;
+    using CielaSpike.Thread_Ninja;
 
     public class ThreadUtils : MonoBehaviour
     {

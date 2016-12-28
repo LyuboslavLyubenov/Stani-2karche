@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using UnityEngine;
 
     public abstract class ExtendedMonoBehaviour : MonoBehaviour
     {

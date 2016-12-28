@@ -7,6 +7,7 @@ using UnityEngine;
 namespace Assets.Scripts.Commands.Server
 {
 
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
 

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets
+﻿namespace Assets.Scripts.AnimationControllers
 {
+
+    using UnityEngine;
 
     public class DestroyOnAnimationEnd : StateMachineBehaviour
     {

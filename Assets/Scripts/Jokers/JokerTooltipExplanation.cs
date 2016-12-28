@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-
-namespace Assets
+﻿namespace Assets.Scripts.Jokers
 {
 
     using Assets.Scripts.Localization;
-    using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity.UI;
+
+    using UnityEngine;
 
     public class JokerTooltipExplanation : MonoBehaviour
     {

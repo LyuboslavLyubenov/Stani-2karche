@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity.UI
 {
+
+    using UnityEngine;
 
     public class DisableButtonIfAndroid : MonoBehaviour
     {

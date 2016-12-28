@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using System.Collections.Generic;
+
+    using UnityEngine;
 
     public class ObjectsPool : MonoBehaviour
     {

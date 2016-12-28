@@ -6,8 +6,11 @@ using UnityEngine.SceneManagement;
 namespace Assets.Scripts
 {
 
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Enums;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class GameInfoFactory : MonoBehaviour
     {

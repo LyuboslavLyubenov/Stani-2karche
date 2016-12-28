@@ -7,6 +7,8 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Controllers
 {
 
+    using Assets.Scripts.DTOs;
+
     public class LeaderboardUIController : MonoBehaviour
     {
         const int SpaceBetweenScore = 10;

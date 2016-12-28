@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts
+﻿namespace Assets.Scripts.Utils
 {
 
     public class ValueWrapper<T>

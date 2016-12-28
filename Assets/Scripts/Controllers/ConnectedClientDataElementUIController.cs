@@ -6,6 +6,8 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Controllers
 {
 
+    using Assets.Scripts.DTOs;
+
     public class ConnectedClientDataElementUIController : MonoBehaviour
     {
         Text connectionIdText;

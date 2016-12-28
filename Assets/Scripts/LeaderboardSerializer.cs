@@ -11,6 +11,7 @@ namespace Assets.Scripts
 {
 
     using Assets.CielaSpike.Thread_Ninja;
+    using Assets.Scripts.DTOs;
 
     public class LeaderboardSerializer : MonoBehaviour
     {

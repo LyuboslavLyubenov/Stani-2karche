@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace Assets.Scripts.Commands.Jokers
 {
 
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Jokers;
     using Assets.Scripts.Jokers.AudienceAnswerPoll;

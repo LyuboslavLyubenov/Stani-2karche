@@ -2,7 +2,9 @@
 {
 
     using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.GameData;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class AvailableCategoriesCommandsInitializator : ExtendedMonoBehaviour
     {

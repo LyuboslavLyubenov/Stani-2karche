@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using System.Net;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Extensions
 {
+
+    using System.Linq;
+    using System.Net;
 
     public static class IPAddressExtensions
     {

@@ -3,6 +3,8 @@ using System;
 namespace Assets.Scripts.Network
 {
 
+    using Assets.Scripts.DTOs;
+
     using EventArgs = System.EventArgs;
 
     public class ConnectedClientDataEventArgs : EventArgs

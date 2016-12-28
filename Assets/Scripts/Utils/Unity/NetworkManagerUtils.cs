@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-
-using UnityEngine;
-using UnityEngine.Networking;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
 
+    using System;
+    using System.Collections;
+
     using Assets.Scripts.Network;
+
+    using UnityEngine;
+    using UnityEngine.Networking;
 
     public class NetworkManagerUtils : MonoBehaviour
     {

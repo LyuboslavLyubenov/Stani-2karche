@@ -11,10 +11,12 @@ namespace Assets.Scripts.Network
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Exceptions;
     using Assets.Scripts.Localization;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     using Debug = UnityEngine.Debug;
 

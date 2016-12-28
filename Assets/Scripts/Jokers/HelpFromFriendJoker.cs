@@ -6,16 +6,21 @@ using UnityEngine;
 namespace Assets.Scripts.Jokers
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers.AskPlayerQuestion;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils;
+    using Commands;
+    using Commands.Client;
+    using Controllers;
+    using EventArgs;
+    using Interfaces;
+    using AskPlayerQuestion;
+
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Exceptions;
+    using Assets.Scripts.Utils.Unity;
+
+    using Localization;
+    using Network;
+    using Notifications;
+    using Utils;
 
     using EventArgs = System.EventArgs;
 

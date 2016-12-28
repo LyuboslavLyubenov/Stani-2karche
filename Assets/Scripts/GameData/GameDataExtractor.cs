@@ -1,4 +1,4 @@
-namespace Assets.Scripts
+namespace Assets.Scripts.GameData
 {
 
     using System;
@@ -9,10 +9,11 @@ namespace Assets.Scripts
     using System.Reflection;
 
     using Assets.CielaSpike.Thread_Ninja;
-
-    using Interfaces;
-    using Statistics;
-    using Utils;
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Exceptions;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Statistics;
+    using Assets.Scripts.Utils;
 
     using CSharpJExcel.Jxl;
 
@@ -86,7 +87,7 @@ namespace Assets.Scripts
 
             yield return Ninja.JumpToUnity;
             
-            Loading = false;
+            this.Loading = false;
 
             if (exception == null)
             {

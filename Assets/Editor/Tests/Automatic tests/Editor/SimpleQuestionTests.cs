@@ -6,6 +6,7 @@ namespace Assets.Editor.Tests.Automatic_tests.Editor
 {
 
     using Assets.Scripts;
+    using Assets.Scripts.DTOs;
 
     public class SimpleQuestionTests
     {

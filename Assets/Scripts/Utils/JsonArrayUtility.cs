@@ -1,19 +1,17 @@
-using System;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Utils
 {
+    using System;
+    using UnityEngine;
 
-    public static class JsonHelper
+    public static class JsonArrayUtility
     {
-        public static T[] FromJson<T>(string json)
+        public static T[] ArrayFromJson<T>(string json)
         {
             var wrapper = JsonUtility.FromJson < _ArrayWrapper<T>>(json);
             return wrapper.Items;
         }
 
-        public static string ToJson<T>(T[] array)
+        public static string ArrayToJson<T>(T[] array)
         {
             var wrapper = new _ArrayWrapper<T>();
             wrapper.Items = array;

@@ -11,6 +11,7 @@ namespace Assets.Scripts.Controllers
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
     {

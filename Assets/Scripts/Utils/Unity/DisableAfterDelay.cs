@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
 
+    using System;
+    using System.Collections;
+    using System.Linq;
+
     using Assets.Scripts.EventArgs;
+
+    using UnityEngine;
 
     using EventArgs = System.EventArgs;
 

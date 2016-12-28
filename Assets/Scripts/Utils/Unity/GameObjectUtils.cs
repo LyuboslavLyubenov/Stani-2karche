@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using UnityEngine;
 
     public class GameObjectUtils : MonoBehaviour
     {

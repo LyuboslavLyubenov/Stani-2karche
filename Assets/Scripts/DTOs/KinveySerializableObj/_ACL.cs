@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.KinveySerializableObj
+﻿namespace Assets.Scripts.DTOs.KinveySerializableObj
 {
+
+    using System;
 
     [Serializable]
     public class _ACL

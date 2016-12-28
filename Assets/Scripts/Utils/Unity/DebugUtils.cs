@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using System;
 
     using Debug = UnityEngine.Debug;
 

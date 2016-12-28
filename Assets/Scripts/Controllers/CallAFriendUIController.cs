@@ -8,8 +8,10 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Controllers
 {
 
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     /// <summary>
     /// Call A friend user interface controller.

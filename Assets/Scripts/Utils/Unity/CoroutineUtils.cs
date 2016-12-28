@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using System;
+    using System.Collections;
+
+    using UnityEngine;
 
     public class CoroutineUtils
     {

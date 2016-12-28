@@ -5,8 +5,11 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Controllers
 {
 
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Enums;
     using Assets.Scripts.Localization;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class ServerDiscoveredElementController : ExtendedMonoBehaviour
     {

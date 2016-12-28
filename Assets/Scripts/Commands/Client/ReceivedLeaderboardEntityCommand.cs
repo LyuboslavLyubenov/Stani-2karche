@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Assets.Scripts.Commands.Client
 {
 
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
 
     public class ReceivedLeaderboardEntityCommand : INetworkManagerCommand

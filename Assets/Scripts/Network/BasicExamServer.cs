@@ -347,13 +347,13 @@ namespace Assets.Scripts.Network
 
         public void EndGame()
         {
-            this.IsGameOver = true;
-            this.OnGameOver(this, EventArgs.Empty);
-
             this.SavePlayerScoreToLeaderboard();
             this.SendEndGameInfo();
             this.ExportStatistics();
             this.Cleanup();
+
+            this.IsGameOver = true;
+            this.OnGameOver(this, EventArgs.Empty);
         }
     }
 }

@@ -9,6 +9,8 @@
     using CSharpJExcel.Jxl.Write;
     using System.Collections.Generic;
 
+    using Assets.Scripts.GameData;
+
     using Interfaces;
     using Utils;
 

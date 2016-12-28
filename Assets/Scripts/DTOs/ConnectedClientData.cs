@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.DTOs
 {
+
+    using System;
 
     public class ConnectedClientData
     {

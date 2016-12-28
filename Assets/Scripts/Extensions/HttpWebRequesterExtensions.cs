@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Net;
-
-namespace Assets.Scripts.Utils
+namespace Assets.Scripts.Extensions
 {
+
+    using System;
+    using System.IO;
+    using System.Net;
 
     public static class HttpWebRequesterExtensions
     {

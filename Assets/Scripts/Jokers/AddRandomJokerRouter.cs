@@ -6,9 +6,11 @@ namespace Assets.Scripts.Jokers
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Jokers.Add;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
@@ -31,7 +33,7 @@ namespace Assets.Scripts.Jokers
             }
 
             var jokersTypeNames = jokersToSelectFrom.Select(j => new JokerType_DTO() { JokerType = j.Name }).ToArray();
-            var jokersTypeNamesJSON = JsonHelper.ToJson<JokerType_DTO>(jokersTypeNames);
+            var jokersTypeNamesJSON = JsonArrayUtility.ArrayToJson<JokerType_DTO>(jokersTypeNames);
             var selectedJokerIndex = UnityEngine.Random.Range(0, jokersTypeNames.Length);
             var selectedJoker = jokersToSelectFrom[selectedJokerIndex];
 

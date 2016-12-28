@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Assets.Scripts.GameData;
+
     using EventArgs;
     using Interfaces;
     using Localization;

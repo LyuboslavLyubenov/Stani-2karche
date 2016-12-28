@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     public class LoadScene : MonoBehaviour
     {

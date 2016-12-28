@@ -1,12 +1,12 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.Networking;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
 
+    using System;
+
     using Assets.Scripts.Localization;
+
+    using UnityEngine;
+    using UnityEngine.Networking;
 
     public class NetworkErrorUtils
     {

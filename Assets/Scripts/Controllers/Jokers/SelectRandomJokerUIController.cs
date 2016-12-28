@@ -11,6 +11,7 @@ namespace Assets.Scripts.Controllers.Jokers
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class SelectRandomJokerUIController : ExtendedMonoBehaviour
     {

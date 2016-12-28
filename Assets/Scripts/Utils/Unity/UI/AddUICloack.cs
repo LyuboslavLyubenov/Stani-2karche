@@ -1,8 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity.UI
 {
+
+    using UnityEngine;
+    using UnityEngine.UI;
 
     public class AddUICloack : MonoBehaviour
     {

@@ -1,6 +1,8 @@
 namespace Assets.Scripts.Interfaces
 {
 
+    using Assets.Scripts.DTOs;
+
     public interface ISimpleQuestion
     {
         string Text

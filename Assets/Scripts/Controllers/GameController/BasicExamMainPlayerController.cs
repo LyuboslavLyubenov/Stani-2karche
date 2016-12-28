@@ -1,26 +1,25 @@
-﻿using System.Collections;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers.GameController
 {
 
     using System;
+    using System.Collections;
 
-    using Commands;
-    using Commands.Client;
-    using Commands.Jokers.Add;
-    using Commands.Server;
-    using Jokers;
-    using DialogSwitchers;
-    using EventArgs;
-    using Interfaces;
-    using Scripts.Jokers;
-    using Localization;
-    using Network;
-    using Notifications;
-    using Utils;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers.Add;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Controllers.Jokers;
+    using Assets.Scripts.DialogSwitchers;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Jokers;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
+    using Assets.Scripts.Utils.Unity;
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;

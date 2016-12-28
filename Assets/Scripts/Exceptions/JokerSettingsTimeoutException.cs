@@ -1,8 +1,13 @@
 using System;
 
-public class JokerSettingsTimeoutException : TimeoutException
+namespace Assets.Scripts.Exceptions
 {
-    public JokerSettingsTimeoutException()
-    {       
+
+    public class JokerSettingsTimeoutException : TimeoutException
+    {
+        public JokerSettingsTimeoutException()
+        {       
+        }
     }
+
 }

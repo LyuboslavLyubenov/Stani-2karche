@@ -1,8 +1,9 @@
-﻿using System;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.DTOs
 {
 
+    using System;
+
+    using Assets.Scripts.Enums;
     using Assets.Scripts.Network;
 
     [Serializable]

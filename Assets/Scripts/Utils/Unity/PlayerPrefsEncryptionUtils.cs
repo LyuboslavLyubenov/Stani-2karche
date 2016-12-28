@@ -1,12 +1,12 @@
-﻿using System;
-using System.Security.Cryptography;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Utils.Unity
 {
 
+    using System;
+    using System.Security.Cryptography;
+
     using Assets.Scripts.SecuritySettings;
+
+    using UnityEngine;
 
     public class PlayerPrefsEncryptionUtils
     {

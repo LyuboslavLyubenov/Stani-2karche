@@ -5,6 +5,7 @@ namespace Assets.Scripts.Network
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class DeviceIndetificatorSender : ExtendedMonoBehaviour
     {

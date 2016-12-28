@@ -7,11 +7,13 @@ using UnityEngine;
 namespace Assets.Scripts.Jokers
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Utils;
+    using Assets.Scripts.Exceptions;
+
+    using Commands;
+    using Commands.Jokers;
+    using Interfaces;
+    using Network;
+    using Utils;
 
     using EventArgs = System.EventArgs;
 

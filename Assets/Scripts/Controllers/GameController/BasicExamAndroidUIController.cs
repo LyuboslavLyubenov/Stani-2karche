@@ -1,17 +1,17 @@
-﻿using UnityEngine;
-
-//Mediator
-namespace Assets.Scripts.Controllers
+﻿//Mediator
+namespace Assets.Scripts.Controllers.GameController
 {
 
-    using Commands;
-    using Commands.Client;
-    using EventArgs;
-    using Exceptions;
-    using Interfaces;
-    using Network;
-    using Notifications;
-    using Utils;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Exceptions;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
+    using Assets.Scripts.Utils.Unity;
+
+    using UnityEngine;
 
     using EventArgs = System.EventArgs;
 

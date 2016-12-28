@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Extensions
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public static class DictionaryExtensions
     {

@@ -7,6 +7,7 @@ namespace Assets.Scripts.Jokers
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     using EventArgs = System.EventArgs;
 

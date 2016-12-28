@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Assets.Scripts.Commands.GameData
 {
 
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
 

@@ -4,6 +4,7 @@ namespace Assets.Scripts.Controllers
 {
 
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class DialogController : ExtendedMonoBehaviour
     {

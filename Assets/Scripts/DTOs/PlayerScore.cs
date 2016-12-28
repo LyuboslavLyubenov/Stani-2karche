@@ -1,11 +1,7 @@
-﻿namespace Assets.Scripts
+﻿namespace Assets.Scripts.DTOs
 {
 
     using System;
-    using System.Collections;
-    using System.Reflection;
-
-    using UnityEngine;
 
     public class PlayerScore
     {

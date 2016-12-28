@@ -4,6 +4,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
 {
 
     using Assets.Scripts.Controllers.Jokers;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils;
@@ -26,7 +27,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
         public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
         {
             var jokersTypesJSON = commandsOptionsValues["JokersTypeNamesJSON"];
-            var jokersTypeNames = JsonHelper.FromJson<JokerType_DTO>(jokersTypesJSON); 
+            var jokersTypeNames = JsonArrayUtility.ArrayFromJson<JokerType_DTO>(jokersTypesJSON); 
             var jokers = new Type[jokersTypeNames.Length];
 
             for (int i = 0; i < jokersTypeNames.Length; i++)

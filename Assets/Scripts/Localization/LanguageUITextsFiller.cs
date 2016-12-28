@@ -5,6 +5,7 @@ namespace Assets.Scripts.Localization
 {
 
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     public class LanguageUITextsFiller : ExtendedMonoBehaviour
     {

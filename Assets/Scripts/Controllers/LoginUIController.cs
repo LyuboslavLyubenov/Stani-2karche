@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace Assets.Scripts.Controllers
 {
 
-    using Assets.Scripts.KinveySerializableObj;
+    using Assets.Scripts.DTOs.KinveySerializableObj;
 
     using Debug = UnityEngine.Debug;
 

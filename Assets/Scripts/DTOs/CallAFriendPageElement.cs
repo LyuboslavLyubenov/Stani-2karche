@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.DTOs
 {
+
+    using System;
 
     /// <summary>
     /// Used for individual cell of the phone (Call A friend joker) 

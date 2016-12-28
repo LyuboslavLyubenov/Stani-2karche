@@ -7,7 +7,9 @@ namespace Assets.Scripts.Network
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Controllers;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     using EventArgs = System.EventArgs;
 

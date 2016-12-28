@@ -4,9 +4,8 @@ using System.Linq;
 
 namespace Assets.Scripts.Commands.GameData
 {
-
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
+    using Interfaces;
+    using Network;
 
     public class GameDataGetQuestionRouterCommand : INetworkManagerCommand
     {

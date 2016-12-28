@@ -6,9 +6,12 @@ using UnityEngine;
 namespace Assets.Scripts
 {
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.KinveySerializableObj;
-    using Assets.Scripts.Utils;
+    using Assets.Scripts.DTOs.KinveySerializableObj;
+    using Assets.Scripts.Extensions;
+
+    using CielaSpike.Thread_Ninja;
+
+    using Utils;
 
     public class KinveyWrapper : MonoBehaviour
     {
@@ -199,8 +202,8 @@ namespace Assets.Scripts
             }
 
             var json = "{\"Items\":" + requestResult + "}";
-            var objs = JsonHelper.FromJson<T>(json);
-            var kinveyDetails = JsonHelper.FromJson<_KinveyEntityDetails>(json);
+            var objs = JsonArrayUtility.ArrayFromJson<T>(json);
+            var kinveyDetails = JsonArrayUtility.ArrayFromJson<_KinveyEntityDetails>(json);
             var entities = new _KinveyEntity<T>[objs.Length];
 
             for (int i = 0; i < objs.Length; i++)
