@@ -4,10 +4,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.Network
 {
-
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.GameData;
-    using Assets.Scripts.EventArgs;
+    using Commands;
+    using Commands.GameData;
+    using EventArgs;
 
     using EventArgs = System.EventArgs;
 
@@ -21,7 +20,7 @@ namespace Assets.Scripts.Network
             {
             };
     
-        public LocalGameData LocalGameData;
+        public GameDataIterator LocalGameData;
         public ServerNetworkManager NetworkManager;
 
         void Start()
@@ -30,23 +29,19 @@ namespace Assets.Scripts.Network
             this.LocalGameData.OnMarkIncrease += this.OnMarkIncrease;
             this.LocalGameData.OnLoaded += this.OnGameDataLoaded;
 
-            var getCurrentQuestionCommand = new ReceivedGetCurrentQuestionCommand(this.LocalGameData, this.NetworkManager);
-            var getRandomQuestionCommand = new ReceivedGetRandomQuestionCommand(this.LocalGameData, this.NetworkManager);
-            var getNextQuestionCommand = new ReceivedGetNextQuestionCommand(this.LocalGameData, this.NetworkManager);
+            var getCurrentQuestionCommand = new GetCurrentQuestionCommand(this.LocalGameData, this.NetworkManager);
+            var getNextQuestionCommand = new GetNextQuestionCommand(this.LocalGameData, this.NetworkManager);
                 
             getCurrentQuestionCommand.OnBeforeSend += this.OnBeforeSentToClient;
-            getRandomQuestionCommand.OnBeforeSend += this.OnBeforeSentToClient;
             getNextQuestionCommand.OnBeforeSend += this.OnBeforeSentToClient;
 
             getCurrentQuestionCommand.OnSentQuestion += this.OnSentQuestionToClient;
-            getRandomQuestionCommand.OnSentQuestion += this.OnSentQuestionToClient;
             getNextQuestionCommand.OnSentQuestion += this.OnSentQuestionToClient;
 
             var commandsManager = this.NetworkManager.CommandsManager;
 
             commandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(this.NetworkManager));
             commandsManager.AddCommand("GameDataGetCurrentQuestion", getCurrentQuestionCommand);
-            commandsManager.AddCommand("GameDataGetRandomQuestion", getRandomQuestionCommand);
             commandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
         }
 

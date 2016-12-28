@@ -45,7 +45,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             };
     
         public ServerNetworkManager NetworkManager;
-        public LocalGameData LocalGameData;
+        public GameDataIterator LocalGameData;
    
         int timeToAnswerInSeconds;
         int senderConnectionId;
@@ -66,7 +66,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         {
             this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
 
-            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerSelectedAnswerCommand(this.OnReceivedVote));
+            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
         }
 
         void UpdateTimer()

@@ -19,7 +19,7 @@ namespace Assets.Scripts.Statistics
         public ServerNetworkManager NetworkManager;
         public BasicExamServer Server;
         public GameDataSender Sender;
-        public LocalGameData GameData;
+        public GameDataIterator GameData;
 
         Dictionary<ISimpleQuestion, int> questionSpentTime = new Dictionary<ISimpleQuestion, int>();
         Dictionary<ISimpleQuestion, List<Type>> questionsUsedJokers = new Dictionary<ISimpleQuestion, List<Type>>();
@@ -98,7 +98,7 @@ namespace Assets.Scripts.Statistics
 
         void Start()
         {
-            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ReceivedServerSelectedAnswerCommand(this.OnReceivedAnswer));
+            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedAnswer));
 
             var jokersData = this.Server.MainPlayerData.JokersData;
             jokersData.OnUsedJoker += this.OnUsedJoker;
@@ -163,15 +163,16 @@ namespace Assets.Scripts.Statistics
             this.SetCurrentQuestion();
         }
 
+        void OnLoadedCurrentQuestion(ISimpleQuestion question)
+        {
+            this.lastQuestion = question;
+        }
+        
         void SetCurrentQuestion()
         {
             this.GameData.GetCurrentQuestion(this.OnLoadedCurrentQuestion);
         }
 
-        void OnLoadedCurrentQuestion(ISimpleQuestion question)
-        {
-            this.lastQuestion = question;
-        }
     }
 
 }

@@ -1,40 +1,19 @@
 ﻿namespace Assets.Scripts.Network
 {
-
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.GameData;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Utils;
+    using Commands;
+    using Commands.GameData;
+    using EventArgs;
+    using Exceptions;
+    using Interfaces;
+    using Utils;
 
     using UnityEngine;
 
-    public class RemoteGameData : IGameData
+    public class RemoteGameDataIterator : MonoBehaviour, IGameDataIterator
     {
-        public EventHandler OnLoaded
-        {
-            get;
-            set;
-        }
-
-        public EventHandler<MarkEventArgs> OnMarkIncrease
-        {
-            get;
-            set;
-        }
-
-        public bool Loaded
-        {
-            get
-            {
-                return this.loaded; 
-            }
-        }
-
         public int RemainingQuestionsToNextMark
         {
             get;
@@ -59,17 +38,17 @@
             private set;
         }
 
+        public event EventHandler OnLoaded;
+        public event EventHandler<MarkEventArgs> OnMarkIncrease;
+
         ClientNetworkManager networkManager;
 
-        bool loaded = false;
-
-        Stack<PendingQuestionRequestData> currentQuestionRequests = new Stack<PendingQuestionRequestData>();
-        Stack<PendingQuestionRequestData> nextQuestionRequests = new Stack<PendingQuestionRequestData>();
-        Stack<PendingQuestionRequestData> randomQuestionRequests = new Stack<PendingQuestionRequestData>();
+        readonly Stack<PendingQuestionRequest> currentQuestionRequests = new Stack<PendingQuestionRequest>();
+        readonly Stack<PendingQuestionRequest> nextQuestionRequests = new Stack<PendingQuestionRequest>();
 
         ISimpleQuestion currentQuestionCache = null;
 
-        public RemoteGameData(ClientNetworkManager networkManager)
+        public RemoteGameDataIterator(ClientNetworkManager networkManager)
         {
             this.networkManager = networkManager;
             this.InitializeCommands();
@@ -89,7 +68,7 @@
 
             if (this.OnLoaded != null)
             {
-                this.OnLoaded(this, EventArgs.Empty);    
+                this.OnLoaded(this, EventArgs.Empty);
             }
         }
 
@@ -102,28 +81,19 @@
             }
         }
 
-        void LoadDataFromServer()
-        {
-            this.GetCurrentQuestion((question) =>
-                {
-                    this.currentQuestionCache = question;
-                }, 
-                Debug.LogException);
-        }
-
         void OnReceivedMark(int mark)
         {
             this.CurrentMark = mark;
 
             if (this.OnMarkIncrease != null)
             {
-                this.OnMarkIncrease(this, new MarkEventArgs(mark));    
+                this.OnMarkIncrease(this, new MarkEventArgs(mark));
             }
         }
 
         void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
         {
-            PendingQuestionRequestData questionRequest = null;
+            PendingQuestionRequest questionRequest = null;
 
             switch (requestType)
             {
@@ -133,9 +103,6 @@
                 case QuestionRequestType.Next:
                     questionRequest = this.nextQuestionRequests.PopOrDefault();
                     break;
-                case QuestionRequestType.Random:
-                    questionRequest = this.randomQuestionRequests.PopOrDefault();
-                    break;
             }
 
             if (questionRequest == null)
@@ -143,12 +110,8 @@
                 Debug.LogWarning("Received question from server but cant find request source.");
                 return;
             }
-          
-            if (requestType != QuestionRequestType.Random)
-            {
-                this.currentQuestionCache = question;
-            }
-
+            
+            this.currentQuestionCache = question;
             this.RemainingQuestionsToNextMark = remainingQuestionsToNextMark;
             this.SecondsForAnswerQuestion = secondsForAnswerQuestion;
 
@@ -175,18 +138,16 @@
             {
                 this.SendGetQuestionRequest(QuestionRequestType.Current);
 
-                var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                var requestData = new PendingQuestionRequest((question) => onSuccessfullyLoaded(question), (error) => onError(error));
                 this.currentQuestionRequests.Push(requestData);
             }
             catch (Exception ex)
             {
+                Debug.LogException(ex);
+
                 if (onError != null)
                 {
                     onError(ex);
-                }
-                else
-                {
-                    throw;
                 }
             }
         }
@@ -197,40 +158,16 @@
             {
                 this.SendGetQuestionRequest(QuestionRequestType.Next);
 
-                var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                var requestData = new PendingQuestionRequest((question) => onSuccessfullyLoaded(question), (error) => onError(error));
                 this.nextQuestionRequests.Push(requestData);
             }
             catch (Exception ex)
             {
+                Debug.LogException(ex);
+
                 if (onError != null)
                 {
                     onError(ex);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        public void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
-        {
-            try
-            {
-                this.SendGetQuestionRequest(QuestionRequestType.Random);
-
-                var requestData = new PendingQuestionRequestData((question) => onSuccessfullyLoaded(question), (error) => onError(error));
-                this.randomQuestionRequests.Push(requestData);
-            }
-            catch (Exception ex)
-            {
-                if (onError != null)
-                {
-                    onError(ex);
-                }
-                else
-                {
-                    throw;
                 }
             }
         }
@@ -239,8 +176,6 @@
     public enum QuestionRequestType
     {
         Current,
-        Next,
-        Random
+        Next
     }
-
 }

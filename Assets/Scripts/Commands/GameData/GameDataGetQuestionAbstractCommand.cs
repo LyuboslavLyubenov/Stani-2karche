@@ -26,13 +26,13 @@ namespace Assets.Scripts.Commands.GameData
             private set;
         }
 
-        protected LocalGameData GameData
+        protected GameDataIterator GameData
         {
             get;
             private set;
         }
 
-        protected GameDataGetQuestionAbstractCommand(LocalGameData gameData, ServerNetworkManager networkManager)
+        protected GameDataGetQuestionAbstractCommand(GameDataIterator gameData, ServerNetworkManager networkManager)
         {
             if (gameData == null)
             {
@@ -55,10 +55,12 @@ namespace Assets.Scripts.Commands.GameData
             var questionJSON = JsonUtility.ToJson(question.Serialize());
             var commandData = new NetworkCommandData("GameDataQuestion");
             var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);
+
             commandData.AddOption("QuestionJSON", questionJSON);
             commandData.AddOption("RemainingQuestionsToNextMark", this.GameData.RemainingQuestionsToNextMark.ToString());
             commandData.AddOption("SecondsForAnswerQuestion", this.GameData.SecondsForAnswerQuestion.ToString());
             commandData.AddOption("RequestType", requestTypeStr);
+
             this.NetworkManager.SendClientCommand(connectionId, commandData);
             this.OnSentQuestion(this, new ServerSentQuestionEventArgs(question, requestType, connectionId));
         }

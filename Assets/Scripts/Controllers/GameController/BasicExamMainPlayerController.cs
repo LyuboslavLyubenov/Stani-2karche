@@ -6,19 +6,21 @@ using UnityEngine.SceneManagement;
 namespace Assets.Scripts.Controllers
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers.Add;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers.Jokers;
-    using Assets.Scripts.DialogSwitchers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils;
+    using System;
+
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers.Add;
+    using Commands.Server;
+    using Jokers;
+    using DialogSwitchers;
+    using EventArgs;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Localization;
+    using Network;
+    using Notifications;
+    using Utils;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
@@ -54,15 +56,19 @@ namespace Assets.Scripts.Controllers
 
         public SelectRandomJokerUIController SelectRandomJokerUIController;
 
-        IGameData gameData;
+        public RemoteGameDataIterator RemoteGameDataIterator;
+
+        //IGameData gameData;
 
         UnableToConnectUIController unableToConnectUIController;
 
         void Start()
         {
+            throw new NotImplementedException();
+
             PlayerPrefs.DeleteKey("LoadedGameData");
 
-            this.gameData = new RemoteGameData(this.NetworkManager);
+            //this.gameData = new RemoteGameData(this.NetworkManager);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
@@ -74,7 +80,7 @@ namespace Assets.Scripts.Controllers
             {
                 PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
                 //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-                this.CoroutineUtils.WaitForSeconds(9, this.ConnectToServer);
+                this.CoroutineUtils.WaitForSeconds(9f, this.ConnectToServer);
             }
             else
             {
@@ -112,17 +118,17 @@ namespace Assets.Scripts.Controllers
             this.NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI));
             this.NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
             this.NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI, this.NotificationService));
-            this.NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.gameData, this.QuestionUIController));
+            this.NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.QuestionUIController));
             this.NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, this.NetworkManager));
         }
-
+        
         void OnLoadedGameData(object sender, EventArgs args)
         {
             this.LoadingUI.SetActive(false);
             this.ChooseCategoryUIController.gameObject.SetActive(false);
             this.QuestionUIController.HideAllAnswers();
             this.SecondsRemainingUIController.Paused = false;
-            this.gameData.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+            this.RemoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
 
             PlayerPrefs.SetString("LoadedGameData", "true");
         }
@@ -135,7 +141,8 @@ namespace Assets.Scripts.Controllers
             this.QuestionUIController.OnAnswerClick += this.OnAnswerClick;
             this.QuestionUIController.OnQuestionLoaded += this.OnQuestionLoaded;
 
-            this.gameData.OnMarkIncrease += this.OnMarkIncrease;
+            this.RemoteGameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
+            this.RemoteGameDataIterator.OnLoaded += this.OnLoadedGameData;
 
             this.ChooseCategoryUIController.OnLoadedCategories += (sender, args) => this.LoadingUI.SetActive(false);
             this.ChooseCategoryUIController.OnChoosedCategory += this.OnChoosedCategory;
@@ -144,8 +151,6 @@ namespace Assets.Scripts.Controllers
 
             this.AvailableJokersUIController.OnAddedJoker += this.OnAddedJoker;
             this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
-
-            this.gameData.OnLoaded += this.OnLoadedGameData;
         }
 
         void OnMarkIncrease(object sender, MarkEventArgs args)
@@ -163,18 +168,14 @@ namespace Assets.Scripts.Controllers
 
         void OnAddedJoker(object sender, JokerEventArgs args)
         {
-            //TODO REFACTOR
-            var jokerExecutedCallback = args.Joker as INetworkOperationExecutedCallback;
+            args.Joker.OnFinishedExecution += this.OnFinishedExecutionJoker;
+        }
 
-            if (jokerExecutedCallback == null)
-            {
-                return;
-            }
-
-            jokerExecutedCallback.OnExecuted += (s, a) =>
-                {
-                    this.SecondsRemainingUIController.Paused = false;
-                };
+        void OnFinishedExecutionJoker(object sender, EventArgs args)
+        {
+            this.SecondsRemainingUIController.Paused = false;
+            var joker = (IJoker)sender;
+            joker.OnFinishedExecution -= this.OnFinishedExecutionJoker;
         }
 
         void OnUsedJoker(object sender, JokerEventArgs args)
@@ -191,8 +192,8 @@ namespace Assets.Scripts.Controllers
 
         void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
         {
-            this.QuestionsRemainingUIController.SetRemainingQuestions(this.gameData.RemainingQuestionsToNextMark);
-            this.SecondsRemainingUIController.SetSeconds(this.gameData.SecondsForAnswerQuestion);
+            this.QuestionsRemainingUIController.SetRemainingQuestions(this.RemoteGameDataIterator.RemainingQuestionsToNextMark);
+            this.SecondsRemainingUIController.SetSeconds(this.RemoteGameDataIterator.SecondsForAnswerQuestion);
         }
 
         void OnActivateSceneChanged(Scene oldScene, Scene newScene)
@@ -229,13 +230,14 @@ namespace Assets.Scripts.Controllers
 
             if (PlayerPrefs.HasKey("LoadedGameData"))
             {
-                var loadedGameData = new NetworkCommandData("LoadedGameData");
-                loadedGameData.AddOption("LevelCategory", this.gameData.LevelCategory);
+                var loadedGameData = NetworkCommandData.From<LoadedGameDataCommand>();
+                loadedGameData.AddOption("LevelCategory", this.RemoteGameDataIterator.LevelCategory);
                 this.NetworkManager.CommandsManager.Execute(loadedGameData);
                 return;
             }
 
             this.ChooseCategoryUIController.gameObject.SetActive(true);
+            this.StartLoadingCategories();
         }
 
         void OnAnswerClick(object sender, AnswerEventArgs args)
@@ -254,7 +256,7 @@ namespace Assets.Scripts.Controllers
 
             if (isCorrect)
             {
-                this.gameData.GetNextQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+                this.RemoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
             }
             else
             {
@@ -281,10 +283,11 @@ namespace Assets.Scripts.Controllers
                     this.ChooseCategoryUI.SetActive(false);
                     this.NetworkManager.Disconnect();
                 }, 10);
-
+            
             this.ChooseCategoryUIController.gameObject.SetActive(true);
+            this.ChooseCategoryUIController.Initialize(remoteCategoriesReader);
         }
-
+        
         void StartServerIfPlayerIsHost()
         {
             if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))

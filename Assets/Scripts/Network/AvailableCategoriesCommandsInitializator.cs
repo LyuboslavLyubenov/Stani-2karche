@@ -7,15 +7,15 @@
     public class AvailableCategoriesCommandsInitializator : ExtendedMonoBehaviour
     {
         public ServerNetworkManager NetworkManager;
-        public LocalGameData GameData;
+        public GameDataExtractor GameData;
         public LeaderboardSerializer Leaderboard;
 
         void Start()
         {
             this.CoroutineUtils.WaitForFrames(0, () =>
                 {
-                    this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new ReceivedServerGetAllAvailableCategoriesCommand(this.NetworkManager));
-                    this.NetworkManager.CommandsManager.AddCommand("SelectedCategory", new ReceivedServerSelectedCategoryCommand(this.GameData, this.Leaderboard));
+                    this.NetworkManager.CommandsManager.AddCommand(new GetAllAvailableCategoriesCommand(this.NetworkManager));
+                    this.NetworkManager.CommandsManager.AddCommand(new SelectedCategoryCommand(this.GameData, this.Leaderboard));
                 });
         }
 

@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.Jokers.AskPlayerQuestion
 {
-
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Commands.Jokers;
@@ -26,7 +25,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
 
         public ServerNetworkManager NetworkManager;
-        public LocalGameData LocalGameData;
+        public GameDataIterator LocalGameData;
 
         int timeToAnswerInSeconds;
         int senderConnectionId;
@@ -64,7 +63,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         {
             if (connectionId != this.friendConnectionId)
             {
-                this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
+                this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
                 return;
             }
 
@@ -149,7 +148,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                     sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
 
                     this.NetworkManager.SendClientCommand(this.friendConnectionId, sendQuestionToFriend);
-                    this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new ServerReceivedSelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
+                    this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
                 }, (exception) =>
                     {
                         Debug.LogException(exception);

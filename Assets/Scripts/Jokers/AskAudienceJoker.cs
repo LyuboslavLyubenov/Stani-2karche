@@ -47,6 +47,18 @@ namespace Assets.Scripts.Jokers
             set;
         }
 
+        public EventHandler<UnhandledExceptionEventArgs> OnError
+        {
+            get;
+            set;
+        }
+
+        public EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
+
         public bool Activated
         {
             get;
@@ -54,9 +66,9 @@ namespace Assets.Scripts.Jokers
         }
 
         public AskAudienceJoker(
-            ClientNetworkManager networkManager, 
-            GameObject waitingToAnswerUI, 
-            GameObject audienceAnswerUI, 
+            ClientNetworkManager networkManager,
+            GameObject waitingToAnswerUI,
+            GameObject audienceAnswerUI,
             GameObject loadingUI,
             NotificationsServiceController notificationsServiceController)
         {
@@ -84,7 +96,7 @@ namespace Assets.Scripts.Jokers
             {
                 throw new ArgumentNullException("notificationsServiceController");
             }
-            
+
             this.networkManager = networkManager;
             this.waitingToAnswerUI = waitingToAnswerUI;
             this.audienceAnswerUI = audienceAnswerUI;
@@ -107,6 +119,11 @@ namespace Assets.Scripts.Jokers
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
             this.notificationsServiceController.AddNotification(Color.red, message);
+
+            if (OnError != null)
+            {
+                OnError(this, new UnhandledExceptionEventArgs(new JokerSettingsTimeoutException(), true));
+            }
         }
 
         void OnReceivedJokerSettings(object sender, JokerSettingsEventArgs args)
@@ -125,7 +142,15 @@ namespace Assets.Scripts.Jokers
             this.audienceAnswerUI.GetComponent<AudienceAnswerUIController>()
                 .SetVoteCount(answersVotes, true);
 
-            this.OnAudienceVoted(this, args);
+            if (this.OnAudienceVoted != null)
+            {
+                this.OnAudienceVoted(this, args);
+            }
+
+            if (OnFinishedExecution != null)
+            {
+                OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
 
         void OnReceiveAudienceVoteTimeout(object sender, EventArgs args)
@@ -134,6 +159,11 @@ namespace Assets.Scripts.Jokers
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
             this.notificationsServiceController.AddNotification(Color.red, message);
+
+            if (OnError != null)
+            {
+                OnError(this, new UnhandledExceptionEventArgs(new TimeoutException(), true));
+            }
         }
 
         public void Activate()
@@ -143,7 +173,7 @@ namespace Assets.Scripts.Jokers
 
             if (this.OnActivated != null)
             {
-                this.OnActivated(this, EventArgs.Empty);    
+                this.OnActivated(this, EventArgs.Empty);
             }
 
             this.Activated = true;

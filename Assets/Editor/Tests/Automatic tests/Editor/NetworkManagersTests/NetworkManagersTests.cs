@@ -1,28 +1,36 @@
-﻿using UnityEngine;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
-public class NetworkManagersTests
+using UnityEngine;
+
+namespace Assets.Editor.Tests.Automatic_tests.Editor.NetworkManagersTests
 {
-    ClientNetworkManager clientNetworkManager;
-    ServerNetworkManager serverNetworkManager;
 
-    [Test, Timeout(500)]
-    public void ConnectClientToServer()
+    using Assets.Scripts.Network;
+
+    public class NetworkManagersTests
     {
-        var obj = new GameObject();
-        obj.name = "Client";
-        clientNetworkManager = obj.AddComponent<ClientNetworkManager>();
+        ClientNetworkManager clientNetworkManager;
+        ServerNetworkManager serverNetworkManager;
 
-        var obj2 = new GameObject();
-        obj2.name = "Server";
-        serverNetworkManager = obj2.AddComponent<ServerNetworkManager>();
-
-        if (!serverNetworkManager.IsRunning)
+        [Test, Timeout(500)]
+        public void ConnectClientToServer()
         {
-            serverNetworkManager.StartServer();
-        }
+            var obj = new GameObject();
+            obj.name = "Client";
+            this.clientNetworkManager = obj.AddComponent<ClientNetworkManager>();
 
-        clientNetworkManager.ConnectToHost("127.0.0.1");
-        Assert.IsTrue(clientNetworkManager.IsConnected);
+            var obj2 = new GameObject();
+            obj2.name = "Server";
+            this.serverNetworkManager = obj2.AddComponent<ServerNetworkManager>();
+
+            if (!this.serverNetworkManager.IsRunning)
+            {
+                this.serverNetworkManager.StartServer();
+            }
+
+            this.clientNetworkManager.ConnectToHost("127.0.0.1");
+            Assert.IsTrue(this.clientNetworkManager.IsConnected);
+        }
     }
+
 }

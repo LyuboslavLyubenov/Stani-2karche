@@ -2,15 +2,14 @@
 
 namespace Assets.Scripts.Controllers
 {
-
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
+    using EventArgs;
+    using Network;
 
     using EventArgs = System.EventArgs;
 
     public class GameDataInfoUIController : MonoBehaviour
     {
-        public LocalGameData GameData;
+        public GameDataIterator GameData;
         public GameDataSender GameDataSender;
         public BasicExamServer Server;
 
@@ -45,11 +44,6 @@ namespace Assets.Scripts.Controllers
 
         void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
-            if (args.QuestionType == QuestionRequestType.Random)
-            {
-                return;
-            }    
-
             this.remainingQuestionsField.Value = this.GameData.RemainingQuestionsToNextMark.ToString();
             this.currentQuestionField.Value = args.Question.Text;
         }

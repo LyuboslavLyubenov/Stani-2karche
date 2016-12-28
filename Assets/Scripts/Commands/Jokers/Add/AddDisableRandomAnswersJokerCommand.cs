@@ -14,10 +14,10 @@ namespace Assets.Scripts.Commands.Jokers.Add
     {
         IJoker joker;
 
-        public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, IGameData gameData, QuestionUIController questionUIController)
+        public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, QuestionUIController questionUIController)
             : base(availableJokersUIController)
         {
-            this.joker = new DisableRandomAnswersJoker(networkManager, gameData, questionUIController);
+            this.joker = new DisableRandomAnswersJoker(networkManager, questionUIController);
         }
 
         public override void Execute(Dictionary<string, string> commandsOptionsValues)

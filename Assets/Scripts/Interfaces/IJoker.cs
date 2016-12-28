@@ -18,6 +18,18 @@ namespace Assets.Scripts.Interfaces
             set;
         }
 
+        EventHandler<UnhandledExceptionEventArgs> OnError
+        {
+            get;
+            set;
+        }
+
+        EventHandler OnFinishedExecution
+        {
+            get;
+            set;
+        }
+
         bool Activated
         {
             get;

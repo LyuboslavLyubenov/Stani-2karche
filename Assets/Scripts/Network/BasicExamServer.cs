@@ -4,19 +4,18 @@ using UnityEngine;
 
 namespace Assets.Scripts.Network
 {
-
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Jokers.AskPlayerQuestion;
-    using Assets.Scripts.Jokers.AudienceAnswerPoll;
-    using Assets.Scripts.Statistics;
-    using Assets.Scripts.Utils;
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers;
+    using Commands.Server;
+    using Controllers;
+    using EventArgs;
+    using Interfaces;
+    using Jokers;
+    using Jokers.AskPlayerQuestion;
+    using Jokers.AudienceAnswerPoll;
+    using Statistics;
+    using Utils;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
@@ -36,7 +35,7 @@ namespace Assets.Scripts.Network
 
         public ServerNetworkManager NetworkManager;
 
-        public LocalGameData GameData;
+        public GameDataIterator GameData;
         public GameDataSender GameDataSender;
 
         public LeaderboardSerializer LeaderboardSerializer;
@@ -80,6 +79,8 @@ namespace Assets.Scripts.Network
         bool paused = false;
         bool playerSentAnswer = false;
 
+        private ISimpleQuestion lastQuestion;
+
         void Awake()
         {
             this.LoadServerSettings();
@@ -96,7 +97,7 @@ namespace Assets.Scripts.Network
 
         void Start()
         {
-            this.CoroutineUtils.RepeatEverySeconds(1, () =>
+            this.CoroutineUtils.RepeatEverySeconds(1f, () =>
                 {
                     if (!this.NetworkManager.IsRunning || this.IsGameOver || this.paused || this.remainingTimeToAnswerMainQuestion == -1)
                     {
@@ -110,6 +111,133 @@ namespace Assets.Scripts.Network
         void OnApplicationQuit()
         {
             this.EndGame();
+        }
+
+        void OnConnectedClientSelected(int connectionId)
+        {
+            this.ClientOptionsUIController.gameObject.SetActive(true);
+            this.CoroutineUtils.WaitForFrames(0, () =>
+            {
+                var username = this.NetworkManager.GetClientUsername(connectionId);
+                var clientData = new ConnectedClientData(connectionId, username);
+                var role =
+                    (this.MainPlayerData.IsConnected && this.MainPlayerData.ConnectionId == connectionId)
+                        ?
+                        BasicExamClientRole.MainPlayer
+                        :
+                        BasicExamClientRole.Audience;
+
+                this.ClientOptionsUIController.Set(clientData, role);
+            });
+        }
+
+        void OnMainPlayerSurrender()
+        {
+            PlayerPrefs.SetString("Surrender", "true");
+            this.EndGame();
+        }
+
+        void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        {
+            this.AskPlayerQuestionRouter.Deactivate();
+            this.AudiencePollRouter.Deactivate();
+        }
+
+        void OnReceivedSelectedAnswer(int clientId, string answer)
+        {
+            if (this.IsGameOver ||
+                !this.MainPlayerData.IsConnected ||
+                clientId != this.MainPlayerData.ConnectionId ||
+                this.paused)
+            {
+                return;
+            }
+
+            this.GameData.GetCurrentQuestion((question) =>
+            {
+                var isCorrect = (answer == question.Answers[question.CorrectAnswerIndex]);
+
+                if (isCorrect)
+                {
+                    this.OnMainPlayerAnsweredCorrectly();
+                }
+                else
+                {
+                    this.OnMainPlayerAnsweredIncorrectly();
+                }
+
+            },
+                Debug.LogException);
+
+            this.playerSentAnswer = true;
+        }
+
+        void OnMainPlayerAnsweredCorrectly()
+        {
+            if (UnityEngine.Random.value < this.chanceToAddRandomJoker)
+            {
+                var jokers = JokerUtils.AllJokersTypes;
+                this.AddRandomJokerRouter.Activate(this.MainPlayerData.ConnectionId, jokers, this.MainPlayerData.JokersData);
+                //TODO send next question  
+            }
+        }
+
+        void OnMainPlayerAnsweredIncorrectly()
+        {
+            this.CoroutineUtils.WaitForFrames(1, this.EndGame);
+        }
+        
+        void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
+        {
+            if (args.QuestionType == QuestionRequestType.Next)
+            {
+                if (args.ClientId != this.MainPlayerData.ConnectionId)
+                {
+                    throw new Exception("Client id " + args.ClientId + " doesnt have premission to get next question.");
+                }
+
+                if (!this.playerSentAnswer)
+                {
+                    throw new Exception("MainPlayer must answer current question before requesting new one.");
+                }
+            }
+        }
+
+        void OnMainPlayerSelectedJoker(object sender, EventArgs args)
+        {
+            var jokerName = sender.GetType().Name
+                .Replace("Selected", "")
+                .Replace("Command", "")
+                .ToUpperInvariant();
+
+            if (jokerName == typeof(DisableRandomAnswersJoker).Name.ToUpperInvariant())
+            {
+                return;
+            }
+
+            this.paused = true;
+        }
+        
+        void OnLoadedGameData(object sender, EventArgs args)
+        {
+            this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
+        }
+
+        void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
+        {
+            if (args.QuestionType == QuestionRequestType.Next)
+            {
+                this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
+                this.playerSentAnswer = false;
+            }
+        }
+
+        void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        {
+            if (this.IsGameOver)
+            {
+                this.SendEndGameInfo();
+            }
         }
 
         void LoadServerSettings()
@@ -127,34 +255,24 @@ namespace Assets.Scripts.Network
         void AttachEventHandlers()
         {
             this.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
-            this.GameData.OnLoaded += (sender, args) =>
-                {
-                    this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;  
-                };
-        
-            this.GameDataSender.OnSentQuestion += (sender, args) =>
-                {
-                    if (args.QuestionType == QuestionRequestType.Next)
-                    {
-                        this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
-                        this.playerSentAnswer = false;
-                    }
-                };
-        
-            this.NetworkManager.OnClientConnected += (sender, args) =>
-                {
-                    if (this.IsGameOver)
-                    {
-                        this.SendEndGameInfo();
-                    }
-                };
-        
-            this.AskPlayerQuestionRouter.OnSent += (sender, args) => this.paused = false;
-            this.AudiencePollRouter.OnSent += (sender, args) => this.paused = false;
-            this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnClientSelected(args.ConnectionId);
+
+            this.GameData.OnLoaded += this.OnLoadedGameData;
+            this.GameDataSender.OnSentQuestion += this.OnSentQuestion;
             this.GameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
+
+            this.NetworkManager.OnClientConnected += this.OnClientConnected;
+
+            this.AskPlayerQuestionRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
+            this.AudiencePollRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
+
+            this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
         }
 
+        void OnFinishedJokerExecution()
+        {
+            this.paused = false;
+        }
+        
         void InitializeMainPlayerData()
         {
             this.MainPlayerData = new MainPlayerData(this.NetworkManager);
@@ -163,7 +281,7 @@ namespace Assets.Scripts.Network
 
         void InitializeCommands()
         {
-            var selectedAnswerCommand = new ReceivedServerSelectedAnswerCommand(this.OnReceivedSelectedAnswer);
+            var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(this.NetworkManager, this.MainPlayerData, this.AskPlayerQuestionRouter, 60);
             var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.AudiencePollRouter, this.NetworkManager, 60);
             var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.DisableRandomAnswersJokerRouter, this.NetworkManager, 2);
@@ -180,37 +298,6 @@ namespace Assets.Scripts.Network
             this.NetworkManager.CommandsManager.AddCommand(selectedAudiencePollCommand);
             this.NetworkManager.CommandsManager.AddCommand(selectedFifthyFifthyChanceCommand);
             this.NetworkManager.CommandsManager.AddCommand("Surrender", surrenderCommand);
-        }
-
-        void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
-        {
-            if (args.QuestionType == QuestionRequestType.Next)
-            {
-                if (args.ClientId != this.MainPlayerData.ConnectionId)
-                {
-                    throw new Exception("Client id " + args.ClientId + " doesnt have premission to get next question.");    
-                }
-
-                if (!this.playerSentAnswer)
-                {
-                    throw new Exception("MainPlayer must answer current question before requesting new one.");
-                }
-            }
-        }
-
-        void OnMainPlayerSelectedJoker(object sender, EventArgs args)
-        {
-            var jokerName = sender.GetType().Name
-                .Replace("Selected", "")
-                .Replace("Command", "")
-                .ToUpperInvariant();
-        
-            if (jokerName == typeof(DisableRandomAnswersJoker).Name.ToUpperInvariant())
-            {
-                return;
-            }
-
-            this.paused = true;
         }
 
         void Cleanup()
@@ -236,70 +323,7 @@ namespace Assets.Scripts.Network
                 this.EndGame();
             }
         }
-
-        void OnClientSelected(int connectionId)
-        {
-            this.ClientOptionsUIController.gameObject.SetActive(true);
-            this.CoroutineUtils.WaitForFrames(0, () =>
-                {
-                    var username = this.NetworkManager.GetClientUsername(connectionId);
-                    var clientData = new ConnectedClientData(connectionId, username);
-                    var role = 
-                        (this.MainPlayerData.IsConnected && this.MainPlayerData.ConnectionId == connectionId) 
-                            ? 
-                            BasicExamClientRole.MainPlayer 
-                            : 
-                            BasicExamClientRole.Audience;
-
-                    this.ClientOptionsUIController.Set(clientData, role);
-                });
-        }
-
-        void OnMainPlayerSurrender()
-        {
-            PlayerPrefs.SetString("Surrender", "true");
-            this.EndGame();
-        }
-
-        void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
-        {
-            this.AskPlayerQuestionRouter.Deactivate();
-            this.AudiencePollRouter.Deactivate();
-        }
-
-        void OnReceivedSelectedAnswer(int clientId, string answer)
-        {
-            if (this.IsGameOver || !this.MainPlayerData.IsConnected || clientId != this.MainPlayerData.ConnectionId || this.paused)
-            {
-                return;
-            }
-
-            this.GameData.GetCurrentQuestion((question) =>
-                {
-                    var isCorrect = (answer == question.Answers[question.CorrectAnswerIndex]);
-
-                    if (isCorrect)
-                    {
-                        this.OnMainPlayerAnsweredCorrectly();
-                        return;
-                    }
-
-                    this.CoroutineUtils.WaitForFrames(1, this.EndGame);
-                }, 
-                Debug.LogException);
-
-            this.playerSentAnswer = true;
-        }
-
-        void OnMainPlayerAnsweredCorrectly()
-        {
-            if (UnityEngine.Random.value < this.chanceToAddRandomJoker)
-            {
-                var jokers = JokerUtils.AllJokersTypes;
-                this.AddRandomJokerRouter.Activate(this.MainPlayerData.ConnectionId, jokers, this.MainPlayerData.JokersData);   
-            }
-        }
-
+        
         void SendEndGameInfo()
         {
             var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
@@ -332,5 +356,4 @@ namespace Assets.Scripts.Network
             this.Cleanup();
         }
     }
-
 }

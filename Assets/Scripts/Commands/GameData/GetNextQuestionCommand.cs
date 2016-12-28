@@ -7,21 +7,21 @@ namespace Assets.Scripts.Commands.GameData
 
     using Debug = UnityEngine.Debug;
 
-    public class ReceivedGetCurrentQuestionCommand : GameDataGetQuestionAbstractCommand
+    public class GetNextQuestionCommand : GameDataGetQuestionAbstractCommand
     {
-        public ReceivedGetCurrentQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
+        public GetNextQuestionCommand(GameDataIterator gameData, ServerNetworkManager networkManager)
             : base(gameData, networkManager)
-        {       
+        {     
         }
 
         public override void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
 
-            base.GameData.GetCurrentQuestion((question) =>
+            base.GameData.GetNextQuestion((question) =>
                 {
-                    var requestType = QuestionRequestType.Current;
-                    base.SendQuestion(connectionId, question, requestType);
+                    var requestType = QuestionRequestType.Next;
+                    base.SendQuestion(connectionId, question, requestType);    
                 }, 
                 Debug.LogException);
         }

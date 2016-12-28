@@ -40,12 +40,6 @@ namespace Assets.Scripts.Commands.GameData
                     this.networkManager.CommandsManager.Execute(nextQuestionCommandData);
                     break;
 
-                case QuestionRequestType.Random:
-                    var randomQuestionCommandData = new NetworkCommandData("GameDataGetRandomQuestion");
-                    this.MapOptionsToCommand(randomQuestionCommandData, commandsOptionsValues);
-                    this.networkManager.CommandsManager.Execute(randomQuestionCommandData);
-                    break;
-
                 default:
                     throw new NotImplementedException();
                     break;

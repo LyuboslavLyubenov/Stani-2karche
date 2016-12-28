@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using System;
+    using Interfaces;
 
-    using Assets.Scripts.Interfaces;
-
-    public class PendingQuestionRequestData
+    public class PendingQuestionRequest
     {
         public delegate void OnSuccessfullyLoadedDelegate(ISimpleQuestion question);
 
@@ -23,7 +21,7 @@ namespace Assets.Scripts.Network
             private set;
         }
 
-        public PendingQuestionRequestData(OnSuccessfullyLoadedDelegate onSuccessfullyLoaded, OnExceptionDelegate onException)
+        public PendingQuestionRequest(OnSuccessfullyLoadedDelegate onSuccessfullyLoaded, OnExceptionDelegate onException)
         {
             if (onSuccessfullyLoaded == null)
             {

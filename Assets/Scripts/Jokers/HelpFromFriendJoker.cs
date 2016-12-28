@@ -21,9 +21,6 @@ namespace Assets.Scripts.Jokers
 
     public class HelpFromFriendJoker : IJoker
     {
-        //0% = 0f, 100% = 1f
-        const float ChanceForGeneratingCorrectAnswer = 0.85f;
-
         public EventHandler<AnswerEventArgs> OnFriendAnswered = delegate
             {
             };
@@ -44,6 +41,18 @@ namespace Assets.Scripts.Jokers
         }
 
         public EventHandler OnActivated
+        {
+            get;
+            set;
+        }
+
+        public EventHandler<UnhandledExceptionEventArgs> OnError
+        {
+            get;
+            set;
+        }
+
+        public EventHandler OnFinishedExecution
         {
             get;
             set;
@@ -140,6 +149,11 @@ namespace Assets.Scripts.Jokers
             NotificationsServiceController.Instance.AddNotification(Color.red, message);
 
             this.Activated = false;
+
+            if (OnError != null)
+            {
+                OnError(this, new UnhandledExceptionEventArgs(new JokerSettingsTimeoutException(), true));
+            }
         }
 
         void OnReceivedAnswer(object sender, AskPlayerResponseEventArgs args)
@@ -149,6 +163,11 @@ namespace Assets.Scripts.Jokers
             this.friendAnswerUI.GetComponent<FriendAnswerUIController>().SetResponse(args.Username, args.Answer);
 
             this.Activated = false;
+
+            if (OnFinishedExecution != null)
+            {
+                OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
 
         void OnReceiveAnswerTimeout(object sender, EventArgs args)
@@ -159,6 +178,11 @@ namespace Assets.Scripts.Jokers
             NotificationsServiceController.Instance.AddNotification(Color.red, message);
 
             this.Activated = false;
+
+            if (OnError != null)
+            {
+                OnError(this, new UnhandledExceptionEventArgs(new TimeoutException(), true));
+            }
         }
 
         void BeginReceiveConnectedClientsIdsNames()
@@ -180,5 +204,4 @@ namespace Assets.Scripts.Jokers
             }
         }
     }
-
 }

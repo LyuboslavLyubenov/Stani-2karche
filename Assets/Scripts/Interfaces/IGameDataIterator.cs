@@ -2,27 +2,13 @@
 
 namespace Assets.Scripts.Interfaces
 {
+    using EventArgs;
 
-    using Assets.Scripts.EventArgs;
-
-    public interface IGameData
+    public interface IGameDataIterator
     {
-        EventHandler<MarkEventArgs> OnMarkIncrease
-        {
-            get;
-            set;
-        }
+        event EventHandler<MarkEventArgs> OnMarkIncrease;
 
-        EventHandler OnLoaded
-        {
-            get;
-            set;
-        }
-
-        bool Loaded
-        {
-            get;
-        }
+        event EventHandler OnLoaded;
 
         int RemainingQuestionsToNextMark
         {
@@ -47,8 +33,6 @@ namespace Assets.Scripts.Interfaces
         void GetCurrentQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
 
         void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
-
-        void GetRandomQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
     }
 
 }

@@ -8,7 +8,7 @@ namespace Assets.Scripts.Commands.Jokers
 
     using EventArgs = System.EventArgs;
 
-    public class ReceivedDisableRandomAnswerJokerSettingsCommand : IOneTimeExecuteCommand
+    public class DisableRandomAnswerJokerSettingsCommand : IOneTimeExecuteCommand
     {
         public delegate void OnReceivedJokerSettings(int answersToDisableCount);
 
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Commands.Jokers
             set;
         }
 
-        public ReceivedDisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings onReceivedJokerSettings)
+        public DisableRandomAnswerJokerSettingsCommand(OnReceivedJokerSettings onReceivedJokerSettings)
         {
             if (onReceivedJokerSettings == null)
             {

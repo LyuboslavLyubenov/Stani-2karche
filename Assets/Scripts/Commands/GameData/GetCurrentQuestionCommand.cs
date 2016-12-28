@@ -7,9 +7,9 @@ namespace Assets.Scripts.Commands.GameData
 
     using Debug = UnityEngine.Debug;
 
-    public class ReceivedGetRandomQuestionCommand : GameDataGetQuestionAbstractCommand
+    public class GetCurrentQuestionCommand : GameDataGetQuestionAbstractCommand
     {
-        public ReceivedGetRandomQuestionCommand(LocalGameData gameData, ServerNetworkManager networkManager)
+        public GetCurrentQuestionCommand(GameDataIterator gameData, ServerNetworkManager networkManager)
             : base(gameData, networkManager)
         {       
         }
@@ -18,13 +18,12 @@ namespace Assets.Scripts.Commands.GameData
         {
             var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
 
-            base.GameData.GetRandomQuestion((question) =>
+            base.GameData.GetCurrentQuestion((question) =>
                 {
-                    var requestType = QuestionRequestType.Random;
-                    base.SendQuestion(connectionId, question, requestType);    
-                },
+                    var requestType = QuestionRequestType.Current;
+                    base.SendQuestion(connectionId, question, requestType);
+                }, 
                 Debug.LogException);
-        
         }
     }
 
