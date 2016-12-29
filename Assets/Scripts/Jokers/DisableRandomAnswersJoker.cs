@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Timers;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Jokers
+﻿namespace Assets.Scripts.Jokers
 {
+    using System;
+    using System.Linq;
+    using System.Timers;
+
+    using UnityEngine;
 
     using Assets.Scripts.Exceptions;
     using Assets.Scripts.Network.NetworkManagers;
@@ -20,11 +19,13 @@ namespace Assets.Scripts.Jokers
 
     public class DisableRandomAnswersJoker : IJoker
     {
-        const int SettingsReceiveTimeoutInSeconds = 5;
+        private const int SettingsReceiveTimeoutInSeconds = 5;
 
-        ClientNetworkManager networkManager;
-        IQuestionUIController questionUIController;
-        Timer receiveSettingsTimeoutTimer;
+        private ClientNetworkManager networkManager;
+
+        private IQuestionUIController questionUIController;
+
+        private Timer receiveSettingsTimeoutTimer;
 
         public Sprite Image
         {
@@ -67,7 +68,7 @@ namespace Assets.Scripts.Jokers
             {
                 throw new ArgumentNullException("networkManager");
             }
-            
+
             if (questionUIController == null)
             {
                 throw new ArgumentNullException("questionUIController");
@@ -78,53 +79,31 @@ namespace Assets.Scripts.Jokers
 
             this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
         }
-
-        public void Activate()
+        
+        private void OnReceiveSettingsTimeout()
         {
-            if (this.questionUIController.CurrentlyLoadedQuestion == null)
+            DisposeTimer();
+            this.networkManager.CommandsManager.RemoveCommand<DisableRandomAnswerJokerSettingsCommand>();
+
+            if (OnError != null)
             {
-                throw new InvalidOperationException();
+                var exception = new JokerSettingsTimeoutException();
+                OnError(this, new UnhandledExceptionEventArgs(exception, true));
             }
-
-            var selectedJokerCommand = NetworkCommandData.From<SelectedDisableRandomAnswersJokerCommand>();
-            this.networkManager.SendServerCommand(selectedJokerCommand);
-
-            var receiveJokerSettings = new DisableRandomAnswerJokerSettingsCommand(this.OnReceivedJokerSettings);
-            this.networkManager.CommandsManager.AddCommand(receiveJokerSettings);
-
-            this.receiveSettingsTimeoutTimer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-            this.receiveSettingsTimeoutTimer.Elapsed += this.OnReceiveSettingsTimeout;
-            this.receiveSettingsTimeoutTimer.Start();
-
-            if (OnActivated != null)
-            {
-                OnActivated(this, EventArgs.Empty);
-            }
-
-            this.Activated = true;
         }
 
-        void OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
-        {
-            ThreadUtils.Instance.RunOnMainThread(() =>
-                {
-                    this.receiveSettingsTimeoutTimer.Dispose();
-                    this.networkManager.CommandsManager.RemoveCommand<DisableRandomAnswerJokerSettingsCommand>();
-
-                    if (OnError != null)
-                    {
-                        var exception = new JokerSettingsTimeoutException();
-                        OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                    }
-                });
-        }
-
-        void OnReceivedJokerSettings(int answersToDisableCount)
+        private void OnReceivedJokerSettings(int answersToDisableCount)
         {
             this.ActivateJoker(answersToDisableCount);
         }
 
-        void ActivateJoker(int answersToDisableCount)
+        void DisposeTimer()
+        {
+            this.receiveSettingsTimeoutTimer.Dispose();
+            this.receiveSettingsTimeoutTimer = null;
+        }
+
+        private void ActivateJoker(int answersToDisableCount)
         {
             var currentQuestion = this.questionUIController.CurrentlyLoadedQuestion;
 
@@ -155,10 +134,36 @@ namespace Assets.Scripts.Jokers
                 this.questionUIController.HideAnswer(disabledAnswerIndex);
             }
 
+            DisposeTimer();
+
             if (OnFinishedExecution != null)
             {
                 OnFinishedExecution(this, EventArgs.Empty);
             }
+        }
+        
+        public void Activate()
+        {
+            if (this.questionUIController.CurrentlyLoadedQuestion == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var selectedJokerCommand = NetworkCommandData.From<SelectedDisableRandomAnswersJokerCommand>();
+            this.networkManager.SendServerCommand(selectedJokerCommand);
+
+            var receiveJokerSettings = new DisableRandomAnswerJokerSettingsCommand(this.OnReceivedJokerSettings);
+            this.networkManager.CommandsManager.AddCommand(receiveJokerSettings);
+
+            this.receiveSettingsTimeoutTimer =
+                TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, OnReceiveSettingsTimeout);
+
+            if (OnActivated != null)
+            {
+                OnActivated(this, EventArgs.Empty);
+            }
+
+            this.Activated = true;
         }
     }
 }

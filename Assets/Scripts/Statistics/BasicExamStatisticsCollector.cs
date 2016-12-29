@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
+﻿
 
 namespace Assets.Scripts.Statistics
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using UnityEngine;
+
+    using Commands.Server;
+    using EventArgs;
+    using Interfaces;
+    using IO;
+    using Network;
+    using Network.NetworkManagers;
+    using Network.Servers;
 
     using EventArgs = System.EventArgs;
 
@@ -23,14 +25,17 @@ namespace Assets.Scripts.Statistics
         public GameDataSender Sender;
         public GameDataIterator GameData;
 
-        Dictionary<ISimpleQuestion, int> questionSpentTime = new Dictionary<ISimpleQuestion, int>();
-        Dictionary<ISimpleQuestion, List<Type>> questionsUsedJokers = new Dictionary<ISimpleQuestion, List<Type>>();
-        Dictionary<Type, int> jokersUsedTimes = new Dictionary<Type, int>();
+        private Dictionary<ISimpleQuestion, int> questionSpentTime = new Dictionary<ISimpleQuestion, int>();
 
-        List<ISimpleQuestion> correctAnsweredQuestions = new List<ISimpleQuestion>();
+        private Dictionary<ISimpleQuestion, List<Type>> questionsUsedJokers = new Dictionary<ISimpleQuestion, List<Type>>();
 
-        ISimpleQuestion lastQuestion = null;
-        string lastSelectedAnswer = string.Empty;
+        private Dictionary<Type, int> jokersUsedTimes = new Dictionary<Type, int>();
+
+        private List<ISimpleQuestion> correctAnsweredQuestions = new List<ISimpleQuestion>();
+
+        private ISimpleQuestion lastQuestion = null;
+
+        private string lastSelectedAnswer = string.Empty;
 
         public IDictionary<ISimpleQuestion, List<Type>> QuestionsUsedJokers
         {
@@ -98,11 +103,13 @@ namespace Assets.Scripts.Statistics
             }
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedAnswer));
 
             var jokersData = this.Server.MainPlayerData.JokersData;
+
             jokersData.OnUsedJoker += this.OnUsedJoker;
 
             this.GameData.OnLoaded += this.OnGameDataLoaded;
@@ -114,22 +121,22 @@ namespace Assets.Scripts.Statistics
             this.Server.OnGameOver += this.OnGameOver;
         }
 
-        void OnGameOver(object sender, EventArgs args)
+        private void OnGameOver(object sender, EventArgs args)
         {
             this.questionSpentTime[this.lastQuestion] = this.GameData.SecondsForAnswerQuestion - this.Server.RemainingTimetoAnswerInSeconds;
         }
 
-        void OnReceivedAnswer(int connectionId, string answer)
+        private void OnReceivedAnswer(int connectionId, string answer)
         {
             this.lastSelectedAnswer = answer;
         }
 
-        void OnMarkIncrease(object sender, MarkEventArgs args)
+        private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
             this.EndMark = args.Mark;
         }
 
-        void OnUsedJoker(object sender, JokerTypeEventArgs args)
+        private void OnUsedJoker(object sender, JokerTypeEventArgs args)
         {
             if (!this.jokersUsedTimes.ContainsKey(args.JokerType))
             {
@@ -145,12 +152,12 @@ namespace Assets.Scripts.Statistics
             this.questionsUsedJokers[this.lastQuestion].Add(args.JokerType);
         }
 
-        void OnGameDataLoaded(object sender, EventArgs args)
+        private void OnGameDataLoaded(object sender, EventArgs args)
         {
             this.SetCurrentQuestion();
         }
 
-        void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
+        private void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             if (args.QuestionType == QuestionRequestType.Next)
             {
@@ -160,17 +167,17 @@ namespace Assets.Scripts.Statistics
             this.questionSpentTime[this.lastQuestion] = this.GameData.SecondsForAnswerQuestion - this.Server.RemainingTimetoAnswerInSeconds;
         }
 
-        void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
+        private void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             this.SetCurrentQuestion();
         }
 
-        void OnLoadedCurrentQuestion(ISimpleQuestion question)
+        private void OnLoadedCurrentQuestion(ISimpleQuestion question)
         {
             this.lastQuestion = question;
         }
-        
-        void SetCurrentQuestion()
+
+        private void SetCurrentQuestion()
         {
             this.GameData.GetCurrentQuestion(this.OnLoadedCurrentQuestion);
         }

@@ -10,7 +10,7 @@
     {
         public AvailableJokersUIController JokersUI;
 
-        void Start()
+        private void Start()
         {
             this.CoroutineUtils.WaitForFrames(1, () =>
                 {

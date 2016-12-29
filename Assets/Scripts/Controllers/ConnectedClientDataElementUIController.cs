@@ -1,17 +1,16 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.DTOs;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using DTOs;
 
     public class ConnectedClientDataElementUIController : MonoBehaviour
     {
-        Text connectionIdText;
-        Text usernameText;
+        private Text connectionIdText;
+        private Text usernameText;
 
         public int ConnectionId
         {
@@ -29,6 +28,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             var connectionIdTextObj = this.transform.Find("ConnectionId");

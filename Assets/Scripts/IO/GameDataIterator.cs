@@ -2,8 +2,10 @@
 {
     using System;
 
+    using DTOs;
+
     using EventArgs;
-    using GameData;
+
     using Interfaces;
     using Localization;
 
@@ -116,19 +118,18 @@
             }
         }
 
-        int currentQuestionIndex = 0;
-        int currentMarkIndex = 0;
+        private int currentQuestionIndex = 0;
+        private int currentMarkIndex = 0;
 
-        ExtractedQuestion currentQuestion = null;
-
-        readonly GameDataExtractor extractor;
+        private ExtractedQuestion currentQuestion = null;
+        private readonly GameDataExtractor extractor;
 
         public GameDataIterator()
         {
             this.extractor = new GameDataExtractor();
         }
 
-        ISimpleQuestion _GetCurrentQuestion()
+        private ISimpleQuestion _GetCurrentQuestion()
         {
             if (!this.Loaded)
             {
@@ -148,7 +149,7 @@
             return this.currentQuestion.Question;
         }
 
-        ISimpleQuestion _GetNextQuestion()
+        private ISimpleQuestion _GetNextQuestion()
         {
             if (!this.Loaded)
             {

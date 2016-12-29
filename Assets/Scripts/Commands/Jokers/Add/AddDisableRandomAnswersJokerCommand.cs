@@ -1,19 +1,15 @@
-using System.Collections.Generic;
-
-//Mediator
-
 namespace Assets.Scripts.Commands.Jokers.Add
 {
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using Controllers;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Network.NetworkManagers;
 
     public class AddDisableRandomAnswersJokerCommand : AddJokerAbstractCommand
     {
-        IJoker joker;
+        private IJoker joker;
 
         public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, QuestionUIController questionUIController)
             : base(availableJokersUIController)
@@ -26,5 +22,4 @@ namespace Assets.Scripts.Commands.Jokers.Add
             base.AddJoker(this.joker);
         }
     }
-
 }

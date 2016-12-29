@@ -1,32 +1,31 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using Localization;
+    using Utils.Unity;
 
     public class ShowIPUIController : MonoBehaviour
     {
         public Text IPText;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.IPText.text = NetworkUtils.GetLocalIP(); 
             NetworkUtils.GetExternalIP(this.OnFoundIP, this.OnNetworkError);
         }
 
-        void OnFoundIP(string ip)
+        private void OnFoundIP(string ip)
         {
             this.IPText.text += Environment.NewLine;
             this.IPText.text += ip.Trim();
         }
 
-        void OnNetworkError(string errorMsg)
+        private void OnNetworkError(string errorMsg)
         {
             this.IPText.text = LanguagesManager.Instance.GetValue("Errors/NoInternetConnection");
         }

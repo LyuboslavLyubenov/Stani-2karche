@@ -1,14 +1,12 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using EventArgs;
+    using Utils.Unity;
 
     public class EnterNameUIController : ExtendedMonoBehaviour
     {
@@ -17,6 +15,7 @@ namespace Assets.Scripts.Controllers
             {
             };
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             if (this.UsernameTextField == null)
@@ -27,7 +26,7 @@ namespace Assets.Scripts.Controllers
             this.CoroutineUtils.WaitForFrames(0, this.Initialize);
         }
 
-        void Initialize()
+        private void Initialize()
         {
             if (PlayerPrefsEncryptionUtils.HasKey("Username"))
             {
@@ -37,7 +36,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void Deactivate()
+        private void Deactivate()
         {
             this.GetComponent<Animator>().SetTrigger("disable");
         }

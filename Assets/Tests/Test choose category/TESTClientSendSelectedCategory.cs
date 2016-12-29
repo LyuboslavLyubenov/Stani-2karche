@@ -13,12 +13,12 @@
         public ClientNetworkManager NetworkManager;
         public ClientChooseCategoryUIController ChooseCategoryUIController;
 
-        void Start()
+        private void Start()
         {
             this.CoroutineUtils.WaitForFrames(0, this.Initialize);
         }
 
-        void Initialize()
+        private void Initialize()
         {
             this.NetworkManager.OnConnectedEvent += (sender, args) =>
                 {
@@ -32,7 +32,7 @@
                 };
         }
 
-        void OnTimeout()
+        private void OnTimeout()
         {
         
         }

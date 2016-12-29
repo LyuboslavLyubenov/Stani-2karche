@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Notifications;
+    using UnityEngine;
+
+    using Interfaces;
+    using Notifications;
 
     public class ReceivedNotificationFromServerCommand : INetworkManagerCommand
     {
-        readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+        private readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
                                                            {
                                                                { "black", Color.black },
                                                                { "white", Color.white },
@@ -34,7 +33,7 @@ namespace Assets.Scripts.Commands.Client
             }
         }
 
-        NotificationsServiceController notificationsService;
+        private NotificationsServiceController notificationsService;
 
         public ReceivedNotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
         {
@@ -68,7 +67,7 @@ namespace Assets.Scripts.Commands.Client
             }
         }
 
-        Color ParseColor(string color)
+        private Color ParseColor(string color)
         {
             if (!Colors.ContainsKey(color))
             {
@@ -77,7 +76,5 @@ namespace Assets.Scripts.Commands.Client
 
             return Colors[color];
         }
-
     }
-
 }

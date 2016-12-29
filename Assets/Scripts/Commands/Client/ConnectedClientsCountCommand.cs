@@ -1,14 +1,13 @@
-﻿using System;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Utils;
+    using Interfaces;
+    using Utils;
 
     public class ConnectedClientsCountCommand : INetworkManagerCommand
     {
-        ValueWrapper<int> serverConnectedClientsCount;
+        private ValueWrapper<int> serverConnectedClientsCount;
 
         public ConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
         {
@@ -26,5 +25,4 @@ namespace Assets.Scripts.Commands.Client
             this.serverConnectedClientsCount.Value = clientsCount;
         }
     }
-
 }

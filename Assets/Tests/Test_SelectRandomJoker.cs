@@ -10,7 +10,7 @@ namespace Assets.Tests
     {
         public SelectRandomJokerUIController SelectRandomJokerController;
 
-        void Start()
+        private void Start()
         {
         }
 

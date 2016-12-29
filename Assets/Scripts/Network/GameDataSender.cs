@@ -1,12 +1,11 @@
-﻿using System;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using System;
 
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network.NetworkManagers;
+    using UnityEngine;
+
+    using IO;
+    using NetworkManagers;
 
     using Commands;
     using Commands.GameData;
@@ -49,7 +48,7 @@ namespace Assets.Scripts.Network
             commandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
         }
 
-        void OnGameDataLoaded(object sender, EventArgs args)
+        private void OnGameDataLoaded(object sender, EventArgs args)
         {
             var connectedClients = this.NetworkManager.ConnectedClientsConnectionId;
 
@@ -60,7 +59,7 @@ namespace Assets.Scripts.Network
             }
         }
 
-        void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
         {
             if (this.LocalGameData.Loaded)
             {
@@ -68,29 +67,28 @@ namespace Assets.Scripts.Network
             }
         }
 
-        void OnMarkIncrease(object sender, MarkEventArgs args)
+        private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
             var commandData = new NetworkCommandData("GameDataMark");
             commandData.AddOption("Mark", args.Mark.ToString());
             this.NetworkManager.SendAllClientsCommand(commandData);
         }
 
-        void SendLoadedGameData(int connectionId)
+        private void OnSentQuestionToClient(object sender, ServerSentQuestionEventArgs args)
+        {
+            this.OnSentQuestion(this, args);
+        }
+
+        private void OnBeforeSentToClient(object sender, ServerSentQuestionEventArgs args)
+        {
+            this.OnBeforeSend(this, args);
+        }
+
+        private void SendLoadedGameData(int connectionId)
         {
             var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
             loadedGameDataCommand.AddOption("LevelCategory", this.LocalGameData.LevelCategory);
             this.NetworkManager.SendClientCommand(connectionId, loadedGameDataCommand);
         }
-
-        void OnSentQuestionToClient(object sender, ServerSentQuestionEventArgs args)
-        {
-            this.OnSentQuestion(this, args);
-        }
-
-        void OnBeforeSentToClient(object sender, ServerSentQuestionEventArgs args)
-        {
-            this.OnBeforeSend(this, args);
-        }
     }
-
 }

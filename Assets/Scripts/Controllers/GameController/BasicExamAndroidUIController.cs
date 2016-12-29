@@ -1,16 +1,14 @@
 ﻿//Mediator
 namespace Assets.Scripts.Controllers.GameController
 {
-
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Commands.Client;
+    using EventArgs;
+    using Exceptions;
+    using Interfaces;
+    using Network.NetworkManagers;
+    using Notifications;
+    using Utils.Unity;
 
     using UnityEngine;
 
@@ -30,10 +28,12 @@ namespace Assets.Scripts.Controllers.GameController
         public NotificationsServiceController NotificationsController;
         public SecondsRemainingUIController SecondsRemainingUIController;
         public DialogController MainPlayerDialogController;
-        
-        QuestionUIController questionUIController = null;
-        UnableToConnectUIController unableToConnectUIController = null;
 
+        private QuestionUIController questionUIController = null;
+
+        private UnableToConnectUIController unableToConnectUIController = null;
+
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -44,7 +44,7 @@ namespace Assets.Scripts.Controllers.GameController
             this.ConnectToServer();
         }
 
-        void ConnectToServer()
+        private void ConnectToServer()
         {
             var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
             var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
@@ -61,13 +61,13 @@ namespace Assets.Scripts.Controllers.GameController
                 });
         }
 
-        void LoadControllers()
+        private void LoadControllers()
         {
             this.questionUIController = this.QuestionPanelUI.GetComponent<QuestionUIController>();
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
         }
 
-        void LoadCommands()
+        private void LoadCommands()
         {
             var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, this.NotificationsController);
             var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
@@ -78,14 +78,14 @@ namespace Assets.Scripts.Controllers.GameController
             this.NetworkManager.CommandsManager.AddCommand(basicExamGameEnd);
         }
 
-        void AttachEventsHooks()
+        private void AttachEventsHooks()
         {
             this.NetworkManager.OnConnectedEvent += this.OnConnected;
             this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectFromServer;
             this.questionUIController.OnAnswerClick += this.OnAnswerClick;
         }
 
-        void OnAnswerClick(object sender, AnswerEventArgs args)
+        private void OnAnswerClick(object sender, AnswerEventArgs args)
         {
             var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
             answerSelectedCommand.AddOption("Answer", args.Answer);
@@ -96,7 +96,7 @@ namespace Assets.Scripts.Controllers.GameController
             //MainPlayerDialogUI.SetActive(true);
         }
 
-        void OnConnected(object sender, EventArgs args)
+        private void OnConnected(object sender, EventArgs args)
         {
             this.ConnectingUI.SetActive(false);
             this.Vibrate();
@@ -105,20 +105,20 @@ namespace Assets.Scripts.Controllers.GameController
         /// <summary>
         /// Vibrate if mobile.
         /// </summary>
-        void Vibrate()
+        private void Vibrate()
         {
 #if UNITY_ANDROID
         Handheld.Vibrate();
         #endif
         }
 
-        void OnDisconnectFromServer(object sender, EventArgs args)
+        private void OnDisconnectFromServer(object sender, EventArgs args)
         {
             this.ConnectingUI.SetActive(false);
             this.UnableToConnectUI.SetActive(true);
         }
 
-        void LoadQuestion(ISimpleQuestion question, int timeToAnswer)
+        private void LoadQuestion(ISimpleQuestion question, int timeToAnswer)
         {
             this.QuestionPanelUI.SetActive(true);
             this.questionUIController.LoadQuestion(question);

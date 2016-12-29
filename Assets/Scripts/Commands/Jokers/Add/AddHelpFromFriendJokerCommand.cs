@@ -1,21 +1,17 @@
-using System.Collections.Generic;
-
-using UnityEngine;
-
-//Mediator
-
 namespace Assets.Scripts.Commands.Jokers.Add
 {
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using UnityEngine;
+
+    using Controllers;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Network.NetworkManagers;
 
     public class AddHelpFromFriendJokerCommand : AddJokerAbstractCommand
     {
-        IJoker joker;
+        private IJoker joker;
 
         public AddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
                                              ClientNetworkManager networkManager,

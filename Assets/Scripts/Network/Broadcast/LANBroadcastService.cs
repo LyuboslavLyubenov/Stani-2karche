@@ -6,25 +6,25 @@
     using System.Net.Sockets;
     using System.Security.Cryptography;
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using CielaSpike.Thread_Ninja;
+    using Extensions;
+    using Utils;
+    using Utils.Unity;
+    using SecuritySettings;
 
     public abstract class LANBroadcastService : ExtendedMonoBehaviour
     {
-        const int Port = 7771;
-        const string ENCRYPTION_PASSWORD = "72a23c2e4152b09ca0b3cf2563c85eb2";
-        const string ENCRYPTION_SALT = "21a87b0b0eb48a341889bf1cb818db67";
-
+        private const int Port = 7771;
+        
         public delegate void OnReceivedMessage(string ip,string message);
 
         public delegate void OnSentMessage();
 
-        UdpClient udpClient = null;
-        IPEndPoint listenEndPoint = new IPEndPoint(IPAddress.Any, Port);
+        private UdpClient udpClient = null;
 
-        void ConfigUDPCLient(IPEndPoint endPoint)
+        private IPEndPoint listenEndPoint = new IPEndPoint(IPAddress.Any, Port);
+
+        private void ConfigUDPCLient(IPEndPoint endPoint)
         {
             this.udpClient = new UdpClient();
             this.udpClient.ExclusiveAddressUse = false;
@@ -35,9 +35,9 @@
             this.udpClient.Client.Bind(endPoint);
         }
 
-        IEnumerator BroadcastMessageCoroutine(string message, OnSentMessage onSentMessage)
+        private IEnumerator BroadcastMessageCoroutine(string message, OnSentMessage onSentMessage)
         {
-            var messageEncrypted = CipherUtility.Encrypt<RijndaelManaged>(message, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+            var messageEncrypted = CipherUtility.Encrypt<RijndaelManaged>(message, SecuritySettings.LANBROADCASTSERVICE_PASSWORD, SecuritySettings.SALT);
             var buffer = System.Text.Encoding.UTF8.GetBytes(messageEncrypted);
             var ip = IPAddress.Broadcast.GetIPAddress();
             this.udpClient.Send(buffer, buffer.Length, ip, Port);
@@ -47,12 +47,12 @@
             UnityEngine.Debug.Log("LANBroadcast BroadcastMessage " + message);
         }
 
-        IEnumerator ReceiveMessageCoroutine(OnReceivedMessage onReceivedMessage)
+        private IEnumerator ReceiveMessageCoroutine(OnReceivedMessage onReceivedMessage)
         {
             IPEndPoint receivedEndPoint = null;
             var buffer = this.udpClient.Receive(ref receivedEndPoint);
             var messageEncrypted = System.Text.Encoding.UTF8.GetString(buffer);
-            var messageDecrypted = CipherUtility.Decrypt<RijndaelManaged>(messageEncrypted, ENCRYPTION_PASSWORD, ENCRYPTION_SALT);
+            var messageDecrypted = CipherUtility.Decrypt<RijndaelManaged>(messageEncrypted, SecuritySettings.LANBROADCASTSERVICE_PASSWORD, SecuritySettings.SALT);
 
             yield return Ninja.JumpToUnity;
             onReceivedMessage(receivedEndPoint.Address.GetIPAddress(), messageDecrypted);

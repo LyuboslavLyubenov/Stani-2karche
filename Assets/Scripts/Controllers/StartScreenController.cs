@@ -1,14 +1,13 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine;
 
     public class StartScreenController : MonoBehaviour
     {
         public GameObject CreateOrJoinUI;
         public EnterNameUIController EnterNameUIController;
 
-        void Start()
+        private void Start()
         {
             if (PlayerPrefs.HasKey("Username"))
             {
@@ -22,10 +21,9 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void OnUsernameSet(object sender, System.EventArgs args)
+        private void OnUsernameSet(object sender, System.EventArgs args)
         {
             this.CreateOrJoinUI.SetActive(true);
         }
     }
-
 }

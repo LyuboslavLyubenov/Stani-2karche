@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-
 namespace Assets.Scripts.Commands.Jokers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
@@ -12,7 +11,7 @@ namespace Assets.Scripts.Commands.Jokers
     {
         public delegate void OnReceivedJokerSettings(int answersToDisableCount);
 
-        OnReceivedJokerSettings onReceivedJokerSettings;
+        private OnReceivedJokerSettings onReceivedJokerSettings;
 
         public bool FinishedExecution
         {

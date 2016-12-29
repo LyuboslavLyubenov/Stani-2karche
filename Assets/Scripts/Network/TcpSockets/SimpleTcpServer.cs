@@ -19,8 +19,9 @@ namespace Assets.Scripts.Network.TcpSockets
 
     public class SimpleTcpServer : ExtendedMonoBehaviour
     {
-        const int AcceptNewConnectionDelayInMiliseconds = 200;
-        const float UpdateSocketsDelayInSeconds = 0.1f;
+        private const int AcceptNewConnectionDelayInMiliseconds = 200;
+
+        private const float UpdateSocketsDelayInSeconds = 0.1f;
         protected const int ReceiveMessageTimeoutInMiliseconds = 1000;
         protected const int SendMessageTimeoutInMiliseconds = 1000;
 
@@ -34,15 +35,17 @@ namespace Assets.Scripts.Network.TcpSockets
 
         //readonly object MyLock = new object();
 
-        int port;
-        bool initialized = false;
+        private int port;
 
-        readonly Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        private bool initialized = false;
 
-        Dictionary<string, Socket> connectedIPClientsSocket = new Dictionary<string, Socket>();
-        Dictionary<Socket, ReceiveMessageState> socketsMessageState = new Dictionary<Socket, ReceiveMessageState>();
+        private readonly Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        List<Socket> aliveSockets = new List<Socket>();
+        private Dictionary<string, Socket> connectedIPClientsSocket = new Dictionary<string, Socket>();
+
+        private Dictionary<Socket, ReceiveMessageState> socketsMessageState = new Dictionary<Socket, ReceiveMessageState>();
+
+        private List<Socket> aliveSockets = new List<Socket>();
 
         public bool Initialized
         {
@@ -60,17 +63,17 @@ namespace Assets.Scripts.Network.TcpSockets
             }
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             this.Dispose();
         }
 
-        void OnApplicationExit()
+        private void OnApplicationExit()
         {
             this.Dispose();
         }
 
-        void RemoveDisconnectedSockets()
+        private void RemoveDisconnectedSockets()
         {
             var disconnectedSockets = this.connectedIPClientsSocket.Where(s => !s.Value.IsConnected()).ToList();
 
@@ -90,7 +93,7 @@ namespace Assets.Scripts.Network.TcpSockets
                 });
         }
 
-        string FilterReceivedMessage(string message)
+        private string FilterReceivedMessage(string message)
         {
             var filtered = new StringBuilder();
 
@@ -105,12 +108,12 @@ namespace Assets.Scripts.Network.TcpSockets
             return filtered.ToString();
         }
 
-        void BeginAcceptConnections()
+        private void BeginAcceptConnections()
         {
             this.acceptConnections.BeginAccept(new AsyncCallback(this.EndAcceptConnections), this.acceptConnections);
         }
 
-        void EndAcceptConnections(IAsyncResult result)
+        private void EndAcceptConnections(IAsyncResult result)
         {
             var socket = (Socket)result.AsyncState;
 
@@ -145,7 +148,7 @@ namespace Assets.Scripts.Network.TcpSockets
             }
         }
 
-        void BeginReceiveMessage(string ipAddress)
+        private void BeginReceiveMessage(string ipAddress)
         {
             if (!ipAddress.IsValidIPV4())
             {
@@ -170,7 +173,7 @@ namespace Assets.Scripts.Network.TcpSockets
             Debug.Log("SimpleTcpServer BeginReceiveMessage from " + ipAddress);
         }
 
-        void EndReceiveMessage(IAsyncResult result)
+        private void EndReceiveMessage(IAsyncResult result)
         {
             var state = (ReceiveMessageState)result.AsyncState;
             var socket = state.Socket;
@@ -270,7 +273,7 @@ namespace Assets.Scripts.Network.TcpSockets
             Debug.Log("SimpleTcpServer begin disconnect " + ipAddress);
         }
 
-        void EndDisconnect(IAsyncResult result)
+        private void EndDisconnect(IAsyncResult result)
         {
             var state = (DisconnectState)result.AsyncState;
             var socket = state.Socket;

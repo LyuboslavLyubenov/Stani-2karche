@@ -1,31 +1,27 @@
-using System.Collections.Generic;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Commands.Jokers.Add
 {
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Notifications;
+    using UnityEngine;
+
+    using Controllers;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Network.NetworkManagers;
 
     public class AddAskAudienceJokerCommand : AddJokerAbstractCommand
     {
-        IJoker joker;
+        private IJoker joker;
 
         public AddAskAudienceJokerCommand(
             AvailableJokersUIController availableJokersUIController, 
             ClientNetworkManager networkManager, 
             GameObject waitingToAnswerUI, 
             GameObject audienceAnswerUI, 
-            GameObject loadingUI,
-            NotificationsServiceController notificationService)
+            GameObject loadingUI)
             : base(availableJokersUIController)
         {
-            this.joker = new AskAudienceJoker(networkManager, waitingToAnswerUI, audienceAnswerUI, loadingUI, notificationService);
+            this.joker = new AskAudienceJoker(networkManager, waitingToAnswerUI, audienceAnswerUI, loadingUI);
         }
 
         public override void Execute(Dictionary<string, string> commandsOptionsValues)
@@ -33,5 +29,4 @@ namespace Assets.Scripts.Commands.Jokers.Add
             base.AddJoker(this.joker);
         }
     }
-
 }

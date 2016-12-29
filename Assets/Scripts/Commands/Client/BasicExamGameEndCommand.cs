@@ -13,10 +13,11 @@
 
     public class BasicExamGameEndCommand : INetworkManagerCommand
     {
-        const int LoadLeaderboardTimeoutInSeconds = 10;
+        private const int LoadLeaderboardTimeoutInSeconds = 10;
 
-        GameObject endGameUI;
-        GameObject leaderboardUI;
+        private GameObject endGameUI;
+
+        private GameObject leaderboardUI;
 
         public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI)
         {
@@ -37,9 +38,10 @@
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var mark = int.Parse(commandsOptionsValues["Mark"]);
+            
+            this.endGameUI.SetActive(true);
 
             var endGameUIController = this.endGameUI.GetComponent<EndGameUIController>();
-            this.endGameUI.SetActive(true);
             endGameUIController.SetMark(mark);
 
             var leaderboardUIController = this.leaderboardUI.GetComponent<LeaderboardUIController>();

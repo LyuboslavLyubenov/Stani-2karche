@@ -1,16 +1,15 @@
 ﻿namespace Assets.Scripts.IO
 {
-
     using System;
     using System.IO;
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class LocalCategoriesReader : IAvailableCategoriesReader
     {
-        readonly string[] RequiredFiles = new [] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
+        private readonly string[] RequiredFiles = new [] { "3.xls", "4.xls", "5.xls", "6.xls", "Rating.csv" };
 
         public void GetAllCategories(Action<string[]> onGetAllCategories)
         {
@@ -23,13 +22,13 @@
             var themesPath = execPath + "LevelData\\теми\\";
             var availableCategories = Directory.GetDirectories(themesPath)
                 .Where(this.IsValidLevel)
-                .Select((categoryFilePath) => this.GetNameOfCategory(categoryFilePath))
+                .Select(this.GetNameOfCategory)
                 .ToArray();
         
             onGetAllCategories(availableCategories);
         }
 
-        string GetNameOfCategory(string category)
+        private string GetNameOfCategory(string category)
         {
             var categoryNameStartIndex = category.LastIndexOf('\\') + 1;
             var categoryName = category.Substring(categoryNameStartIndex);
@@ -37,10 +36,11 @@
             return categoryName;
         }
 
-        bool IsValidLevel(string path)
+        private bool IsValidLevel(string path)
         {
             var files = Directory.GetFiles(path).Select(f => f.Substring(path.Length + 1)).ToArray(); 
             var isValidLevel = this.RequiredFiles.All(rf => files.Contains(rf));
+
             return isValidLevel;
         }
     }

@@ -13,7 +13,7 @@
     [RequireComponent(typeof(Renderer), typeof(RectTransform))]
     public class ActivateTooltip : ExtendedMonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        const int Offset = 10;
+        private const int Offset = 10;
 
         /// <summary>
         /// Show tooltip if mouse/finger is still on this gameobject after this delay
@@ -29,15 +29,17 @@
         public bool InitializeOnStart = true;
 
         //should show tooltip
-        bool showTooltip = false;
-        GameObject tooltip = null;
+        private bool showTooltip = false;
 
-        GameObject tooltipPrefab;
-        GameObject canvas;
+        private GameObject tooltip = null;
 
-        RectTransform thisRectTransform;
+        private GameObject tooltipPrefab;
 
-        void Start()
+        private GameObject canvas;
+
+        private RectTransform thisRectTransform;
+
+        private void Start()
         {
             this.tooltipPrefab = Resources.Load<GameObject>("Prefabs\\Tooltip");
             this.canvas = GameObject.Find("Canvas");
@@ -122,7 +124,7 @@
             this.tooltip.SetActive(false);
         }
 
-        Rect GetPos()
+        private Rect GetPos()
         {
             return new Rect();
         }

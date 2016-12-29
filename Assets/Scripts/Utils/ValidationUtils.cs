@@ -5,7 +5,7 @@ namespace Assets.Scripts.Utils
 
     public class ValidationUtils
     {
-        ValidationUtils()
+        private ValidationUtils()
         {
         
         }

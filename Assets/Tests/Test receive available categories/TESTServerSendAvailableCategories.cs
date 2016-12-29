@@ -3,7 +3,6 @@
 namespace Assets.Tests.Test_receive_available_categories
 {
 
-    using Assets.Scripts.GameData;
     using Assets.Scripts.IO;
     using Assets.Scripts.Network.NetworkManagers;
 
@@ -17,7 +16,7 @@ namespace Assets.Tests.Test_receive_available_categories
         public GameDataExtractor GameData;
         public LeaderboardSerializer Leaderboard;
 
-        void Start()
+        private void Start()
         {
             this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new GetAllAvailableCategoriesCommand(this.NetworkManager));
             this.NetworkManager.CommandsManager.AddCommand("SelectedCategory", new SelectedCategoryCommand(this.GameData, this.Leaderboard));

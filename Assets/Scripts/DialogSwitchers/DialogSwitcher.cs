@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-
-using UnityEngine;
-
-namespace Assets.Scripts.DialogSwitchers
+﻿namespace Assets.Scripts.DialogSwitchers
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+
+    using Controllers;
+    using Utils.Unity;
 
     public abstract class DialogSwitcher : ExtendedMonoBehaviour
     {
@@ -20,10 +18,11 @@ namespace Assets.Scripts.DialogSwitchers
         /// </summary>
         public string DialogFilePath;
 
-        GameObject teacherDialogObj;
+        private GameObject teacherDialogObj;
 
-        Dictionary<string, string> teacherDialogs = new Dictionary<string, string>();
-        bool initialized = false;
+        private Dictionary<string, string> teacherDialogs = new Dictionary<string, string>();
+
+        private bool initialized = false;
 
         public bool Initialized
         {
@@ -75,7 +74,7 @@ namespace Assets.Scripts.DialogSwitchers
             this.StartCoroutine(this.DisplayMessageCoroutine(message, delayInSeconds));
         }
 
-        IEnumerator DisplayMessageCoroutine(string message, float delayInSeconds)
+        private IEnumerator DisplayMessageCoroutine(string message, float delayInSeconds)
         {
             yield return new WaitUntil(() => this.initialized);
             yield return new WaitForSeconds(delayInSeconds);

@@ -6,11 +6,11 @@
 
     public class AddUICloack : MonoBehaviour
     {
-        Image cloackImage = null;
+        private Image cloackImage = null;
 
         public float Opacity = 0.5f;
 
-        void Start()
+        private void Start()
         {
             var prefab = Resources.Load<Transform>("Prefabs/Cloack");
             var cloack = Instantiate(prefab);
@@ -24,7 +24,7 @@
             this.transform.SetParent(cloack, false);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             if (this.cloackImage != null)
             {
@@ -32,7 +32,7 @@
             }
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             if (this.cloackImage != null)
             {

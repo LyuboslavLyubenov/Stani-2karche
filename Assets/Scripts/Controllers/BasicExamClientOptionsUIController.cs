@@ -1,27 +1,26 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using UnityEngine;
+    using UnityEngine.Events;
+    using UnityEngine.UI;
+
+    using DTOs;
+    using Localization;
+    using Network.NetworkManagers;
 
     public class BasicExamClientOptionsUIController : MonoBehaviour
     {
         public ServerNetworkManager NetworkManager;
 
-        FieldUIController connectionIdField;
-        FieldUIController usernameField;
-        FieldUIController roleField;
-        InputField reasonInputField;
+        private FieldUIController connectionIdField;
+        private FieldUIController usernameField;
+        private FieldUIController roleField;
 
-        void Start()
+        private InputField reasonInputField;
+
+        private void Start()
         {
             this.connectionIdField = this.transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
             this.usernameField = this.transform.Find("UsernameField").GetComponent<FieldUIController>();
@@ -35,7 +34,7 @@ namespace Assets.Scripts.Controllers
             banButton.onClick.AddListener(new UnityAction(this.OnBan));
         }
 
-        void OnKick()
+        private void OnKick()
         {
             var connectionId = int.Parse(this.connectionIdField.Value);
             var reason = this.reasonInputField.text;
@@ -52,7 +51,7 @@ namespace Assets.Scripts.Controllers
             this.gameObject.SetActive(false);
         }
 
-        void OnBan()
+        private void OnBan()
         {
             var connectionId = int.Parse(this.connectionIdField.Value);
             this.NetworkManager.BanPlayer(connectionId);

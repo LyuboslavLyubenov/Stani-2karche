@@ -1,19 +1,19 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Network;
+    using EventArgs;
+    using Localization;
+    using Network.Servers;
 
     public class MainPlayerInfoUIController : MonoBehaviour
     {
         public BasicExamServer Server;
 
-        FieldUIController connectionIdField;
-        FieldUIController isConnectedField;
+        private FieldUIController connectionIdField;
+        private FieldUIController isConnectedField;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.connectionIdField = this.transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
@@ -23,13 +23,13 @@ namespace Assets.Scripts.Controllers
             this.Server.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
         }
 
-        void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
         {
             this.connectionIdField.Value = this.Server.MainPlayerData.ConnectionId.ToString();
             this.isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/Yes");
         }
 
-        void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
         {
             this.connectionIdField.Value = "-1";
             this.isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/No");

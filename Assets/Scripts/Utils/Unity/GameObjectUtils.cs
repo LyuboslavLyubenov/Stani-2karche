@@ -8,7 +8,7 @@
 
     public class GameObjectUtils : MonoBehaviour
     {
-        GameObjectUtils()
+        private GameObjectUtils()
         {
         
         }

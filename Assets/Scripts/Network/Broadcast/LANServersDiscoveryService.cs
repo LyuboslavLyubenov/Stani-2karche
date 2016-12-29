@@ -3,7 +3,7 @@
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public class LANServersDiscoveryService : LANBroadcastService
     {
@@ -11,20 +11,21 @@
             {
             };
 
-        const int RetrieveMessageDelayInSeconds = 1;
-
+        private const int RetrieveMessageDelayInSeconds = 1;
+        
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             base.Initialize();
             this.CoroutineUtils.WaitForFrames(1, this.ReceiveIsServerOnlineMessage);
         }
 
-        void ReceiveIsServerOnlineMessage()
+        private void ReceiveIsServerOnlineMessage()
         {
             base.ReceiveBroadcastMessageAsync(this.ReceivedBroadcastMessage);
         }
 
-        void ReceivedBroadcastMessage(string ip, string message)
+        private void ReceivedBroadcastMessage(string ip, string message)
         {
             if (message.Equals(LANServerOnlineBroadcastService.MessageIAmServer))
             {

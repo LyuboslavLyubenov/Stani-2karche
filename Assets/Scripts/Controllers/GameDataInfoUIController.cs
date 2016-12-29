@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine;
 
-    using Assets.Scripts.IO;
+    using IO;
+    using Network.Servers;
 
     using EventArgs;
     using Network;
@@ -16,11 +16,15 @@ namespace Assets.Scripts.Controllers
         public GameDataSender GameDataSender;
         public BasicExamServer Server;
 
-        FieldUIController categoryField;
-        FieldUIController currentQuestionField;
-        FieldUIController currentMarkField;
-        FieldUIController remainingQuestionsField;
+        private FieldUIController categoryField;
 
+        private FieldUIController currentQuestionField;
+
+        private FieldUIController currentMarkField;
+
+        private FieldUIController remainingQuestionsField;
+
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.categoryField = this.transform.Find("CategoryField").GetComponent<FieldUIController>();
@@ -33,19 +37,19 @@ namespace Assets.Scripts.Controllers
             this.GameDataSender.OnSentQuestion += this.OnSentQuestion;
         }
 
-        void OnGameDataLoaded(object sender, EventArgs args)
+        private void OnGameDataLoaded(object sender, EventArgs args)
         {
             this.categoryField.Value = this.GameData.LevelCategory;
             this.currentMarkField.Value = this.GameData.CurrentMark.ToString();
             this.remainingQuestionsField.Value = this.GameData.RemainingQuestionsToNextMark.ToString();
         }
 
-        void OnMarkIncrease(object sender, MarkEventArgs args)
+        private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
             this.currentMarkField.Value = this.GameData.CurrentMark.ToString();
         }
 
-        void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
+        private void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             this.remainingQuestionsField.Value = this.GameData.RemainingQuestionsToNextMark.ToString();
             this.currentQuestionField.Value = args.Question.Text;

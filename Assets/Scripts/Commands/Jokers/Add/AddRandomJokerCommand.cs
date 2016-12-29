@@ -1,20 +1,18 @@
-using System;
-
 namespace Assets.Scripts.Commands.Jokers.Add
 {
+    using System;
 
-    using Assets.Scripts.Controllers.Jokers;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
+    using Controllers.Jokers;
+    using DTOs;
+    using Interfaces;
+    using Network.NetworkManagers;
+    using Utils;
 
     public class AddRandomJokerCommand : INetworkManagerCommand
     {
-        SelectRandomJokerUIController selectRandomJokerUIController;
+        private SelectRandomJokerUIController selectRandomJokerUIController;
 
-        ClientNetworkManager networkManager;
+        private ClientNetworkManager networkManager;
 
         public AddRandomJokerCommand(SelectRandomJokerUIController selectRandomJokerUIController, ClientNetworkManager networkManager)
         {

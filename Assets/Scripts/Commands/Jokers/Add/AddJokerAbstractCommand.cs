@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
-
-//Mediator
-
 namespace Assets.Scripts.Commands.Jokers.Add
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Interfaces;
+    using Controllers;
+    using Interfaces;
 
     public abstract class AddJokerAbstractCommand : INetworkManagerCommand
     {
-        AvailableJokersUIController jokersUIController;
+        private AvailableJokersUIController jokersUIController;
 
         protected AddJokerAbstractCommand(AvailableJokersUIController jokersUIController)
         {
@@ -35,5 +32,4 @@ namespace Assets.Scripts.Commands.Jokers.Add
 
         public abstract void Execute(Dictionary<string, string> commandsOptionsValues);
     }
-
 }

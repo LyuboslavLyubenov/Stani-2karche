@@ -1,13 +1,13 @@
 ﻿namespace Assets.Scripts.Network
 {
     using Commands.Server;
-    using GameData;
+
     using IO;
     using NetworkManagers;
 
     public class AvailableCategoriesCommandsInitializator
     {
-        AvailableCategoriesCommandsInitializator()
+        private AvailableCategoriesCommandsInitializator()
         {
         }
 

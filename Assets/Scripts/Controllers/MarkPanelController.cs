@@ -1,19 +1,17 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using Utils.Unity;
 
     public class MarkPanelController : ExtendedMonoBehaviour
     {
         public Text MarkText;
 
-        Animator animator;
+        private Animator animator;
 
         public string Mark
         {
@@ -23,6 +21,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
+        // ReSharper disable once UnusedMember.Local
         void Start()
         {
             this.animator = this.GetComponent<Animator>();

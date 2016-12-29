@@ -1,25 +1,25 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using EventArgs;
+
+    using Network.NetworkManagers;
+    using Utils.Unity;
 
     public class WaitingToAnswerUIController : MonoBehaviour
     {
         public GameObject RemainingSecondsObject;
         public ClientNetworkManager NetworkManager;
 
-        Text remainingSecondsText;
-        DisableAfterDelay disableAfterDelay = null;
+        private Text remainingSecondsText;
 
+        private DisableAfterDelay disableAfterDelay = null;
+
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnEnable()
         {
             if (this.RemainingSecondsObject == null)
@@ -46,17 +46,18 @@ namespace Assets.Scripts.Controllers
             this.disableAfterDelay.OnTimePass += this.OnTimePass;
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
             this.disableAfterDelay.OnTimePass -= this.OnTimePass;
         }
 
-        void UpdateTimer(int remainingSeconds)
+        private void UpdateTimer(int remainingSeconds)
         {
             this.remainingSecondsText.text = remainingSeconds + " секунди";
         }
 
-        void OnTimePass(object sender, TimeInSecondsEventArgs args)
+        private void OnTimePass(object sender, TimeInSecondsEventArgs args)
         {
             this.UpdateTimer(args.Seconds);
         }

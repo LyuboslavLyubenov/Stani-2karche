@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.DialogSwitchers
+﻿namespace Assets.Scripts.DialogSwitchers
 {
+    using UnityEngine;
 
     public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher
     {
-        const string ExplainCategorySelectAlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTeacher - ExplainCategorySelect";
+        private const string ExplainCategorySelectAlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTeacher - ExplainCategorySelect";
 
         public bool RepeatTutorials = false;
 

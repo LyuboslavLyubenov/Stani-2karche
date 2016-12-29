@@ -1,16 +1,15 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using System;
 
-    using Assets.Scripts.Localization;
+    using Localization;
 
     using UnityEngine;
     using UnityEngine.Networking;
 
     public class NetworkErrorUtils
     {
-        NetworkErrorUtils()
+        private NetworkErrorUtils()
         {
         }
 

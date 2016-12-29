@@ -3,10 +3,12 @@
 
     using System;
     using System.Collections;
+    using System.Timers;
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Exceptions;
     using Assets.Scripts.Notifications;
@@ -19,36 +21,46 @@
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class ClientNetworkManager : ExtendedMonoBehaviour
+    public class ClientNetworkManager
     {
         public const int Port = 7788;
 
-        const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
-        const float SendKeepAliveRequestDelayInSeconds = 3f;
+        private const float ReceiveNetworkMessagesDelayInSeconds = 0.5f;
 
-        const int MaxConnectionAttempts = 3;
+        private const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
 
-        const int MaxServerReactionTimeInSeconds = 6;
-        const int MaxNetworkErrorsBeforeDisconnect = 5;
+        private const float SendKeepAliveRequestDelayInSeconds = 3f;
+
+        private const float ReceiveConnectedClientsCountDelayInSeconds = 3f;
+
+        private const int MaxConnectionAttempts = 3;
+
+        private const int MaxServerReactionTimeInSeconds = 6;
+
+        private const int MaxNetworkErrorsBeforeDisconnect = 5;
 
         public NotificationsServiceController NotificationsServiceController;
         public bool ShowDebugMenu = false;
 
-        int connectionId = 0;
-        int genericHostId = 0;
+        private int connectionId = 0;
 
-        ConnectionConfig connectionConfig = null;
-        byte communicationChannel = 0;
+        private int genericHostId = 0;
 
-        ValueWrapper<bool> isConnected = new ValueWrapper<bool>(false);
-        bool isRunning = false;
+        private ConnectionConfig connectionConfig = null;
 
-        CommandsManager commandsManager = new CommandsManager();
+        private byte communicationChannel = 0;
 
-        ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
+        private ValueWrapper<bool> isConnected = new ValueWrapper<bool>(false);
 
-        float elapsedTimeSinceNetworkError = 0;
-        int networkErrorsCount = 0;
+        private bool isRunning = false;
+
+        private CommandsManager commandsManager = new CommandsManager();
+
+        private ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
+
+        private float elapsedTimeSinceNetworkError = 0;
+
+        private int networkErrorsCount = 0;
 
         public EventHandler OnConnectedEvent
         {
@@ -93,7 +105,7 @@
         {
             get
             {
-                return this.commandsManager; 
+                return this.commandsManager;
             }
         }
 
@@ -105,7 +117,7 @@
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             NetworkTransport.Init();
 
@@ -122,22 +134,32 @@
                 };
         }
 
-        void Start()
+        private Timer keepAliveTimer;
+
+        private Timer connectedClientsCountTimer;
+
+        private Timer receiveNetworkMessagesTimer;
+
+        private void Start()
         {
             this.ConfigureCommands();
             this.ConfigureClient();
 
-            this.CoroutineUtils.RepeatEverySeconds(SendKeepAliveRequestDelayInSeconds, this.SendKeepAliveRequest);
-            this.CoroutineUtils.RepeatEverySeconds(3f, this.BeginReceiveConnectedClientsCount);
+            this.keepAliveTimer = 
+                TimerUtils.ExecuteEvery(SendKeepAliveRequestDelayInSeconds, this.SendKeepAliveRequest);
 
-            this.StartCoroutine(this.UpdateCoroutine());
+            this.connectedClientsCountTimer = 
+                TimerUtils.ExecuteEvery(ReceiveConnectedClientsCountDelayInSeconds, this.BeginReceiveConnectedClientsCount);
+
+            this.receiveNetworkMessagesTimer = 
+                TimerUtils.ExecuteEvery(ReceiveNetworkMessagesDelayInSeconds, this.ReceiveMessages);
         }
 
-        void Update()
+        private void Update()
         {
             if (!this.IsConnected)
             {
-                return;  
+                return;
             }
 
             if (this.networkErrorsCount >= MaxNetworkErrorsBeforeDisconnect)
@@ -154,18 +176,18 @@
             this.elapsedTimeSinceNetworkError += Time.deltaTime;
         }
 
-        void ConfigureClient()
+        private void ConfigureClient()
         {
             this.connectionConfig = new ConnectionConfig();
-            this.connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts; 
+            this.connectionConfig.MaxConnectionAttempt = MaxConnectionAttempts;
             this.communicationChannel = this.connectionConfig.AddChannel(QosType.ReliableSequenced);
         }
 
-        void ConfigureCommands()
+        private void ConfigureCommands()
         {
             if (this.NotificationsServiceController != null)
             {
-                this.commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(this.NotificationsServiceController));    
+                this.commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(this.NotificationsServiceController));
             }
 
             var allowedToConnect = new DummyCommand();
@@ -178,7 +200,7 @@
             this.commandsManager.AddCommand("ConnectedClientsCount", new ConnectedClientsCountCommand(this.serverConnectedClientsCount));
         }
 
-        void BeginReceiveConnectedClientsCount()
+        private void BeginReceiveConnectedClientsCount()
         {
             if (!this.isRunning || !this.IsConnected)
             {
@@ -189,44 +211,39 @@
             this.SendServerCommand(commandData);
         }
 
-        void SendKeepAliveRequest()
+        private void SendKeepAliveRequest()
         {
             if (!this.isRunning || !this.IsConnected)
             {
                 return;
             }
-            
+
             var commandLine = NetworkCommandData.From<KeepAliveCommand>();
             this.SendServerCommand(commandLine);
         }
 
-        void ShowNotification(Color color, string message)
+        private void ShowNotification(Color color, string message)
         {
             if (this.NotificationsServiceController != null)
             {
-                this.NotificationsServiceController.AddNotification(color, message);          
+                this.NotificationsServiceController.AddNotification(color, message);
             }
         }
 
-        IEnumerator UpdateCoroutine()
+        private void ReceiveMessages()
         {
-            while (true)
+            if (this.isRunning)
             {
-                if (this.isRunning)
-                {
-                    NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromClientAsync, (exception) =>
-                        {
-                            Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
-                            Debug.LogException(exception);
-                            this.networkErrorsCount++;
-                        });
-                }
-
-                yield return new WaitForSeconds(0.5f);
+                NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromClientAsync, (exception) =>
+                    {
+                        Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
+                        Debug.LogException(exception);
+                        this.networkErrorsCount++;
+                    });
             }
         }
 
-        string GetUsername()
+        private string GetUsername()
         {
             var username = "Anonymous";
 
@@ -238,7 +255,7 @@
             return username;
         }
 
-        void ReceivedMessageFromClientAsync(NetworkData networkData)
+        private void ReceivedMessageFromClientAsync(NetworkData networkData)
         {
             switch (networkData.NetworkEventType)
             {
@@ -246,13 +263,13 @@
                     this.DataReceivedFromServer(networkData);
                     break;
 
-                case NetworkEventType.DisconnectEvent:                            
+                case NetworkEventType.DisconnectEvent:
                     this.DisconnectedFromServer(networkData);
                     break;
-            } 
+            }
         }
 
-        void ConnectedToServer()
+        private void ConnectedToServer()
         {
             var username = this.GetUsername();
             var commandLine = NetworkCommandData.From<SetUsernameCommand>();
@@ -260,11 +277,11 @@
             commandLine.AddOption("Username", username);
 
             this.SendServerCommand(commandLine);
-            
+
             this.IsConnected = true;
         }
 
-        void DataReceivedFromServer(NetworkData networkData)
+        private void DataReceivedFromServer(NetworkData networkData)
         {
             var message = networkData.Message;
             NetworkCommandData commandLine = null;
@@ -282,7 +299,7 @@
             {
                 try
                 {
-                    this.commandsManager.Execute(commandLine);    
+                    this.commandsManager.Execute(commandLine);
                 }
                 catch (Exception ex)
                 {
@@ -296,17 +313,17 @@
 
                 if (this.OnReceivedDataEvent != null)
                 {
-                    this.OnReceivedDataEvent(this, new DataSentEventArgs(serverConnectionId, username, message));    
-                }    
+                    this.OnReceivedDataEvent(this, new DataSentEventArgs(serverConnectionId, username, message));
+                }
             }
         }
 
-        void DisconnectedFromServer(NetworkData networkData)
+        private void DisconnectedFromServer(NetworkData networkData)
         {
             this.Disconnect();
         }
 
-        IEnumerator CheckCommandAllowedToConnectReceivedCoroutine()
+        private IEnumerator CheckCommandAllowedToConnectReceivedCoroutine()
         {
             var time = 0f;
 
@@ -363,14 +380,14 @@
                 this.StartCoroutine(this.CheckCommandAllowedToConnectReceivedCoroutine());
             }
         }
-        
+
         public void Disconnect()
         {
             byte error = 0;
 
             try
             {
-                NetworkTransport.Disconnect(this.genericHostId, this.connectionId, out error);    
+                NetworkTransport.Disconnect(this.genericHostId, this.connectionId, out error);
             }
             catch (NetworkException ex)
             {
@@ -418,9 +435,9 @@
 
         #region DEBUG
 
-        string debug_connectIp = "(example 127.0.0.1)";
+        private string debug_connectIp = "(example 127.0.0.1)";
 
-        void OnGUI()
+        private void OnGUI()
         {
             if (!this.ShowDebugMenu)
             {
@@ -429,7 +446,7 @@
 
             GUI.Box(new Rect(200, 0, 300, 300), "ClientNetworkManager debug");
 
-            var connectIpRect = new Rect(205, 30, 130, 25); 
+            var connectIpRect = new Rect(205, 30, 130, 25);
             var connectButtonRect = new Rect(205, 65, 130, 30);
 
             var connectButton = GUI.Button(connectButtonRect, "Connect");

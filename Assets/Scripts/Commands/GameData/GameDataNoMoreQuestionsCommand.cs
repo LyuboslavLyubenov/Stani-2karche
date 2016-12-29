@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Commands.GameData
+﻿namespace Assets.Scripts.Commands.GameData
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class GameDataNoMoreQuestionsCommand : INetworkManagerCommand
     {
-        Action onNoMoreQuestionsCommand;
+        private Action onNoMoreQuestionsCommand;
 
         public GameDataNoMoreQuestionsCommand(Action onNoMoreQuestionsCommand)
         {
@@ -25,5 +24,4 @@ namespace Assets.Scripts.Commands.GameData
             this.onNoMoreQuestionsCommand();
         }
     }
-
 }

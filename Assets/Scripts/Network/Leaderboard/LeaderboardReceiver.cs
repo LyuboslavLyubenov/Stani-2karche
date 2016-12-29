@@ -1,15 +1,14 @@
 ﻿namespace Assets.Scripts.Network.Leaderboard
 {
-
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Commands.Client;
+    using Controllers;
+    using DTOs;
+    using NetworkManagers;
+    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
@@ -24,21 +23,22 @@
             private set;
         }
 
-        List<PlayerScore> playersScores = new List<PlayerScore>();
+        private List<PlayerScore> playersScores = new List<PlayerScore>();
 
-        int elapsedTimeReceivingInSeconds = 0;
-        int timeoutInSeconds = 0;
+        private int elapsedTimeReceivingInSeconds = 0;
+        private int timeoutInSeconds = 0;
 
-        Action<PlayerScore[]> onReceived = null;
-        Action onError = null;
+        private Action<PlayerScore[]> onReceived = null;
+        private Action onError = null;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.CoroutineUtils.WaitForFrames(0, this.InitializeCommand);
             this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateElapsedTime);
         }
 
-        void UpdateElapsedTime()
+        private void UpdateElapsedTime()
         {
             if (!this.Receiving)
             {
@@ -53,7 +53,7 @@
             }
         }
 
-        void Timeout()
+        private void Timeout()
         {
             var timeoutCommand = new NetworkCommandData("LeaderboardReceiveTimeout");
             this.NetworkManager.SendServerCommand(timeoutCommand);
@@ -65,7 +65,7 @@
             this.onError();
         }
 
-        void OnNoMoreEntities(object sender, EventArgs args)
+        private void OnNoMoreEntities(object sender, EventArgs args)
         {
             this.playersScores.Clear();
             this.Receiving = false;
@@ -73,7 +73,7 @@
             this.onReceived(this.playersScores.ToArray());
         }
 
-        void InitializeCommand()
+        private void InitializeCommand()
         {
             var noMoreEntitiesCommand = new DummyCommand();
             noMoreEntitiesCommand.OnExecuted += this.OnNoMoreEntities;
@@ -82,7 +82,7 @@
             this.NetworkManager.CommandsManager.AddCommand("LeaderboardNoMoreEntities", noMoreEntitiesCommand);
         }
 
-        void StartReceiving()
+        private void StartReceiving()
         {
             var receiveLeaderboardEntities = new NetworkCommandData("SendLeaderboardEntities");
             this.NetworkManager.SendServerCommand(receiveLeaderboardEntities);

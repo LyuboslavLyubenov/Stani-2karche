@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.EventSystems;
+    using UnityEngine.UI;
+
+    using DTOs;
+    using EventArgs;
+    using Network.NetworkManagers;
+    using Utils.Unity;
 
     public class ConnectedClientsUIController : ExtendedMonoBehaviour
     {
-        const int YOffset = 75;
-        const int DistanceBetweenElements = 5;
+        private const int YOffset = 75;
+
+        private const int DistanceBetweenElements = 5;
 
         public EventHandler<ClientConnectionDataEventArgs> OnSelectedPlayer = delegate
             {
@@ -28,13 +26,13 @@ namespace Assets.Scripts.Controllers
         public ServerNetworkManager NetworkManager;
         public ObjectsPool ConnectedClientsDataPool;
 
-        float clientElementPrefabHeight;
+        private float clientElementPrefabHeight;
 
-        RectTransform contentRectTransform;
+        private RectTransform contentRectTransform;
 
-        Dictionary<int, Transform> connectionIdClientElement = new Dictionary<int, Transform>();
+        private Dictionary<int, Transform> connectionIdClientElement = new Dictionary<int, Transform>();
 
-        void Start()
+        private void Start()
         {
             var connectedClientDataPrefab = Resources.Load<GameObject>("Prefabs/ConnectedClientElementData");
             var rectTransform = connectedClientDataPrefab.GetComponent<RectTransform>();
@@ -49,7 +47,7 @@ namespace Assets.Scripts.Controllers
             this.NetworkManager.OnClientSetUsername += this.OnClientSetUsername;
         }
 
-        void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
         {
             var connectionId = args.ConnectionId;
 
@@ -60,7 +58,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
         {
             if (this.connectionIdClientElement.ContainsKey(args.ConnectionId))
             {
@@ -77,7 +75,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void OnClientSetUsername(object sender, ConnectedClientDataEventArgs args)
+        private void OnClientSetUsername(object sender, ConnectedClientDataEventArgs args)
         {
             var connectionId = args.ClientData.ConnectionId;
 
@@ -90,7 +88,7 @@ namespace Assets.Scripts.Controllers
             controller.Fill(args.ClientData);
         }
 
-        void AddConnectedClientToList(int connectionId)
+        private void AddConnectedClientToList(int connectionId)
         {
             var connectedClientElement = this.ConnectedClientsDataPool.Get();
             var rectTransform = connectedClientElement.GetComponent<RectTransform>();
@@ -108,19 +106,17 @@ namespace Assets.Scripts.Controllers
             this.connectionIdClientElement.Add(connectionId, connectedClientElement);
         }
 
-        void ClickedOnPlayer()
+        private void ClickedOnPlayer()
         {
             var obj = EventSystem.current.currentSelectedGameObject;
             var controller = obj.GetComponent<ConnectedClientDataElementUIController>();
             this.OnSelectedPlayer(this, new ClientConnectionDataEventArgs(controller.ConnectionId));
         }
 
-        void UpdateContainerSize()
+        private void UpdateContainerSize()
         {
             var sizeY = YOffset + ((this.clientElementPrefabHeight + DistanceBetweenElements) * this.connectionIdClientElement.Count);
             this.contentRectTransform.sizeDelta = new Vector2(this.contentRectTransform.sizeDelta.x, sizeY);
         }
-
     }
-
 }

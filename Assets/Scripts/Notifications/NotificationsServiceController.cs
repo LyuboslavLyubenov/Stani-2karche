@@ -10,7 +10,7 @@ namespace Assets.Scripts.Notifications
 
     public class NotificationsServiceController : MonoBehaviour, INotificationService
     {
-        static NotificationsServiceController instance;
+        private static NotificationsServiceController instance;
 
         public static NotificationsServiceController Instance
         {
@@ -23,33 +23,35 @@ namespace Assets.Scripts.Notifications
                     var obj = (GameObject)Instantiate(prefab, canvas, false);
                     instance = obj.GetComponent<NotificationsServiceController>();
                 }
-
-                //TODO: TEST
+                
                 return instance;
             }
         }
 
-        const int SpaceBetweenNotifications = 20;
-        const int StartOffset = 10;
-        const int NormalDisableDelayInSeconds = 5;
+        private const int SpaceBetweenNotifications = 20;
+
+        private const int StartOffset = 10;
+
+        private const int NormalDisableDelayInSeconds = 5;
 
         public Transform Container;
 
-        HashSet<GameObject> allNotifications = new HashSet<GameObject>();
+        private HashSet<GameObject> allNotifications = new HashSet<GameObject>();
 
-        Transform notificationElementPrefab;
+        private Transform notificationElementPrefab;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.notificationElementPrefab = Resources.Load<Transform>("Prefabs/NotificationElement");
         }
 
-        int GetNotificationCount()
+        private int GetNotificationCount()
         {
             return this.Container.childCount; 
         }
 
-        void _AddNotification(Color color, string message, int disableDelayInSeconds)
+        private void _AddNotification(Color color, string message, int disableDelayInSeconds)
         {
             var notification = Instantiate(this.notificationElementPrefab);
             var notificationRect = notification.GetComponent<RectTransform>();

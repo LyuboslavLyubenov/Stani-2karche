@@ -1,11 +1,12 @@
-﻿namespace Assets.Scripts.Network.NetworkManagers
+﻿// ReSharper disable ArrangeTypeMemberModifiers
+namespace Assets.Scripts.Network.NetworkManagers
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Network.Broadcast;
+    using Broadcast;
 
     using Commands;
     using Commands.Server;
@@ -25,8 +26,9 @@
 
     public class ServerNetworkManager : ExtendedMonoBehaviour
     {
-        const int Port = 7788;
-        const float CheckForDeadClientsDelayInSeconds = 5f;
+        private const int Port = 7788;
+
+        private const float CheckForDeadClientsDelayInSeconds = 5f;
 
         public bool AutoStart = true;
         //how many clients can be connected to the server
@@ -49,22 +51,25 @@
             {
             };
 
-        int genericHostId = 0;
+        private int genericHostId = 0;
 
-        ConnectionConfig connectionConfig = null;
-        HostTopology topology = null;
+        private ConnectionConfig connectionConfig = null;
 
-        byte communicationChannel = 0;
+        private HostTopology topology = null;
 
-        bool isRunning = false;
+        private byte communicationChannel = 0;
+
+        private bool isRunning = false;
         //Id of all connected clients
-        List<int> connectedClientsIds = new List<int>();
-        List<int> bannedConnections = new List<int>();
-    
-        HashSet<int> aliveClientsId = new HashSet<int>();
-        Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
+        private List<int> connectedClientsIds = new List<int>();
 
-        CommandsManager commandsManager = new CommandsManager();
+        private List<int> bannedConnections = new List<int>();
+
+        private HashSet<int> aliveClientsId = new HashSet<int>();
+
+        private Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
+
+        private CommandsManager commandsManager = new CommandsManager();
 
         public bool IsRunning
         {
@@ -128,14 +133,14 @@
             this.StopServer();
         }
 
-        void ConfigureServer()
+        private void ConfigureServer()
         {
             this.connectionConfig = new ConnectionConfig();
             this.communicationChannel = this.connectionConfig.AddChannel(QosType.ReliableSequenced);
             this.topology = new HostTopology(this.connectionConfig, this.MaxConnections);
         }
 
-        void ConfigureCommands()
+        private void ConfigureCommands()
         {
             this.commandsManager.AddCommand(new SetUsernameCommand(this));
             this.commandsManager.AddCommand(new KeepAliveCommand(this.aliveClientsId));
@@ -143,7 +148,7 @@
             this.commandsManager.AddCommand(new ServerSendConnectedClientsIdsNamesCommand(this, this.connectedClientsNames));
         }
 
-        IEnumerator UpdateCoroutine()
+        private IEnumerator UpdateCoroutine()
         {
             while (true)
             {
@@ -156,7 +161,7 @@
             }
         }
 
-        void UpdateServer()
+        private void UpdateServer()
         {
             NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedDataFromClientAsync, (exception) =>
                 {
@@ -167,7 +172,7 @@
                 });
         }
 
-        void ReceivedDataFromClientAsync(NetworkData networkData)
+        private void ReceivedDataFromClientAsync(NetworkData networkData)
         {
             switch (networkData.NetworkEventType)
             {
@@ -185,7 +190,7 @@
             }    
         }
 
-        IList<int> GetDeadClientsIds()
+        private IList<int> GetDeadClientsIds()
         {
             var result = new List<int>();
 
@@ -202,7 +207,7 @@
             return result;
         }
 
-        void UpdateAliveClients()
+        private void UpdateAliveClients()
         {
             if (!this.isRunning)
             {
@@ -234,7 +239,7 @@
             this.aliveClientsId.Clear();
         }
 
-        void OnConnectedClient(NetworkData networkData)
+        private void OnConnectedClient(NetworkData networkData)
         {
             var connectionId = networkData.ConnectionId;
             this.connectedClientsIds.Add(connectionId);
@@ -258,7 +263,7 @@
             }
         }
 
-        void OnClientDisconnect(NetworkData networkData)
+        private void OnClientDisconnect(NetworkData networkData)
         {
             //if disconnected remove from connected clients list
             var connectionId = networkData.ConnectionId;
@@ -279,7 +284,7 @@
             }
         }
 
-        void FilterCommandLineOptions(NetworkCommandData command)
+        private void FilterCommandLineOptions(NetworkCommandData command)
         {
             var optionsKeyValue = command.Options.ToArray();
 
@@ -295,7 +300,7 @@
             }
         }
 
-        void OnClientSendData(NetworkData receiveNetworkData)
+        private void OnClientSendData(NetworkData receiveNetworkData)
         {
             //if we received data from client
             var connectionId = receiveNetworkData.ConnectionId;

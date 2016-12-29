@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Jokers
+﻿namespace Assets.Scripts.Jokers
 {
+    using System;
+    using System.Linq;
+
+    using UnityEngine;
 
     using Commands;
     using Commands.Client;
@@ -13,15 +12,13 @@ namespace Assets.Scripts.Jokers
     using Interfaces;
     using AskPlayerQuestion;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils.Unity;
+    using DTOs;
+    using Exceptions;
+    using Network.NetworkManagers;
+    using Utils.Unity;
 
     using Localization;
-    using Network;
     using Notifications;
-    using Utils;
 
     using EventArgs = System.EventArgs;
 
@@ -31,14 +28,13 @@ namespace Assets.Scripts.Jokers
             {
             };
 
-        CallAFriendUIController callAFriendUIController;
+        private CallAFriendUIController callAFriendUIController;
+        private ClientNetworkManager networkManager;
 
-        ClientNetworkManager networkManager;
-
-        GameObject callAFriendUI;
-        GameObject friendAnswerUI;
-        GameObject waitingToAnswerUI;
-        GameObject loadingUI;
+        private GameObject callAFriendUI;
+        private GameObject friendAnswerUI;
+        private GameObject waitingToAnswerUI;
+        private GameObject loadingUI;
 
         public Sprite Image
         {
@@ -113,7 +109,7 @@ namespace Assets.Scripts.Jokers
             this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/HelpFromFriend");
         }
 
-        void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
+        private void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
         {
             var connectedClientsIdsNames = connectedClientsData.OnlinePlayers.ToDictionary(c => c.ConnectionId, c => c.Username);
             connectedClientsIdsNames.Add(NetworkCommandData.CODE_Option_ClientConnectionId_AI, LanguagesManager.Instance.GetValue("Computer"));
@@ -125,7 +121,7 @@ namespace Assets.Scripts.Jokers
             this.callAFriendUIController.OnCalledPlayer += this.OnCalledPlayer;
         }
 
-        void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
+        private void OnCalledPlayer(object sender, PlayerCalledEventArgs args)
         {
             this.callAFriendUI.SetActive(false);
             this.loadingUI.SetActive(true);
@@ -140,14 +136,14 @@ namespace Assets.Scripts.Jokers
             resultRetriever.Activate(args.PlayerConnectionId);
         }
 
-        void OnReceivedSettings(object sender, JokerSettingsEventArgs args)
+        private void OnReceivedSettings(object sender, JokerSettingsEventArgs args)
         {
             this.loadingUI.SetActive(false);
             this.waitingToAnswerUI.SetActive(true);
             this.waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = args.TimeToAnswerInSeconds;
         }
 
-        void OnReceiveSettingsTimeout(object sender, EventArgs args)
+        private void OnReceiveSettingsTimeout(object sender, EventArgs args)
         {
             this.loadingUI.SetActive(false);
 
@@ -162,7 +158,7 @@ namespace Assets.Scripts.Jokers
             }
         }
 
-        void OnReceivedAnswer(object sender, AskPlayerResponseEventArgs args)
+        private void OnReceivedAnswer(object sender, AskPlayerResponseEventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
             this.friendAnswerUI.SetActive(true);
@@ -176,7 +172,7 @@ namespace Assets.Scripts.Jokers
             }
         }
 
-        void OnReceiveAnswerTimeout(object sender, EventArgs args)
+        private void OnReceiveAnswerTimeout(object sender, EventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
 
@@ -191,7 +187,7 @@ namespace Assets.Scripts.Jokers
             }
         }
 
-        void BeginReceiveConnectedClientsIdsNames()
+        private void BeginReceiveConnectedClientsIdsNames()
         {
             var commandData = new NetworkCommandData("ConnectedClientsIdsNames");
             this.networkManager.SendServerCommand(commandData);

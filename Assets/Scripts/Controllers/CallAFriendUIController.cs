@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using DTOs;
+    using EventArgs;
+    using Utils.Unity;
 
     /// <summary>
     /// Call A friend user interface controller.
@@ -29,13 +27,14 @@ namespace Assets.Scripts.Controllers
             {
             };
 
-        Button[] friendSelectToCallButtons = null;
-        Text[] friendSelectToCallNames = null;
+        private Button[] friendSelectToCallButtons = null;
+        private Text[] friendSelectToCallNames = null;
 
-        int currentPageIndex = 0;
+        private int currentPageIndex = 0;
         //pages on the phone
-        List<CallFriendPageElement[]> pages = new List<CallFriendPageElement[]>();
+        private List<CallFriendPageElement[]> pages = new List<CallFriendPageElement[]>();
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Awake()
         {
             this.friendSelectToCallButtons = this.FriendsToSelectPanel.GetComponentsInChildren<Button>();
@@ -50,7 +49,7 @@ namespace Assets.Scripts.Controllers
             this.NextButton.onClick.AddListener(this.OnNextButtonClick);
         }
 
-        void OnNextButtonClick()
+        private void OnNextButtonClick()
         {
             this.currentPageIndex++;
             this.ReloadContacts();
@@ -61,7 +60,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void OnPreviousButtonClick()
+        private void OnPreviousButtonClick()
         {
             this.currentPageIndex--;
             this.ReloadContacts();
@@ -72,7 +71,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void ReloadContacts()
+        private void ReloadContacts()
         {
             this.RenderContactNames();
 
@@ -89,7 +88,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void RenderContactNames()
+        private void RenderContactNames()
         {
             var page = this.pages[this.currentPageIndex];
 

@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-
 namespace Assets.Scripts.Commands.Jokers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Jokers.AudienceAnswerPoll;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using DTOs;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Scripts.Jokers.AudienceAnswerPoll;
+    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
@@ -21,16 +19,18 @@ namespace Assets.Scripts.Commands.Jokers
             set;
         }
 
-        MainPlayerData mainPlayerData;
-        AudienceAnswerPollRouter askAudienceJokerRouter;
-        ServerNetworkManager networkManager;
-        Type askAudienceJokerType;
-        int timeToAnswerInSeconds;
+        private MainPlayerData mainPlayerData;
+
+        private AudienceAnswerPollRouter askAudienceJokerRouter;
+        
+
+        private Type askAudienceJokerType;
+
+        private int timeToAnswerInSeconds;
 
         public SelectedAudiencePollCommand(
             MainPlayerData mainPlayerData, 
-            AudienceAnswerPollRouter askAudienceJokerRouter, 
-            ServerNetworkManager networkManager, 
+            AudienceAnswerPollRouter askAudienceJokerRouter,
             int timeToAnswerInSeconds
             )
         {
@@ -43,15 +43,9 @@ namespace Assets.Scripts.Commands.Jokers
             {
                 throw new ArgumentNullException("askAudienceJokerRouter");
             }
-
-            if (networkManager == null)
-            {
-                throw new ArgumentNullException("networkManager");
-            }
             
             this.mainPlayerData = mainPlayerData;
             this.askAudienceJokerRouter = askAudienceJokerRouter;
-            this.networkManager = networkManager;
             this.timeToAnswerInSeconds = timeToAnswerInSeconds;
             this.askAudienceJokerType = typeof(AskAudienceJoker);
         }
@@ -68,7 +62,7 @@ namespace Assets.Scripts.Commands.Jokers
             }
 
             this.mainPlayerData.JokersData.RemoveJoker(this.askAudienceJokerType);
-            this.askAudienceJokerRouter.Activate(senderConnectionId, this.mainPlayerData);
+            this.askAudienceJokerRouter.Activate(senderConnectionId, timeToAnswerInSeconds, this.mainPlayerData);
 
             if (this.OnExecuted != null)
             {

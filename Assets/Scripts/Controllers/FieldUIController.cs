@@ -1,16 +1,15 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+
+    using UnityEngine;
+    using UnityEngine.UI;
 
     public class FieldUIController : MonoBehaviour
     {
-        Text keyText;
-        Text delimiterText;
-        Text valueText;
+        private Text keyText;
+        private Text delimiterText;
+        private Text valueText;
 
         public string Key
         {
@@ -64,6 +63,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.keyText = this.transform.Find("Key").GetComponent<Text>();

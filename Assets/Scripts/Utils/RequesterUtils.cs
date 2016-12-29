@@ -18,7 +18,7 @@
             set;
         }
 
-        RequesterUtils()
+        private RequesterUtils()
         {
         }
 
@@ -72,7 +72,11 @@
             return request;
         }
 
-        static bool MyRemoteCertificateValidationCallback(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        /// <summary>
+        /// Usage ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
+        /// Use it if you want to establish secure connection to server (https)
+        /// </summary>
+        private static bool MyRemoteCertificateValidationCallback(System.Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             bool isOk = true;
             // If there are errors in the certificate chain, look at each error to determine the cause.
@@ -97,12 +101,10 @@
             return isOk;
         }
 
-        static string Base64Encode(string plainText)
+        private static string Base64Encode(string plainText)
         {
             var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
             return System.Convert.ToBase64String(plainTextBytes);
         }
     }
-
 }
-

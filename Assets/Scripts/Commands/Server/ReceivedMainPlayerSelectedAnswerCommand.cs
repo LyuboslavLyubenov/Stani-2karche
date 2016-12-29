@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.Server
+﻿namespace Assets.Scripts.Commands.Server
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
+    using UnityEngine;
+    using EventArgs;
+    using Interfaces;
 
     public class ReceivedMainPlayerSelectedAnswerCommand : INetworkManagerCommand
     {
-        Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer;
+        private Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer;
 
         public ReceivedMainPlayerSelectedAnswerCommand(Action<AnswerEventArgs_Serializable> onReceivedClickedAnswer)
         {

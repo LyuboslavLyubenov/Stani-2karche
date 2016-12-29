@@ -5,24 +5,29 @@ using System.Text;
 
 namespace Assets.Scripts.Commands
 {
-
     public class NetworkCommandData
     {
-        //TODO: Move in external class
         public const int CODE_Option_ClientConnectionId_All = -1;
         public const int CODE_Option_ClientConnectionId_Random = -2;
         public const int CODE_Option_ClientConnectionId_AI = -3;
 
-        const int MinCommandNameLength = 3;
-        const int MinOptionNameLength = 3;
-        const int MinOptionValueLength = 1;
-        const string CommandTag = "[COMMAND]";
-        const char OptionsDelitemerSymbol = ';';
-        const char OptionsBeginDelitemerSymbol = '-';
-        const char OptionValueDelitemerSymbol = '=';
+        private const int MinCommandNameLength = 3;
 
-        readonly string commandName;
-        readonly Dictionary<string, string> commandOptions;
+        private const int MinOptionNameLength = 3;
+
+        private const int MinOptionValueLength = 1;
+
+        private const string CommandTag = "[COMMAND]";
+
+        private const char OptionsDelitemerSymbol = ';';
+
+        private const char OptionsBeginDelitemerSymbol = '-';
+
+        private const char OptionValueDelitemerSymbol = '=';
+
+        private readonly string commandName;
+
+        private readonly Dictionary<string, string> commandOptions;
 
         public string Name
         {
@@ -179,7 +184,7 @@ namespace Assets.Scripts.Commands
             return new NetworkCommandData(commandName, commandOptionsValues);
         }
 
-        static void ValidateOption(string optionName, string optionValue)
+        private static void ValidateOption(string optionName, string optionValue)
         {
             if (string.IsNullOrEmpty(optionName) || optionName.Length < MinOptionNameLength)
             {
@@ -192,7 +197,7 @@ namespace Assets.Scripts.Commands
             }
         }
 
-        bool HaveCommandNameForbiddenSymbols(string commandName)
+        private bool HaveCommandNameForbiddenSymbols(string commandName)
         {
             return ForbiddenSymbolsInCommandName.Any(c => commandName.Contains(c));
         }

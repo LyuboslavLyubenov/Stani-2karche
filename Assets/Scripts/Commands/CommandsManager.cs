@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Commands
+﻿namespace Assets.Scripts.Commands
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class CommandsManager
     {
-        Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
+        private Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
 
         public void AddCommand(INetworkManagerCommand commandToExecute)
         {

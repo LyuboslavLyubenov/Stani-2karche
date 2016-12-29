@@ -1,6 +1,5 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using System;
     using System.Collections;
     using System.Net;
@@ -11,7 +10,7 @@
     {
         public delegate void OnCheckCompleted(bool isConnectedToInternet);
 
-        static IEnumerator CheckInternetConnectionCoroutine(OnCheckCompleted onCheckCompleted)
+        private static IEnumerator CheckInternetConnectionCoroutine(OnCheckCompleted onCheckCompleted)
         {
             WWW www = new WWW("http://icanhazip.com/");
             yield return www;
@@ -20,7 +19,7 @@
             onCheckCompleted(haveConnection);
         }
 
-        static IEnumerator GetExternalIPCoroutine(Action<string> onFound, Action<string> onNetworkError = null)
+        private static IEnumerator GetExternalIPCoroutine(Action<string> onFound, Action<string> onNetworkError = null)
         {
             WWW www = new WWW("http://icanhazip.com/");
             yield return www;
@@ -63,7 +62,5 @@
  
             return null;
         }
-
     }
-
 }

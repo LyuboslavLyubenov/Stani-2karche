@@ -1,31 +1,29 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-using CSharpJExcel.Jxl;
-using CSharpJExcel.Jxl.Write;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Statistics
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
 
-    using Assets.Scripts.Interfaces;
+    using CSharpJExcel.Jxl;
+    using CSharpJExcel.Jxl.Write;
+
+    using UnityEngine;
+    using Interfaces;
 
     public class BasicExamGeneralStatiticsExporter : IStatisticsExporter
     {
-        const string Directory = "Statistics\\";
-        const string FileName = "General";
-        const string Extension = ".xls";
+        private const string Directory = "Statistics\\";
+        private const string FileName = "General";
+        private const string Extension = ".xls";
 
-        readonly string Path;
+        private readonly string Path;
 
-        readonly JExcelCellPosition AvgSpentTimeLabelAddress = new JExcelCellPosition(0, 1);
-        readonly JExcelCellPosition UsedJokersCountLabelAddress = new JExcelCellPosition(1, 1);
-        readonly JExcelCellPosition SurrenderCountLabelAddress = new JExcelCellPosition(2, 1);
+        private readonly JExcelCellPosition AvgSpentTimeLabelAddress = new JExcelCellPosition(0, 1);
+        private readonly JExcelCellPosition UsedJokersCountLabelAddress = new JExcelCellPosition(1, 1);
+        private readonly JExcelCellPosition SurrenderCountLabelAddress = new JExcelCellPosition(2, 1);
 
-        BasicExamStatisticsCollector statisticsCollector;
+        private BasicExamStatisticsCollector statisticsCollector;
 
         public BasicExamGeneralStatiticsExporter(BasicExamStatisticsCollector statisticsCollector)
         {
@@ -40,7 +38,7 @@ namespace Assets.Scripts.Statistics
             this.Path = execPath + Directory + FileName + Extension;
         }
 
-        float ExtractAvgSpentTimeOnQuestion(Sheet sheet)
+        private float ExtractAvgSpentTimeOnQuestion(Sheet sheet)
         {
             var avgSpentTimeCell = sheet.GetCellOrDefault(this.AvgSpentTimeLabelAddress.Column, this.AvgSpentTimeLabelAddress.Row + 1); 
             var avgSpentTime = avgSpentTimeCell.getContents();
@@ -53,7 +51,7 @@ namespace Assets.Scripts.Statistics
             return float.Parse(avgSpentTime);
         }
 
-        float GetAvgSpentTimeOnQuestion()
+        private float GetAvgSpentTimeOnQuestion()
         {
             var questionSpentTime = this.statisticsCollector.QuestionsSpentTime;
             var sumTime = (float)questionSpentTime.Values.Sum(t => t);
@@ -61,7 +59,7 @@ namespace Assets.Scripts.Statistics
             return avgSpentTime;
         }
 
-        float CalculateNewAvgSpentTimeOnQuestion(Sheet sheet)
+        private float CalculateNewAvgSpentTimeOnQuestion(Sheet sheet)
         {
             var currentGameAvgSpentTimeOnQestion = this.GetAvgSpentTimeOnQuestion();
             var avgSpentTimeOnQuestion = this.ExtractAvgSpentTimeOnQuestion(sheet);
@@ -70,7 +68,7 @@ namespace Assets.Scripts.Statistics
             return avgSpentTimeOnQuestion;
         }
 
-        int ExtractUsedJokerCount(Sheet sheet)
+        private int ExtractUsedJokerCount(Sheet sheet)
         {
             var usedJokerCountCell = sheet.GetCellOrDefault(this.UsedJokersCountLabelAddress.Column, this.UsedJokersCountLabelAddress.Row + 1);  
             var usedJokerCount = usedJokerCountCell.getContents();
@@ -83,20 +81,20 @@ namespace Assets.Scripts.Statistics
             return int.Parse(usedJokerCount);
         }
 
-        int SumUsedJokersCount()
+        private int SumUsedJokersCount()
         {
             var jokersUsedTimes = this.statisticsCollector.JokersUsedTimes;
             return jokersUsedTimes.Sum(jut => jut.Value);
         }
 
-        int CalculateNewUsedJokerCount(Sheet sheet)
+        private int CalculateNewUsedJokerCount(Sheet sheet)
         {
             var usedJokersCount = this.ExtractUsedJokerCount(sheet);
             usedJokersCount += this.SumUsedJokersCount();
             return usedJokersCount;
         }
 
-        int ExtractSurrenderCount(Sheet sheet)
+        private int ExtractSurrenderCount(Sheet sheet)
         {
             var surrenderCountCell = sheet.GetCellOrDefault(this.SurrenderCountLabelAddress.Column, this.SurrenderCountLabelAddress.Row + 1);
             var surrenderCount = surrenderCountCell.getContents();
@@ -128,7 +126,7 @@ namespace Assets.Scripts.Statistics
             if (PlayerPrefs.HasKey("Surrender"))
             {
                 newSurrenderCount++;
-                PlayerPrefs.DeleteKey("Surrender");
+                PlayerPrefs.DeleteKey("Surrender");//TODO remove?
             }
 
             var workbookW = Workbook.createWorkbook(fileInfo, workbook);

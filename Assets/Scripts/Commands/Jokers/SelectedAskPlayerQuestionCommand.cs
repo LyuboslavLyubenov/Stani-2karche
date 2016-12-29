@@ -1,15 +1,13 @@
-using System;
-using System.Collections.Generic;
-
 namespace Assets.Scripts.Commands.Jokers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Jokers.AskPlayerQuestion;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using DTOs;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Scripts.Jokers.AskPlayerQuestion;
+    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
@@ -21,13 +19,15 @@ namespace Assets.Scripts.Commands.Jokers
             set;
         }
 
-        ServerNetworkManager networkManager;
+        private ServerNetworkManager networkManager;
 
-        MainPlayerData mainPlayerData;
-        AskPlayerQuestionRouter jokerServerRouter;
-        int timeToAnswerInSeconds;
+        private MainPlayerData mainPlayerData;
 
-        Type helpFromFriendJokerType;
+        private AskPlayerQuestionRouter jokerServerRouter;
+
+        private int timeToAnswerInSeconds;
+
+        private Type helpFromFriendJokerType;
 
         public SelectedAskPlayerQuestionCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, AskPlayerQuestionRouter jokerServerRouter, int timeToAnswerInSeconds)
         {
@@ -55,7 +55,9 @@ namespace Assets.Scripts.Commands.Jokers
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
+            //from
             var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
+            //to
             var sendClientId = int.Parse(commandsOptionsValues["PlayerConnectionId"]);
 
             if (!this.mainPlayerData.JokersData.AvailableJokers.Contains(this.helpFromFriendJokerType) || !this.networkManager.IsConnected(senderConnectionId))

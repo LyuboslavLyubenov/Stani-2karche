@@ -1,19 +1,18 @@
-using System;
-using System.Linq;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Jokers.AskPlayerQuestion
 {
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using System;
+    using System.Linq;
+
+    using UnityEngine;
+
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers;
+    using Commands.Server;
+    using IO;
+    using Network.NetworkManagers;
+    using Utils;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
@@ -22,20 +21,18 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
     {
         public const int MinTimeToAnswerInSeconds = 10;
 
-        const float ChanceToGenerateCorrectAnswer = 0.8f;
-
-        const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
-        const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
+        private const float ChanceToGenerateCorrectAnswer = 0.8f;
+        private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
+        private const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
 
         public ServerNetworkManager NetworkManager;
         public GameDataIterator LocalGameData;
 
-        int timeToAnswerInSeconds;
-        int senderConnectionId;
-        int friendConnectionId;
-        int elapsedTime;
-
-        bool activated = false;
+        private int timeToAnswerInSeconds;
+        private int senderConnectionId;
+        private int friendConnectionId;
+        private int elapsedTime;
+        private bool activated = false;
 
         public bool Activated
         {
@@ -57,12 +54,13 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             {
             };
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             base.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
         }
 
-        void OnReceivedFriendResponse(int connectionId, string answer)
+        private void OnReceivedFriendResponse(int connectionId, string answer)
         {
             if (connectionId != this.friendConnectionId)
             {
@@ -78,21 +76,22 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.SendMainPlayerAnswerResponse(connectionId, answer);
         }
 
-        void SendMainPlayerAnswerResponse(int connectionId, string answer)
+        private void SendMainPlayerAnswerResponse(int connectionId, string answer)
         {
             var sendFriendResponseCommand = NetworkCommandData.From<AskPlayerResponseCommand>();
             var friendUsername = this.NetworkManager.GetClientUsername(connectionId);
+
             sendFriendResponseCommand.AddOption("Username", friendUsername);
             sendFriendResponseCommand.AddOption("Answer", answer);
 
             this.NetworkManager.SendClientCommand(this.senderConnectionId, sendFriendResponseCommand);
 
-            this.OnSent(this, EventArgs.Empty);
-
             this.Deactivate();
+
+            this.OnSent(this, EventArgs.Empty);
         }
 
-        void UpdateTimer()
+        private void UpdateTimer()
         {
             if (!this.Activated)
             {
@@ -101,17 +100,19 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
             this.elapsedTime++;
 
-            if (this.elapsedTime >= this.timeToAnswerInSeconds)
+            if (this.elapsedTime < this.timeToAnswerInSeconds)
             {
-                this.Deactivate();
-
-                var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
-                this.NetworkManager.SendClientCommand(this.senderConnectionId, answerTimeoutCommandData);
-                this.NetworkManager.SendClientCommand(this.friendConnectionId, answerTimeoutCommandData);
+                return;
             }
+            
+            this.Deactivate();
+
+            var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
+            this.NetworkManager.SendClientCommand(this.senderConnectionId, answerTimeoutCommandData);
+            this.NetworkManager.SendClientCommand(this.friendConnectionId, answerTimeoutCommandData);
         }
 
-        void SendComputerGeneratedAnswer()
+        private void SendComputerGeneratedAnswer()
         {
             var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
 
@@ -141,7 +142,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                 });
         }
 
-        void SendQuestionToFriend()
+        private void SendQuestionToFriend()
         {
             this.LocalGameData.GetCurrentQuestion((question) =>
                 {
@@ -160,7 +161,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                     });
         }
 
-        void SendJokerSettings(int connectionId)
+        private void SendJokerSettings(int connectionId)
         {
             var settingsCommandData = NetworkCommandData.From<HelpFromFriendJokerSettingsCommand>();
             settingsCommandData.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
@@ -178,10 +179,10 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             {
                 throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
             }
-
+            
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
             this.senderConnectionId = senderConnectionId;
             this.friendConnectionId = friendConnectionId;
-            this.timeToAnswerInSeconds = this.LocalGameData.SecondsForAnswerQuestion;
 
             this.SendJokerSettings(senderConnectionId);
 

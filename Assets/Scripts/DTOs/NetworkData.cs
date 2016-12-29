@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.DTOs
 {
+
     using System;
 
     using UnityEngine.Networking;

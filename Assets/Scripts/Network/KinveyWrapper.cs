@@ -21,7 +21,7 @@ namespace Assets.Scripts.Network
             }
         }
 
-        IEnumerator LoginCoroutine(string username, string password, Action<_UserReceivedData> onLoggedIn, Action<Exception> onError)
+        private IEnumerator LoginCoroutine(string username, string password, Action<_UserReceivedData> onLoggedIn, Action<Exception> onError)
         {
             const string url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey + "/login";
 
@@ -55,7 +55,7 @@ namespace Assets.Scripts.Network
             RequesterUtils.SessionAuth = userReceivedData._kmd.authtoken;
         }
 
-        IEnumerator LogoutCoroutine(Action onLogout, Action<Exception> onError)
+        private IEnumerator LogoutCoroutine(Action onLogout, Action<Exception> onError)
         {
             const string url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey + "/_logout";
 
@@ -89,7 +89,7 @@ namespace Assets.Scripts.Network
             onLogout();
         }
 
-        IEnumerator RegisterCoroutine(string username, string password, Action<_UserReceivedData> onRegister, Action<Exception> onError)
+        private IEnumerator RegisterCoroutine(string username, string password, Action<_UserReceivedData> onRegister, Action<Exception> onError)
         {
             const string url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey;
 
@@ -122,7 +122,7 @@ namespace Assets.Scripts.Network
             onRegister(receivedData);
         }
 
-        IEnumerator CreateEntityCoroutine(string tableName, string json, Action onCreated, Action<Exception> onError)
+        private IEnumerator CreateEntityCoroutine(string tableName, string json, Action onCreated, Action<Exception> onError)
         {
             var url = RequesterUtils.KinveyUrl + "appdata/" + RequesterUtils.AppKey + "/" + tableName;
 
@@ -150,7 +150,7 @@ namespace Assets.Scripts.Network
             onCreated();
         }
 
-        IEnumerator RetrieveEntityCoroutine<T>(string tableName, string id, Action<_KinveyEntity<T>[]> onRetrieved, Action<Exception> onError)
+        private IEnumerator RetrieveEntityCoroutine<T>(string tableName, string id, Action<_KinveyEntity<T>[]> onRetrieved, Action<Exception> onError)
         {
             var url = RequesterUtils.KinveyUrl + "appdata/" + RequesterUtils.AppKey + "/" + tableName + "/";
 
@@ -203,14 +203,14 @@ namespace Assets.Scripts.Network
             onRetrieved(entities);
         }
 
-        _KinveyEntity<T> Parse<T>(string json)
+        private _KinveyEntity<T> Parse<T>(string json)
         {
             var entity = JsonUtility.FromJson<T>(json);
             var details = JsonUtility.FromJson<_KinveyEntityDetails>(json);
             return new _KinveyEntity<T>() { Entity = entity, EntityDetails = details };
         }
 
-        IEnumerator UpdateEntityCoroutine<T>(string tableName, string id, T entity, Action onSuccessfullyUpdated, Action<Exception> onError)
+        private IEnumerator UpdateEntityCoroutine<T>(string tableName, string id, T entity, Action onSuccessfullyUpdated, Action<Exception> onError)
         {
             var url = RequesterUtils.KinveyUrl + "appdata/" + RequesterUtils.AppKey + "/" + tableName + "/" + id;
             var json = JsonUtility.ToJson(entity);
@@ -238,7 +238,7 @@ namespace Assets.Scripts.Network
             onSuccessfullyUpdated();
         }
 
-        IEnumerator DeleteEntityCoroutine(string tableName, string id, Action<_DeletedCount> onSuccessfullyDeleted, Action<Exception> onError)
+        private IEnumerator DeleteEntityCoroutine(string tableName, string id, Action<_DeletedCount> onSuccessfullyDeleted, Action<Exception> onError)
         {
             var url = string.Join("", new string[] { RequesterUtils.KinveyUrl, "appdata/", RequesterUtils.AppKey, "/", tableName, "/", id });
             var requester = RequesterUtils.ConfigRequester(url, "DELETE", null, true);
@@ -267,7 +267,7 @@ namespace Assets.Scripts.Network
             onSuccessfullyDeleted(deletedCount);
         }
 
-        IEnumerator DoesUsernameExistsCoroutine(string username, Action<_UsersnameExistence> onSuccessfullyChecked, Action<Exception> onError)
+        private IEnumerator DoesUsernameExistsCoroutine(string username, Action<_UsersnameExistence> onSuccessfullyChecked, Action<Exception> onError)
         {
             var url = RequesterUtils.KinveyUrl + "rpc/" + RequesterUtils.AppKey + "/check-username-exists";
             var json = "{ \"username\": \"" + username + "\" }";

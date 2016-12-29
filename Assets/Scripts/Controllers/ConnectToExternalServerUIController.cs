@@ -11,7 +11,7 @@
 
     public class ConnectToExternalServerUIController : MonoBehaviour
     {
-        const int ConnectionTimeoutInSeconds = 5;
+        private const int ConnectionTimeoutInSeconds = 5;
 
         public CreatedGameInfoReceiverService GameInfoReceiverService;
         public NotificationsServiceController NotificationService;
@@ -19,9 +19,11 @@
         public GameObject LoadingUI;
         public Text IPText;
 
-        float elapsedTimeTryingToConnect = 0;
-        string ip;
-        bool connecting = false;
+        private float elapsedTimeTryingToConnect = 0;
+
+        private string ip;
+
+        private bool connecting = false;
 
         public void TryToConnect(string ip)
         {
@@ -38,6 +40,7 @@
             this.TryToConnect(this.IPText.text);
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Update()
         {
             if (!this.connecting)
@@ -65,7 +68,7 @@
             }
         }
 
-        void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
+        private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
         {
             this.LoadingUI.SetActive(false);
             this.connecting = false;
@@ -83,7 +86,7 @@
             }
         }
 
-        void OnConnectingToBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
+        private void OnConnectingToBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
         {
             this.SelectPlayerTypeUIController.gameObject.SetActive(true);
             this.SelectPlayerTypeUIController.Initialize(gameInfo_DTO);

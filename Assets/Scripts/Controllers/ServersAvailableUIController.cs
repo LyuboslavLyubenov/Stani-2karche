@@ -2,8 +2,8 @@
 {
     using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs.KinveySerializableObj;
-    using Assets.Scripts.Network.Broadcast;
+    using DTOs.KinveySerializableObj;
+    using Network.Broadcast;
 
     using UnityEngine;
     using UnityEngine.UI;
@@ -29,8 +29,9 @@
 
         public GameObject Container;
 
-        List<string> foundServers = new List<string>();
+        private List<string> foundServers = new List<string>();
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.CoroutineUtils.RepeatEverySeconds(10f, () =>
@@ -41,7 +42,7 @@
             this.LANServersDiscoveryService.OnFound += this.OnLocalServerFound;
         }
 
-        void StartLoadingExternalServersIfConnectedToInternet()
+        private void StartLoadingExternalServersIfConnectedToInternet()
         {
             NetworkUtils.CheckInternetConnection((isConnectedToInternet) =>
                 {
@@ -56,7 +57,7 @@
                 });
         }
 
-        void OnLoadedServers(_KinveyEntity<ServerInfo_DTO>[] servers)
+        private void OnLoadedServers(_KinveyEntity<ServerInfo_DTO>[] servers)
         {
             for (int i = 0; i < servers.Length; i++)
             {
@@ -66,13 +67,13 @@
             }
         }
 
-        void OnLocalServerFound(object sender, IpEventArgs args)
+        private void OnLocalServerFound(object sender, IpEventArgs args)
         {
             var ip = args.IPAddress;
             this.BeginReceiveServerGameInfo(ip);
         }
 
-        void BeginReceiveServerGameInfo(string ip)
+        private void BeginReceiveServerGameInfo(string ip)
         {
             if (this.foundServers.Contains(ip))
             {
@@ -83,7 +84,7 @@
             this.foundServers.Add(ip);
         }
 
-        void OnReceivedGameInfo(GameInfoReceivedDataEventArgs receivedData)
+        private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs receivedData)
         {
             var gameInfo = receivedData.GameInfo;
 
@@ -96,7 +97,7 @@
             }
         }
 
-        void OnFoundBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
+        private void OnFoundBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
         {
             var obj = this.ServerFoundElementsPool.Get();
             var controller = obj.GetComponent<ServerDiscoveredElementController>();
@@ -109,7 +110,7 @@
             button.onClick.AddListener(() => this.OpenBasicExamSelectMenu(gameInfo_DTO));
         }
 
-        void OpenBasicExamSelectMenu(BasicExamGameInfo_DTO gameInfo_DTO)
+        private void OpenBasicExamSelectMenu(BasicExamGameInfo_DTO gameInfo_DTO)
         {
             if (gameInfo_DTO.ServerInfo.IsFull)
             {
@@ -121,7 +122,7 @@
             this.CoroutineUtils.WaitForFrames(0, () => this.BasicExamSelectPlayerTypeController.Initialize(gameInfo_DTO));
         }
 
-        void ClearFoundServerList()
+        private void ClearFoundServerList()
         {
             var serversCount = this.Container.transform.childCount;
 
@@ -134,5 +135,4 @@
             this.foundServers.Clear();
         }
     }
-
 }

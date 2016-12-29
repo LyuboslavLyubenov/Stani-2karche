@@ -1,12 +1,10 @@
-﻿using System;
-
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine.UI;
+
+    using Utils.Unity;
 
     public class SecondsRemainingUIController : ExtendedMonoBehaviour
     {
@@ -24,6 +22,7 @@ namespace Assets.Scripts.Controllers
             set;
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.Paused = false;

@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Network.NetworkManagers;
 
     using Commands;
@@ -43,12 +44,13 @@
         public event EventHandler OnLoaded;
         public event EventHandler<MarkEventArgs> OnMarkIncrease;
 
-        ClientNetworkManager networkManager;
+        private ClientNetworkManager networkManager;
 
-        readonly Stack<PendingQuestionRequest> currentQuestionRequests = new Stack<PendingQuestionRequest>();
-        readonly Stack<PendingQuestionRequest> nextQuestionRequests = new Stack<PendingQuestionRequest>();
+        private readonly Stack<PendingQuestionRequest> currentQuestionRequests = new Stack<PendingQuestionRequest>();
 
-        ISimpleQuestion currentQuestionCache = null;
+        private readonly Stack<PendingQuestionRequest> nextQuestionRequests = new Stack<PendingQuestionRequest>();
+
+        private ISimpleQuestion currentQuestionCache = null;
 
         public RemoteGameDataIterator(ClientNetworkManager networkManager)
         {
@@ -56,7 +58,7 @@
             this.InitializeCommands();
         }
 
-        void InitializeCommands()
+        private void InitializeCommands()
         {
             this.networkManager.CommandsManager.AddCommand(new LoadedGameDataCommand(this._OnLoadedGameData));
             this.networkManager.CommandsManager.AddCommand(new GameDataQuestionCommand(this.OnReceivedQuestion));
@@ -64,7 +66,7 @@
             this.networkManager.CommandsManager.AddCommand(new GameDataNoMoreQuestionsCommand(this.OnNoMoreQuestions));
         }
 
-        void _OnLoadedGameData(string levelCategory)
+        private void _OnLoadedGameData(string levelCategory)
         {
             this.LevelCategory = levelCategory;
 
@@ -74,7 +76,7 @@
             }
         }
 
-        void OnNoMoreQuestions()
+        private void OnNoMoreQuestions()
         {
             for (int i = 0; i < this.nextQuestionRequests.Count; i++)
             {
@@ -83,7 +85,7 @@
             }
         }
 
-        void OnReceivedMark(int mark)
+        private void OnReceivedMark(int mark)
         {
             this.CurrentMark = mark;
 
@@ -93,7 +95,7 @@
             }
         }
 
-        void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
+        private void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
         {
             PendingQuestionRequest questionRequest = null;
 
@@ -120,7 +122,7 @@
             questionRequest.OnLoaded(question);
         }
 
-        void SendGetQuestionRequest(QuestionRequestType requestType)
+        private void SendGetQuestionRequest(QuestionRequestType requestType)
         {
             var commandData = new NetworkCommandData("GameDataGetQuestion");
             var requestTypeStr = Enum.GetName(typeof(QuestionRequestType), requestType);

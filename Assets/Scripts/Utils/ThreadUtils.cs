@@ -9,10 +9,11 @@
 
     public class ThreadUtils : MonoBehaviour
     {
-        readonly Queue<Action> MethodsQueue = new Queue<Action>();
-        readonly object MyLock = new object();
+        private readonly Queue<Action> MethodsQueue = new Queue<Action>();
 
-        static ThreadUtils instance;
+        private readonly object MyLock = new object();
+
+        private static ThreadUtils instance;
 
         public static ThreadUtils Instance
         {
@@ -31,6 +32,7 @@
             }
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Update()
         {
             lock (this.MyLock)

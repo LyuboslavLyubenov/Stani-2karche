@@ -15,9 +15,9 @@ namespace Assets.Tests.Test_receive_available_categories
         public ClientNetworkManager NetworkManager;
         public NotificationsServiceController NotificationsService;
 
-        IAvailableCategoriesReader categoriesReader;
+        private IAvailableCategoriesReader categoriesReader;
 
-        void Start()
+        private void Start()
         {
             var threadUtils = ThreadUtils.Instance;
 
@@ -28,14 +28,14 @@ namespace Assets.Tests.Test_receive_available_categories
                 };        
         }
 
-        void OnGetCategoriesTimeout()
+        private void OnGetCategoriesTimeout()
         {
             var errorMsg = LanguagesManager.Instance.GetValue("Errors/LoadCategoriesTimeout");
             Debug.LogWarning(errorMsg);
             this.NotificationsService.AddNotification(new Color(255, 255, 140), errorMsg);
         }
 
-        void OnGetAllCategories(string[] categories)
+        private void OnGetAllCategories(string[] categories)
         {
             var allCategories = string.Join(", ", categories);
             Debug.Log(allCategories);

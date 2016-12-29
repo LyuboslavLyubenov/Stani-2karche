@@ -1,38 +1,34 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.Servers
 {
+
     using System;
 
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.IO;
+    using Assets.Scripts.Jokers;
+    using Assets.Scripts.Jokers.AskPlayerQuestion;
+    using Assets.Scripts.Jokers.AudienceAnswerPoll;
     using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Statistics;
+    using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
     using UnityEngine;
-
-    using DTOs;
-
-    using Commands;
-    using Commands.Client;
-    using Commands.Jokers;
-    using Commands.Server;
-
-    using Controllers;
-    using EventArgs;
-    using Interfaces;
-
-    using Jokers;
-    using Jokers.AskPlayerQuestion;
-    using Jokers.AudienceAnswerPoll;
-
-    using Statistics;
-
-    using Utils;
-    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
     public class BasicExamServer : ExtendedMonoBehaviour
     {
-        const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
-        const int DefaultServerMaxPlayers = 40;
+        private const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
+
+        private const int DefaultServerMaxPlayers = 40;
 
         public EventHandler OnGameOver = delegate
             {
@@ -79,18 +75,19 @@
             private set;
         }
 
-        MainPlayerJokersDataSynchronizer mainPlayerJokersDataSynchronizer;
+        private MainPlayerJokersDataSynchronizer mainPlayerJokersDataSynchronizer;
 
-        float chanceToAddRandomJoker = DefaultChanceToAddRandomJokerOnMarkChange;
+        private float chanceToAddRandomJoker = DefaultChanceToAddRandomJokerOnMarkChange;
 
-        int remainingTimeToAnswerMainQuestion = -1;
+        private int remainingTimeToAnswerMainQuestion = -1;
         // when using joker
-        bool paused = false;
-        bool playerSentAnswer = false;
+        private bool paused = false;
 
-        ISimpleQuestion lastQuestion;
+        private bool playerSentAnswer = false;
 
-        void Awake()
+        private ISimpleQuestion lastQuestion;
+
+        private void Awake()
         {
             this.LoadServerSettings();
 
@@ -104,7 +101,7 @@
             this.MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
         }
 
-        void Start()
+        private void Start()
         {
             this.CoroutineUtils.RepeatEverySeconds(1f, () =>
                 {
@@ -117,12 +114,12 @@
                 });
         }
 
-        void OnApplicationQuit()
+        private void OnApplicationQuit()
         {
             this.EndGame();
         }
 
-        void OnConnectedClientSelected(int connectionId)
+        private void OnConnectedClientSelected(int connectionId)
         {
             this.ClientOptionsUIController.gameObject.SetActive(true);
             this.CoroutineUtils.WaitForFrames(0, () =>
@@ -140,19 +137,19 @@
             });
         }
 
-        void OnMainPlayerSurrender()
+        private void OnMainPlayerSurrender()
         {
             PlayerPrefs.SetString("Surrender", "true");
             this.EndGame();
         }
 
-        void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
         {
             this.AskPlayerQuestionRouter.Deactivate();
             this.AudiencePollRouter.Deactivate();
         }
 
-        void OnReceivedSelectedAnswer(int clientId, string answer)
+        private void OnReceivedSelectedAnswer(int clientId, string answer)
         {
             if (this.IsGameOver ||
                 !this.MainPlayerData.IsConnected ||
@@ -176,7 +173,7 @@
             this.playerSentAnswer = true;
         }
 
-        void OnMainPlayerAnsweredCorrectly()
+        private void OnMainPlayerAnsweredCorrectly()
         {
             if (UnityEngine.Random.value < this.chanceToAddRandomJoker)
             {
@@ -186,12 +183,12 @@
             }
         }
 
-        void OnMainPlayerAnsweredIncorrectly()
+        private void OnMainPlayerAnsweredIncorrectly()
         {
             this.CoroutineUtils.WaitForFrames(1, this.EndGame);
         }
-        
-        void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
+
+        private void OnBeforeSendQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             if (args.QuestionType == QuestionRequestType.Next)
             {
@@ -207,7 +204,7 @@
             }
         }
 
-        void OnMainPlayerSelectedJoker(object sender, EventArgs args)
+        private void OnMainPlayerSelectedJoker(object sender, EventArgs args)
         {
             var jokerName = sender.GetType().Name
                 .Replace("Selected", "")
@@ -221,13 +218,13 @@
 
             this.paused = true;
         }
-        
-        void OnLoadedGameData(object sender, EventArgs args)
+
+        private void OnLoadedGameData(object sender, EventArgs args)
         {
             this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
         }
 
-        void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
+        private void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             if (args.QuestionType == QuestionRequestType.Next)
             {
@@ -237,20 +234,20 @@
             }
         }
 
-        void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
         {
             if (this.IsGameOver)
             {
                 this.SendEndGameInfo();
             }
         }
-        
-        void OnFinishedJokerExecution()
+
+        private void OnFinishedJokerExecution()
         {
             this.paused = false;
         }
-        
-        void LoadServerSettings()
+
+        private void LoadServerSettings()
         {
             int serverMaxPlayers = DefaultServerMaxPlayers;
 
@@ -262,7 +259,7 @@
             this.NetworkManager.MaxConnections = serverMaxPlayers;    
         }
 
-        void AttachEventHandlers()
+        private void AttachEventHandlers()
         {
             this.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
 
@@ -278,13 +275,13 @@
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
         }
 
-        void InitializeMainPlayerData()
+        private void InitializeMainPlayerData()
         {
             this.MainPlayerData = new MainPlayerData(this.NetworkManager);
             this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(this.NetworkManager, this.MainPlayerData);
         }
 
-        void InitializeCommands()
+        private void InitializeCommands()
         {
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(this.NetworkManager, this.MainPlayerData, this.AskPlayerQuestionRouter, 60);
@@ -305,7 +302,7 @@
             this.NetworkManager.CommandsManager.AddCommand("Surrender", surrenderCommand);
         }
 
-        void Cleanup()
+        private void Cleanup()
         {
             this.mainPlayerJokersDataSynchronizer = null;
             this.NetworkManager.CommandsManager.RemoveCommand("AnswerSelected");
@@ -314,7 +311,7 @@
             this.NetworkManager.CommandsManager.RemoveCommand("Surrender");
         }
 
-        void UpdateRemainingTime()
+        private void UpdateRemainingTime()
         {
             if (!this.MainPlayerData.IsConnected || this.paused)
             {
@@ -328,15 +325,15 @@
                 this.EndGame();
             }
         }
-        
-        void SendEndGameInfo()
+
+        private void SendEndGameInfo()
         {
             var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
             commandData.AddOption("Mark", this.GameData.CurrentMark.ToString());
             this.NetworkManager.SendAllClientsCommand(commandData);
         }
 
-        void SavePlayerScoreToLeaderboard()
+        private void SavePlayerScoreToLeaderboard()
         {
             var mainPlayerName = this.MainPlayerData.Username;
             var playerScore = new PlayerScore(mainPlayerName, this.StatisticsCollector.PlayerScore, DateTime.Now);
@@ -344,7 +341,7 @@
             this.LeaderboardSerializer.SavePlayerScore(playerScore);
         }
 
-        void ExportStatistics()
+        private void ExportStatistics()
         {
             new BasicExamGeneralStatiticsExporter(this.StatisticsCollector).Export();
             new BasicExamGameDataStatisticsExporter(this.StatisticsCollector, this.GameData).Export();

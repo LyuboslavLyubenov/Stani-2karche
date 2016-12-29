@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections;
-
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+    using System.Collections;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Notifications;
+    using UnityEngine;
+    using UnityEngine.Events;
+    using UnityEngine.EventSystems;
+    using UnityEngine.UI;
+
+    using EventArgs;
+    using Interfaces;
+    using Network.NetworkManagers;
+    using Notifications;
 
     using EventArgs = System.EventArgs;
 
     public class ClientChooseCategoryUIController : MonoBehaviour
     {
-        const int SpaceBetweenElements = 10;
+        private const int SpaceBetweenElements = 10;
 
         public EventHandler OnLoadedCategories = delegate
             {
@@ -33,9 +31,9 @@ namespace Assets.Scripts.Controllers
         public Transform ContentPanel;
         public NotificationsServiceController NotificationService;
 
-        GameObject categoryElementPrefab;
+        private GameObject categoryElementPrefab;
 
-        IEnumerator InitializeCoroutine(string[] availableCategories)
+        private IEnumerator InitializeCoroutine(string[] availableCategories)
         {
             this.categoryElementPrefab = Resources.Load<GameObject>("Prefabs/CategoryToSelectButton");
 
@@ -79,7 +77,7 @@ namespace Assets.Scripts.Controllers
             this.OnLoadedCategories(this, EventArgs.Empty);
         }
 
-        void ChoosedCategory()
+        private void ChoosedCategory()
         {
             var button = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
             var categoryName = button.GetComponentInChildren<Text>().text;
@@ -89,7 +87,7 @@ namespace Assets.Scripts.Controllers
             this.gameObject.SetActive(false);
         }
 
-        void RemoveOldCategories()
+        private void RemoveOldCategories()
         {
             var childCount = this.ContentPanel.childCount;
 
@@ -106,5 +104,4 @@ namespace Assets.Scripts.Controllers
             categoriesReader.GetAllCategories((categories) => this.StartCoroutine(this.InitializeCoroutine(categories)));
         }
     }
-
 }

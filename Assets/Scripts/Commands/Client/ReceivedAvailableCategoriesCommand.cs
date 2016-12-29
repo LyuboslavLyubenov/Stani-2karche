@@ -1,16 +1,15 @@
-using System;
-using System.Collections.Generic;
-
 namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
     public class ReceivedAvailableCategoriesCommand : IOneTimeExecuteCommand
     {
-        Action<string[]> onGetAllCategories;
+        private Action<string[]> onGetAllCategories;
 
         public EventHandler OnFinishedExecution
         {
@@ -47,5 +46,4 @@ namespace Assets.Scripts.Commands.Client
             this.FinishedExecution = true;
         }
     }
-
 }

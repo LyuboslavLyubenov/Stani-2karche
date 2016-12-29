@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
@@ -23,7 +22,7 @@ namespace Assets.Scripts.Commands.Client
             set;
         }
 
-        OnReceivedAnswer onReceivedAnswer;
+        private OnReceivedAnswer onReceivedAnswer;
 
         public AskPlayerResponseCommand(OnReceivedAnswer onReceivedAnswer)
         {
@@ -52,5 +51,4 @@ namespace Assets.Scripts.Commands.Client
             }
         }
     }
-
 }

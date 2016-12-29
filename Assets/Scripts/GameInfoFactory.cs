@@ -2,26 +2,26 @@
 {
     using System;
 
-    using Assets.Scripts.Network.NetworkManagers;
+    using Network.NetworkManagers;
+    using Network.Servers;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
     using DTOs;
     using Enums;
-    using Network;
     using Utils.Unity;
 
     public class GameInfoFactory : MonoBehaviour
     {
-        const string BasicExam = "BasicExam";
+        private const string BasicExam = "BasicExam";
 
         public ServerNetworkManager ServerNetworkManager;
         public BasicExamServer BasicExamServer;
 
-        string externalIp = "";
+        private string externalIp = "";
 
-        void Awake()
+        private void Awake()
         {
             NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
         }
@@ -44,7 +44,7 @@
             throw new NotImplementedException();
         }
 
-        BasicExamGameInfo_DTO GetBasicExamGameInfo()
+        private BasicExamGameInfo_DTO GetBasicExamGameInfo()
         {
             var canConnectAsMainPlayer = !this.BasicExamServer.MainPlayerData.IsConnected;
             var canConnectAsAudience = this.ServerNetworkManager.ConnectedClientsCount < (this.ServerNetworkManager.MaxConnections - 1);
@@ -64,7 +64,7 @@
             return gameInfo;
         }
 
-        ServerInfo_DTO GetServerInfo()
+        private ServerInfo_DTO GetServerInfo()
         {
             var localIPAddress = NetworkUtils.GetLocalIP();
             var connectedClientsCount = this.ServerNetworkManager.ConnectedClientsCount;

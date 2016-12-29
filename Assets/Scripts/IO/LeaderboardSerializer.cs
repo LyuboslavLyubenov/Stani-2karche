@@ -7,21 +7,23 @@
     using System.Linq;
     using System.Reflection;
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.DTOs;
+    using CielaSpike.Thread_Ninja;
+    using DTOs;
 
     using UnityEngine;
 
     public class LeaderboardSerializer : MonoBehaviour
     {
-        const string FilePath = "LevelData\\теми";
-        const string FileName = "Rating.csv";
+        private const string FilePath = "LevelData\\теми";
+
+        private const string FileName = "Rating.csv";
 
         public string LevelCategory = "философия";
         public bool AllowDublicates = false;
 
-        List<PlayerScore> leaderboard = new List<PlayerScore>();
-        bool loaded = false;
+        private List<PlayerScore> leaderboard = new List<PlayerScore>();
+
+        private bool loaded = false;
 
         public IList<PlayerScore> Leaderboard
         {
@@ -39,13 +41,13 @@
             }
         }
 
-        string GetEndPath()
+        private string GetEndPath()
         {
             var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
             return string.Format("{0}\\{1}\\{2}\\{3}", execPath, FilePath, this.LevelCategory, FileName);
         }
 
-        IEnumerator LoadLeaderboardAsync()
+        private IEnumerator LoadLeaderboardAsync()
         {
             yield return null;
 
@@ -91,7 +93,7 @@
             this.loaded = true;
         }
 
-        IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
+        private IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
         {
             var path = this.GetEndPath();
             var playersScore = File.ReadAllLines(path).ToList();

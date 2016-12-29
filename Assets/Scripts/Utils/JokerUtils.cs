@@ -23,9 +23,9 @@ namespace Assets.Scripts.Utils
             }
         }
 
-        static Type[] allJokerTypes;
+        private static Type[] allJokerTypes;
 
-        JokerUtils()
+        private JokerUtils()
         {
         }
 

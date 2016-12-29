@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
+    using UnityEngine;
+    using UnityEngine.Events;
+    using UnityEngine.UI;
+
+    using EventArgs;
+    using Interfaces;
 
     using Debug = UnityEngine.Debug;
 
     public class AvailableJokersUIController : MonoBehaviour
     {
-        const int SpawnOffset = 10;
+        private const int SpawnOffset = 10;
 
         public EventHandler<JokerEventArgs> OnAddedJoker = delegate
             {
@@ -35,17 +34,19 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        RectTransform containerRectTransform;
+        private RectTransform containerRectTransform;
 
-        List<Transform> jokerObjs = new List<Transform>();
+        private List<Transform> jokerObjs = new List<Transform>();
+        private List<IJoker> jokers = new List<IJoker>();
 
-        List<IJoker> jokers = new List<IJoker>();
-        Transform dummyJokerButtonPrefab;
-        Vector2 jokerStartPosition;
-        Vector2 jokerButtonSize;
+        private Transform dummyJokerButtonPrefab;
 
-        float distanceBetweenJokers = 0;
+        private Vector2 jokerStartPosition;
+        private Vector2 jokerButtonSize;
 
+        private float distanceBetweenJokers = 0;
+
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.containerRectTransform = this.Container.GetComponent<RectTransform>();
@@ -57,8 +58,7 @@ namespace Assets.Scripts.Controllers
             this.distanceBetweenJokers = this.jokerStartPosition.y - this.jokerButtonSize.y;
         }
 
-
-        void OnJokerClick(GameObject jokerObj, IJoker joker)
+        private void OnJokerClick(GameObject jokerObj, IJoker joker)
         {
             try
             {

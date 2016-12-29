@@ -28,7 +28,7 @@
 
     public class BasicExamMainPlayerController : ExtendedMonoBehaviour
     {
-        const string ServerBinaryName = "stani2karcheserver";
+        private const string ServerBinaryName = "stani2karcheserver";
 
         public GameObject LeaderboardUI;
         public GameObject LoadingUI;
@@ -57,19 +57,15 @@
 
         public SelectRandomJokerUIController SelectRandomJokerUIController;
 
-        public RemoteGameDataIterator RemoteGameDataIterator;
+        private RemoteGameDataIterator remoteGameDataIterator = null;
 
-        //IGameData gameData;
+        private UnableToConnectUIController unableToConnectUIController;
 
-        UnableToConnectUIController unableToConnectUIController;
-
-        void Start()
+        private void Start()
         {
-            throw new NotImplementedException();
-
             PlayerPrefs.DeleteKey("LoadedGameData");
 
-            //this.gameData = new RemoteGameData(this.NetworkManager);
+            this.remoteGameDataIterator = new RemoteGameDataIterator(this.NetworkManager);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
@@ -91,7 +87,7 @@
             this.LoadingUI.SetActive(true);
         }
 
-        void OnFoundServerIP(string ip)
+        private void OnFoundServerIP(string ip)
         {
             try
             {
@@ -104,17 +100,17 @@
             }
         }
 
-        void OnFoundServerIPError()
+        private void OnFoundServerIPError()
         {
             this.CoroutineUtils.WaitForSeconds(1f, this.ConnectToServer);
         }
 
-        void ConnectToServer()
+        private void ConnectToServer()
         {
             NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
         }
 
-        void InitializeCommands()
+        private void InitializeCommands()
         {
             this.NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI));
             this.NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
@@ -122,19 +118,19 @@
             this.NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.QuestionUIController));
             this.NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, this.NetworkManager));
         }
-        
-        void OnLoadedGameData(object sender, EventArgs args)
+
+        private void OnLoadedGameData(object sender, EventArgs args)
         {
             this.LoadingUI.SetActive(false);
             this.ChooseCategoryUIController.gameObject.SetActive(false);
             this.QuestionUIController.HideAllAnswers();
             this.SecondsRemainingUIController.Paused = false;
-            this.RemoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+            this.remoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
 
             PlayerPrefs.SetString("LoadedGameData", "true");
         }
 
-        void AttachEventHandlers()
+        private void AttachEventHandlers()
         {
             this.NetworkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
@@ -142,8 +138,8 @@
             this.QuestionUIController.OnAnswerClick += this.OnAnswerClick;
             this.QuestionUIController.OnQuestionLoaded += this.OnQuestionLoaded;
 
-            this.RemoteGameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
-            this.RemoteGameDataIterator.OnLoaded += this.OnLoadedGameData;
+            this.remoteGameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
+            this.remoteGameDataIterator.OnLoaded += this.OnLoadedGameData;
 
             this.ChooseCategoryUIController.OnLoadedCategories += (sender, args) => this.LoadingUI.SetActive(false);
             this.ChooseCategoryUIController.OnChoosedCategory += this.OnChoosedCategory;
@@ -154,32 +150,32 @@
             this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
         }
 
-        void OnMarkIncrease(object sender, MarkEventArgs args)
+        private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
             this.MarkChangedConfetti.SetActive(true);
             this.MarkPanelController.SetMark(args.Mark.ToString());
         }
 
-        void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
+        private void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
         {
             var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
             selectedCategoryCommand.AddOption("Category", args.Name);
             this.NetworkManager.SendServerCommand(selectedCategoryCommand);
         }
 
-        void OnAddedJoker(object sender, JokerEventArgs args)
+        private void OnAddedJoker(object sender, JokerEventArgs args)
         {
             args.Joker.OnFinishedExecution += this.OnFinishedExecutionJoker;
         }
 
-        void OnFinishedExecutionJoker(object sender, EventArgs args)
+        private void OnFinishedExecutionJoker(object sender, EventArgs args)
         {
             this.SecondsRemainingUIController.Paused = false;
             var joker = (IJoker)sender;
             joker.OnFinishedExecution -= this.OnFinishedExecutionJoker;
         }
 
-        void OnUsedJoker(object sender, JokerEventArgs args)
+        private void OnUsedJoker(object sender, JokerEventArgs args)
         {
             var jokerTypeNameUpper = args.Joker.GetType().Name.ToUpperInvariant();
 
@@ -191,26 +187,26 @@
             this.SecondsRemainingUIController.Paused = true;  
         }
 
-        void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
+        private void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
         {
             this.QuestionsRemainingUIController.SetRemainingQuestions(this.RemoteGameDataIterator.RemainingQuestionsToNextMark);
             this.SecondsRemainingUIController.SetSeconds(this.RemoteGameDataIterator.SecondsForAnswerQuestion);
         }
 
-        void OnActivateSceneChanged(Scene oldScene, Scene newScene)
+        private void OnActivateSceneChanged(Scene oldScene, Scene newScene)
         {
             this.KillLocalServer();
             this.CleanUp();
             SceneManager.activeSceneChanged -= this.OnActivateSceneChanged;
         }
 
-        void OnApplicationQuit()
+        private void OnApplicationQuit()
         {
             this.KillLocalServer();
             this.CleanUp();
         }
 
-        void OnDisconnectedFromServer(object sender, EventArgs args)
+        private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
             this.ChooseCategoryUIController.gameObject.SetActive(false);
             this.LoadingUI.SetActive(false);
@@ -218,7 +214,7 @@
             this.UnableToConnectUI.SetActive(true);   
         }
 
-        void OnConnectedToServer(object sender, EventArgs args)
+        private void OnConnectedToServer(object sender, EventArgs args)
         {
             this.AvailableJokersUIController.ClearAll();
 
@@ -241,12 +237,12 @@
             this.StartLoadingCategories();
         }
 
-        void OnAnswerClick(object sender, AnswerEventArgs args)
+        private void OnAnswerClick(object sender, AnswerEventArgs args)
         {
             this.StartCoroutine(this.OnAnswerClickCoroutine(args.Answer, args.IsCorrect));
         }
 
-        IEnumerator OnAnswerClickCoroutine(string answer, bool isCorrect)
+        private IEnumerator OnAnswerClickCoroutine(string answer, bool isCorrect)
         {
             var commandData = new NetworkCommandData("AnswerSelected");
             commandData.AddOption("Answer", answer);
@@ -265,7 +261,7 @@
             }
         }
 
-        void ShowNotification(Color color, string message)
+        private void ShowNotification(Color color, string message)
         {
             if (this.NotificationService != null)
             {
@@ -273,7 +269,7 @@
             }
         }
 
-        void StartLoadingCategories()
+        private void StartLoadingCategories()
         {
             var remoteCategoriesReader = new RemoteAvailableCategoriesReader(this.NetworkManager, () =>
                 {
@@ -288,8 +284,8 @@
             this.ChooseCategoryUIController.gameObject.SetActive(true);
             this.ChooseCategoryUIController.Initialize(remoteCategoriesReader);
         }
-        
-        void StartServerIfPlayerIsHost()
+
+        private void StartServerIfPlayerIsHost()
         {
             if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
             {
@@ -299,13 +295,13 @@
             }
         }
 
-        void CleanUp()
+        private void CleanUp()
         {
             PlayerPrefs.DeleteKey("LoadedGameData");
             PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
         }
 
-        void KillLocalServer()
+        private void KillLocalServer()
         {
             if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
             {

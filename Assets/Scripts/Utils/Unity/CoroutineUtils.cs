@@ -7,7 +7,7 @@
 
     public class CoroutineUtils
     {
-        MonoBehaviour instance;
+        private MonoBehaviour instance;
         
         public CoroutineUtils(MonoBehaviour instance)
         {
@@ -44,7 +44,7 @@
             this.instance.StartCoroutine(this.RepeatEverySecondsCoroutine(seconds, callback));
         }
 
-        IEnumerator RepeatEverySecondsCoroutine(float seconds, Action callback)
+        private IEnumerator RepeatEverySecondsCoroutine(float seconds, Action callback)
         {
             while (true)
             {
@@ -53,13 +53,13 @@
             }
         }
 
-        IEnumerator WaitUntilCoroutine(Func<bool> condition, Action callback)
+        private IEnumerator WaitUntilCoroutine(Func<bool> condition, Action callback)
         {
             yield return new WaitUntil(condition);
             callback();
         }
 
-        IEnumerator WaitForGUIRenderFrameCoroutine(int frames, Action callback)
+        private IEnumerator WaitForGUIRenderFrameCoroutine(int frames, Action callback)
         {
             for (int i = 0; i < frames; i++)
             {
@@ -69,7 +69,7 @@
             callback();
         }
 
-        IEnumerator WaitForFramesCoroutine(int frames, Action callback)
+        private IEnumerator WaitForFramesCoroutine(int frames, Action callback)
         {
             for (int i = 0; i < frames; i++)
             {
@@ -79,7 +79,7 @@
             callback();
         }
 
-        IEnumerator WaitForSecondsCoroutine(float seconds, Action callback)
+        private IEnumerator WaitForSecondsCoroutine(float seconds, Action callback)
         {
             yield return new WaitForSeconds(seconds);
             callback();

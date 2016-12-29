@@ -23,7 +23,7 @@ namespace Assets.Scripts.Utils
             base.Elapsed += this.OnElapsed;
         }
 
-        void OnElapsed(object sender, ElapsedEventArgs args)
+        private void OnElapsed(object sender, ElapsedEventArgs args)
         {
             ThreadUtils.Instance.RunOnMainThread(this.Method);
             base.Stop();

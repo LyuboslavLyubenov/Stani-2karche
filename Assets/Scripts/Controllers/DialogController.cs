@@ -1,23 +1,22 @@
-﻿using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine.UI;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Utils.Unity;
 
     public class DialogController : ExtendedMonoBehaviour
     {
-        Text text;
+        private Text text;
 
-        bool initialized = false;
+        private bool initialized = false;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.CoroutineUtils.WaitForSeconds(1, this.Initialize);
         }
 
-        void Initialize()
+        private void Initialize()
         {
             this.text = this.GetComponentInChildren<Text>();
             this.initialized = true;

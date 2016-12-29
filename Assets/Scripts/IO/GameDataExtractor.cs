@@ -1,4 +1,4 @@
-namespace Assets.Scripts.GameData
+namespace Assets.Scripts.IO
 {
 
     using System;
@@ -8,12 +8,12 @@ namespace Assets.Scripts.GameData
     using System.Linq;
     using System.Reflection;
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Statistics;
-    using Assets.Scripts.Utils;
+    using CielaSpike.Thread_Ninja;
+    using DTOs;
+    using Exceptions;
+    using Interfaces;
+    using Statistics;
+    using Utils;
 
     using CSharpJExcel.Jxl;
 
@@ -22,11 +22,13 @@ namespace Assets.Scripts.GameData
         public const string LevelPath = "LevelData\\теми\\";
         public const int QuestionsStartRow = 5;
 
-        const int DefaultSecondsForAnswerQuestion = 60;
-        const int DefaultQuestionToTakePerMark = int.MaxValue;
+        private const int DefaultSecondsForAnswerQuestion = 60;
 
-        readonly JExcelCellPosition QuestionsToTakePosition = new JExcelCellPosition(1, 1);
-        readonly JExcelCellPosition SecondsForAnswerQuestionPosition = new JExcelCellPosition(3, 1);
+        private const int DefaultQuestionToTakePerMark = int.MaxValue;
+
+        private readonly JExcelCellPosition QuestionsToTakePosition = new JExcelCellPosition(1, 1);
+
+        private readonly JExcelCellPosition SecondsForAnswerQuestionPosition = new JExcelCellPosition(3, 1);
 
         /// <summary>
         /// If true questions for given marks are aways with random order
@@ -64,12 +66,12 @@ namespace Assets.Scripts.GameData
                 return this.marksQuestions.Count - 1;
             }
         }
-        
-        readonly List<ISimpleQuestion[]> marksQuestions = new List<ISimpleQuestion[]>();
 
-        readonly List<int> secondsForAnswerQuestionPerMark = new List<int>();
+        private readonly List<ISimpleQuestion[]> marksQuestions = new List<ISimpleQuestion[]>();
 
-        IEnumerator ExtractDataAsyncCoroutine(Action<Exception> onError)
+        private readonly List<int> secondsForAnswerQuestionPerMark = new List<int>();
+
+        private IEnumerator ExtractDataAsyncCoroutine(Action<Exception> onError)
         {
             Exception exception = null;
 
@@ -102,7 +104,7 @@ namespace Assets.Scripts.GameData
         /// <summary>
         /// Excel files paths. (all excel files from LevelCategory path)
         /// </summary>
-        string[] GetQuestionsFilesPath()
+        private string[] GetQuestionsFilesPath()
         {
             var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
             var levelPath = execPath + LevelPath + this.LevelCategory;
@@ -113,7 +115,7 @@ namespace Assets.Scripts.GameData
         /// <summary>
         /// Load all questions and seperate them by categories
         /// </summary>
-        void ExtractData()
+        private void ExtractData()
         {
             var questionsFilesPath = this.GetQuestionsFilesPath();
 
@@ -159,7 +161,7 @@ namespace Assets.Scripts.GameData
             }
         }
 
-        ISimpleQuestion[] ExtractQuestions(Sheet sheet, int questionsToTake)
+        private ISimpleQuestion[] ExtractQuestions(Sheet sheet, int questionsToTake)
         {
             var questions = new List<ISimpleQuestion>();
 
@@ -196,7 +198,7 @@ namespace Assets.Scripts.GameData
         /// </summary>
         /// <param name="rowi">row index</param>
         /// <returns></returns>
-        AnswerExtractionResult ExtractAnswers(Sheet sheet, int rowi)
+        private AnswerExtractionResult ExtractAnswers(Sheet sheet, int rowi)
         {
             var answers = new List<string>();
             var correctAnswer = string.Empty;

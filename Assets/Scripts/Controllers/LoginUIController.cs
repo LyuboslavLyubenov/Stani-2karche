@@ -1,7 +1,6 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-
-    using Assets.Scripts.Network;
+    using Network;
 
     using UnityEngine;
     using UnityEngine.UI;
@@ -14,7 +13,7 @@
         public InputField UsernameInputField;
         public InputField PasswordInputField;
 
-        void OnLoggedIn(_UserReceivedData userData)
+        private void OnLoggedIn(_UserReceivedData userData)
         {
             Debug.Log("Logged in successfuly ");
         }

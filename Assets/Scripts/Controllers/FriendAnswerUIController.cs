@@ -1,25 +1,24 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using Utils.Unity;
 
     public class FriendAnswerUIController : ExtendedMonoBehaviour
     {
         public GameObject FriendUsername;
         public GameObject FriendAnswer;
 
-        Text usernameText;
-        Text answerText;
+        private Text usernameText;
 
-        string[] offlineFriendNames = { "Гошо", "Пешо", "г-н Кидиков" };
+        private Text answerText;
 
-        void Start()
+        private string[] offlineFriendNames = { "Гошо", "Пешо", "г-н Кидиков" };
+
+        private void Start()
         {
             if (this.FriendUsername == null)
             {
@@ -58,7 +57,7 @@ namespace Assets.Scripts.Controllers
             this.CoroutineUtils.WaitForFrames(0, () => this._SetResponse(username, answer));
         }
 
-        void _SetResponse(string username, string answer)
+        private void _SetResponse(string username, string answer)
         {
             this.usernameText.text = username;
             this.answerText.text = answer;

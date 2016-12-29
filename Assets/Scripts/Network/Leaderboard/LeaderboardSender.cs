@@ -1,11 +1,11 @@
 namespace Assets.Scripts.Network.Leaderboard
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using DTOs;
+    using IO;
+    using NetworkManagers;
+    using Utils.Unity;
 
     using UnityEngine;
 
@@ -14,16 +14,14 @@ namespace Assets.Scripts.Network.Leaderboard
         public ServerNetworkManager NetworkManager;
         public LeaderboardSerializer LeaderboardSerializer;
 
-
-
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
-            this.CoroutineUtils.WaitForFrames(0, () => this.Initialize());
+            this.CoroutineUtils.WaitForFrames(0, this.Initialize);
         }
 
-        void Initialize()
+        private void Initialize()
         {
-            //tODO FIX TIMEOUT
             var sendLeaderboardEntitiesCommand = new DummyCommand();
 
             sendLeaderboardEntitiesCommand.OnExecuted += (sender, args) =>
@@ -35,7 +33,7 @@ namespace Assets.Scripts.Network.Leaderboard
             this.NetworkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);   
         }
 
-        void StartSendingLeaderboardEntities(int connectionId)
+        private void StartSendingLeaderboardEntities(int connectionId)
         {
             var allPlayersData = this.LeaderboardSerializer.Leaderboard;
 

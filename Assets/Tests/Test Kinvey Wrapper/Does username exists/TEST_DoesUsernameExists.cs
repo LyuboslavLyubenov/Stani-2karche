@@ -9,7 +9,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Does_username_exists
 
     public class TEST_DoesUsernameExists : MonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             var kinveyWrapper = new KinveyWrapper();
             kinveyWrapper.DoesUsernameExistsAsync("ivan", (data) =>

@@ -1,14 +1,13 @@
-﻿using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Localization
+﻿namespace Assets.Scripts.Localization
 {
+    using UnityEngine.SceneManagement;
+    using UnityEngine.UI;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Utils.Unity;
 
     public class LanguageUITextsFiller : ExtendedMonoBehaviour
     {
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Awake()
         {
             DontDestroyOnLoad(this);
@@ -16,12 +15,12 @@ namespace Assets.Scripts.Localization
             SceneManager.activeSceneChanged += this.OnSceneChanged;
         }
 
-        void OnSceneChanged(Scene oldScene, Scene newScene)
+        private void OnSceneChanged(Scene oldScene, Scene newScene)
         {
             this.CoroutineUtils.WaitForFrames(1, this.TranslateAllTextComponentsInScene);
         }
 
-        void TranslateAllTextComponentsInScene()
+        private void TranslateAllTextComponentsInScene()
         {
             if (!LanguagesManager.Instance.IsLoadedLanguage)
             {

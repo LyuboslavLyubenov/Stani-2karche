@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
+    using UnityEngine;
+
+    using DTOs;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
     public class ConnectedClientsDataCommand : IOneTimeExecuteCommand
     {
-        Action<OnlineClientsData_Serializable> onReceivedOnlineClients;
+        private Action<OnlineClientsData_Serializable> onReceivedOnlineClients;
 
         public bool FinishedExecution
         {

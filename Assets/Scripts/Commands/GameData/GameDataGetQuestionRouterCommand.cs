@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Assets.Scripts.Commands.GameData
+﻿namespace Assets.Scripts.Commands.GameData
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Network.NetworkManagers;
+    using Network.NetworkManagers;
 
     using Interfaces;
     using Network;
 
     public class GameDataGetQuestionRouterCommand : INetworkManagerCommand
     {
-        ServerNetworkManager networkManager;
+        private ServerNetworkManager networkManager;
 
         public GameDataGetQuestionRouterCommand(ServerNetworkManager networkManager)
         {
@@ -48,7 +47,7 @@ namespace Assets.Scripts.Commands.GameData
             }
         }
 
-        void MapOptionsToCommand(NetworkCommandData commandData, Dictionary<string, string> options)
+        private void MapOptionsToCommand(NetworkCommandData commandData, Dictionary<string, string> options)
         {
             var optionsList = options.ToArray();
 
@@ -59,5 +58,4 @@ namespace Assets.Scripts.Commands.GameData
             }
         }
     }
-
 }

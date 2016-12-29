@@ -8,19 +8,18 @@ namespace Assets.CielaSpike.Thread_Ninja.Example
 {
 
     public class ExampleScript : MonoBehaviour {
-
-        void Start()
+        private void Start()
         {
             this.StartCoroutine(this.StartExamples());
         }
 
-        void Update()
+        private void Update()
         {
             // rotate cube to see if main thread has been blocked;
             this.transform.Rotate(Vector3.up, Time.deltaTime * 180);
         }
 
-        IEnumerator StartExamples()
+        private IEnumerator StartExamples()
         {
             Task task;
             this.LogExample("Blocking Thread");
@@ -39,7 +38,7 @@ namespace Assets.CielaSpike.Thread_Ninja.Example
             this.LogState(task);
         }
 
-        IEnumerator Blocking()
+        private IEnumerator Blocking()
         {
             this.LogAsync("Thread.Sleep(5000); -> See if cube rotates.");
             Thread.Sleep(5000);
@@ -54,7 +53,7 @@ namespace Assets.CielaSpike.Thread_Ninja.Example
             yield return new WaitForSeconds(3.0f);
         }
 
-        IEnumerator Cancellation()
+        private IEnumerator Cancellation()
         {
             this.LogAsync("Running heavy task...");
             for (int i = 0; i < int.MaxValue; i++)
@@ -66,7 +65,7 @@ namespace Assets.CielaSpike.Thread_Ninja.Example
             yield break;
         }
 
-        IEnumerator ErrorHandling()
+        private IEnumerator ErrorHandling()
         {
             this.LogAsync("Running heavy task...");
             for (int i = 0; i < int.MaxValue; i++)

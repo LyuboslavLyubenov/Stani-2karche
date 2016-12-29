@@ -1,4 +1,4 @@
-namespace Assets.Scripts.GameData
+namespace Assets.Scripts.DTOs
 {
 
     public class AnswerExtractionResult

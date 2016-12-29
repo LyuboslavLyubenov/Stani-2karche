@@ -8,7 +8,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Delete
 
     public class TEST_DeleteEntity : MonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             var kinveyWrapper = new KinveyWrapper();
 

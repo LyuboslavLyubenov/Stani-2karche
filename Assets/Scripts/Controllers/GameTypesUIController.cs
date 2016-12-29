@@ -1,17 +1,15 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
+    using Utils.Unity;
 
     public class GameTypesUIController : MonoBehaviour
     {
-
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.transform.localScale = new Vector3(1, 0, 1);

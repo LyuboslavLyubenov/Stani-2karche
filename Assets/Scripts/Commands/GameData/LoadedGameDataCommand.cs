@@ -4,13 +4,13 @@ namespace Assets.Scripts.Commands.GameData
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class LoadedGameDataCommand : INetworkManagerCommand
     {
         public delegate void OnLoadedGameData(string levelCategory);
 
-        OnLoadedGameData onLoadedGameData;
+        private OnLoadedGameData onLoadedGameData;
 
         public LoadedGameDataCommand(OnLoadedGameData onLoadedGameData)
         {
@@ -27,7 +27,5 @@ namespace Assets.Scripts.Commands.GameData
             var category = commandsOptionsValues["LevelCategory"];
             this.onLoadedGameData(category);
         }
-    
     }
-
 }

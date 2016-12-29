@@ -1,14 +1,13 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using System;
     using System.Collections;
     using System.Security.Cryptography;
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.SecuritySettings;
+    using CielaSpike.Thread_Ninja;
+    using DTOs;
+    using Exceptions;
+    using SecuritySettings;
 
     using UnityEngine;
     using UnityEngine.Networking;
@@ -61,7 +60,7 @@
                 });
         }
 
-        static void DecryptMessageAsync(string message, Action<string> onDecrypted)
+        private static void DecryptMessageAsync(string message, Action<string> onDecrypted)
         {   
             if (onDecrypted == null)
             {
@@ -77,7 +76,7 @@
             NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(DecryptMessageAsyncCoroutine(message, onDecrypted));
         }
 
-        static IEnumerator DecryptMessageAsyncCoroutine(string message, Action<string> onDecrypted)
+        private static IEnumerator DecryptMessageAsyncCoroutine(string message, Action<string> onDecrypted)
         {
             var decryptedMessage = string.Empty;
 
@@ -115,7 +114,7 @@
                 });
         }
 
-        static void EncryptMessageAsync(string message, Action<byte[]> onEncrypted)
+        private static void EncryptMessageAsync(string message, Action<byte[]> onEncrypted)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -130,7 +129,7 @@
             NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(EncryptMessageAsyncCoroutine(message, onEncrypted));
         }
 
-        static IEnumerator EncryptMessageAsyncCoroutine(string message, Action<byte[]> onEncrypted)
+        private static IEnumerator EncryptMessageAsyncCoroutine(string message, Action<byte[]> onEncrypted)
         {
             var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
             var buffer = System.Text.Encoding.UTF8.GetBytes(encryptedMessage);
@@ -140,7 +139,7 @@
             onEncrypted(buffer);
         }
 
-        static void ValidateNetworkOperation(byte error)
+        private static void ValidateNetworkOperation(byte error)
         {
             var networkError = (NetworkError)error;
             if (networkError != NetworkError.Ok)
@@ -149,7 +148,7 @@
             }
         }
 
-        static string ConvertBufferToString(byte[] buffer)
+        private static string ConvertBufferToString(byte[] buffer)
         {
             var message = System.Text.Encoding.UTF8.GetString(buffer).ToCharArray();
             var result = new System.Text.StringBuilder();
@@ -183,7 +182,6 @@
             }
         }
 
-        static NetworkTransportUtilsDummyClass _instance = null;
+        private static NetworkTransportUtilsDummyClass _instance = null;
     }
-
 }

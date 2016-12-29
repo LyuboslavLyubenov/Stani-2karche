@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Notifications;
+    using UnityEngine;
+
+    using Interfaces;
+    using Notifications;
 
     public class AnswerTimeoutCommand : INetworkManagerCommand
     {
-        const string AnsweTimeoutMessage = "Времето за отговор изтече";
+        private const string AnsweTimeoutMessage = "Времето за отговор изтече";
 
-        GameObject questionPanelUI;
+        private GameObject questionPanelUI;
 
-        NotificationsServiceController notificationService;
+        private NotificationsServiceController notificationService;
 
         public AnswerTimeoutCommand(GameObject questionPanelUI, NotificationsServiceController notificationService)
         {
@@ -39,5 +38,4 @@ namespace Assets.Scripts.Commands.Client
             this.notificationService.AddNotification(Color.blue, AnsweTimeoutMessage);
         }
     }
-
 }

@@ -6,19 +6,20 @@
 
     public class OpenSceneUI : MonoBehaviour
     {
-        Rect windowRect = new Rect(0, 0, 200, 100);
+        private Rect windowRect = new Rect(0, 0, 200, 100);
 
-        void OnGUI()
+        private void OnGUI()
         {
             GUI.ModalWindow(1, this.windowRect, this.OpenSceneRenderer, "OpenScene");
         }
 
-        Rect sceneInputFieldRect = new Rect(5, 10, 140, 50);
-        string sceneName = "Type scene name";
+        private Rect sceneInputFieldRect = new Rect(5, 10, 140, 50);
 
-        Rect buttonRect = new Rect(5, 60, 140, 30);
+        private string sceneName = "Type scene name";
 
-        void OpenSceneRenderer(int id)
+        private Rect buttonRect = new Rect(5, 60, 140, 30);
+
+        private void OpenSceneRenderer(int id)
         {
             this.sceneName = GUI.TextField(this.sceneInputFieldRect, this.sceneName);
 

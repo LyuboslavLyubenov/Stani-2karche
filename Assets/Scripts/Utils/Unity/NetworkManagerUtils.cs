@@ -1,18 +1,16 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using System;
     using System.Collections;
 
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using Network.NetworkManagers;
 
     using UnityEngine;
     using UnityEngine.Networking;
 
     public class NetworkManagerUtils : MonoBehaviour
     {
-        static NetworkManagerUtils instance;
+        private static NetworkManagerUtils instance;
 
         public static NetworkManagerUtils Instance
         {
@@ -20,8 +18,7 @@
             {
                 if (instance == null)
                 {
-                    var obj = new GameObject();
-                    obj.name = "NetworkManagerUtils";
+                    var obj = new GameObject("NetworkManagerUtils");
                     instance = obj.AddComponent<NetworkManagerUtils>();
                 }
 
@@ -29,7 +26,7 @@
             }
         }
 
-        NetworkManagerUtils()
+        private NetworkManagerUtils()
         {
         
         }
@@ -71,7 +68,7 @@
             this.StartCoroutine(this.IsServerUpCoroutine(ip, port, isUp));
         }
 
-        IEnumerator IsServerUpCoroutine(string ip, int port, Action<bool> isRunning)
+        private IEnumerator IsServerUpCoroutine(string ip, int port, Action<bool> isRunning)
         {
             const int MaxConnectionAttempts = 5;
 
@@ -109,7 +106,5 @@
 
             isRunning(isUp);
         }
-
     }
-
 }

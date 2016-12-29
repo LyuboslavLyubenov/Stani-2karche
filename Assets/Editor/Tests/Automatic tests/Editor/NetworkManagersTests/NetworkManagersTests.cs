@@ -10,8 +10,9 @@ namespace Assets.Editor.Tests.Automatic_tests.Editor.NetworkManagersTests
 
     public class NetworkManagersTests
     {
-        ClientNetworkManager clientNetworkManager;
-        ServerNetworkManager serverNetworkManager;
+        private ClientNetworkManager clientNetworkManager;
+
+        private ServerNetworkManager serverNetworkManager;
 
         [Test, Timeout(500)]
         public void ConnectClientToServer()

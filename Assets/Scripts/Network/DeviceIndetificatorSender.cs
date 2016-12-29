@@ -10,7 +10,7 @@
 
     public class DeviceIndetificatorSender
     {
-        ClientNetworkManager networkManager;
+        private ClientNetworkManager networkManager;
 
         public DeviceIndetificatorSender(ClientNetworkManager networkManager)
         {
@@ -20,9 +20,10 @@
             }
 
             this.networkManager = networkManager;
+            this.Initialize();
         }
 
-        void Initialize()
+        private void Initialize()
         {
             var getDeviceIndetificator = new DummyCommand();
             getDeviceIndetificator.OnExecuted += (sender, args) => this.SendDeviceIndetificator();
@@ -30,7 +31,7 @@
             this.networkManager.CommandsManager.AddCommand("GetDeviceIndetificator", getDeviceIndetificator);
         }
 
-        void SendDeviceIndetificator()
+        private void SendDeviceIndetificator()
         {
             var deviceINdetificatorCommand = new NetworkCommandData("DeviceIndetificator");
             deviceINdetificatorCommand.AddOption("DeviceIndetificator", SystemInfo.deviceUniqueIdentifier);

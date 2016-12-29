@@ -1,29 +1,41 @@
 ﻿namespace Assets.Scripts.Utils
 {
     using System;
+    using System.Timers;
 
     public class TimerUtils
     {
-        TimerUtils()
+        private TimerUtils()
         {
-            
         }
-        
-        public void ExecuteAfter(float seconds, Action method)
+
+        /// <summary>
+        /// Creates timer executing {method} after {seconds} seconds
+        /// </summary>
+        /// <returns>Created timer</returns>
+        public static Timer ExecuteAfter(float seconds, Action method)
         {
-            new Timer_ExecuteMethodAfterTime(seconds * 1000)
+            var timer = new Timer_ExecuteMethodAfterTime(seconds * 1000)
             {
                 Method = method,
                 AutoDispose = true
             };
-        }
 
-        public void ExecuteEvery(float seconds, Action method)
+            return timer;
+        }
+        
+        /// <summary>
+        /// Creates timer executing {method} every {seconds} seconds
+        /// </summary>
+        /// <returns>Created timer</returns>
+        public static Timer ExecuteEvery(float seconds, Action method)
         {
-            new Timer_ExecuteMethodEverySeconds(seconds * 1000)
+            var timer = new Timer_ExecuteMethodEverySeconds(seconds * 1000)
             {
                 Method = method
             };
+
+            return timer;
         }
     }
 }

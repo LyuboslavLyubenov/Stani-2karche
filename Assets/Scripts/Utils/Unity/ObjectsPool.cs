@@ -10,7 +10,7 @@
         public Transform Prefab;
         public int StartSize = 20;
 
-        List<Transform> pool;
+        private List<Transform> pool;
 
         public int CurrentSize
         {
@@ -60,7 +60,7 @@
             return this.Get(Vector2.zero);
         }
 
-        Transform AddObjToThePool()
+        private Transform AddObjToThePool()
         {
             var poolObj = Instantiate(this.Prefab);
             poolObj.gameObject.SetActive(false);

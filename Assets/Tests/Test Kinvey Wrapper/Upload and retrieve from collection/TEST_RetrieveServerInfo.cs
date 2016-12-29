@@ -14,18 +14,18 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
 
     public class TEST_RetrieveServerInfo : ExtendedMonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             this.CoroutineUtils.WaitForSeconds(1, this.TestRetrieveGameInfo);
         }
 
-        void TestRetrieveGameInfo()
+        private void TestRetrieveGameInfo()
         {
             var kinveyWrapper = new KinveyWrapper();
             kinveyWrapper.LoginAsync("ivan", "ivan", (data) => OnReceivedLoginResponse(kinveyWrapper, data), Debug.LogException);
         }
 
-        void OnReceivedLoginResponse(KinveyWrapper kinveyWrapper, _UserReceivedData data)
+        private void OnReceivedLoginResponse(KinveyWrapper kinveyWrapper, _UserReceivedData data)
         {
             kinveyWrapper.RetrieveEntityAsync<CreatedGameInfo_DTO>("Servers", null, (retrieved) =>
             {

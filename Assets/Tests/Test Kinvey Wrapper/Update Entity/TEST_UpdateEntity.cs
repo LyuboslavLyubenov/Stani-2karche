@@ -11,7 +11,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Update_Entity
 
     public class TEST_UpdateEntity : MonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             var kinveyWrapper = new KinveyWrapper();
 

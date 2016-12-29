@@ -13,14 +13,14 @@ namespace Assets.Tests
         public bool FollowX = true;
         public bool FollowY = true;
 
-        RectTransform rectTransform;
+        private RectTransform rectTransform;
 
-        void Start()
+        private void Start()
         {
             this.rectTransform = this.gameObject.GetComponent<RectTransform>();
         }
 
-        void Update()
+        private void Update()
         {
             var newX = this.rectTransform.position.x;
             var newY = this.rectTransform.position.y;

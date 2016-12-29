@@ -10,31 +10,24 @@
 
     public class PlayerPrefsEncryptionUtils
     {
-        readonly Type[] SupportedTypes = new [] { typeof(int), typeof(string), typeof(float) };
+        private readonly Type[] SupportedTypes = new [] { typeof(int), typeof(string), typeof(float) };
 
-        PlayerPrefsEncryptionUtils()
+        private PlayerPrefsEncryptionUtils()
         {
         
         }
-
-        static void ValidateNotEmpty(string value, string paramName)
-        {
-            if (string.IsNullOrEmpty(value))
-            {
-                throw new ArgumentException(paramName + " cannot be empty");
-            }
-        }
-
+        
         public static void DeleteKey(string key)
         {
-            ValidateNotEmpty(key, "Key");
+            ValidationUtils.ValidateStringNotNullOrEmpty(key, "key");
+
             var encryptedKey = CipherUtility.Encrypt<RijndaelManaged>(key, SecuritySettings.PLAYERPREFS_PASSWORD, SecuritySettings.SALT);
             PlayerPrefs.DeleteKey(encryptedKey);
         }
 
         public static bool HasKey(string key)
         {
-            ValidateNotEmpty(key, "Key");
+            ValidationUtils.ValidateStringNotNullOrEmpty(key, "key");
 
             var encryptedKey = CipherUtility.Encrypt<RijndaelManaged>(key, SecuritySettings.PLAYERPREFS_PASSWORD, SecuritySettings.SALT);
             return PlayerPrefs.HasKey(encryptedKey);
@@ -42,8 +35,8 @@
 
         public static void SetString(string key, string value)
         {
-            ValidateNotEmpty(key, "Key");
-            ValidateNotEmpty(value, "Value");
+            ValidationUtils.ValidateStringNotNullOrEmpty(key, "key");
+            ValidationUtils.ValidateStringNotNullOrEmpty(key, "value");
 
             var encryptedKey = CipherUtility.Encrypt<RijndaelManaged>(key, SecuritySettings.PLAYERPREFS_PASSWORD, SecuritySettings.SALT);
             var encryptedValue = CipherUtility.Encrypt<RijndaelManaged>(value, SecuritySettings.PLAYERPREFS_PASSWORD, SecuritySettings.SALT);
@@ -51,8 +44,8 @@
         }
 
         public static string GetString(string key)
-        {        
-            ValidateNotEmpty(key, "Key");
+        {
+            ValidationUtils.ValidateStringNotNullOrEmpty(key, "key");
 
             var encryptedKey = CipherUtility.Encrypt<RijndaelManaged>(key, SecuritySettings.PLAYERPREFS_PASSWORD, SecuritySettings.SALT);
             var encryptedValue = PlayerPrefs.GetString(encryptedKey);

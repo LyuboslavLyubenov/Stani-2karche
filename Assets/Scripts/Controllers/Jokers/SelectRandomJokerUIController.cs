@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers.Jokers
+﻿namespace Assets.Scripts.Controllers.Jokers
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using EventArgs;
+    using Utils;
+    using Utils.Unity;
 
     public class SelectRandomJokerUIController : ExtendedMonoBehaviour
     {
@@ -19,20 +18,20 @@ namespace Assets.Scripts.Controllers.Jokers
             {
             };
 
-        const float DelayBetweenJokersRemovalInSeconds = 0.9f;
-        const float DelayShowSelectedJoker = 3f;
-        const int XDistanceBetweenJokers = 20;
-        const int YOffset = 20;
+        private const float DelayBetweenJokersRemovalInSeconds = 0.9f;
+        private const float DelayShowSelectedJoker = 3f;
+        private const int XDistanceBetweenJokers = 20;
+        private const int YOffset = 20;
 
-        Dictionary<Type, GameObject> jokersObjs = new Dictionary<Type, GameObject>();
+        private Dictionary<Type, GameObject> jokersObjs = new Dictionary<Type, GameObject>();
 
-        RectTransform upperContainer;
-        RectTransform lowerContainer;
+        private RectTransform upperContainer;
+        private RectTransform lowerContainer;
+        private RectTransform thisRectTransform;
 
-        RectTransform thisRectTransform;
+        private GameObject jokerPrefab;
 
-        GameObject jokerPrefab;
-
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.upperContainer = this.transform.Find("Upper").GetComponent<RectTransform>();
@@ -41,7 +40,7 @@ namespace Assets.Scripts.Controllers.Jokers
             this.jokerPrefab = Resources.Load<GameObject>("Prefabs/SelectRandomJoker/Joker");
         }
 
-        IEnumerator CreateJokerObjs(Type[] jokers)
+        private IEnumerator CreateJokerObjs(Type[] jokers)
         {
             yield return null;
 
@@ -81,7 +80,7 @@ namespace Assets.Scripts.Controllers.Jokers
             }
         }
 
-        IEnumerator DeleteNotSelectedJokers(Type[] notSelectedJokers)
+        private IEnumerator DeleteNotSelectedJokers(Type[] notSelectedJokers)
         {
             var jokersToDelete = notSelectedJokers.ToArray();
             jokersToDelete.Shuffle();
@@ -100,7 +99,7 @@ namespace Assets.Scripts.Controllers.Jokers
             }
         }
 
-        IEnumerator PlaySelectRandomJokerCoroutine(Type[] jokers, int selectedJokerIndex)
+        private IEnumerator PlaySelectRandomJokerCoroutine(Type[] jokers, int selectedJokerIndex)
         {
             yield return this.StartCoroutine(this.CreateJokerObjs(jokers));
             yield return new WaitForEndOfFrame();
@@ -113,7 +112,7 @@ namespace Assets.Scripts.Controllers.Jokers
             yield return this.StartCoroutine(this.ShowAsSelectedCoroutine(selectedJoker));
         }
 
-        IEnumerator ShowAsSelectedCoroutine(Type joker)
+        private IEnumerator ShowAsSelectedCoroutine(Type joker)
         {
             var selectedJokerObj = this.jokersObjs[joker];
             selectedJokerObj.transform.SetParent(this.transform, true);

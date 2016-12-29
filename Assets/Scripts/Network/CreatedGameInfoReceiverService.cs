@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network.TcpSockets;
+    using UnityEngine;
+    using EventArgs;
+    using TcpSockets;
 
     public class CreatedGameInfoReceiverService : MonoBehaviour
     {
@@ -17,7 +15,7 @@ namespace Assets.Scripts.Network
         public Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             if (!this.TcpClient.Initialized)
             {
@@ -32,7 +30,7 @@ namespace Assets.Scripts.Network
             this.TcpServer.OnReceivedMessage += this.OnReceivedMessage;
         }
 
-        void OnReceivedMessage(object sender, MessageEventArgs args)
+        private void OnReceivedMessage(object sender, MessageEventArgs args)
         {
             var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag);
 

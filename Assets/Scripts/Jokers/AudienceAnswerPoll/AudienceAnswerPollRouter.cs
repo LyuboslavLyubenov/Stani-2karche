@@ -1,23 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers;
+    using Commands.Server;
+    using DTOs;
+    using Interfaces;
+    using IO;
+    using Network.NetworkManagers;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
@@ -26,11 +23,11 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     {
         public const int MinTimeToAnswerInSeconds = 10;
 
-        const float MinCorrectAnswerVoteProcentage = 0.40f;
-        const float MaxCorrectAnswerVoteProcentage = 0.80f;
+        private const float MinCorrectAnswerVoteProcentage = 0.40f;
+        private const float MaxCorrectAnswerVoteProcentage = 0.80f;
 
-        const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
-        const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
+        private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
+        private const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
 
         public EventHandler OnBeforeSend = delegate
             {
@@ -50,80 +47,31 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     
         public ServerNetworkManager NetworkManager;
         public GameDataIterator LocalGameData;
-   
-        int timeToAnswerInSeconds;
-        int senderConnectionId;
-        int elapsedTime;
 
-        List<int> clientsThatMustVote = new List<int>();
-        List<int> votedClientsConnectionId = new List<int>();
-        Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+        private int timeToAnswerInSeconds;
+        private int senderConnectionId;
+        private int elapsedTime;
 
+        private List<int> clientsThatMustVote = new List<int>();
+        private List<int> votedClientsConnectionId = new List<int>();
 
+        private Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+        
         public bool Activated
         {
             get;
             private set;
         }
-
+        
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
-
             this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
         }
-
-        void UpdateTimer()
+        
+        private void OnReceivedVote(int connectionId, string answer)
         {
-            if (!this.Activated)
-            {
-                return;
-            }
-
-            this.elapsedTime++;
-
-            if (!this.AreFinishedVoting())
-            {
-                return;
-            }
-            
-            this.TellClientsThatJokerIsDeactivated();
-            this.SendMainPlayerVoteResult();
-        }
-
-        void NoMoreTimeToAnswer()
-        {
-            var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
-            this.NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, this.senderConnectionId);
-        }
-
-        void SendMainPlayerVoteResult()
-        {
-            this.OnBeforeSend(this, EventArgs.Empty);
-            this.SendVoteResult();
-        }
-
-        void SendVoteResult()
-        {
-            var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
-            var answersVotesPairs = this.answersVotes.ToArray();
-
-            for (int i = 0; i < answersVotesPairs.Length; i++)
-            {
-                var answer = answersVotesPairs[i].Key;
-                var answerVoteCount = answersVotesPairs[i].Value;
-                voteResultCommandData.AddOption(answer, answerVoteCount.ToString());
-            }
-
-            this.NetworkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
-
-            this.Deactivate();
-
-            this.OnSent(this, EventArgs.Empty);
-        }
-
-        void OnReceivedVote(int connectionId, string answer)
-        { 
             if (!this.Activated)
             {
                 return;
@@ -145,7 +93,57 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             }
         }
 
-        bool AreFinishedVoting()
+        private void UpdateTimer()
+        {
+            if (!this.Activated)
+            {
+                return;
+            }
+
+            this.elapsedTime++;
+
+            if (!this.AreFinishedVoting())
+            {
+                return;
+            }
+            
+            this.TellClientsThatJokerIsDeactivated();
+            this.SendMainPlayerVoteResult();
+        }
+
+        private void NoMoreTimeToAnswer()
+        {
+            var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
+            this.NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, this.senderConnectionId);
+        }
+
+        private void SendMainPlayerVoteResult()
+        {
+            this.OnBeforeSend(this, EventArgs.Empty);
+            this.SendVoteResult();
+        }
+
+        private void SendVoteResult()
+        {
+            var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
+            var answersVotesPairs = this.answersVotes.ToArray();
+
+            for (int i = 0; i < answersVotesPairs.Length; i++)
+            {
+                var answer = answersVotesPairs[i].Key;
+                var answerVoteCount = answersVotesPairs[i].Value;
+                voteResultCommandData.AddOption(answer, answerVoteCount.ToString());
+            }
+
+            this.NetworkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
+
+            this.Deactivate();
+
+            this.OnSent(this, EventArgs.Empty);
+        }
+
+
+        private bool AreFinishedVoting()
         {
             if (this.elapsedTime >= this.timeToAnswerInSeconds)
             {
@@ -165,14 +163,14 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             return true;
         }
 
-        void SendJokerSettings()
+        private void SendJokerSettings()
         {
             var setAskAudienceJokerSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
             setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
             this.NetworkManager.SendClientCommand(this.senderConnectionId, setAskAudienceJokerSettingsCommand);
         }
 
-        void SendQuestionToAudience(ISimpleQuestion question)
+        private void SendQuestionToAudience(ISimpleQuestion question)
         {
             var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             var questionJSON = JsonUtility.ToJson(question.Serialize());
@@ -180,7 +178,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.NetworkManager.SendAllClientsCommand(sendQuestionCommand, this.senderConnectionId);
         }
 
-        void TellClientsThatJokerIsDeactivated()
+        private void TellClientsThatJokerIsDeactivated()
         {
             var clients = this.clientsThatMustVote.ToList();
             clients.Add(this.senderConnectionId);
@@ -196,7 +194,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             }
         }
 
-        void ResetAnswerVotes(ISimpleQuestion question)
+        private void ResetAnswerVotes(ISimpleQuestion question)
         {
             this.answersVotes.Clear();
 
@@ -207,7 +205,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             }
         }
 
-        void GenerateAudienceVotes(ISimpleQuestion question)
+        private void GenerateAudienceVotes(ISimpleQuestion question)
         { 
             var correctAnswer = question.Answers[question.CorrectAnswerIndex]; 
             var correctAnswerChance = (int)(UnityEngine.Random.Range(MinCorrectAnswerVoteProcentage, MaxCorrectAnswerVoteProcentage) * 100); 
@@ -228,7 +226,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.answersVotes.Add(incorrectAnswers.Last(), wrongAnswersLeftOverChance);
         }
 
-        void SendGeneratedResultToMainPlayer()
+        private void SendGeneratedResultToMainPlayer()
         {
             var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
             this.CoroutineUtils.WaitForSeconds(secondsToWait, () =>
@@ -264,23 +262,28 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.Activated = false;
         }
 
-        public void Activate(int senderConnectionId, MainPlayerData mainPlayerData)
+        public void Activate(int senderConnectionId, int timeToAnswerInSeconds, MainPlayerData mainPlayerData)
         {
             if (this.Activated)
             {
                 throw new InvalidOperationException("Already active");
             }
 
+            if (timeToAnswerInSeconds <= 0)
+            {
+                throw new ArgumentNullException();
+            }
+
             if (mainPlayerData == null)
             {
                 throw new ArgumentNullException("mainPlayerData");
             }
-
+            
             var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
 
-            this.timeToAnswerInSeconds = this.LocalGameData.SecondsForAnswerQuestion;
             this.senderConnectionId = senderConnectionId;
-
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+            
             if (this.NetworkManager.ConnectedClientsCount < minClients)
             {
                 this.answersVotes.Clear();

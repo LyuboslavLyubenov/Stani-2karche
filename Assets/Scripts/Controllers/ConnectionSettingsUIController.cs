@@ -1,12 +1,11 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.EventArgs;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using EventArgs;
 
     public class ConnectionSettingsUIController : MonoBehaviour
     {
@@ -16,6 +15,7 @@ namespace Assets.Scripts.Controllers
             {
             };
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             if (this.IPText == null)

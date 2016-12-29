@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-
 namespace Assets.Scripts.Commands.Jokers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
@@ -12,7 +11,7 @@ namespace Assets.Scripts.Commands.Jokers
     {
         public delegate void OnReceivedSettings(int timeToAnswerInSeconds);
 
-        OnReceivedSettings onReceivedSettings;
+        private OnReceivedSettings onReceivedSettings;
 
         public bool FinishedExecution
         {
@@ -40,6 +39,8 @@ namespace Assets.Scripts.Commands.Jokers
         {
             var timeToAnswer = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
             this.onReceivedSettings(timeToAnswer);
+
+            FinishedExecution = true;
 
             if (this.OnFinishedExecution != null)
             {

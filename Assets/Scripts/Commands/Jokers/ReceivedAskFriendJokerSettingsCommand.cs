@@ -1,20 +1,19 @@
-using System;
-using System.Collections.Generic;
-
 namespace Assets.Scripts.Commands.Jokers
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Interfaces;
+
+    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
     public class ReceivedAskFriendJokerSettingsCommand : IOneTimeExecuteCommand
     {
-        DisableAfterDelay disableAfterDelay;
+        private DisableAfterDelay disableAfterDelay;
 
-        Action onAppliedSettings;
+        private Action onAppliedSettings;
 
         public bool FinishedExecution
         {

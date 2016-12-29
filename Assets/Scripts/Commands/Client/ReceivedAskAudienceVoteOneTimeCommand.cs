@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
@@ -12,7 +11,7 @@ namespace Assets.Scripts.Commands.Client
     {
         public delegate void OnReceivedVote(int connectionId,string answer);
 
-        OnReceivedVote onReceivedVote;
+        private OnReceivedVote onReceivedVote;
 
         public bool FinishedExecution
         {
@@ -50,5 +49,4 @@ namespace Assets.Scripts.Commands.Client
             }
         }
     }
-
 }

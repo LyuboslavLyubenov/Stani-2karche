@@ -1,12 +1,10 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using UnityEngine;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network.TcpSockets;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using EventArgs;
+    using TcpSockets;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
 
@@ -19,7 +17,7 @@ namespace Assets.Scripts.Network
         public SimpleTcpServer TcpServer;
         public GameInfoFactory GameInfoFactory;
 
-        void Start()
+        private void Start()
         {
             if (!this.TcpClient.Initialized)
             {
@@ -36,7 +34,7 @@ namespace Assets.Scripts.Network
             Debug.Log("Created game info inizialized");
         }
 
-        void OnReceivedMessage(object sender, MessageEventArgs args)
+        private void OnReceivedMessage(object sender, MessageEventArgs args)
         {
             if (!args.Message.Contains(SendGameInfoCommandTag))
             {   

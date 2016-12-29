@@ -1,21 +1,20 @@
-﻿using System.Collections;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System.Collections;
+
+    using UnityEngine;
+    using UnityEngine.UI;
 
     public class BasicExamPlayerTutorialUIController : MonoBehaviour
     {
-        const string AlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTutorial";
+        private const string AlreadyPlayedKey = "TutorialShowed - BasicExamPlayerTutorial";
 
         public bool RepeatTutorial = false;
         public bool AllowSkipping = true;
 
-        bool activated = false;
+        private bool activated = false;
 
-        Animator animator;
+        private Animator animator;
 
         public void Activate()
         {
@@ -36,12 +35,13 @@ namespace Assets.Scripts.Controllers
             this.StartCoroutine(this._UpdateCoroutine());
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
             this.StopAllCoroutines();
         }
 
-        IEnumerator _UpdateCoroutine()
+        private IEnumerator _UpdateCoroutine()
         {
             while (true)
             {

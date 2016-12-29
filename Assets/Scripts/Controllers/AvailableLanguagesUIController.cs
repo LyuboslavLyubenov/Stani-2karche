@@ -1,23 +1,22 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine;
+    using UnityEngine.Events;
+    using UnityEngine.UI;
 
-    using Assets.Scripts.Localization;
+    using Localization;
 
     public class AvailableLanguagesUIController : MonoBehaviour
     {
         public Transform Content;
 
-        const float LanguageBtnWidth = 200f;
+        private const float LanguageBtnWidth = 200f;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             var availableLanguages = LanguagesManager.Instance.AvailableLanguages;
             var contentRectTransform = this.Content.GetComponent<RectTransform>();
-            var contentHeight = contentRectTransform.sizeDelta.y;
 
             for (int i = 0; i < availableLanguages.Length; i++)
             {
@@ -29,7 +28,7 @@ namespace Assets.Scripts.Controllers
             contentRectTransform.sizeDelta = new Vector2(xSize, contentRectTransform.sizeDelta.y);
         }
 
-        void AddLanguageObj(string language)
+        private void AddLanguageObj(string language)
         {
             var obj = new GameObject();
             var textObj = new GameObject();
@@ -73,7 +72,7 @@ namespace Assets.Scripts.Controllers
             btn.onClick.AddListener(new UnityAction(() => this.OnSelectedLanguage(language)));
         }
 
-        void OnSelectedLanguage(string language)
+        private void OnSelectedLanguage(string language)
         {
             LanguagesManager.Instance.LoadLanguage(language);
             this.gameObject.SetActive(false);

@@ -20,11 +20,11 @@
         protected const int ReceiveMessageTimeoutInMiliseconds = 1000;
         protected const int SendMessageTimeoutInMiliseconds = 1000;
 
-        Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
+        private Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
 
         //readonly object MyLock = new object();
 
-        bool initialized = false;
+        private bool initialized = false;
 
         public bool Initialized
         {
@@ -34,17 +34,17 @@
             }
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             this.Dispose();
         }
 
-        void OnApplicationExit()
+        private void OnApplicationExit()
         {
             this.Dispose();
         }
 
-        void UpdateConnectedSockets()
+        private void UpdateConnectedSockets()
         {
             var disconnectedSockets = this.connectedToServersIPsSockets.Where(ipSocket => !ipSocket.Value.IsConnected()).ToList();
             disconnectedSockets.ForEach(ipSocket =>
@@ -62,7 +62,7 @@
                 });
         }
 
-        void BeginConnectToServer(string ipAddress, int port, Action onConnected)
+        private void BeginConnectToServer(string ipAddress, int port, Action onConnected)
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             var state = new ClientConnectingState() { OnConnected = onConnected, Client = socket };
@@ -75,7 +75,7 @@
             socket.BeginConnect(ipAddress, port, new AsyncCallback(this.EndConnectToServer), state);
         }
 
-        void EndConnectToServer(IAsyncResult result)
+        private void EndConnectToServer(IAsyncResult result)
         {
             var state = (ClientConnectingState)result.AsyncState;
             var socket = state.Client;
@@ -99,7 +99,7 @@
             }
         }
 
-        void BeginSendMessageToServer(string ipAddress, string message)
+        private void BeginSendMessageToServer(string ipAddress, string message)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -123,7 +123,7 @@
             socket.BeginSend(state.DataToSend, 0, state.DataToSend.Length, SocketFlags.None, new AsyncCallback(this.EndSendMessageToServer), state);
         }
 
-        void EndSendMessageToServer(IAsyncResult result)
+        private void EndSendMessageToServer(IAsyncResult result)
         {
             var state = (SendMessageState)result.AsyncState;
             var socket = state.Client;
@@ -209,7 +209,7 @@
             socket.BeginDisconnect(false, this.EndDisconnect, state);
         }
 
-        void EndDisconnect(IAsyncResult result)
+        private void EndDisconnect(IAsyncResult result)
         {
             var state = (DisconnectState)result.AsyncState;
             var socket = state.Socket;

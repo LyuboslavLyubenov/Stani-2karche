@@ -1,15 +1,14 @@
-﻿using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using UnityEngine.UI;
 
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Utils.Unity;
 
     public class GeneralSettingsUI : ExtendedMonoBehaviour
     {
-        InputField usernameInputField;
+        private InputField usernameInputField;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Awake()
         {
             this.usernameInputField = this.transform.Find("ChangeUsername")
@@ -17,6 +16,7 @@ namespace Assets.Scripts.Controllers
                 .GetComponent<InputField>();    
         }
 
+        // ReSharper disable once UnusedMember.Local
         void OnEnable()
         {
             if (!PlayerPrefsEncryptionUtils.HasKey("Username"))
@@ -28,6 +28,7 @@ namespace Assets.Scripts.Controllers
             this.usernameInputField.text = username;
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
             var username = this.usernameInputField.text;

@@ -14,12 +14,12 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
 
     public class TEST_UploadServerInfo : ExtendedMonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             this.CoroutineUtils.WaitForSeconds(1, this.TestUploadGameInfo);
         }
 
-        void TestUploadGameInfo()
+        private void TestUploadGameInfo()
         {
             var kinveyWrapper = new KinveyWrapper();
 
@@ -30,7 +30,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
                 Debug.LogException);
         }
 
-        void OnReceivedLoginResponse(KinveyWrapper kinveyWrapper, _UserReceivedData data)
+        private void OnReceivedLoginResponse(KinveyWrapper kinveyWrapper, _UserReceivedData data)
         {
             var serverInfo = new ServerInfo_DTO()
             {

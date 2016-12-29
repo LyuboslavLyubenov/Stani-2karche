@@ -1,13 +1,14 @@
 ﻿namespace Assets.Scripts.Jokers
 {
-
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Utils.Unity.UI;
+    using Localization;
+    using Utils.Unity.UI;
 
     using UnityEngine;
 
+    [RequireComponent(typeof(ActivateTooltip))]
     public class JokerTooltipExplanation : MonoBehaviour
     {
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             var tooltip = this.GetComponent<ActivateTooltip>();

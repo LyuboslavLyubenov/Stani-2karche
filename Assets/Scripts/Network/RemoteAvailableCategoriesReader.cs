@@ -1,22 +1,21 @@
-using System;
-using System.Timers;
-
 namespace Assets.Scripts.Network
 {
+    using System;
+    using System.Timers;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
+    using Commands;
+    using Commands.Client;
+    using Interfaces;
+    using NetworkManagers;
+    using Utils;
 
     public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisposable
     {
-        ClientNetworkManager networkManager;
+        private ClientNetworkManager networkManager;
 
-        Action onTimeout;
+        private Action onTimeout;
 
-        Timer timeoutTimer = new Timer();
+        private Timer timeoutTimer = new Timer();
 
         public bool Receiving
         {
@@ -24,7 +23,7 @@ namespace Assets.Scripts.Network
             private set;
         }
 
-        int timeoutInSeconds;
+        private int timeoutInSeconds;
 
         public RemoteAvailableCategoriesReader(ClientNetworkManager networkManager, Action onTimeout, int timeoutInSeconds)
         {
@@ -50,7 +49,7 @@ namespace Assets.Scripts.Network
             var threadUtils = ThreadUtils.Instance;
         }
 
-        void OnTimeout()
+        private void OnTimeout()
         {
             ThreadUtils.Instance.RunOnMainThread(() =>
                 {
@@ -64,7 +63,7 @@ namespace Assets.Scripts.Network
                 });
         }
 
-        void StopReceivingAvailableCategories()
+        private void StopReceivingAvailableCategories()
         {
             try
             {

@@ -5,7 +5,7 @@
 
     public class FPSSettings : MonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             DontDestroyOnLoad(this);
 

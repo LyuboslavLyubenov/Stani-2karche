@@ -1,11 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     using EventArgs = System.EventArgs;
 
@@ -23,7 +22,7 @@ namespace Assets.Scripts.Commands.Client
             private set;
         }
 
-        Action<Dictionary<string, int>> onReceivedAnswersVotes;
+        private Action<Dictionary<string, int>> onReceivedAnswersVotes;
 
         public AudiencePollResultCommand(Action<Dictionary<string, int>> onReceivedAnswersVotes)
         {

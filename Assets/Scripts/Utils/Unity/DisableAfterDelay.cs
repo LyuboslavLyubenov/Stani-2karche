@@ -1,11 +1,10 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using System;
     using System.Collections;
     using System.Linq;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     using UnityEngine;
 
@@ -48,25 +47,29 @@
             }
         }
 
-        EventHandler<TimeInSecondsEventArgs> onTimePass = delegate
+        private EventHandler<TimeInSecondsEventArgs> onTimePass = delegate
             {
             };
 
-        EventHandler onTimeEnd = delegate
+        private EventHandler onTimeEnd = delegate
             {
             };
 
+
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnEnable()
         {
             this.StartCoroutine(this.DisableWithDelay());
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
             this.PassedSeconds = 0;
             this.onTimeEnd(this, EventArgs.Empty);
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void FixedUpdate()
         {
             if (this.DisableAfterClick && Input.GetMouseButton(0))
@@ -76,8 +79,10 @@
             }
         }
 
-        void Disable()
+        private void Disable()
         {
+            onTimeEnd(this, EventArgs.Empty);
+            
             if (this.UseAnimator)
             {
                 this.GetComponent<Animator>().SetTrigger("disable");
@@ -88,7 +93,7 @@
             }
         }
 
-        IEnumerator DisableWithDelay()
+        private IEnumerator DisableWithDelay()
         {
             while (this.PassedSeconds < this.DelayInSeconds)
             {

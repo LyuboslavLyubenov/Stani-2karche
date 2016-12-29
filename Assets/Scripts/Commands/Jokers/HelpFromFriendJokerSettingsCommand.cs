@@ -24,7 +24,7 @@ namespace Assets.Scripts.Commands.Jokers
             set;
         }
 
-        OnReceivedSettings onReceivedSettings;
+        private OnReceivedSettings onReceivedSettings;
 
         public HelpFromFriendJokerSettingsCommand(OnReceivedSettings onReceivedSettings)
         {

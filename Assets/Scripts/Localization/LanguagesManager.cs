@@ -14,13 +14,13 @@ namespace Assets.Scripts.Localization
 
     public class LanguagesManager : MonoBehaviour
     {
-        const string DefaultLanguage = "Bulgarian";
+        private const string DefaultLanguage = "Bulgarian";
 
         public EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
             {
             };
 
-        static LanguagesManager instance = null;
+        private static LanguagesManager instance = null;
    
         private XmlDocument mainDoc = null;
         private XmlElement root = null;
@@ -86,8 +86,8 @@ namespace Assets.Scripts.Localization
         }
 
 #if UNITY_STANDALONE
-    
-        void CollectLanguages()
+
+        private void CollectLanguages()
         {
             try
             {
@@ -106,7 +106,7 @@ namespace Assets.Scripts.Localization
             }
         }
 
-        string GetLanguageFile(string language)
+        private string GetLanguageFile(string language)
         {
             var languageUpper = language.ToUpperInvariant();
             return this.languageFiles.FirstOrDefault(l => l.ToUpperInvariant().Contains(languageUpper));

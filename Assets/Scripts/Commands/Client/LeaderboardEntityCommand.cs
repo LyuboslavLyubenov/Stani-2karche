@@ -9,7 +9,7 @@ namespace Assets.Scripts.Commands.Client
 
     public class LeaderboardEntityCommand : INetworkManagerCommand
     {
-        ICollection<PlayerScore> playersScores;
+        private ICollection<PlayerScore> playersScores;
 
         public LeaderboardEntityCommand(ICollection<PlayerScore> playersScores)
         {
@@ -29,5 +29,4 @@ namespace Assets.Scripts.Commands.Client
             this.playersScores.Add(playerScore);
         }
     }
-
 }

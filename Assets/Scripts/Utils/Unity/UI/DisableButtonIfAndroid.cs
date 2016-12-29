@@ -5,7 +5,7 @@
 
     public class DisableButtonIfAndroid : MonoBehaviour
     {
-        void Start()
+        private void Start()
         {
 #if UNITY_ANDROID
         GetComponent<Button>().interactable = false;

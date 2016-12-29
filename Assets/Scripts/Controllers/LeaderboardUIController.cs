@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+    using System.Collections;
 
-    using Assets.Scripts.DTOs;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using DTOs;
 
     public class LeaderboardUIController : MonoBehaviour
     {
-        const int SpaceBetweenScore = 10;
+        private const int SpaceBetweenScore = 10;
     
         public GameObject ContentPanel;
 
-        GameObject PlayerScorePrefab;
+        private GameObject PlayerScorePrefab;
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.PlayerScorePrefab = Resources.Load<GameObject>("Prefabs/LeaderboardPlayerScoreElement");
@@ -32,7 +32,7 @@ namespace Assets.Scripts.Controllers
             this.StartCoroutine(this.PopulateCoroutine(playersScore));
         }
 
-        IEnumerator PopulateCoroutine(PlayerScore[] playersScore)
+        private IEnumerator PopulateCoroutine(PlayerScore[] playersScore)
         {
             yield return null;
 
@@ -73,7 +73,7 @@ namespace Assets.Scripts.Controllers
             this.ResizeContentPanel();
         }
 
-        void ResizeContentPanel()
+        private void ResizeContentPanel()
         {
             //get last element position
             //resize ContentPanel so its height = last element position + last element height + SpaceBetweenScore

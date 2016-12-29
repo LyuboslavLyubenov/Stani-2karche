@@ -1,17 +1,15 @@
 namespace Assets.Scripts.DTOs
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
+    using Commands;
+    using EventArgs;
+    using Interfaces;
+    using Network.NetworkManagers;
+    using Utils;
 
     public class JokersData
     {
@@ -27,7 +25,7 @@ namespace Assets.Scripts.DTOs
             {
             };
 
-        List<Type> availableJokers = new List<Type>();
+        private List<Type> availableJokers = new List<Type>();
 
         public ICollection<Type> AvailableJokers
         {
@@ -59,12 +57,12 @@ namespace Assets.Scripts.DTOs
             }
         }
 
-        void UsedJoker(Type jokerType)
+        private void UsedJoker(Type jokerType)
         {
             this.OnUsedJoker(this, new JokerTypeEventArgs(jokerType));
         }
 
-        void _AddJoker(Type joker)
+        private void _AddJoker(Type joker)
         {
             this.availableJokers.Add(joker);
             this.OnAddedJoker(this, new JokerTypeEventArgs(joker));

@@ -7,26 +7,25 @@
 
     using CSharpJExcel.Jxl;
     using CSharpJExcel.Jxl.Write;
-    using System.Collections.Generic;
 
-    using Assets.Scripts.GameData;
-    using Assets.Scripts.IO;
+    using IO;
 
     using Interfaces;
     using Utils;
 
     public class BasicExamGameDataStatisticsExporter : IStatisticsExporter
     {
-        const int IsCorrectAnswerColumn = 1;
-        const int CorrectAnsweredQuestionCountColumn = 2;
-        const int WrongAnsweredQuestionCountColumn = 3;
-        const int TotalTimeSpentOnQuestionColumn = 4;
-        const int AvgSpentTimeOnQuestionColumn = 5;
-        const int SelectedAnswerCountOnQuestionColumn = 6;
-        const int UsedJokersCountOnQuestionColumn = 7;
+        private const int IsCorrectAnswerColumn = 1;
+        private const int CorrectAnsweredQuestionCountColumn = 2;
+        private const int WrongAnsweredQuestionCountColumn = 3;
+        private const int TotalTimeSpentOnQuestionColumn = 4;
+        private const int AvgSpentTimeOnQuestionColumn = 5;
+        private const int SelectedAnswerCountOnQuestionColumn = 6;
+        private const int UsedJokersCountOnQuestionColumn = 7;
 
-        BasicExamStatisticsCollector statisticsCollector;
-        IGameDataIterator gameDataIterator;
+        private BasicExamStatisticsCollector statisticsCollector;
+
+        private IGameDataIterator gameDataIterator;
 
         public BasicExamGameDataStatisticsExporter(BasicExamStatisticsCollector statisticsCollector, IGameDataIterator gameDataIterator)
         {   
@@ -44,31 +43,31 @@
             this.gameDataIterator = gameDataIterator;
         }
 
-        int ExtractCorrectAnsweredQuestionCount(Sheet sheet, int questionRow)
+        private int ExtractCorrectAnsweredQuestionCount(Sheet sheet, int questionRow)
         {
             var correctAnsweredCountCell = sheet.GetCellOrDefault(CorrectAnsweredQuestionCountColumn, questionRow);
             return correctAnsweredCountCell.getContents().ConvertToOrDefault<int>();
         }
 
-        int ExtractIncorrectAnsweredQuestionCount(Sheet sheet, int questionRow)
+        private int ExtractIncorrectAnsweredQuestionCount(Sheet sheet, int questionRow)
         {
             var incorrectAnsweredCountCell = sheet.GetCellOrDefault(WrongAnsweredQuestionCountColumn, questionRow);
             return incorrectAnsweredCountCell.getContents().ConvertToOrDefault<int>();
         }
 
-        int ExtractTotalTimeSpentThinking(Sheet sheet, int questionRow)
+        private int ExtractTotalTimeSpentThinking(Sheet sheet, int questionRow)
         {
             var totalTimeSpentCell = sheet.GetCellOrDefault(TotalTimeSpentOnQuestionColumn, questionRow);
             return totalTimeSpentCell.getContents().ConvertToOrDefault<int>();
         }
 
-        float ExtractAvgTimeSpentThinking(Sheet sheet, int questionRow)
+        private float ExtractAvgTimeSpentThinking(Sheet sheet, int questionRow)
         {
             var avgTimeSpentCell = sheet.GetCellOrDefault(AvgSpentTimeOnQuestionColumn, questionRow);
             return avgTimeSpentCell.getContents().ConvertToOrDefault<float>();
         }
 
-        int[] ExtractAnswersSelectedCount(Sheet sheet, int questionRow, int answersCount)
+        private int[] ExtractAnswersSelectedCount(Sheet sheet, int questionRow, int answersCount)
         {
             var answersSelectedCount = new int[answersCount];
             var startRow = questionRow + 1;
@@ -83,7 +82,7 @@
             return answersSelectedCount;
         }
 
-        string ExtractCorrectAnswer(Sheet sheet, int questionRow, int answersCount)
+        private string ExtractCorrectAnswer(Sheet sheet, int questionRow, int answersCount)
         {
             var correctAnswer = string.Empty;
             var startRow = questionRow + 1;
@@ -107,7 +106,7 @@
             return correctAnswer;
         }
 
-        int ExtractAnswerIndex(Sheet sheet, int questionRow, string answer)
+        private int ExtractAnswerIndex(Sheet sheet, int questionRow, string answer)
         {
             for (int i = questionRow + 1; ; i++)
             {
@@ -131,13 +130,13 @@
             return -1;
         }
 
-        int ExtractUsedJokersCount(Sheet sheet, int questionRow)
+        private int ExtractUsedJokersCount(Sheet sheet, int questionRow)
         {
             var usedJokersCountCell = sheet.GetCellOrDefault(UsedJokersCountOnQuestionColumn, questionRow);
             return usedJokersCountCell.getContents().ConvertToOrDefault<int>();
         }
 
-        int ExtractQuestionAnswersCount(Sheet sheet, int questionRow)
+        private int ExtractQuestionAnswersCount(Sheet sheet, int questionRow)
         {
             for (int i = 1; ; i++)
             {
@@ -150,7 +149,7 @@
             }
         }
 
-        void UpdateQuestionStatisticsData(Sheet sheet, WritableSheet sheetW, int questionRow, int answersCount)
+        private void UpdateQuestionStatisticsData(Sheet sheet, WritableSheet sheetW, int questionRow, int answersCount)
         {
             var questionTextCell = sheet.GetCellOrDefault(0, questionRow);
             var questionText = questionTextCell.getContents();
@@ -227,8 +226,8 @@
         {
             for (int mark = GameDataIterator.MarkMin; ; mark++)
             {
-                var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..";
-                var path = string.Format("{0}\\{1}{2}\\{3}.xls", execPath, GameDataExtractor.LevelPath, this.gameDataIterator.LevelCategory, mark);
+                var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
+                var path = string.Format("{0}{1}{2}\\{3}.xls", execPath, GameDataExtractor.LevelPath, this.gameDataIterator.LevelCategory, mark);
 
                 if (!File.Exists(path))
                 {
@@ -259,6 +258,7 @@
                 }
 
                 workbookW.write();
+
                 workbookW.close();
                 workbook.close();
 

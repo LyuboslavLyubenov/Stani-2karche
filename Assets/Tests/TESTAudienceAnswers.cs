@@ -11,7 +11,7 @@ namespace Assets.Tests
     {
         public AudienceAnswerUIController AudienceAnswer;
 
-        void Start()
+        private void Start()
         {
             var sampleVotes = new Dictionary<string, int>();
             sampleVotes.Add("1", 1);

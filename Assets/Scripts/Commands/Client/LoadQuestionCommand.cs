@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
+    using UnityEngine;
+
+    using DTOs;
+    using Interfaces;
 
     public class LoadQuestionCommand : INetworkManagerCommand
     {
         public delegate void OnReceivedQuestion(ISimpleQuestion question,int timeToAnswer);
 
-        OnReceivedQuestion onReceivedQuestion;
+        private OnReceivedQuestion onReceivedQuestion;
 
         public LoadQuestionCommand(OnReceivedQuestion onReceivedQuestion)
         {
@@ -33,5 +32,4 @@ namespace Assets.Scripts.Commands.Client
             this.onReceivedQuestion(question.Deserialize(), timeToAnswer);
         }
     }
-
 }

@@ -1,19 +1,18 @@
-using System;
-using System.Linq;
-
 namespace Assets.Scripts.Network
 {
+    using System;
+    using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network.NetworkManagers;
+    using Commands;
+    using DTOs;
+    using EventArgs;
+    using NetworkManagers;
 
     public class MainPlayerJokersDataSynchronizer
     {
-        ServerNetworkManager networkManager;
+        private ServerNetworkManager networkManager;
 
-        MainPlayerData mainPlayerData;
+        private MainPlayerData mainPlayerData;
 
         public MainPlayerJokersDataSynchronizer(ServerNetworkManager networkManager, MainPlayerData mainPlayerData)
         {
@@ -34,17 +33,17 @@ namespace Assets.Scripts.Network
             mainPlayerData.JokersData.OnAddedJoker += this.OnAddedJoker;
         }
 
-        void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
         {
             this.SendAvailableJokersToMainPlayer(args.ConnectionId);
         }
 
-        void OnAddedJoker(object sender, JokerTypeEventArgs args)
+        private void OnAddedJoker(object sender, JokerTypeEventArgs args)
         {
             this.SendJokerToPlayer(args.JokerType, this.mainPlayerData.ConnectionId);
         }
 
-        void SendAvailableJokersToMainPlayer(int connectionId)
+        private void SendAvailableJokersToMainPlayer(int connectionId)
         {
             if (!this.mainPlayerData.IsConnected)
             {
@@ -60,7 +59,7 @@ namespace Assets.Scripts.Network
             }
         }
 
-        void SendJokerToPlayer(Type jokerType, int connectionId)
+        private void SendJokerToPlayer(Type jokerType, int connectionId)
         {
             if (!this.mainPlayerData.IsConnected)
             {

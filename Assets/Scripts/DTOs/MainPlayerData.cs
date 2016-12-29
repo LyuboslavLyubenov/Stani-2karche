@@ -1,17 +1,14 @@
 namespace Assets.Scripts.DTOs
 {
-
     using System;
 
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using Commands.Server;
+    using EventArgs;
+    using Interfaces;
+    using Network.NetworkManagers;
 
     public class MainPlayerData : IPlayerData
     {
-        ServerNetworkManager networkManager;
 
         public EventHandler<ClientConnectionDataEventArgs> OnConnected
         {
@@ -55,6 +52,8 @@ namespace Assets.Scripts.DTOs
                 return this.networkManager.GetClientUsername(this.ConnectionId);
             }
         }
+        
+        private ServerNetworkManager networkManager;
 
         public MainPlayerData(ServerNetworkManager networkManager)
         {
@@ -81,7 +80,7 @@ namespace Assets.Scripts.DTOs
             this.IsConnected = false;
         }
 
-        void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
         {
             if (this.ConnectionId != args.ConnectionId)
             {
@@ -94,7 +93,7 @@ namespace Assets.Scripts.DTOs
             this.OnDisconnected(this, args);
         }
 
-        void OnMainPlayerConnecting(int connectionId)
+        private void OnMainPlayerConnecting(int connectionId)
         {
             this.ConnectionId = connectionId;
             this.IsConnected = true;

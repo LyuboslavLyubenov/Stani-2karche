@@ -1,7 +1,9 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.DTOs
 {
+
     using System;
-    using Interfaces;
+
+    using Assets.Scripts.Interfaces;
 
     public class PendingQuestionRequest
     {

@@ -1,21 +1,17 @@
-﻿using System;
-using UnityEngine;
-
-namespace Assets.Scripts.Jokers
+﻿namespace Assets.Scripts.Jokers
 {
+    using System;
+    using UnityEngine;
 
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils.Unity;
+    using Exceptions;
+    using Network.NetworkManagers;
+    using Utils.Unity;
 
     using Controllers;
     using EventArgs;
     using Interfaces;
     using AudienceAnswerPoll;
     using Localization;
-    using Network;
-    using Notifications;
-    using Utils;
 
     using EventArgs = System.EventArgs;
 
@@ -28,15 +24,13 @@ namespace Assets.Scripts.Jokers
             {
             };
 
-        ClientNetworkManager networkManager;
+        private ClientNetworkManager networkManager;
 
-        GameObject waitingToAnswerUI;
-        GameObject loadingUI;
-        GameObject audienceAnswerUI;
+        private GameObject waitingToAnswerUI;
+        private GameObject loadingUI;
+        private GameObject audienceAnswerUI;
 
-        AudienceAnswerPollResultRetriever pollDataRetriever;
-
-        NotificationsServiceController notificationsServiceController;
+        private AudienceAnswerPollResultRetriever pollDataRetriever;
 
         public Sprite Image
         {
@@ -72,8 +66,7 @@ namespace Assets.Scripts.Jokers
             ClientNetworkManager networkManager,
             GameObject waitingToAnswerUI,
             GameObject audienceAnswerUI,
-            GameObject loadingUI,
-            NotificationsServiceController notificationsServiceController)
+            GameObject loadingUI)
         {
             if (networkManager == null)
             {
@@ -94,12 +87,7 @@ namespace Assets.Scripts.Jokers
             {
                 throw new ArgumentNullException("loadingUI");
             }
-
-            if (notificationsServiceController == null)
-            {
-                throw new ArgumentNullException("notificationsServiceController");
-            }
-
+            
             this.networkManager = networkManager;
             this.waitingToAnswerUI = waitingToAnswerUI;
             this.audienceAnswerUI = audienceAnswerUI;
@@ -115,7 +103,7 @@ namespace Assets.Scripts.Jokers
             this.pollDataRetriever.OnReceiveAudienceVoteTimeout += this.OnReceiveAudienceVoteTimeout;
         }
 
-        void OnReceiveSettingsTimeout(object sender, EventArgs args)
+        private void OnReceiveSettingsTimeout(object sender, EventArgs args)
         {
             this.loadingUI.SetActive(false);
             this.waitingToAnswerUI.SetActive(false);
@@ -129,14 +117,14 @@ namespace Assets.Scripts.Jokers
             }
         }
 
-        void OnReceivedJokerSettings(object sender, JokerSettingsEventArgs args)
+        private void OnReceivedJokerSettings(object sender, JokerSettingsEventArgs args)
         {
             this.loadingUI.SetActive(false);
             this.waitingToAnswerUI.SetActive(true);
             this.waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = args.TimeToAnswerInSeconds;
         }
 
-        void Retriever_OnAudienceVoted(object sender, AudienceVoteEventArgs args)
+        private void Retriever_OnAudienceVoted(object sender, AudienceVoteEventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
             this.audienceAnswerUI.SetActive(true);
@@ -156,7 +144,7 @@ namespace Assets.Scripts.Jokers
             }
         }
 
-        void OnReceiveAudienceVoteTimeout(object sender, EventArgs args)
+        private void OnReceiveAudienceVoteTimeout(object sender, EventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
 

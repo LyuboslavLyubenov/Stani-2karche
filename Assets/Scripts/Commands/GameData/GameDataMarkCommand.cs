@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Commands.GameData
+﻿namespace Assets.Scripts.Commands.GameData
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class GameDataMarkCommand : INetworkManagerCommand
     {
-        Action<int> onReceivedMark;
+        private Action<int> onReceivedMark;
 
         public GameDataMarkCommand(Action<int> onReceivedMark)
         {
@@ -26,5 +25,4 @@ namespace Assets.Scripts.Commands.GameData
             this.onReceivedMark(mark);
         }
     }
-
 }

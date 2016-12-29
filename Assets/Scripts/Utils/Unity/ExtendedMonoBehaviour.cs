@@ -1,11 +1,10 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using UnityEngine;
 
     public abstract class ExtendedMonoBehaviour : MonoBehaviour
     {
-        CoroutineUtils coroutineUtils;
+        private CoroutineUtils coroutineUtils;
 
         public CoroutineUtils CoroutineUtils
         {

@@ -1,24 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Utils;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using Extensions;
 
     public class AudienceAnswerUIController : MonoBehaviour
     {
-        const int DistanceBetweenElements = 10;
+        private const int DistanceBetweenElements = 10;
 
-        Transform[] answers;
-        Text[] answersText;
-        Text[] chanceToBeCorrectText;
+        private Transform[] answers;
 
-        void DeleteOldAnswers()
+        private Text[] answersText;
+        private Text[] chanceToBeCorrectText;
+
+        private void DeleteOldAnswers()
         {
             for (int i = 0; i < this.transform.childCount; i++)
             {
@@ -31,7 +30,7 @@ namespace Assets.Scripts.Controllers
             this.chanceToBeCorrectText = null;
         }
 
-        void SetAnswersChancesCount(int count)
+        private void SetAnswersChancesCount(int count)
         {
             this.answers = new Transform[count];
             this.answersText = new Text[count];

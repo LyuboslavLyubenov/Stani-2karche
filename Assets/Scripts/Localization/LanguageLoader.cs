@@ -1,12 +1,10 @@
 ﻿namespace Assets.Scripts.Localization
 {
-
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Utils.Unity;
 
     public class LanguageLoader : ExtendedMonoBehaviour
     {
-        void Start()
+        private void Start()
         {
             this.CoroutineUtils.WaitForFrames(0, () =>
                 {

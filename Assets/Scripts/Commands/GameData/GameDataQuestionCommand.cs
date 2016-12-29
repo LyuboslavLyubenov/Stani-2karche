@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.GameData
+﻿namespace Assets.Scripts.Commands.GameData
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
+    using UnityEngine;
+
+    using DTOs;
+    using Interfaces;
+    using Network;
 
     public class GameDataQuestionCommand : INetworkManagerCommand
     {
         public delegate void ReceivedQuestionDelegate(QuestionRequestType requestType,ISimpleQuestion question,int questionsRemainingToNextMark,int secondsForAnswerQuestion);
 
-        ReceivedQuestionDelegate receivedQuestion;
+        private ReceivedQuestionDelegate receivedQuestion;
 
         public GameDataQuestionCommand(ReceivedQuestionDelegate receivedQuestion)
         {
@@ -37,5 +36,4 @@ namespace Assets.Scripts.Commands.GameData
             this.receivedQuestion(requestType, question.Deserialize(), questionsRemaining, secondsForAnswerQuestion);
         }
     }
-
 }

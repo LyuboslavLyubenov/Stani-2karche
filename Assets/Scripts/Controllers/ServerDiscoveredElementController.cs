@@ -11,9 +11,9 @@
 
     public class ServerDiscoveredElementController : ExtendedMonoBehaviour
     {
-        Text category;
-        Text creatorName;
-        Text connectedClients;
+        private Text category;
+        private Text creatorName;
+        private Text connectedClients;
 
         public string ServerIPAddress
         {
@@ -21,6 +21,7 @@
             private set;
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.category = this.transform.Find("CategoryType").GetComponent<Text>();
@@ -36,7 +37,7 @@
             this.ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
         }
 
-        string TranslateGameType(GameType gameType)
+        private string TranslateGameType(GameType gameType)
         {
             var enumName = Enum.GetName(typeof(GameType), gameType);
             return LanguagesManager.Instance.GetValue(enumName);

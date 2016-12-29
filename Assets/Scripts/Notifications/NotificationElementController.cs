@@ -1,31 +1,33 @@
-﻿using System.Collections;
-
-using UnityEngine;
-using UnityEngine.EventSystems;
-
-namespace Assets.Scripts.Notifications
+﻿namespace Assets.Scripts.Notifications
 {
+    using System.Collections;
+
+    using UnityEngine;
+    using UnityEngine.EventSystems;
 
     public class NotificationElementController : MonoBehaviour, IPointerUpHandler
     {
         public int WaitBeforeDisableSeconds = 5;
-
+        
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.StartCoroutine(this.DismissAfterDelay());
         }
 
-        IEnumerator DismissAfterDelay()
-        {
-            yield return new WaitForSeconds(this.WaitBeforeDisableSeconds);
-            this.Dismiss();
-        }
-
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
             this.StopAllCoroutines();
             Destroy(this.gameObject);
         }
+
+        private IEnumerator DismissAfterDelay()
+        {
+            yield return new WaitForSeconds(this.WaitBeforeDisableSeconds);
+            this.Dismiss();
+        }
+
 
         public void OnPointerUp(PointerEventData eventData)
         {

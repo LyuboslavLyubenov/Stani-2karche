@@ -1,42 +1,21 @@
-using System;
-using System.Timers;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Jokers.AskPlayerQuestion
 {
+    using System;
+    using System.Timers;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers;
+    using EventArgs;
+    using Network.NetworkManagers;
+    using Utils;
+    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
     public class AskPlayerQuestionResultRetriever : ExtendedMonoBehaviour
     {
-        const int SettingsReceiveTimeoutInSeconds = 5;
-
-        static AskPlayerQuestionResultRetriever instance;
-
-        public static AskPlayerQuestionResultRetriever Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    var obj = new GameObject();
-                    obj.name = typeof(AskPlayerQuestionResultRetriever).Name;
-                    instance = obj.AddComponent<AskPlayerQuestionResultRetriever>();
-                }
-
-                return instance;
-            }
-        }
+        private const int SettingsReceiveTimeoutInSeconds = 5;
 
         public EventHandler<AskPlayerResponseEventArgs> OnReceivedAnswer = delegate
             {
@@ -53,17 +32,17 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         public EventHandler OnReceiveSettingsTimeout = delegate
             {
             };
-    
-        ClientNetworkManager networkManager;
 
-        Timer timer;
+        private ClientNetworkManager networkManager;
 
-        void Awake()
+        private Timer timer;
+
+        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager)
         {
-            this.networkManager = GameObject.FindObjectOfType<ClientNetworkManager>();     
+            this.networkManager = networkManager;
         }
-
-        void _OnReceivedSettings(int timeToAnswerInSeconds)
+        
+        private void _OnReceivedSettings(int timeToAnswerInSeconds)
         {
             this.timer.Stop();
             this.timer.Close();
@@ -78,7 +57,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));
         }
 
-        void Timer_OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
+        private void Timer_OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
         {
             ThreadUtils.Instance.RunOnMainThread(() =>
                 {
@@ -88,12 +67,12 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                 });
         }
 
-        void _OnReceivedAnswer(string username, string answer)
+        private void _OnReceivedAnswer(string username, string answer)
         {
             this.OnReceivedAnswer(this, new AskPlayerResponseEventArgs(username, answer));
         }
 
-        void Timer_OnReceiveAnswerTimeout(object sender, ElapsedEventArgs args)
+        private void Timer_OnReceiveAnswerTimeout(object sender, ElapsedEventArgs args)
         {
             ThreadUtils.Instance.RunOnMainThread(() =>
                 {

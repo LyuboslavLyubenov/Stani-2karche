@@ -1,9 +1,8 @@
 ﻿namespace Assets.Scripts.DTOs
 {
-
     using System;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class SimpleQuestion : ISimpleQuestion
     {
@@ -39,9 +38,9 @@
             }
         }
 
-        string text;
-        string[] answers;
-        int correctAnswerIndex;
+        private string text;
+        private string[] answers;
+        private int correctAnswerIndex;
 
         public SimpleQuestion(string text, string[] answers, int correctAnswerIndex)
         {

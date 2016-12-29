@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
 
     public class ReceivedTimeToAnswerCommand : INetworkManagerCommand
     {
-        Action<int> onReceivedRemainingTime;
+        private Action<int> onReceivedRemainingTime;
 
         public ReceivedTimeToAnswerCommand(Action<int> onReceivedRemainingTime)
         { 
@@ -26,5 +25,4 @@ namespace Assets.Scripts.Commands.Client
             this.onReceivedRemainingTime(secondsRemaining);
         }
     }
-
 }

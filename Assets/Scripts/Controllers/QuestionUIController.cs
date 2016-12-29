@@ -1,38 +1,38 @@
-﻿using System;
-using System.Collections;
-using System.Linq;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers
 {
+    using System;
+    using System.Collections;
+    using System.Linq;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    using EventArgs;
+    using Interfaces;
+    using Utils.Unity;
 
     public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController
     {
-        const int DistanceBetweenAnswerButton = 10;
+        private const int DistanceBetweenAnswerButton = 10;
 
         public int AnswersCount = 4;
         public bool ShouldPlayButtonAnimation = true;
         public bool ShowCorrectAnswerAfterError = false;
 
-        bool initialized = false;
+        private bool initialized = false;
 
-        Text questionText = null;
-        Text[] answersTexts = null;
-        Button[] answersButtons = null;
-        Animator[] answersAnimators = null;
+        private Text questionText = null;
 
-        Transform answersPanel = null;
-        RectTransform leftColumn = null;
-        RectTransform rightColumn = null;
+        private Text[] answersTexts = null;
+        private Button[] answersButtons = null;
+        private Animator[] answersAnimators = null;
 
-        GameObject answerPrefab;
+        private Transform answersPanel = null;
+
+        private RectTransform leftColumn = null;
+        private RectTransform rightColumn = null;
+
+        private GameObject answerPrefab;
 
         public EventHandler<AnswerEventArgs> OnAnswerClick
         {
@@ -63,20 +63,21 @@ namespace Assets.Scripts.Controllers
                 };
         }
 
+        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             this.answerPrefab = Resources.Load<GameObject>("Prefabs/Answer");
             this.StartCoroutine(this.InitializeCoroutine());
         }
 
-        void InitializeAnswers(int answersCount)
+        private void InitializeAnswers(int answersCount)
         {
             var answers = this.GenerateAnswers(answersCount);
             this.LoadAnswersComponents(answers);
             this.AnswersCount = answersCount;
         }
 
-        void LoadAnswersComponents(GameObject[] answers)
+        private void LoadAnswersComponents(GameObject[] answers)
         {
             this.answersTexts = new Text[answers.Length];
             this.answersButtons = new Button[answers.Length];
@@ -109,7 +110,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        GameObject[] GenerateAnswers(int count)
+        private GameObject[] GenerateAnswers(int count)
         {
             var answers = new GameObject[count];
 
@@ -133,7 +134,7 @@ namespace Assets.Scripts.Controllers
             return answers;
         }
 
-        IEnumerator InitializeCoroutine()
+        private IEnumerator InitializeCoroutine()
         {
             yield return null;
 
@@ -151,7 +152,7 @@ namespace Assets.Scripts.Controllers
             this.initialized = true;
         }
 
-        void DestroyOldAnswerObjs()
+        private void DestroyOldAnswerObjs()
         {
             for (int i = 0; i < this.leftColumn.childCount; i++)
             {
@@ -166,7 +167,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
+        private IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
         {
             yield return new WaitUntil(() => this.initialized);
             yield return new WaitForEndOfFrame();
@@ -213,7 +214,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        IEnumerator WaitUntilAnswersAreHiddenCoroutine()
+        private IEnumerator WaitUntilAnswersAreHiddenCoroutine()
         {
             for (int i = 0; i < this.AnswersCount; i++)
             {
@@ -231,7 +232,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        void AttachButtonListener(int buttonIndex, bool isCorrect)
+        private void AttachButtonListener(int buttonIndex, bool isCorrect)
         {
             var button = this.answersButtons[buttonIndex];
             button.onClick.AddListener(() =>
@@ -251,7 +252,7 @@ namespace Assets.Scripts.Controllers
                 });
         }
 
-        void ColorAnswer(string answer, bool fireClickEvent)
+        private void ColorAnswer(string answer, bool fireClickEvent)
         {
             var correctAnswerIndex = this.CurrentlyLoadedQuestion.CorrectAnswerIndex;
             var answerIndex = this.CurrentlyLoadedQuestion.Answers.ToList().FindIndex(a => a == answer);
@@ -263,14 +264,14 @@ namespace Assets.Scripts.Controllers
             answerAnimator.SetBool("isCorrect", isCorrect);
         }
 
-        void ShowCorrectAnswer()
+        private void ShowCorrectAnswer()
         {
             var correctAnswerIndex = this.CurrentlyLoadedQuestion.CorrectAnswerIndex;
             var correctAnswer = this.CurrentlyLoadedQuestion.Answers[correctAnswerIndex];
             this.ColorAnswer(correctAnswer, false);
         }
 
-        void ShowAnswer(int index)
+        private void ShowAnswer(int index)
         {
             if (index < 0 || index >= this.AnswersCount)
             {
@@ -285,7 +286,7 @@ namespace Assets.Scripts.Controllers
             }
         }
 
-        int GetAnswerIndex(string answer)
+        private int GetAnswerIndex(string answer)
         {        
             for (int i = 0; i < this.AnswersCount; i++)
             {
