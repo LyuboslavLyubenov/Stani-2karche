@@ -1,31 +1,41 @@
-﻿using UnityEngine;
-
-public class TESTClientSendSelectedCategory : ExtendedMonoBehaviour
+﻿namespace Assets.Tests.Test_choose_category
 {
-    public ClientNetworkManager NetworkManager;
-    public ClientChooseCategoryUIController ChooseCategoryUIController;
 
-    void Start()
-    {
-        CoroutineUtils.WaitForFrames(0, Initialize);
-    }
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Controllers;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
 
-    void Initialize()
+    public class TESTClientSendSelectedCategory : ExtendedMonoBehaviour
     {
-        NetworkManager.OnConnectedEvent += (sender, args) =>
+        public ClientNetworkManager NetworkManager;
+        public ClientChooseCategoryUIController ChooseCategoryUIController;
+
+        void Start()
         {
-            ChooseCategoryUIController.gameObject.SetActive(true);
-            ChooseCategoryUIController.OnChoosedCategory += (s, a) =>
-            {
-                var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
-                selectedCategoryCommand.AddOption("Category", a.Name);
-                NetworkManager.SendServerCommand(selectedCategoryCommand);
-            };
-        };
+            this.CoroutineUtils.WaitForFrames(0, this.Initialize);
+        }
+
+        void Initialize()
+        {
+            this.NetworkManager.OnConnectedEvent += (sender, args) =>
+                {
+                    this.ChooseCategoryUIController.gameObject.SetActive(true);
+                    this.ChooseCategoryUIController.OnChoosedCategory += (s, a) =>
+                        {
+                            var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
+                            selectedCategoryCommand.AddOption("Category", a.Name);
+                            this.NetworkManager.SendServerCommand(selectedCategoryCommand);
+                        };
+                };
+        }
+
+        void OnTimeout()
+        {
+        
+        }
     }
 
-    void OnTimeout()
-    {
-        
-    }
 }

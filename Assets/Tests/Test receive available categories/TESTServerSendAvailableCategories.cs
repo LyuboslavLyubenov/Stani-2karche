@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TESTServerSendAvailableCategories : MonoBehaviour
+namespace Assets.Tests.Test_receive_available_categories
 {
-    public ServerNetworkManager NetworkManager;
-    public LocalGameData GameData;
-    public LeaderboardSerializer Leaderboard;
 
-    void Start()
+    using Assets.Scripts.GameData;
+    using Assets.Scripts.IO;
+    using Assets.Scripts.Network.NetworkManagers;
+
+    using Scripts;
+    using Scripts.Commands.Server;
+    using Scripts.Network;
+
+    public class TESTServerSendAvailableCategories : MonoBehaviour
     {
-        NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new ReceivedServerGetAllAvailableCategoriesCommand(NetworkManager));
-        NetworkManager.CommandsManager.AddCommand("SelectedCategory", new ReceivedServerSelectedCategoryCommand(GameData, Leaderboard));
+        public ServerNetworkManager NetworkManager;
+        public GameDataExtractor GameData;
+        public LeaderboardSerializer Leaderboard;
+
+        void Start()
+        {
+            this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new GetAllAvailableCategoriesCommand(this.NetworkManager));
+            this.NetworkManager.CommandsManager.AddCommand("SelectedCategory", new SelectedCategoryCommand(this.GameData, this.Leaderboard));
+        }
     }
+
 }

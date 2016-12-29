@@ -1,14 +1,23 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TEST_DoesUsernameExists : MonoBehaviour
+namespace Assets.Tests.Test_Kinvey_Wrapper.Does_username_exists
 {
-    void Start()
+
+    using Assets.Scripts.Network;
+
+    using Scripts;
+
+    public class TEST_DoesUsernameExists : MonoBehaviour
     {
-        KinveyWrapper.Instance.DoesUsernameExistsAsync("ivan", (data) =>
-            {
-                Debug.Log("Exists = " + data.usernameExists);
-            }, Debug.LogException);
-    }
+        void Start()
+        {
+            var kinveyWrapper = new KinveyWrapper();
+            kinveyWrapper.DoesUsernameExistsAsync("ivan", (data) =>
+                {
+                    Debug.Log("Exists = " + data.usernameExists);
+                }, Debug.LogException);
+        }
 	
+    }
+
 }

@@ -1,33 +1,43 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 
-public class TEST_UpdateEntity : MonoBehaviour
+using UnityEngine;
+
+namespace Assets.Tests.Test_Kinvey_Wrapper.Update_Entity
 {
-    void Start()
+
+    using Assets.Scripts;
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Network;
+
+    public class TEST_UpdateEntity : MonoBehaviour
     {
-        KinveyWrapper.Instance.LoginAsync("ivan", "ivan", (data) =>
-            {
-                var tableName = "Servers";
-                var id = "58356df6f08321f70dc31bd3";
+        void Start()
+        {
+            var kinveyWrapper = new KinveyWrapper();
 
-                KinveyWrapper
-                    .Instance
-                    .RetrieveEntityAsync<CreatedGameInfo_Serializable>(
-                    tableName, 
-                    id, 
-                    (retrievedData) =>
-                    {
-                        var entity = retrievedData.First().Entity;
-                        entity.HostUsername = "ivan promenen";
+            kinveyWrapper.LoginAsync("ivan", "ivan", (data) =>
+                {
+                    var tableName = "Servers";
+                    var id = "58356df6f08321f70dc31bd3";
 
-                        KinveyWrapper.Instance.UpdateEntityAsync<CreatedGameInfo_Serializable>(tableName, id, entity, () =>
-                            {
-                                Debug.Log("bravo");
-                            }, Debug.LogException);
+                    kinveyWrapper
+                        .RetrieveEntityAsync<CreatedGameInfo_DTO>(
+                            tableName, 
+                            id, 
+                            (retrievedData) =>
+                                {
+                                    var entity = retrievedData.First().Entity;
+                                    entity.HostUsername = "ivan promenen";
+
+                                    kinveyWrapper.UpdateEntityAsync<CreatedGameInfo_DTO>(tableName, id, entity, () =>
+                                        {
+                                            Debug.Log("bravo");
+                                        }, Debug.LogException);
                             
-                    }, Debug.LogException);
+                                }, Debug.LogException);
                 
-            }, Debug.LogException);
+                }, Debug.LogException);
+        }
     }
+
 }

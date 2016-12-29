@@ -1,17 +1,26 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class TEST_DeleteEntity : MonoBehaviour
+namespace Assets.Tests.Test_Kinvey_Wrapper.Delete
 {
-    void Start()
+
+    using Assets.Scripts;
+    using Assets.Scripts.Network;
+
+    public class TEST_DeleteEntity : MonoBehaviour
     {
-        KinveyWrapper.Instance.LoginAsync("ivan", "ivan", (data) =>
-            {
-                KinveyWrapper.Instance.DeleteEntityAsync("Servers", "58356df6f08321f70dc31bd3", (data1) =>
-                    {
-                        Debug.Log("Deleted count " + data1.count);
-                    }, Debug.LogException);
-            }, Debug.LogException);
-    }
+        void Start()
+        {
+            var kinveyWrapper = new KinveyWrapper();
+
+            kinveyWrapper.LoginAsync("ivan", "ivan", (data) =>
+                {
+                    kinveyWrapper.DeleteEntityAsync("Servers", "58356df6f08321f70dc31bd3", (data1) =>
+                        {
+                            Debug.Log("Deleted count " + data1.count);
+                        }, Debug.LogException);
+                }, Debug.LogException);
+        }
 	
+    }
+
 }

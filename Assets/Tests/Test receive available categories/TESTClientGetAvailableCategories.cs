@@ -1,34 +1,46 @@
 ﻿using UnityEngine;
 
-public class TESTClientGetAvailableCategories : MonoBehaviour
+namespace Assets.Tests.Test_receive_available_categories
 {
-    public ClientNetworkManager NetworkManager;
-    public NotificationsServiceController NotificationsService;
 
-    IAvailableCategoriesReader categoriesReader;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Notifications;
+    using Assets.Scripts.Utils;
 
-    void Start()
+    public class TESTClientGetAvailableCategories : MonoBehaviour
     {
-        var threadUtils = ThreadUtils.Instance;
+        public ClientNetworkManager NetworkManager;
+        public NotificationsServiceController NotificationsService;
 
-        NetworkManager.OnConnectedEvent += (sender, args) =>
+        IAvailableCategoriesReader categoriesReader;
+
+        void Start()
         {
-            categoriesReader = new RemoteAvailableCategoriesReader(NetworkManager, OnGetCategoriesTimeout, 5);
-            categoriesReader.GetAllCategories(OnGetAllCategories);
-        };        
-    }
+            var threadUtils = ThreadUtils.Instance;
 
-    void OnGetCategoriesTimeout()
-    {
-        var errorMsg = LanguagesManager.Instance.GetValue("Errors/LoadCategoriesTimeout");
-        Debug.LogWarning(errorMsg);
-        NotificationsService.AddNotification(new Color(255, 255, 140), errorMsg);
-    }
+            this.NetworkManager.OnConnectedEvent += (sender, args) =>
+                {
+                    this.categoriesReader = new RemoteAvailableCategoriesReader(this.NetworkManager, this.OnGetCategoriesTimeout, 5);
+                    this.categoriesReader.GetAllCategories(this.OnGetAllCategories);
+                };        
+        }
 
-    void OnGetAllCategories(string[] categories)
-    {
-        var allCategories = string.Join(", ", categories);
-        Debug.Log(allCategories);
-    }
+        void OnGetCategoriesTimeout()
+        {
+            var errorMsg = LanguagesManager.Instance.GetValue("Errors/LoadCategoriesTimeout");
+            Debug.LogWarning(errorMsg);
+            this.NotificationsService.AddNotification(new Color(255, 255, 140), errorMsg);
+        }
+
+        void OnGetAllCategories(string[] categories)
+        {
+            var allCategories = string.Join(", ", categories);
+            Debug.Log(allCategories);
+        }
 	
+    }
+
 }
