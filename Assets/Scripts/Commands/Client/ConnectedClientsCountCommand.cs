@@ -6,11 +6,11 @@ namespace Assets.Scripts.Commands.Client
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Utils;
 
-    public class ReceivedConnectedClientsCountCommand : INetworkManagerCommand
+    public class ConnectedClientsCountCommand : INetworkManagerCommand
     {
         ValueWrapper<int> serverConnectedClientsCount;
 
-        public ReceivedConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
+        public ConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
         {
             if (serverConnectedClientsCount == null)
             {

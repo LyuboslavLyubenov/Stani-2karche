@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Network
+namespace Assets.Scripts.Commands.GameData
 {
+
+    using System;
+    using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
 

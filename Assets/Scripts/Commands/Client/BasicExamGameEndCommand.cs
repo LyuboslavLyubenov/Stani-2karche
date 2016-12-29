@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Commands.Client
+﻿namespace Assets.Scripts.Commands.Client
 {
+    using System;
+    using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
+    using UnityEngine;
+
+    using Controllers;
+    using Interfaces;
+    using Network.Leaderboard;
 
     using Debug = UnityEngine.Debug;
 

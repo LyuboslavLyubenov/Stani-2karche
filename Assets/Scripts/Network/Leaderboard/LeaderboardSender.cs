@@ -1,12 +1,13 @@
-using UnityEngine;
-
-namespace Assets.Scripts.Network
+namespace Assets.Scripts.Network.Leaderboard
 {
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.DTOs;
-    using Assets.Scripts.Utils;
+    using Assets.Scripts.IO;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils.Unity;
+
+    using UnityEngine;
 
     public class LeaderboardSender : ExtendedMonoBehaviour
     {

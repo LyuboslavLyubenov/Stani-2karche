@@ -11,6 +11,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
     using Assets.Scripts.Commands.Jokers;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 

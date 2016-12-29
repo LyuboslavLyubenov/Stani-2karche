@@ -6,6 +6,7 @@ namespace Assets.Editor.Tests.Automatic_tests.Editor.NetworkManagersTests
 {
 
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     public class NetworkManagersTests
     {

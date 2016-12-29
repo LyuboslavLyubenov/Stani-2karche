@@ -8,6 +8,7 @@ namespace Assets.Scripts.Commands.Jokers
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Jokers;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 

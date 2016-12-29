@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-using UnityEngine.Networking;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.NetworkManagers
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Assets.Scripts.Network.Broadcast;
+
+    using Commands;
+    using Commands.Server;
+
+    using DTOs;
+    using EventArgs;
+    using Exceptions;
+    using Localization;
+
+    using Utils;
+    using Utils.Unity;
+
+    using UnityEngine;
+    using UnityEngine.Networking;
 
     using Debug = UnityEngine.Debug;
 
@@ -57,10 +60,10 @@ namespace Assets.Scripts.Network
         //Id of all connected clients
         List<int> connectedClientsIds = new List<int>();
         List<int> bannedConnections = new List<int>();
-
+    
         HashSet<int> aliveClientsId = new HashSet<int>();
-        //Their names
         Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
+
         CommandsManager commandsManager = new CommandsManager();
 
         public bool IsRunning
@@ -134,10 +137,10 @@ namespace Assets.Scripts.Network
 
         void ConfigureCommands()
         {
-            this.commandsManager.AddCommand("SetUsername", new ReceivedSetUsernameCommand(this));
-            this.commandsManager.AddCommand("KeepAlive", new ReceivedKeepAliveCommand(this.aliveClientsId));
-            this.commandsManager.AddCommand("ConnectedClientsCount", new ReceivedSendConnectedClientsCountCommand(this));
-            this.commandsManager.AddCommand("ConnectedClientsIdsNames", new ReceivedSendConnectedClientsIdsNamesCommand(this, this.connectedClientsNames));
+            this.commandsManager.AddCommand(new SetUsernameCommand(this));
+            this.commandsManager.AddCommand(new KeepAliveCommand(this.aliveClientsId));
+            this.commandsManager.AddCommand(new ServerSendConnectedClientsCountCommand(this));
+            this.commandsManager.AddCommand(new ServerSendConnectedClientsIdsNamesCommand(this, this.connectedClientsNames));
         }
 
         IEnumerator UpdateCoroutine()
@@ -222,9 +225,9 @@ namespace Assets.Scripts.Network
                     Debug.Log(e.Message);
                 }
 
-                this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(deadClientConnectionId));
-
                 this.connectedClientsNames.Remove(deadClientConnectionId);
+
+                this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(deadClientConnectionId));
             }
 
             this.connectedClientsIds.RemoveAll(deadClientsIds.Contains);
@@ -352,11 +355,6 @@ namespace Assets.Scripts.Network
             }
         }
 
-        bool IsClientConnected(int connectionId)
-        {
-            return this.connectedClientsIds.IndexOf(connectionId) > -1;
-        }
-
         public void StartServer()
         {
             if (this.IsRunning)
@@ -378,6 +376,7 @@ namespace Assets.Scripts.Network
 
             NetworkTransport.RemoveHost(this.genericHostId);
             NetworkTransport.Shutdown();
+
             this.isRunning = false;
         }
 
@@ -447,7 +446,7 @@ namespace Assets.Scripts.Network
 
         public void KickPlayer(int connectionId, string message)
         {
-            if (!this.IsClientConnected(connectionId))
+            if (!this.IsConnected(connectionId))
             {
                 throw new Exception("Client with id " + connectionId + " not connected"); 
             }   
@@ -464,7 +463,7 @@ namespace Assets.Scripts.Network
             {
                 Debug.Log(ex.Message);
             }
-
+            
             this.CoroutineUtils.WaitForFrames(1, () =>
                 {
                     byte error;

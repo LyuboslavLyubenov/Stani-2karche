@@ -11,6 +11,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Jokers;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     public class AddHelpFromFriendJokerCommand : AddJokerAbstractCommand
     {

@@ -7,6 +7,7 @@ namespace Assets.Scripts.Network
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils;
 
     public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisposable

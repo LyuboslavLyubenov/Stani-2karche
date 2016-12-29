@@ -7,6 +7,7 @@ namespace Assets.Scripts.Network
 {
 
     using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network.TcpSockets;
 
     public class CreatedGameInfoReceiverService : MonoBehaviour
     {

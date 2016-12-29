@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading;
-
-namespace Assets.Scripts.Network
+namespace Assets.Scripts.Network.TcpSockets
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Security.Cryptography;
+    using System.Text;
+    using System.Threading;
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.SecuritySettings;

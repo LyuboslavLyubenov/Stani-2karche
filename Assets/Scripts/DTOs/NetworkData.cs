@@ -1,9 +1,8 @@
-﻿using System;
-
-using UnityEngine.Networking;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using System;
+
+    using UnityEngine.Networking;
 
     public class NetworkData
     {

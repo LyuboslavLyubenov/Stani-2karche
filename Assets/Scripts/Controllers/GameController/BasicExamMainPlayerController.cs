@@ -6,6 +6,7 @@
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.GameData;
     using Assets.Scripts.Commands.Jokers.Add;
     using Assets.Scripts.Commands.Server;
     using Assets.Scripts.Controllers.Jokers;
@@ -15,6 +16,7 @@
     using Assets.Scripts.Jokers;
     using Assets.Scripts.Localization;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Notifications;
     using Assets.Scripts.Utils.Unity;
 

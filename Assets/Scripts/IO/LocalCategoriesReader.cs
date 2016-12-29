@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.IO
 {
+
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
 
     using Assets.Scripts.Interfaces;
 

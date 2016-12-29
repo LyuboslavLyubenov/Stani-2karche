@@ -10,6 +10,7 @@ namespace Assets.Scripts.Controllers
     using Assets.Scripts.DTOs;
     using Assets.Scripts.Localization;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     public class BasicExamClientOptionsUIController : MonoBehaviour
     {

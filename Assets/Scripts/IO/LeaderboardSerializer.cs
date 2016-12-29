@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-using UnityEngine;
-
-namespace Assets.Scripts
+﻿namespace Assets.Scripts.IO
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
 
     using Assets.CielaSpike.Thread_Ninja;
     using Assets.Scripts.DTOs;
+
+    using UnityEngine;
 
     public class LeaderboardSerializer : MonoBehaviour
     {
@@ -94,23 +93,19 @@ namespace Assets.Scripts
 
         IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
         {
-            if (!this.loaded)
-            {
-                throw new Exception("Still loading score");
-            }
-            
             var path = this.GetEndPath();
-            var scores = File.ReadAllLines(path).ToList();
+            var playersScore = File.ReadAllLines(path).ToList();
 
             int playerIndex = -1;
 
             if (!this.AllowDublicates)
             {
-                for (int i = 0; i < scores.Count; i++)
+                for (int i = 0; i < playersScore.Count; i++)
                 {
-                    var scoreData = scores[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    var scoreData = playersScore[i].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    if (scoreData[0] == playerScore.PlayerName && int.Parse(scoreData[1]) < playerScore.Score)
+                    if (scoreData[0] == playerScore.PlayerName && 
+                        int.Parse(scoreData[1]) < playerScore.Score)
                     {
                         playerIndex = i;
                         break;
@@ -136,23 +131,25 @@ namespace Assets.Scripts
 
             if (playerIndex > -1)
             {
-                scores[playerIndex] = score;
+                playersScore[playerIndex] = score;
             }
             else
             {
-                scores.Add(score);
+                playersScore.Add(score);
             }
 
-            File.WriteAllLines(path, scores.ToArray());
+            File.WriteAllLines(path, playersScore.ToArray());
 
             yield return null;
         }
-
-        /// <summary>
-        /// Sets the player score in the leaderboard file
-        /// </summary>
+        
         public void SavePlayerScore(PlayerScore playerScore)
         {
+            if (!this.Loaded)
+            {
+                throw new Exception("Still loading score");
+            }
+
             this.leaderboard.Add(playerScore);
             this.StartCoroutineAsync(this.SavePlayerScoreAsync(playerScore));
         }
@@ -162,5 +159,4 @@ namespace Assets.Scripts
             this.StartCoroutineAsync(this.LoadLeaderboardAsync());
         }
     }
-
 }

@@ -8,6 +8,7 @@ namespace Assets.Scripts.Controllers.GameController
     using Assets.Scripts.Exceptions;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Notifications;
     using Assets.Scripts.Utils.Unity;
 

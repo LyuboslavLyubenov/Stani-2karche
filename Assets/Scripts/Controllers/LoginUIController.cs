@@ -1,5 +1,8 @@
 ﻿namespace Assets.Scripts.Controllers
 {
+
+    using Assets.Scripts.Network;
+
     using UnityEngine;
     using UnityEngine.UI;
     using DTOs.KinveySerializableObj;

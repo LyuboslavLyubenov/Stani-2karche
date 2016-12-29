@@ -1,19 +1,25 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network
 {
+    using System;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using NetworkManagers;
 
-    public class DeviceIndetificatorSender : ExtendedMonoBehaviour
+    using UnityEngine;
+
+    using Commands;
+
+    public class DeviceIndetificatorSender
     {
-        public ClientNetworkManager NetworkManager;
+        ClientNetworkManager networkManager;
 
-        void Start()
+        public DeviceIndetificatorSender(ClientNetworkManager networkManager)
         {
-            this.CoroutineUtils.WaitForFrames(0, () => this.Initialize());
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            this.networkManager = networkManager;
         }
 
         void Initialize()
@@ -21,14 +27,14 @@ namespace Assets.Scripts.Network
             var getDeviceIndetificator = new DummyCommand();
             getDeviceIndetificator.OnExecuted += (sender, args) => this.SendDeviceIndetificator();
 
-            this.NetworkManager.CommandsManager.AddCommand("GetDeviceIndetificator", getDeviceIndetificator);
+            this.networkManager.CommandsManager.AddCommand("GetDeviceIndetificator", getDeviceIndetificator);
         }
 
         void SendDeviceIndetificator()
         {
             var deviceINdetificatorCommand = new NetworkCommandData("DeviceIndetificator");
             deviceINdetificatorCommand.AddOption("DeviceIndetificator", SystemInfo.deviceUniqueIdentifier);
-            this.NetworkManager.SendServerCommand(deviceINdetificatorCommand);
+            this.networkManager.SendServerCommand(deviceINdetificatorCommand);
         }
     }
 

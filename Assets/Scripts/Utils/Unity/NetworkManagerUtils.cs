@@ -5,6 +5,7 @@
     using System.Collections;
 
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     using UnityEngine;
     using UnityEngine.Networking;

@@ -1,19 +1,20 @@
-﻿using System;
-using System.Collections;
-
-using UnityEngine;
-using UnityEngine.Networking;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.NetworkManagers
 {
+
+    using System;
+    using System.Collections;
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Server;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Exceptions;
     using Assets.Scripts.Notifications;
     using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
+
+    using UnityEngine;
+    using UnityEngine.Networking;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
@@ -174,7 +175,7 @@ namespace Assets.Scripts.Network
                 };
 
             this.commandsManager.AddCommand("AllowedToConnect", allowedToConnect);
-            this.commandsManager.AddCommand("ConnectedClientsCount", new ReceivedConnectedClientsCountCommand(this.serverConnectedClientsCount));
+            this.commandsManager.AddCommand("ConnectedClientsCount", new ConnectedClientsCountCommand(this.serverConnectedClientsCount));
         }
 
         void BeginReceiveConnectedClientsCount()
@@ -184,7 +185,7 @@ namespace Assets.Scripts.Network
                 return;
             }
 
-            var commandData = new NetworkCommandData("ConnectedClientsCount");
+            var commandData = NetworkCommandData.From<ServerSendConnectedClientsCountCommand>();
             this.SendServerCommand(commandData);
         }
 
@@ -195,7 +196,7 @@ namespace Assets.Scripts.Network
                 return;
             }
             
-            var commandLine = new NetworkCommandData("KeepAlive");
+            var commandLine = NetworkCommandData.From<KeepAliveCommand>();
             this.SendServerCommand(commandLine);
         }
 
@@ -254,11 +255,12 @@ namespace Assets.Scripts.Network
         void ConnectedToServer()
         {
             var username = this.GetUsername();
-            var commandLine = new NetworkCommandData("SetUsername");
+            var commandLine = NetworkCommandData.From<SetUsernameCommand>();
 
             commandLine.AddOption("Username", username);
-            this.SendServerCommand(commandLine);
 
+            this.SendServerCommand(commandLine);
+            
             this.IsConnected = true;
         }
 
@@ -304,6 +306,29 @@ namespace Assets.Scripts.Network
             this.Disconnect();
         }
 
+        IEnumerator CheckCommandAllowedToConnectReceivedCoroutine()
+        {
+            var time = 0f;
+
+            while (time < ReceivePermissionToConnectTimeoutInSeconds)
+            {
+                if (this.IsConnected)
+                {
+                    this.ConnectedToServer();
+                    break;
+                }
+
+                time += Time.deltaTime;
+
+                yield return null;
+            }
+
+            if (!this.IsConnected)
+            {
+                this.Disconnect();
+            }
+        }
+
         public void ConnectToHost(string ip)
         {
             if (!ip.IsValidIPV4())
@@ -338,30 +363,7 @@ namespace Assets.Scripts.Network
                 this.StartCoroutine(this.CheckCommandAllowedToConnectReceivedCoroutine());
             }
         }
-
-        IEnumerator CheckCommandAllowedToConnectReceivedCoroutine()
-        {
-            var time = 0f;
-
-            while (time < ReceivePermissionToConnectTimeoutInSeconds)
-            {
-                if (this.IsConnected)
-                {
-                    this.ConnectedToServer();
-                    break;
-                }
-
-                time += Time.deltaTime;
-
-                yield return null;
-            }
-
-            if (!this.IsConnected)
-            {
-                this.Disconnect();
-            }
-        }
-
+        
         public void Disconnect()
         {
             byte error = 0;
@@ -442,5 +444,4 @@ namespace Assets.Scripts.Network
 
         #endregion
     }
-
 }

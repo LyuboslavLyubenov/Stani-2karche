@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.Broadcast
 {
 
     public class LANServerOnlineBroadcastService : LANBroadcastService

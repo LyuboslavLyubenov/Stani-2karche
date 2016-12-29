@@ -36,7 +36,7 @@
             byte error;
 
             NetworkEventType receiveEventType = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
-
+            
             try
             {
                 ValidateNetworkOperation(error);    

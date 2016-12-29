@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.DTOs
 {
+
+    using System;
 
     [Serializable]
     public class ServerInfo_DTO

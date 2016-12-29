@@ -6,6 +6,7 @@ namespace Assets.Scripts.Jokers
     using Assets.Scripts.Commands;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 

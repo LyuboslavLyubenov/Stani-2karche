@@ -4,6 +4,7 @@ namespace Assets.Scripts.Network
 {
 
     using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network.TcpSockets;
     using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 

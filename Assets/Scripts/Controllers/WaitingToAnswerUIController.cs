@@ -8,6 +8,7 @@ namespace Assets.Scripts.Controllers
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 

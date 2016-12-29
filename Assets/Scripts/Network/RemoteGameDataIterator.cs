@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Network.NetworkManagers;
+
     using Commands;
     using Commands.GameData;
     using EventArgs;

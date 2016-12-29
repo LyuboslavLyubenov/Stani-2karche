@@ -3,6 +3,7 @@
     using System.Collections.Generic;
 
     using Assets.Scripts.DTOs.KinveySerializableObj;
+    using Assets.Scripts.Network.Broadcast;
 
     using UnityEngine;
     using UnityEngine.UI;

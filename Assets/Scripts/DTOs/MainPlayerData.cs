@@ -7,6 +7,7 @@ namespace Assets.Scripts.DTOs
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     public class MainPlayerData : IPlayerData
     {

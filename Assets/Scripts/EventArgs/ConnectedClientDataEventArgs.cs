@@ -1,7 +1,7 @@
-using System;
-
-namespace Assets.Scripts.Network
+namespace Assets.Scripts.EventArgs
 {
+
+    using System;
 
     using Assets.Scripts.DTOs;
 

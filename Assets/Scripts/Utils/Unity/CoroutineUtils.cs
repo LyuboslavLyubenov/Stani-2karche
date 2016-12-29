@@ -1,6 +1,5 @@
 ﻿namespace Assets.Scripts.Utils.Unity
 {
-
     using System;
     using System.Collections;
 
@@ -9,7 +8,7 @@
     public class CoroutineUtils
     {
         MonoBehaviour instance;
-
+        
         public CoroutineUtils(MonoBehaviour instance)
         {
             if (instance == null)
@@ -27,7 +26,7 @@
 
         public void WaitForFrames(int frames, Action callback)
         {
-            this.instance.StartCoroutine(WaitForSecondsCoroutine(frames, callback));
+            this.instance.StartCoroutine(WaitForFramesCoroutine(frames, callback));
         }
 
         public void WaitForRenderGUIFrames(int frames, Action callback)
@@ -80,7 +79,7 @@
             callback();
         }
 
-        static IEnumerator WaitForSecondsCoroutine(float seconds, Action callback)
+        IEnumerator WaitForSecondsCoroutine(float seconds, Action callback)
         {
             yield return new WaitForSeconds(seconds);
             callback();

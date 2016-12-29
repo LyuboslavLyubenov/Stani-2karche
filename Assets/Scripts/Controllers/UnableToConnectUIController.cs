@@ -7,6 +7,7 @@ namespace Assets.Scripts.Controllers
 {
 
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 

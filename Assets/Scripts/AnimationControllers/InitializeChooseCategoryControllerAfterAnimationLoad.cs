@@ -6,6 +6,7 @@ namespace Assets.Scripts.AnimationControllers
     using Assets.Scripts.Controllers;
     using Assets.Scripts.Localization;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Notifications;
 
     public class InitializeChooseCategoryControllerAfterAnimationLoad : StateMachineBehaviour

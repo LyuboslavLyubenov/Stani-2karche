@@ -2,6 +2,9 @@
 {
     using System;
 
+    using Assets.Scripts.IO;
+    using Assets.Scripts.Network.NetworkManagers;
+
     using UnityEngine;
 
     using DTOs;
@@ -24,7 +27,6 @@
     using Utils;
     using Utils.Unity;
 
-    using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
     public class BasicExamServer : ExtendedMonoBehaviour
@@ -86,7 +88,7 @@
         bool paused = false;
         bool playerSentAnswer = false;
 
-        private ISimpleQuestion lastQuestion;
+        ISimpleQuestion lastQuestion;
 
         void Awake()
         {
@@ -159,23 +161,18 @@
             {
                 return;
             }
+            
+            var isCorrect = (answer == this.lastQuestion.CorrectAnswer);
 
-            this.GameData.GetCurrentQuestion((question) =>
+            if (isCorrect)
             {
-                var isCorrect = (answer == question.Answers[question.CorrectAnswerIndex]);
-
-                if (isCorrect)
-                {
-                    this.OnMainPlayerAnsweredCorrectly();
-                }
-                else
-                {
-                    this.OnMainPlayerAnsweredIncorrectly();
-                }
-
-            },
-                Debug.LogException);
-
+                this.OnMainPlayerAnsweredCorrectly();
+            }
+            else
+            {
+                this.OnMainPlayerAnsweredIncorrectly();
+            }
+            
             this.playerSentAnswer = true;
         }
 
@@ -236,6 +233,7 @@
             {
                 this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
                 this.playerSentAnswer = false;
+                this.lastQuestion = args.Question;
             }
         }
 
@@ -246,7 +244,12 @@
                 this.SendEndGameInfo();
             }
         }
-
+        
+        void OnFinishedJokerExecution()
+        {
+            this.paused = false;
+        }
+        
         void LoadServerSettings()
         {
             int serverMaxPlayers = DefaultServerMaxPlayers;
@@ -275,11 +278,6 @@
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
         }
 
-        void OnFinishedJokerExecution()
-        {
-            this.paused = false;
-        }
-        
         void InitializeMainPlayerData()
         {
             this.MainPlayerData = new MainPlayerData(this.NetworkManager);

@@ -1,7 +1,7 @@
-using System.Net.Sockets;
-
-namespace Assets.Scripts.Network
+namespace Assets.Scripts.Network.TcpSockets
 {
+
+    using System.Net.Sockets;
 
     public class SendMessageState
     {

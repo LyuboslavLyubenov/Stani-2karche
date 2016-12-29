@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Net;
-using System.Net.Sockets;
-using System.Security.Cryptography;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.Broadcast
 {
+
+    using System.Collections;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Security.Cryptography;
 
     using Assets.CielaSpike.Thread_Ninja;
     using Assets.Scripts.Extensions;

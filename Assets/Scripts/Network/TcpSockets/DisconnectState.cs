@@ -1,8 +1,8 @@
-﻿using System;
-using System.Net.Sockets;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.TcpSockets
 {
+
+    using System;
+    using System.Net.Sockets;
 
     using Assets.Scripts.Utils;
 

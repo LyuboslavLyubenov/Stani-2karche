@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Assets.Scripts.Network
 {
+
+    using Assets.Scripts.IO;
+    using Assets.Scripts.Network.NetworkManagers;
+
     using Commands;
     using Commands.GameData;
     using EventArgs;

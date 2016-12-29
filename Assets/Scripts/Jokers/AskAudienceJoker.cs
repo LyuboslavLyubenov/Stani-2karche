@@ -5,6 +5,7 @@ namespace Assets.Scripts.Jokers
 {
 
     using Assets.Scripts.Exceptions;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils.Unity;
 
     using Controllers;

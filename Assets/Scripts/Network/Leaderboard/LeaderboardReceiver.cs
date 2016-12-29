@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.Leaderboard
 {
+
+    using System;
+    using System.Collections.Generic;
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Controllers;
     using Assets.Scripts.DTOs;
-    using Assets.Scripts.Utils;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils.Unity;
 
     using EventArgs = System.EventArgs;
@@ -18,36 +18,38 @@ namespace Assets.Scripts.Network
         public ClientNetworkManager NetworkManager;
         public LeaderboardUIController Leaderboard;
 
-        List<PlayerScore> playersScores = new List<PlayerScore>();
-
         public bool Receiving
         {
             get;
             private set;
         }
 
+        List<PlayerScore> playersScores = new List<PlayerScore>();
+
         int elapsedTimeReceivingInSeconds = 0;
         int timeoutInSeconds = 0;
 
-        Action<PlayerScore[]> onReceived;
-        Action onError;
+        Action<PlayerScore[]> onReceived = null;
+        Action onError = null;
 
         void Start()
         {
-            this.CoroutineUtils.WaitForFrames(0, () => this.InitializeCommand());
-            this.CoroutineUtils.RepeatEverySeconds(1, () => this.UpdateElapsedTime());
+            this.CoroutineUtils.WaitForFrames(0, this.InitializeCommand);
+            this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateElapsedTime);
         }
 
         void UpdateElapsedTime()
         {
-            if (this.Receiving)
+            if (!this.Receiving)
             {
-                this.elapsedTimeReceivingInSeconds++;
+                return;
+            }
 
-                if (this.timeoutInSeconds >= this.elapsedTimeReceivingInSeconds)
-                {
-                    this.Timeout();
-                }
+            this.elapsedTimeReceivingInSeconds++;
+
+            if (this.timeoutInSeconds >= this.elapsedTimeReceivingInSeconds)
+            {
+                this.Timeout();
             }
         }
 
@@ -55,14 +57,20 @@ namespace Assets.Scripts.Network
         {
             var timeoutCommand = new NetworkCommandData("LeaderboardReceiveTimeout");
             this.NetworkManager.SendServerCommand(timeoutCommand);
+
+            this.NetworkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
+
             this.Receiving = false;
+
+            this.onError();
         }
 
         void OnNoMoreEntities(object sender, EventArgs args)
         {
-            this.onReceived(this.playersScores.ToArray());
             this.playersScores.Clear();
             this.Receiving = false;
+
+            this.onReceived(this.playersScores.ToArray());
         }
 
         void InitializeCommand()
@@ -70,7 +78,7 @@ namespace Assets.Scripts.Network
             var noMoreEntitiesCommand = new DummyCommand();
             noMoreEntitiesCommand.OnExecuted += this.OnNoMoreEntities;
 
-            this.NetworkManager.CommandsManager.AddCommand("LeaderboardEntity", new ReceivedLeaderboardEntityCommand(this.playersScores));
+            this.NetworkManager.CommandsManager.AddCommand("LeaderboardEntity", new LeaderboardEntityCommand(this.playersScores));
             this.NetworkManager.CommandsManager.AddCommand("LeaderboardNoMoreEntities", noMoreEntitiesCommand);
         }
 
@@ -112,5 +120,4 @@ namespace Assets.Scripts.Network
             this.StartReceiving();
         }
     }
-
 }

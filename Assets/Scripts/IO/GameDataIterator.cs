@@ -1,17 +1,20 @@
-﻿namespace Assets.Scripts
+﻿namespace Assets.Scripts.IO
 {
     using System;
 
-    using Assets.Scripts.GameData;
-
     using EventArgs;
+    using GameData;
     using Interfaces;
     using Localization;
 
     public class GameDataIterator : IGameDataIterator
     {
         public const int MarkMin = 2;
-        
+
+        public event EventHandler OnLoaded;
+
+        public event EventHandler<MarkEventArgs> OnMarkIncrease;
+
         /// <summary>
         /// If true questions for given marks are aways with randomized order
         /// </summary>
@@ -20,7 +23,7 @@
         /// If true answers for every questions will be in random arrangement
         /// </summary>
         public bool ShuffleAnswers = true;
-
+        
         public string LevelCategory
         {
             get
@@ -33,7 +36,7 @@
         {
             get
             {
-                return extractor.Loaded;
+                return this.extractor.Loaded;
             }
         }
 
@@ -45,9 +48,6 @@
             }
         }
 
-        public event EventHandler OnLoaded;
-
-        public event EventHandler<MarkEventArgs> OnMarkIncrease;
 
         public int RemainingQuestionsToNextMark
         {
@@ -96,9 +96,9 @@
             {
                 this.currentMarkIndex = value;
 
-                if (OnMarkIncrease != null)
+                if (this.OnMarkIncrease != null)
                 {
-                    OnMarkIncrease(this, new MarkEventArgs(value));
+                    this.OnMarkIncrease(this, new MarkEventArgs(value));
                 }
             }
         }
@@ -143,7 +143,7 @@
             
             var extractedQuestion = this.extractor.GetQuestion(this.currentMarkIndex, this.currentQuestionIndex);
 
-            currentQuestion = extractedQuestion;
+            this.currentQuestion = extractedQuestion;
 
             return this.currentQuestion.Question;
         }

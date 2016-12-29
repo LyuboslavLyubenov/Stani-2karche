@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Assets.Scripts.Commands.GameData
 {
+
+    using Assets.Scripts.Network.NetworkManagers;
+
     using Interfaces;
     using Network;
 

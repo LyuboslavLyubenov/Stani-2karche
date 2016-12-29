@@ -7,6 +7,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
     using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils;
 
     public class AddRandomJokerCommand : INetworkManagerCommand

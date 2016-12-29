@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.Broadcast
 {
+
+    using System;
 
     using Assets.Scripts.EventArgs;
 

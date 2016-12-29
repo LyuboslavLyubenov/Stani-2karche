@@ -44,7 +44,7 @@
                 methodToRun();    
             }
         }
-
+        
         public void RunOnMainThread(Action method)
         {
             lock (this.MyLock)
@@ -63,5 +63,4 @@
             this.StartCoroutineAsync(coroutine);    
         }
     }
-
 }

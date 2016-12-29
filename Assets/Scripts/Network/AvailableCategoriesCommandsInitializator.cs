@@ -1,26 +1,20 @@
 ﻿namespace Assets.Scripts.Network
 {
+    using Commands.Server;
+    using GameData;
+    using IO;
+    using NetworkManagers;
 
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.GameData;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
-
-    public class AvailableCategoriesCommandsInitializator : ExtendedMonoBehaviour
+    public class AvailableCategoriesCommandsInitializator
     {
-        public ServerNetworkManager NetworkManager;
-        public GameDataExtractor GameData;
-        public LeaderboardSerializer Leaderboard;
-
-        void Start()
+        AvailableCategoriesCommandsInitializator()
         {
-            this.CoroutineUtils.WaitForFrames(0, () =>
-                {
-                    this.NetworkManager.CommandsManager.AddCommand(new GetAllAvailableCategoriesCommand(this.NetworkManager));
-                    this.NetworkManager.CommandsManager.AddCommand(new SelectedCategoryCommand(this.GameData, this.Leaderboard));
-                });
         }
 
+        public static void Initialize(ServerNetworkManager networkManager, GameDataExtractor extractor, LeaderboardSerializer leaderboard)
+        {
+            networkManager.CommandsManager.AddCommand(new GetAllAvailableCategoriesCommand(networkManager));
+            networkManager.CommandsManager.AddCommand(new SelectedCategoryCommand(extractor, leaderboard));
+        }
     }
-
 }

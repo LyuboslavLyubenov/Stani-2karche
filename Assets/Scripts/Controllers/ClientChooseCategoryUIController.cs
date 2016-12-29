@@ -12,6 +12,7 @@ namespace Assets.Scripts.Controllers
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
+    using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Notifications;
 
     using EventArgs = System.EventArgs;

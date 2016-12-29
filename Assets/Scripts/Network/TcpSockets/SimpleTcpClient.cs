@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Network.TcpSockets
 {
 
-    using Assets.Scripts.SecuritySettings;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+    using System.Security.Cryptography;
+    using System.Text;
+
+    using SecuritySettings;
+    using Utils;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
 
@@ -62,10 +62,10 @@ namespace Assets.Scripts.Network
                 });
         }
 
-        void BeginConnectToServer(string ipAddress, int port, Action OnConnected)
+        void BeginConnectToServer(string ipAddress, int port, Action onConnected)
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var state = new ClientConnectingState() { OnConnected = OnConnected, Client = socket };
+            var state = new ClientConnectingState() { OnConnected = onConnected, Client = socket };
 
             socket.ExclusiveAddressUse = false;
 
@@ -274,6 +274,4 @@ namespace Assets.Scripts.Network
             return this.connectedToServersIPsSockets.ContainsKey(ipAddress);
         }
     }
-
 }
-

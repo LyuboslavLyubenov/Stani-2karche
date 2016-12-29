@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Assets.Scripts.Network.NetworkManagers;
+
     using UnityEngine;
     using UnityEngine.SceneManagement;
 

@@ -1,18 +1,17 @@
-using System.Collections.Generic;
-
-using UnityEngine;
-
 namespace Assets.Scripts.Commands.Client
 {
+    using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
+    using UnityEngine;
 
-    public class ReceivedLeaderboardEntityCommand : INetworkManagerCommand
+    using DTOs;
+    using Interfaces;
+
+    public class LeaderboardEntityCommand : INetworkManagerCommand
     {
         ICollection<PlayerScore> playersScores;
 
-        public ReceivedLeaderboardEntityCommand(ICollection<PlayerScore> playersScores)
+        public LeaderboardEntityCommand(ICollection<PlayerScore> playersScores)
         {
             if (playersScores == null)
             {

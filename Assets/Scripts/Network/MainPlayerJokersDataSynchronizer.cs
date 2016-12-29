@@ -7,6 +7,7 @@ namespace Assets.Scripts.Network
     using Assets.Scripts.Commands;
     using Assets.Scripts.DTOs;
     using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network.NetworkManagers;
 
     public class MainPlayerJokersDataSynchronizer
     {
