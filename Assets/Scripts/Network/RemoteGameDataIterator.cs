@@ -3,8 +3,8 @@
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Network.NetworkManagers;
+    using DTOs;
+    using NetworkManagers;
 
     using Commands;
     using Commands.GameData;
@@ -15,7 +15,7 @@
 
     using UnityEngine;
 
-    public class RemoteGameDataIterator : MonoBehaviour, IGameDataIterator
+    public class RemoteGameDataIterator : IGameDataIterator
     {
         public int RemainingQuestionsToNextMark
         {
@@ -47,7 +47,6 @@
         private ClientNetworkManager networkManager;
 
         private readonly Stack<PendingQuestionRequest> currentQuestionRequests = new Stack<PendingQuestionRequest>();
-
         private readonly Stack<PendingQuestionRequest> nextQuestionRequests = new Stack<PendingQuestionRequest>();
 
         private ISimpleQuestion currentQuestionCache = null;

@@ -30,11 +30,11 @@
 
         private const int DefaultServerMaxPlayers = 40;
 
-        public EventHandler OnGameOver = delegate
+        public event EventHandler OnGameOver = delegate
             {
             };
 
-        public EventHandler<AnswerEventArgs> OnMainPlayerSelectedAnswer = delegate
+        public event EventHandler<AnswerEventArgs> OnMainPlayerSelectedAnswer = delegate
             {
             };
 

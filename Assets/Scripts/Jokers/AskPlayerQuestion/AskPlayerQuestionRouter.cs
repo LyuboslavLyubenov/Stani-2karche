@@ -42,15 +42,15 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             }
         }
 
-        public EventHandler OnActivated = delegate
+        public event EventHandler OnActivated = delegate
             {
             };
 
-        public EventHandler OnSent = delegate
+        public event EventHandler OnSent = delegate
             {
             };
 
-        public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
             {
             };
 

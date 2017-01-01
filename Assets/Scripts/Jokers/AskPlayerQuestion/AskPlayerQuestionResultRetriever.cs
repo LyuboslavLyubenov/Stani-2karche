@@ -17,19 +17,19 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
     {
         private const int SettingsReceiveTimeoutInSeconds = 5;
 
-        public EventHandler<AskPlayerResponseEventArgs> OnReceivedAnswer = delegate
+        public event EventHandler<AskPlayerResponseEventArgs> OnReceivedAnswer = delegate
             {
             };
 
-        public EventHandler<JokerSettingsEventArgs> OnReceivedSettings = delegate
+        public event EventHandler<JokerSettingsEventArgs> OnReceivedSettings = delegate
             {
             };
 
-        public EventHandler OnReceiveAnswerTimeout = delegate
+        public event EventHandler OnReceiveAnswerTimeout = delegate
             {
             };
 
-        public EventHandler OnReceiveSettingsTimeout = delegate
+        public event EventHandler OnReceiveSettingsTimeout = delegate
             {
             };
 

@@ -15,11 +15,11 @@
 
     public class GameDataSender : MonoBehaviour
     {
-        public EventHandler<ServerSentQuestionEventArgs> OnBeforeSend = delegate
+        public event EventHandler<ServerSentQuestionEventArgs> OnBeforeSend = delegate
             {
             };
 
-        public EventHandler<ServerSentQuestionEventArgs> OnSentQuestion = delegate
+        public event EventHandler<ServerSentQuestionEventArgs> OnSentQuestion = delegate
             {
             };
     

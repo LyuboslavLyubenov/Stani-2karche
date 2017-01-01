@@ -35,19 +35,19 @@ namespace Assets.Scripts.Network.NetworkManagers
         public int MaxConnections;
         public LANServerOnlineBroadcastService LANServerOnlineBroadcastService;
 
-        public EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
+        public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
             {
             };
 
-        public EventHandler<DataSentEventArgs> OnReceivedData = delegate
+        public event EventHandler<DataSentEventArgs> OnReceivedData = delegate
             {
             };
 
-        public EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected = delegate
+        public event EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected = delegate
             {
             };
 
-        public EventHandler<ConnectedClientDataEventArgs> OnClientSetUsername = delegate
+        public event EventHandler<ConnectedClientDataEventArgs> OnClientSetUsername = delegate
             {
             };
 
