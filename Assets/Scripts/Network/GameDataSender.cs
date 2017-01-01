@@ -2,7 +2,7 @@
 {
     using System;
 
-    using UnityEngine;
+    using Utils;
 
     using IO;
     using NetworkManagers;
@@ -13,7 +13,7 @@
 
     using EventArgs = System.EventArgs;
 
-    public class GameDataSender : MonoBehaviour
+    public class GameDataSender
     {
         public event EventHandler<ServerSentQuestionEventArgs> OnBeforeSend = delegate
             {
@@ -23,34 +23,45 @@
             {
             };
     
-        public GameDataIterator LocalGameData;
-        public ServerNetworkManager NetworkManager;
+        private GameDataIterator gameDataIterator;
+        private ServerNetworkManager networkManager;
 
-        void Start()
+        public GameDataSender(GameDataIterator gameDataIterator, ServerNetworkManager networkManager)
         {
-            this.NetworkManager.OnClientConnected += this.OnClientConnected;
-            this.LocalGameData.OnMarkIncrease += this.OnMarkIncrease;
-            this.LocalGameData.OnLoaded += this.OnGameDataLoaded;
+            ValidationUtils.ValidateObjectNotNull(gameDataIterator, "gameDataIterator");
+            ValidationUtils.ValidateObjectNotNull(networkManager, "networkManager");
 
-            var getCurrentQuestionCommand = new GetCurrentQuestionCommand(this.LocalGameData, this.NetworkManager);
-            var getNextQuestionCommand = new GetNextQuestionCommand(this.LocalGameData, this.NetworkManager);
-                
+            this.gameDataIterator = gameDataIterator;
+            this.networkManager = networkManager;
+            
+            this.networkManager.OnClientConnected += this.OnClientConnected;
+            this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
+            this.gameDataIterator.OnLoaded += this.OnGameDataLoaded;
+
+            this.IntializeCommands();
+        }
+
+        void IntializeCommands()
+        {
+            var getCurrentQuestionCommand = new GetCurrentQuestionCommand(this.gameDataIterator, this.networkManager);
+            var getNextQuestionCommand = new GetNextQuestionCommand(this.gameDataIterator, this.networkManager);
+
             getCurrentQuestionCommand.OnBeforeSend += this.OnBeforeSentToClient;
             getNextQuestionCommand.OnBeforeSend += this.OnBeforeSentToClient;
 
             getCurrentQuestionCommand.OnSentQuestion += this.OnSentQuestionToClient;
             getNextQuestionCommand.OnSentQuestion += this.OnSentQuestionToClient;
 
-            var commandsManager = this.NetworkManager.CommandsManager;
+            var commandsManager = this.networkManager.CommandsManager;
 
-            commandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(this.NetworkManager));
+            commandsManager.AddCommand("GameDataGetQuestion", new GameDataGetQuestionRouterCommand(this.networkManager));
             commandsManager.AddCommand("GameDataGetCurrentQuestion", getCurrentQuestionCommand);
             commandsManager.AddCommand("GameDataGetNextQuestion", getNextQuestionCommand);
         }
 
         private void OnGameDataLoaded(object sender, EventArgs args)
         {
-            var connectedClients = this.NetworkManager.ConnectedClientsConnectionId;
+            var connectedClients = this.networkManager.ConnectedClientsConnectionId;
 
             for (int i = 0; i < connectedClients.Length; i++)
             {
@@ -61,7 +72,7 @@
 
         private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
         {
-            if (this.LocalGameData.Loaded)
+            if (this.gameDataIterator.Loaded)
             {
                 this.SendLoadedGameData(args.ConnectionId);
             }
@@ -71,7 +82,7 @@
         {
             var commandData = new NetworkCommandData("GameDataMark");
             commandData.AddOption("Mark", args.Mark.ToString());
-            this.NetworkManager.SendAllClientsCommand(commandData);
+            this.networkManager.SendAllClientsCommand(commandData);
         }
 
         private void OnSentQuestionToClient(object sender, ServerSentQuestionEventArgs args)
@@ -87,8 +98,8 @@
         private void SendLoadedGameData(int connectionId)
         {
             var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
-            loadedGameDataCommand.AddOption("LevelCategory", this.LocalGameData.LevelCategory);
-            this.NetworkManager.SendClientCommand(connectionId, loadedGameDataCommand);
+            loadedGameDataCommand.AddOption("LevelCategory", this.gameDataIterator.LevelCategory);
+            this.networkManager.SendClientCommand(connectionId, loadedGameDataCommand);
         }
     }
 }
