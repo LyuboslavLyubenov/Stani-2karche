@@ -5,6 +5,8 @@ using UnityEngine;
 namespace Assets.Editor.Tests.Automatic_tests.Editor.NetworkManagersTests
 {
 
+    using System;
+
     using Assets.Scripts.Network;
     using Assets.Scripts.Network.NetworkManagers;
 
@@ -17,9 +19,10 @@ namespace Assets.Editor.Tests.Automatic_tests.Editor.NetworkManagersTests
         [Test, Timeout(500)]
         public void ConnectClientToServer()
         {
+            throw new NotImplementedException();
             var obj = new GameObject();
             obj.name = "Client";
-            this.clientNetworkManager = obj.AddComponent<ClientNetworkManager>();
+            //this.clientNetworkManager = obj.AddComponent<ClientNetworkManager>();
 
             var obj2 = new GameObject();
             obj2.name = "Server";

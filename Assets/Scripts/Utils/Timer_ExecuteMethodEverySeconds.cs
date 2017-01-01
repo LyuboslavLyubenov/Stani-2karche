@@ -1,12 +1,16 @@
 ﻿namespace Assets.Scripts.Utils
 {
-
     using System;
     using System.Timers;
 
-    public class Timer_ExecuteMethodEverySeconds : Timer
+    public class Timer_ExecuteMethodEverySeconds : Timer, IExtendedTimer
     {
         public Action Method
+        {
+            get; set;
+        }
+
+        public bool RunOnUnityThread
         {
             get; set;
         }
@@ -20,8 +24,14 @@
 
         private void OnElapsed(object sender, ElapsedEventArgs args)
         {
-            ThreadUtils.Instance.RunOnMainThread(this.Method);
+            if (RunOnUnityThread)
+            {
+                ThreadUtils.Instance.RunOnMainThread(this.Method);
+            }
+            else
+            {
+                this.Method();
+            }
         }
     }
-
 }

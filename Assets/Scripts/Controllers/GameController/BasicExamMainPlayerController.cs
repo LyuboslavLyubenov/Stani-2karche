@@ -1,24 +1,26 @@
 ﻿namespace Assets.Scripts.Controllers.GameController
 {
 
-    using System;
     using System.Collections;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.GameData;
-    using Assets.Scripts.Commands.Jokers.Add;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers.Jokers;
-    using Assets.Scripts.DialogSwitchers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils.Unity;
+    using Assets.Scripts.Jokers.AskPlayerQuestion;
+
+    using Commands;
+    using Commands.Client;
+    using Commands.GameData;
+    using Commands.Jokers.Add;
+    using Commands.Server;
+    using Jokers;
+    using DialogSwitchers;
+    using EventArgs;
+    using Interfaces;
+    using Scripts.Jokers;
+    using Scripts.Jokers.AudienceAnswerPoll;
+    using Localization;
+    using Network;
+    using Network.NetworkManagers;
+    using Notifications;
+    using Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
@@ -61,11 +63,17 @@
 
         private UnableToConnectUIController unableToConnectUIController;
 
+        private AudienceAnswerPollResultRetriever audienceAnswerPollResultRetriever;
+
+        private AskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever;
+
         private void Start()
         {
             PlayerPrefs.DeleteKey("LoadedGameData");
 
             this.remoteGameDataIterator = new RemoteGameDataIterator(this.NetworkManager);
+            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(this.NetworkManager);
+            this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(this.NetworkManager);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
@@ -113,8 +121,8 @@
         private void InitializeCommands()
         {
             this.NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI));
-            this.NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
-            this.NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI, this.NotificationService));
+            this.NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
+            this.NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
             this.NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.QuestionUIController));
             this.NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, this.NetworkManager));
         }
@@ -189,8 +197,8 @@
 
         private void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
         {
-            this.QuestionsRemainingUIController.SetRemainingQuestions(this.RemoteGameDataIterator.RemainingQuestionsToNextMark);
-            this.SecondsRemainingUIController.SetSeconds(this.RemoteGameDataIterator.SecondsForAnswerQuestion);
+            this.QuestionsRemainingUIController.SetRemainingQuestions(this.remoteGameDataIterator.RemainingQuestionsToNextMark);
+            this.SecondsRemainingUIController.SetSeconds(this.remoteGameDataIterator.SecondsForAnswerQuestion);
         }
 
         private void OnActivateSceneChanged(Scene oldScene, Scene newScene)
@@ -228,7 +236,7 @@
             if (PlayerPrefs.HasKey("LoadedGameData"))
             {
                 var loadedGameData = NetworkCommandData.From<LoadedGameDataCommand>();
-                loadedGameData.AddOption("LevelCategory", this.RemoteGameDataIterator.LevelCategory);
+                loadedGameData.AddOption("LevelCategory", this.remoteGameDataIterator.LevelCategory);
                 this.NetworkManager.CommandsManager.Execute(loadedGameData);
                 return;
             }
@@ -253,7 +261,7 @@
 
             if (isCorrect)
             {
-                this.RemoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+                this.remoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
             }
             else
             {

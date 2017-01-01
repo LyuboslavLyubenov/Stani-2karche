@@ -285,7 +285,7 @@
         {
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(this.NetworkManager, this.MainPlayerData, this.AskPlayerQuestionRouter, 60);
-            var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.AudiencePollRouter, this.NetworkManager, 60);
+            var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.AudiencePollRouter, 60);
             var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.DisableRandomAnswersJokerRouter, this.NetworkManager, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };

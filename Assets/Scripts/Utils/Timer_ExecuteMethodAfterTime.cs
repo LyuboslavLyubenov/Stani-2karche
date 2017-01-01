@@ -1,10 +1,9 @@
 namespace Assets.Scripts.Utils
 {
-
     using System;
     using System.Timers;
 
-    public class Timer_ExecuteMethodAfterTime : Timer
+    public class Timer_ExecuteMethodAfterTime : Timer, IExtendedTimer
     {
         public Action Method
         {
@@ -12,6 +11,11 @@ namespace Assets.Scripts.Utils
         }
 
         public bool AutoDispose
+        {
+            get; set;
+        }
+
+        public bool RunOnUnityThread
         {
             get; set;
         }
@@ -25,7 +29,15 @@ namespace Assets.Scripts.Utils
 
         private void OnElapsed(object sender, ElapsedEventArgs args)
         {
-            ThreadUtils.Instance.RunOnMainThread(this.Method);
+            if (RunOnUnityThread)
+            {
+                ThreadUtils.Instance.RunOnMainThread(this.Method);
+            }
+            else
+            {
+                this.Method();
+            }
+            
             base.Stop();
 
             if (this.AutoDispose)

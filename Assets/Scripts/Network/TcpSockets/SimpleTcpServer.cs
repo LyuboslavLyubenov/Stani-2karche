@@ -1,6 +1,5 @@
 namespace Assets.Scripts.Network.TcpSockets
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -10,20 +9,22 @@ namespace Assets.Scripts.Network.TcpSockets
     using System.Text;
     using System.Threading;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.SecuritySettings;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using EventArgs;
+    using SecuritySettings;
+    using Utils;
 
     using Debug = UnityEngine.Debug;
+    using Timer = System.Timers.Timer;
 
-    public class SimpleTcpServer : ExtendedMonoBehaviour
+    public class SimpleTcpServer
     {
+        private const int ReceiveMessageTimeoutInMiliseconds = 1000;
+        private const int SendMessageTimeoutInMiliseconds = 1000;
+
         private const int AcceptNewConnectionDelayInMiliseconds = 200;
 
         private const float UpdateSocketsDelayInSeconds = 0.1f;
-        protected const int ReceiveMessageTimeoutInMiliseconds = 1000;
-        protected const int SendMessageTimeoutInMiliseconds = 1000;
+        private const float CheckDisconnectedSocketsDelayInSeconds = 1f;
 
         public EventHandler<IpEventArgs> OnClientConnected = delegate
             {
@@ -33,52 +34,51 @@ namespace Assets.Scripts.Network.TcpSockets
             {
             };
 
-        //readonly object MyLock = new object();
+        public EventHandler<IpEventArgs> OnClientDisconnected = delegate
+            { };
 
-        private int port;
-
-        private bool initialized = false;
-
-        private readonly Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-        private Dictionary<string, Socket> connectedIPClientsSocket = new Dictionary<string, Socket>();
-
-        private Dictionary<Socket, ReceiveMessageState> socketsMessageState = new Dictionary<Socket, ReceiveMessageState>();
-
-        private List<Socket> aliveSockets = new List<Socket>();
-
-        public bool Initialized
-        {
-            get
-            {
-                return this.initialized;
-            }
-        }
+        readonly object myLock = new object();
 
         public int Port
         {
-            get
-            {
-                return this.port;
-            }
+            get;
+            private set;
         }
+        
+        private readonly Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        private void OnDisable()
-        {
-            this.Dispose();
-        }
+        private Dictionary<string, Socket> connectedIPClientsSocket = new Dictionary<string, Socket>();
+        private Dictionary<Socket, ReceiveMessageState> socketsMessageState = new Dictionary<Socket, ReceiveMessageState>();
 
-        private void OnApplicationExit()
+        private Timer removeDisconnectedSocketsTimer;
+
+        public SimpleTcpServer(int port)
         {
-            this.Dispose();
+            var threadUtils = ThreadUtils.Instance;//initialize
+
+            this.Port = port;
+            this.acceptConnections.ExclusiveAddressUse = false;
+            this.acceptConnections.SendTimeout = SendMessageTimeoutInMiliseconds;
+            this.acceptConnections.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
+            this.acceptConnections.Bind(new IPEndPoint(IPAddress.Any, this.Port));
+            this.acceptConnections.Listen(10);
+
+            this.removeDisconnectedSocketsTimer = TimerUtils.ExecuteEvery(CheckDisconnectedSocketsDelayInSeconds, this.RemoveDisconnectedSockets); 
+            this.removeDisconnectedSocketsTimer.Start();
+
+            this.BeginAcceptConnections();
         }
 
         private void RemoveDisconnectedSockets()
         {
-            var disconnectedSockets = this.connectedIPClientsSocket.Where(s => !s.Value.IsConnected()).ToList();
-
-            disconnectedSockets.ForEach(ipSocket =>
+            lock (this.myLock)
+            {
+                var disconnectedSockets = this.connectedIPClientsSocket.Where(s => !s.Value.IsConnected()).ToList();
+            
+                for (int i = 0; i < disconnectedSockets.Count; i++)
                 {
+                    var ipSocket = disconnectedSockets[i];
+
                     try
                     {
                         ipSocket.Value.Close();
@@ -86,11 +86,12 @@ namespace Assets.Scripts.Network.TcpSockets
                     }
                     catch (Exception ex)
                     {
-                        Debug.Log(ex.Message);   
+                        Debug.Log(ex.Message);
                     }
 
                     this.connectedIPClientsSocket.Remove(ipSocket.Key);
-                });
+                }
+            }
         }
 
         private string FilterReceivedMessage(string message)
@@ -124,22 +125,25 @@ namespace Assets.Scripts.Network.TcpSockets
 
                 connectionSocket.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
                 connectionSocket.SendTimeout = SendMessageTimeoutInMiliseconds;
-
-                if (this.connectedIPClientsSocket.ContainsKey(ip))
+                
+                lock (this.myLock)
                 {
-                    this.Disconnect(ip);
-                    Thread.Sleep(30);
+                    var isConnectedAlready = this.connectedIPClientsSocket.ContainsKey(ip);
+
+                    if (isConnectedAlready)
+                    {
+                        this.Disconnect(ip);
+                        Thread.Sleep(30);
+                    }
+
+                    this.connectedIPClientsSocket[ip] = connectionSocket;
                 }
-
-                this.connectedIPClientsSocket[ip] = connectionSocket;
-
-                Debug.Log("SimpleTcpServer Accepted " + ip);
 
                 this.BeginReceiveMessage(ip);
             }
             catch (Exception e)
             {
-                Debug.Log(e.Message);
+                Debug.LogWarning(e.Message);
             }
             finally
             {
@@ -150,27 +154,18 @@ namespace Assets.Scripts.Network.TcpSockets
 
         private void BeginReceiveMessage(string ipAddress)
         {
-            if (!ipAddress.IsValidIPV4())
+            lock (myLock)
             {
-                throw new ArgumentException("Invalid ipv4 address");
+                var socket = this.connectedIPClientsSocket[ipAddress];
+                var state = new ReceiveMessageState(socket);
+
+                if (!this.socketsMessageState.ContainsKey(socket))
+                {
+                    this.socketsMessageState.Add(socket, state);
+                }
+
+                socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(this.EndReceiveMessage), state);
             }
-
-            if (!this.connectedIPClientsSocket.ContainsKey(ipAddress))
-            {
-                throw new Exception("Not connected to " + ipAddress);
-            }
-
-            var socket = this.connectedIPClientsSocket[ipAddress];
-            var state = new ReceiveMessageState(socket);
-
-            if (!this.socketsMessageState.ContainsKey(socket))
-            {
-                this.socketsMessageState.Add(socket, state);
-            }
-
-            socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(this.EndReceiveMessage), state);
-    
-            Debug.Log("SimpleTcpServer BeginReceiveMessage from " + ipAddress);
         }
 
         private void EndReceiveMessage(IAsyncResult result)
@@ -213,64 +208,20 @@ namespace Assets.Scripts.Network.TcpSockets
                 var filteredMessage = this.FilterReceivedMessage(message);
                 var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
                 var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
-
-                Debug.Log("SimpleTcpServer Received " + decryptedMessage + " from " + state.IPAddress);
-
+                
                 if (this.OnReceivedMessage != null)
                 {
                     ThreadUtils.Instance.RunOnMainThread(() => this.OnReceivedMessage(this, args));
                 }
 
-                this.socketsMessageState[socket] = new ReceiveMessageState(socket);
+                lock (myLock)
+                {
+                    this.socketsMessageState[socket] = new ReceiveMessageState(socket);
+                }
             }
 
             Thread.Sleep(30);
             socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, new AsyncCallback(this.EndReceiveMessage), state);
-        }
-
-        public void Initialize(int port)
-        {
-            if (this.Initialized)
-            {
-                throw new InvalidOperationException("Already initialized");
-            }
-
-            var threadUtils = ThreadUtils.Instance;//initialize
-
-            this.port = port;
-            this.acceptConnections.ExclusiveAddressUse = false;
-            this.acceptConnections.SendTimeout = SendMessageTimeoutInMiliseconds;
-            this.acceptConnections.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
-            this.acceptConnections.Bind(new IPEndPoint(IPAddress.Any, this.Port));
-            this.acceptConnections.Listen(10);
-
-            this.CoroutineUtils.RepeatEverySeconds(1f, this.RemoveDisconnectedSockets);
-
-            this.BeginAcceptConnections();
-
-            this.initialized = true;
-
-            Debug.Log("SimpleTcpServer initialized");
-        }
-
-        public void Disconnect(string ipAddress)
-        {
-            if (!this.initialized)
-            {
-                throw new Exception("Use initialize method first");
-            }
-
-            if (!this.connectedIPClientsSocket.ContainsKey(ipAddress))
-            {
-                throw new ArgumentException("Not connected to " + ipAddress);
-            }
-
-            var socket = this.connectedIPClientsSocket[ipAddress];
-            var state = new DisconnectState(ipAddress, socket);
-
-            socket.BeginDisconnect(false, new AsyncCallback(this.EndDisconnect), state);
-
-            Debug.Log("SimpleTcpServer begin disconnect " + ipAddress);
         }
 
         private void EndDisconnect(IAsyncResult result)
@@ -280,19 +231,58 @@ namespace Assets.Scripts.Network.TcpSockets
 
             try
             {
-                this.connectedIPClientsSocket.Remove(state.IPAddress);
+                lock (myLock)
+                {
+                    this.connectedIPClientsSocket.Remove(state.IPAddress);
+                }
+
                 socket.EndDisconnect(result);
                 socket.Close();
+
             }
             catch (Exception ex)
             {
                 Debug.Log(ex.Message);
             }
 
-            Debug.Log("SimpleTcpServer disconnected " + state.IPAddress);
+            this.OnClientDisconnected(this, new IpEventArgs(state.IPAddress));
         }
 
-        public virtual void Dispose()
+        private void DisconnectAllSockets()
+        {
+            this.connectedIPClientsSocket.ToList().ForEach(ipSocket =>
+            {
+                try
+                {
+                    ipSocket.Value.Close();
+                }
+                catch
+                {
+                }
+            });
+
+            this.connectedIPClientsSocket.Clear();
+        }
+
+        public void Disconnect(string ipAddress)
+        {
+            lock (myLock)
+            {
+                if (!this.connectedIPClientsSocket.ContainsKey(ipAddress))
+                {
+                    throw new ArgumentException("Not connected to " + ipAddress);
+                }
+
+                var socket = this.connectedIPClientsSocket[ipAddress];
+                var state = new DisconnectState(ipAddress, socket);
+
+                socket.BeginDisconnect(false, new AsyncCallback(this.EndDisconnect), state);
+            }
+
+            Debug.Log("SimpleTcpServer begin disconnect " + ipAddress);
+        }
+
+        public void Dispose()
         {
             try
             {
@@ -300,21 +290,13 @@ namespace Assets.Scripts.Network.TcpSockets
             }
             catch
             {
-            
             }
-       
-            this.connectedIPClientsSocket.ToList().ForEach(ipSocket =>
-                {
-                    try
-                    {
-                        ipSocket.Value.Close();    
-                    }
-                    catch
-                    {
-                    
-                    }
 
-                });        
+            this.removeDisconnectedSocketsTimer.Stop();
+            this.removeDisconnectedSocketsTimer.Dispose();
+            this.removeDisconnectedSocketsTimer = null;
+
+            DisconnectAllSockets();
 
             this.socketsMessageState.ToList().ForEach(socketState =>
                 {
@@ -324,15 +306,11 @@ namespace Assets.Scripts.Network.TcpSockets
                     }
                     catch
                     {
-                    
                     }
                 });
 
-            this.connectedIPClientsSocket.Clear();
             this.socketsMessageState.Clear();
-
-            this.initialized = false;
-
+            
             Debug.Log("SimpleTcpServer disposed");
         }
 
@@ -340,7 +318,5 @@ namespace Assets.Scripts.Network.TcpSockets
         {
             return this.connectedIPClientsSocket.ContainsKey(ipAddress);
         }
-        //*/
     }
-
 }

@@ -2,6 +2,8 @@ namespace Assets.Scripts.Commands.Jokers.Add
 {
     using System.Collections.Generic;
 
+    using Assets.Scripts.Jokers.AudienceAnswerPoll;
+
     using UnityEngine;
 
     using Controllers;
@@ -16,12 +18,13 @@ namespace Assets.Scripts.Commands.Jokers.Add
         public AddAskAudienceJokerCommand(
             AvailableJokersUIController availableJokersUIController, 
             ClientNetworkManager networkManager, 
+            AudienceAnswerPollResultRetriever pollResultRetriever,
             GameObject waitingToAnswerUI, 
             GameObject audienceAnswerUI, 
             GameObject loadingUI)
             : base(availableJokersUIController)
         {
-            this.joker = new AskAudienceJoker(networkManager, waitingToAnswerUI, audienceAnswerUI, loadingUI);
+            this.joker = new AskAudienceJoker(networkManager, pollResultRetriever, waitingToAnswerUI, audienceAnswerUI, loadingUI);
         }
 
         public override void Execute(Dictionary<string, string> commandsOptionsValues)
