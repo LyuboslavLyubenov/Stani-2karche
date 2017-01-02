@@ -18,6 +18,8 @@ namespace Assets.Scripts.Network.TcpSockets
 
     public class SimpleTcpServer
     {
+        private const int MessageBuffer = 1024;
+
         private const int ReceiveMessageTimeoutInMiliseconds = 1000;
         private const int SendMessageTimeoutInMiliseconds = 1000;
 
@@ -26,16 +28,17 @@ namespace Assets.Scripts.Network.TcpSockets
         private const float UpdateSocketsDelayInSeconds = 0.1f;
         private const float CheckDisconnectedSocketsDelayInSeconds = 1f;
 
-        public EventHandler<IpEventArgs> OnClientConnected = delegate
+        public event EventHandler<IpEventArgs> OnClientConnected = delegate
             {
             };
 
-        public EventHandler<MessageEventArgs> OnReceivedMessage = delegate
+        public event EventHandler<MessageEventArgs> OnReceivedMessage = delegate
             {
             };
 
-        public EventHandler<IpEventArgs> OnClientDisconnected = delegate
-            { };
+        public event EventHandler<IpEventArgs> OnClientDisconnected = delegate
+            {
+            };
 
         readonly object myLock = new object();
 
@@ -44,7 +47,7 @@ namespace Assets.Scripts.Network.TcpSockets
             get;
             private set;
         }
-        
+
         private readonly Socket acceptConnections = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         private Dictionary<string, Socket> connectedIPClientsSocket = new Dictionary<string, Socket>();
@@ -63,7 +66,7 @@ namespace Assets.Scripts.Network.TcpSockets
             this.acceptConnections.Bind(new IPEndPoint(IPAddress.Any, this.Port));
             this.acceptConnections.Listen(10);
 
-            this.removeDisconnectedSocketsTimer = TimerUtils.ExecuteEvery(CheckDisconnectedSocketsDelayInSeconds, this.RemoveDisconnectedSockets); 
+            this.removeDisconnectedSocketsTimer = TimerUtils.ExecuteEvery(CheckDisconnectedSocketsDelayInSeconds, this.RemoveDisconnectedSockets);
             this.removeDisconnectedSocketsTimer.Start();
 
             this.BeginAcceptConnections();
@@ -74,7 +77,7 @@ namespace Assets.Scripts.Network.TcpSockets
             lock (this.myLock)
             {
                 var disconnectedSockets = this.connectedIPClientsSocket.Where(s => !s.Value.IsConnected()).ToList();
-            
+
                 for (int i = 0; i < disconnectedSockets.Count; i++)
                 {
                     var ipSocket = disconnectedSockets[i];
@@ -125,7 +128,7 @@ namespace Assets.Scripts.Network.TcpSockets
 
                 connectionSocket.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
                 connectionSocket.SendTimeout = SendMessageTimeoutInMiliseconds;
-                
+
                 lock (this.myLock)
                 {
                     var isConnectedAlready = this.connectedIPClientsSocket.ContainsKey(ip);
@@ -138,6 +141,8 @@ namespace Assets.Scripts.Network.TcpSockets
 
                     this.connectedIPClientsSocket[ip] = connectionSocket;
                 }
+
+                ThreadUtils.Instance.RunOnMainThread(() => OnClientConnected(this, new IpEventArgs(ip)));
 
                 this.BeginReceiveMessage(ip);
             }
@@ -157,7 +162,7 @@ namespace Assets.Scripts.Network.TcpSockets
             lock (myLock)
             {
                 var socket = this.connectedIPClientsSocket[ipAddress];
-                var state = new ReceiveMessageState(socket);
+                var state = new ReceiveMessageState(socket, MessageBuffer);
 
                 if (!this.socketsMessageState.ContainsKey(socket))
                 {
@@ -185,7 +190,7 @@ namespace Assets.Scripts.Network.TcpSockets
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log(ex.Message);   
+                    Debug.LogWarning(ex.Message);
                 }
 
                 return;
@@ -194,21 +199,20 @@ namespace Assets.Scripts.Network.TcpSockets
             if (!state.IsReceivedDataSize && bytesReceivedCount >= 4)
             {
                 state.DataSizeNeeded = BitConverter.ToInt32(state.Buffer, 0);
-                state.IsReceivedDataSize = true;
                 offset += 4;
                 bytesReceivedCount -= 4;
             }
 
             state.Data.Write(state.Buffer, offset, bytesReceivedCount);
 
-            if (state.Data.Length == state.DataSizeNeeded)
+            if (state.IsReceivedDataSize && state.Data.Length == state.DataSizeNeeded)
             {
                 var buffer = state.Data.ToArray();
                 var message = Encoding.UTF8.GetString(buffer);
                 var filteredMessage = this.FilterReceivedMessage(message);
                 var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
                 var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
-                
+
                 if (this.OnReceivedMessage != null)
                 {
                     ThreadUtils.Instance.RunOnMainThread(() => this.OnReceivedMessage(this, args));
@@ -216,7 +220,7 @@ namespace Assets.Scripts.Network.TcpSockets
 
                 lock (myLock)
                 {
-                    this.socketsMessageState[socket] = new ReceiveMessageState(socket);
+                    this.socketsMessageState[socket] = new ReceiveMessageState(socket, MessageBuffer);
                 }
             }
 
@@ -238,14 +242,13 @@ namespace Assets.Scripts.Network.TcpSockets
 
                 socket.EndDisconnect(result);
                 socket.Close();
-
             }
             catch (Exception ex)
             {
                 Debug.Log(ex.Message);
             }
 
-            this.OnClientDisconnected(this, new IpEventArgs(state.IPAddress));
+            ThreadUtils.Instance.RunOnMainThread(() => this.OnClientDisconnected(this, new IpEventArgs(state.IPAddress)));
         }
 
         private void DisconnectAllSockets()
@@ -286,7 +289,7 @@ namespace Assets.Scripts.Network.TcpSockets
         {
             try
             {
-                this.acceptConnections.Close();    
+                this.acceptConnections.Close();
             }
             catch
             {
@@ -302,7 +305,7 @@ namespace Assets.Scripts.Network.TcpSockets
                 {
                     try
                     {
-                        socketState.Key.Close();    
+                        socketState.Key.Close();
                     }
                     catch
                     {
@@ -310,7 +313,7 @@ namespace Assets.Scripts.Network.TcpSockets
                 });
 
             this.socketsMessageState.Clear();
-            
+
             Debug.Log("SimpleTcpServer disposed");
         }
 

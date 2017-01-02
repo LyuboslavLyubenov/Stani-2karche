@@ -8,11 +8,44 @@
 
     public class ReceiveMessageState
     {
-        public byte[] Buffer = new byte[1024];
-        public bool IsReceivedDataSize = false;
-        public int DataSizeNeeded = -1;
-        public MemoryStream Data = new MemoryStream();
-        public Socket Socket = null;
+        private int dataSizeNeeded;
+
+        public byte[] Buffer
+        {
+            get;
+            private set;
+        }
+
+        public bool IsReceivedDataSize
+        {
+            get;
+            private set;
+        }
+
+        public int DataSizeNeeded
+        {
+            get
+            {
+                return this.dataSizeNeeded;
+            }
+            set
+            {
+                this.dataSizeNeeded = value;
+                this.IsReceivedDataSize = true;
+            }
+        }
+
+        public MemoryStream Data
+        {
+            get;
+            private set;
+        }
+
+        public Socket Socket
+        {
+            get;
+            private set;
+        }
 
         public string IPAddress
         {
@@ -20,13 +53,16 @@
             private set;
         }
 
-        public ReceiveMessageState(Socket socket)
+        
+
+        public ReceiveMessageState(Socket socket, int buffer)
         {
             this.Socket = socket;
+            this.Buffer = new byte[buffer];
+            this.Data = new MemoryStream();
 
             var ipEndPoint = (IPEndPoint)socket.RemoteEndPoint;
             this.IPAddress = ipEndPoint.Address.ToString().Split(':').First();
         }
     }
-
 }
