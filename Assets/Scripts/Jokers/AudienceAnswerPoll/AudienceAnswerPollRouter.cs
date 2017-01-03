@@ -71,9 +71,10 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         public AudienceAnswerPollRouter()
         {
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTime);
+            this.updateTimeTimer.Start();
+
             this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
         }
-
         
         private void OnReceivedVote(int connectionId, string answer)
         {
@@ -254,6 +255,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             
             timer.AutoDispose = true;
             timer.RunOnUnityThread = true;
+            timer.Start();
         }
 
         public void Deactivate()
@@ -315,7 +317,6 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                     this.OnActivated(this, EventArgs.Empty);
                 }, (exception) =>
                     {
-                        Debug.LogException(exception);
                         this.Deactivate();
                         this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
                     });

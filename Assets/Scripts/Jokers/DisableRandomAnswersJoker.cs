@@ -27,7 +27,7 @@
 
         private ClientNetworkManager networkManager;
         private IQuestionUIController questionUIController;
-        private Timer receiveSettingsTimeoutTimer;
+        private Timer_ExecuteMethodAfterTime receiveSettingsTimeoutTimer;
 
         public Sprite Image
         {
@@ -140,6 +140,9 @@
 
             this.receiveSettingsTimeoutTimer =
                 TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, OnReceiveSettingsTimeout);
+
+            this.receiveSettingsTimeoutTimer.RunOnUnityThread = true;
+            this.receiveSettingsTimeoutTimer.Start();
 
             if (OnActivated != null)
             {

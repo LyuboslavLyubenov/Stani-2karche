@@ -91,6 +91,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
             this.timer.Dispose();
             this.timer = TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, Timer_OnReceiveAudienceVoteTimeout);
+            this.timer.Start();
 
             ((IExtendedTimer)this.timer).RunOnUnityThread = true;
 
@@ -132,6 +133,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.networkManager.CommandsManager.AddCommand(receiveSettingsCommand);
 
             this.timer = TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds, this.Timer_OnReceiveSettingsTimeout);
+            this.timer.Start();
 
             ((IExtendedTimer)this.timer).RunOnUnityThread = true;
             

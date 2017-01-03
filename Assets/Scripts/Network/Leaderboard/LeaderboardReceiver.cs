@@ -61,6 +61,7 @@
 
             this.updateElapsedTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateElapsedTime);
             this.updateElapsedTimeTimer.RunOnUnityThread = true;
+            this.updateElapsedTimeTimer.Start();
         }
 
         ~LeaderboardReceiver()
