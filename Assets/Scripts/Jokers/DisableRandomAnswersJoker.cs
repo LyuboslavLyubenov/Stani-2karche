@@ -21,10 +21,12 @@
     {
         private const int SettingsReceiveTimeoutInSeconds = 5;
 
+        public event EventHandler OnActivated;
+        public event EventHandler<UnhandledExceptionEventArgs> OnError;
+        public event EventHandler OnFinishedExecution;
+
         private ClientNetworkManager networkManager;
-
         private IQuestionUIController questionUIController;
-
         private Timer receiveSettingsTimeoutTimer;
 
         public Sprite Image
@@ -32,25 +34,6 @@
             get;
             private set;
         }
-
-        public EventHandler OnActivated
-        {
-            get;
-            set;
-        }
-
-        public EventHandler<UnhandledExceptionEventArgs> OnError
-        {
-            get;
-            set;
-        }
-
-        public EventHandler OnFinishedExecution
-        {
-            get;
-            set;
-        }
-
         public bool Activated
         {
             get;

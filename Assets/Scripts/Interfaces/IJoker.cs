@@ -12,23 +12,11 @@ namespace Assets.Scripts.Interfaces
             get;
         }
 
-        EventHandler OnActivated
-        {
-            get;
-            set;
-        }
+        event EventHandler OnActivated;
 
-        EventHandler<UnhandledExceptionEventArgs> OnError
-        {
-            get;
-            set;
-        }
+        event EventHandler<UnhandledExceptionEventArgs> OnError;
 
-        EventHandler OnFinishedExecution
-        {
-            get;
-            set;
-        }
+        event EventHandler OnFinishedExecution;
 
         bool Activated
         {

@@ -1,6 +1,9 @@
 ﻿namespace Assets.Scripts.Jokers
 {
     using System;
+
+    using Assets.Scripts.Notifications;
+
     using UnityEngine;
 
     using Exceptions;
@@ -20,7 +23,7 @@
         public const int MinClientsForOnlineVote_Release = 4;
         public const int MinClientsForOnlineVote_Development = 1;
 
-        public EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
+        public event EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
             {
             };
 
@@ -38,23 +41,9 @@
             private set;
         }
 
-        public EventHandler OnActivated
-        {
-            get;
-            set;
-        }
-
-        public EventHandler<UnhandledExceptionEventArgs> OnError
-        {
-            get;
-            set;
-        }
-
-        public EventHandler OnFinishedExecution
-        {
-            get;
-            set;
-        }
+        public event EventHandler OnActivated;
+        public event EventHandler<UnhandledExceptionEventArgs> OnError;
+        public event EventHandler OnFinishedExecution;
 
         public bool Activated
         {
@@ -64,6 +53,7 @@
 
         public AskAudienceJoker(
             ClientNetworkManager networkManager,
+            AudienceAnswerPollResultRetriever pollDataRetriever,
             GameObject waitingToAnswerUI,
             GameObject audienceAnswerUI,
             GameObject loadingUI)
@@ -92,8 +82,7 @@
             this.waitingToAnswerUI = waitingToAnswerUI;
             this.audienceAnswerUI = audienceAnswerUI;
             this.loadingUI = loadingUI;
-            this.pollDataRetriever = AudienceAnswerPollResultRetriever.Instance;
-            this.notificationsServiceController = notificationsServiceController;
+            this.pollDataRetriever = pollDataRetriever;
 
             this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
 
@@ -109,7 +98,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
-            this.notificationsServiceController.AddNotification(Color.red, message);
+            NotificationsServiceController.Instance.AddNotification(Color.red, message);
 
             if (OnError != null)
             {
@@ -149,7 +138,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
-            this.notificationsServiceController.AddNotification(Color.red, message);
+            NotificationsServiceController.Instance.AddNotification(Color.red, message);
 
             if (OnError != null)
             {

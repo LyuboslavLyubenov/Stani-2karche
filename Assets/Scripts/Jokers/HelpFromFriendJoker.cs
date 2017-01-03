@@ -24,12 +24,14 @@
 
     public class HelpFromFriendJoker : IJoker
     {
-        public EventHandler<AnswerEventArgs> OnFriendAnswered = delegate
+        public event EventHandler<AnswerEventArgs> OnFriendAnswered = delegate
             {
             };
 
         private CallAFriendUIController callAFriendUIController;
         private ClientNetworkManager networkManager;
+
+        private readonly AskPlayerQuestionResultRetriever resultRetriever;
 
         private GameObject callAFriendUI;
         private GameObject friendAnswerUI;
@@ -42,23 +44,11 @@
             private set;
         }
 
-        public EventHandler OnActivated
-        {
-            get;
-            set;
-        }
+        public event EventHandler OnActivated;
 
-        public EventHandler<UnhandledExceptionEventArgs> OnError
-        {
-            get;
-            set;
-        }
+        public event EventHandler<UnhandledExceptionEventArgs> OnError;
 
-        public EventHandler OnFinishedExecution
-        {
-            get;
-            set;
-        }
+        public event EventHandler OnFinishedExecution;
 
         public bool Activated
         {
@@ -67,6 +57,7 @@
         }
 
         public HelpFromFriendJoker(ClientNetworkManager networkManager, 
+                                   AskPlayerQuestionResultRetriever resultRetriever, 
                                    GameObject callAFriendUI, 
                                    GameObject friendAnswerUI, 
                                    GameObject waitingToAnswerUI,
@@ -99,6 +90,7 @@
             }
 
             this.networkManager = networkManager;
+            this.resultRetriever = resultRetriever;
             this.callAFriendUI = callAFriendUI;
             this.friendAnswerUI = friendAnswerUI;
             this.waitingToAnswerUI = waitingToAnswerUI;
@@ -125,15 +117,14 @@
         {
             this.callAFriendUI.SetActive(false);
             this.loadingUI.SetActive(true);
+            
+        
+            this.resultRetriever.OnReceivedSettings += this.OnReceivedSettings;
+            this.resultRetriever.OnReceiveSettingsTimeout += this.OnReceiveSettingsTimeout;
+            this.resultRetriever.OnReceivedAnswer += this.OnReceivedAnswer;
+            this.resultRetriever.OnReceiveAnswerTimeout += this.OnReceiveAnswerTimeout;
 
-            var resultRetriever = AskPlayerQuestionResultRetriever.Instance;
-
-            resultRetriever.OnReceivedSettings += this.OnReceivedSettings;
-            resultRetriever.OnReceiveSettingsTimeout += this.OnReceiveSettingsTimeout;
-            resultRetriever.OnReceivedAnswer += this.OnReceivedAnswer;
-            resultRetriever.OnReceiveAnswerTimeout += this.OnReceiveAnswerTimeout;
-
-            resultRetriever.Activate(args.PlayerConnectionId);
+            this.resultRetriever.Activate(args.PlayerConnectionId);
         }
 
         private void OnReceivedSettings(object sender, JokerSettingsEventArgs args)
