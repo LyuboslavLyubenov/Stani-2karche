@@ -202,7 +202,7 @@
             this.BeginSendMessageToServer(ipAddress, message, onSent, onError);
         }
 
-        public void ConnectTo(string ipAddress, int port, Action onConnected, Action<Exception> onError = null)
+        public void ConnectTo(string ipAddress, int port, Action onConnected = null, Action<Exception> onError = null)
         {
             if (!ipAddress.IsValidIPV4())
             {
@@ -240,7 +240,13 @@
                 socket = this.connectedToServersIPsSockets[ipAddress];
             }
 
-            var state = new DisconnectState() { IPAddress = ipAddress, OnSuccess = onSuccess, OnError = onError, Socket = socket });
+            var state = new DisconnectState()
+                        {
+                            IPAddress = ipAddress,
+                            OnSuccess = onSuccess,
+                            OnError = onError,
+                            Socket = socket
+                        };
 
             socket.BeginDisconnect(false, this.EndDisconnect, state);
         }

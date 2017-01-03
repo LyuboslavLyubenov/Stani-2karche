@@ -1,84 +1,93 @@
 ﻿namespace Assets.Scripts
 {
     using System;
+    using System.Reflection;
 
     using Network.NetworkManagers;
     using Network.Servers;
-
-    using UnityEngine;
-    using UnityEngine.SceneManagement;
-
+    
     using DTOs;
-    using Enums;
+
     using Utils.Unity;
 
-    public class GameInfoFactory : MonoBehaviour
+    public class GameInfoFactory
     {
-        private const string BasicExam = "BasicExam";
+        private static GameInfoFactory instance;
 
-        public ServerNetworkManager ServerNetworkManager;
-        public BasicExamServer BasicExamServer;
+        public static GameInfoFactory Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new GameInfoFactory();
+                }
+
+                return instance;
+            }
+        }
 
         private string externalIp = "";
-
-        private void Awake()
+        
+        GameInfoFactory()
         {
             NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
         }
 
-        public CreatedGameInfo_DTO Get()
+        public CreatedGameInfo_DTO Get(ServerNetworkManager serverNetworkManager, IGameServer server)
         {
-            var sceneName = SceneManager.GetActiveScene().name;
-            return this.Get(sceneName);
-        }
+            var gameName = server.GetType()
+                .Name.Replace("Server", "");
+            var methodName = "Get" + gameName + "GameInfo";
+            var methodInfo = this.GetType()
+                .GetMethod(
+                    methodName, 
+                    BindingFlags.NonPublic | 
+                    BindingFlags.Instance | 
+                    BindingFlags.InvokeMethod);
 
-        public CreatedGameInfo_DTO Get(string levelName)
-        {
-            var levelNameUpper = levelName.ToUpperInvariant();
-
-            if (levelNameUpper.Contains(BasicExam.ToUpperInvariant()))
+            if (methodInfo == null)
             {
-                return this.GetBasicExamGameInfo();
+                throw new NotImplementedException();
             }
 
-            throw new NotImplementedException();
+            return (CreatedGameInfo_DTO)methodInfo.Invoke(this, new object[] { serverNetworkManager, server });
         }
 
-        private BasicExamGameInfo_DTO GetBasicExamGameInfo()
+        private BasicExamGameInfo_DTO GetBasicExamGameInfo(ServerNetworkManager serverNetworkManager, IGameServer server)
         {
-            var canConnectAsMainPlayer = !this.BasicExamServer.MainPlayerData.IsConnected;
-            var canConnectAsAudience = this.ServerNetworkManager.ConnectedClientsCount < (this.ServerNetworkManager.MaxConnections - 1);
-            var gameType = GameType.BasicExam;
+            var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
+            var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
+            var gameTypeName = server.GetType().FullName;
             var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
-            var serverInfo = this.GetServerInfo();
+            var serverInfo = this.GetServerInfo(serverNetworkManager);
 
             var gameInfo = new BasicExamGameInfo_DTO()
-                           {
-                               CanConnectAsMainPlayer = canConnectAsMainPlayer,
-                               CanConnectAsAudience = canConnectAsAudience,
-                               GameType = gameType,
-                               HostUsername = hostUsername,
-                               ServerInfo = serverInfo
-                           };
+            {
+                CanConnectAsMainPlayer = canConnectAsMainPlayer,
+                CanConnectAsAudience = canConnectAsAudience,
+                GameTypeFullName = gameTypeName,
+                HostUsername = hostUsername,
+                ServerInfo = serverInfo
+            };
 
             return gameInfo;
         }
 
-        private ServerInfo_DTO GetServerInfo()
+        private ServerInfo_DTO GetServerInfo(ServerNetworkManager serverNetworkManager)
         {
             var localIPAddress = NetworkUtils.GetLocalIP();
-            var connectedClientsCount = this.ServerNetworkManager.ConnectedClientsCount;
-            var maxConnections = this.ServerNetworkManager.MaxConnections;
+            var connectedClientsCount = serverNetworkManager.ConnectedClientsCount;
+            var maxConnections = serverNetworkManager.MaxConnections;
             var serverInfo = new ServerInfo_DTO()
-                             {
-                                 ExternalIpAddress = this.externalIp,
-                                 LocalIPAddress = localIPAddress,
-                                 ConnectedClientsCount = connectedClientsCount,
-                                 MaxConnectionsAllowed = maxConnections
-                             };
+            {
+                ExternalIpAddress = this.externalIp,
+                LocalIPAddress = localIPAddress,
+                ConnectedClientsCount = connectedClientsCount,
+                MaxConnectionsAllowed = maxConnections
+            };
 
             return serverInfo;
         }
     }
-
 }

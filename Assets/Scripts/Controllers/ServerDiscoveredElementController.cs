@@ -1,6 +1,7 @@
 ﻿namespace Assets.Scripts.Controllers
 {
     using System;
+    using System.Linq;
 
     using UnityEngine.UI;
 
@@ -31,16 +32,18 @@
 
         public void SetData(CreatedGameInfo_DTO gameInfo)
         {
-            this.category.text = this.TranslateGameType(gameInfo.GameType);
+            var serverGameName = gameInfo.GameTypeFullName.Split(
+                new char[]
+                {
+                    '.'
+                })
+                .Last();
+            var translatedGameName = LanguagesManager.Instance.GetValue(serverGameName);
+
+            this.category.text = translatedGameName;
             this.creatorName.text = gameInfo.HostUsername;
             this.connectedClients.text = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
             this.ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
-        }
-
-        private string TranslateGameType(GameType gameType)
-        {
-            var enumName = Enum.GetName(typeof(GameType), gameType);
-            return LanguagesManager.Instance.GetValue(enumName);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿namespace Assets.Scripts.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using DTOs.KinveySerializableObj;
     using Network.Broadcast;
@@ -87,10 +88,12 @@
         private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs receivedData)
         {
             var gameInfo = receivedData.GameInfo;
+            var gameType = receivedData.GameInfo.GameTypeFullName.Split('.')
+                .Last();
 
-            switch (gameInfo.GameType)
+            switch (gameType)
             {
-                case GameType.BasicExam:
+                case "BasicExam":
                     var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_DTO>(receivedData.JSON);
                     this.OnFoundBasicExam(basicExamGameInfo);
                     break;    

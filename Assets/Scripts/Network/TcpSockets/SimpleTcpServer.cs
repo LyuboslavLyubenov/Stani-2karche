@@ -238,10 +238,15 @@ namespace Assets.Scripts.Network.TcpSockets
                 lock (myLock)
                 {
                     this.connectedIPClientsSocket.Remove(state.IPAddress);
+
+                    if (this.socketsMessageState.ContainsKey(socket))
+                    {
+                        this.socketsMessageState.Remove(socket);
+                    }
                 }
 
                 socket.EndDisconnect(result);
-                socket.Close();
+                //socket.Close();
             }
             catch (Exception ex)
             {
@@ -267,7 +272,7 @@ namespace Assets.Scripts.Network.TcpSockets
             this.connectedIPClientsSocket.Clear();
         }
 
-        public void Disconnect(string ipAddress)
+        public void Disconnect(string ipAddress, Action onSuccess = null, Action<Exception> onError = null)
         {
             lock (myLock)
             {
@@ -277,12 +282,10 @@ namespace Assets.Scripts.Network.TcpSockets
                 }
 
                 var socket = this.connectedIPClientsSocket[ipAddress];
-                var state = new DisconnectState(ipAddress, socket);
+                var state = new DisconnectState() { IPAddress = ipAddress, OnSuccess = onSuccess, OnError = onError, Socket = socket };
 
                 socket.BeginDisconnect(false, new AsyncCallback(this.EndDisconnect), state);
             }
-
-            Debug.Log("SimpleTcpServer begin disconnect " + ipAddress);
         }
 
         public void Dispose()

@@ -24,7 +24,7 @@
 
     using EventArgs = System.EventArgs;
 
-    public class BasicExamServer : ExtendedMonoBehaviour
+    public class BasicExamServer : ExtendedMonoBehaviour, IGameServer
     {
         private const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
 
@@ -358,4 +358,5 @@
             this.OnGameOver(this, EventArgs.Empty);
         }
     }
+
 }

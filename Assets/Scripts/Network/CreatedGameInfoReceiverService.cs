@@ -3,31 +3,31 @@
     using System;
     using System.Collections.Generic;
 
-    using UnityEngine;
     using EventArgs;
     using TcpSockets;
 
-    public class CreatedGameInfoReceiverService : MonoBehaviour
+    public class CreatedGameInfoReceiverService
     {
-        public SimpleTcpClient TcpClient;
-        public SimpleTcpServer TcpServer;
+        private readonly Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
 
-        public Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
+        private SimpleTcpClient client;
+        private SimpleTcpServer server;
 
-        // Use this for initialization
-        private void Start()
+        public CreatedGameInfoReceiverService(SimpleTcpClient client, SimpleTcpServer server)
         {
-            if (!this.TcpClient.Initialized)
+            if (client == null)
             {
-                this.TcpClient.Initialize();
+                throw new ArgumentNullException("client");
+            }
+            if (server == null)
+            {
+                throw new ArgumentNullException("server");
             }
 
-            if (!this.TcpServer.Initialized)
-            {
-                this.TcpServer.Initialize(7774);
-            }
+            this.client = client;
+            this.server = server;
 
-            this.TcpServer.OnReceivedMessage += this.OnReceivedMessage;
+            this.server.OnReceivedMessage += this.OnReceivedMessage;
         }
 
         private void OnReceivedMessage(object sender, MessageEventArgs args)
@@ -46,13 +46,22 @@
             this.pendingRequests.Remove(args.IPAddress);
         }
 
-        public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo)
+        public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
-            this.TcpClient.ConnectTo(ipAddress, this.TcpServer.Port, () =>
+            this.client.ConnectTo(ipAddress, this.server.Port, () =>
                 {
-                    this.TcpClient.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag);
+                    this.client.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag, null, onError);
                     this.pendingRequests.Add(ipAddress, receivedGameInfo);
-                });
+                },
+                (exception) =>
+                    {
+                        this.pendingRequests.Remove(ipAddress);
+
+                        if (onError != null)
+                        {
+                            onError(exception);
+                        }
+                    });
         }
 
         public void StopReceivingFrom(string ipAddress)
@@ -63,8 +72,6 @@
             }
 
             this.pendingRequests.Remove(ipAddress);
-            this.TcpClient.DisconnectFrom(ipAddress);
-            this.TcpServer.Disconnect(ipAddress);
         }
     }
 
