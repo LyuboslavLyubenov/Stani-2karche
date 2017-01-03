@@ -13,7 +13,7 @@
         /// Creates timer executing {method} after {seconds} seconds
         /// </summary>
         /// <returns>Created timer</returns>
-        public static Timer ExecuteAfter(float seconds, Action method)
+        public static Timer_ExecuteMethodAfterTime ExecuteAfter(float seconds, Action method)
         {
             var timer = new Timer_ExecuteMethodAfterTime(seconds * 1000)
             {
@@ -28,7 +28,7 @@
         /// Creates timer executing {method} every {seconds} seconds
         /// </summary>
         /// <returns>Created timer</returns>
-        public static Timer ExecuteEvery(float seconds, Action method)
+        public static Timer_ExecuteMethodEverySeconds ExecuteEvery(float seconds, Action method)
         {
             var timer = new Timer_ExecuteMethodEverySeconds(seconds * 1000)
             {

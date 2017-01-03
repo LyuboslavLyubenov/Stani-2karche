@@ -1,41 +1,55 @@
 namespace Assets.Scripts.Network.Leaderboard
 {
+    using System;
+
+    using EventArgs;
 
     using Commands;
     using DTOs;
     using IO;
+
     using NetworkManagers;
-    using Utils.Unity;
 
     using UnityEngine;
 
-    public class LeaderboardSender : ExtendedMonoBehaviour
+    public class LeaderboardSender
     {
-        public ServerNetworkManager NetworkManager;
-        public LeaderboardSerializer LeaderboardSerializer;
+        public event EventHandler<LeaderboardDataEventArgs> OnSentLeaderboard = delegate
+            { };
 
-        // ReSharper disable once ArrangeTypeMemberModifiers
-        void Start()
-        {
-            this.CoroutineUtils.WaitForFrames(0, this.Initialize);
-        }
+        private readonly ServerNetworkManager networkManager;
+        private readonly LeaderboardSerializer leaderboardSerializer;
 
-        private void Initialize()
+        public LeaderboardSender(ServerNetworkManager networkManager, LeaderboardSerializer leaderboardSerializer)
         {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (leaderboardSerializer == null)
+            {
+                throw new ArgumentNullException("leaderboardSerializer");
+            }
+            
+            this.networkManager = networkManager;
+            this.leaderboardSerializer = leaderboardSerializer;
+
             var sendLeaderboardEntitiesCommand = new DummyCommand();
 
             sendLeaderboardEntitiesCommand.OnExecuted += (sender, args) =>
-                {
-                    var connectionId = int.Parse(args.CommandsOptionsValues["ConnectionId"]);
-                    this.StartSendingLeaderboardEntities(connectionId);
-                };
-        
-            this.NetworkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);   
+            {
+                var connectionId = int.Parse(args.CommandsOptionsValues["ConnectionId"]);
+                this.StartSendingLeaderboardEntities(connectionId);
+            };
+
+            this.networkManager.CommandsManager.AddCommand("SendLeaderboardEntities", sendLeaderboardEntitiesCommand);
         }
+        
 
         private void StartSendingLeaderboardEntities(int connectionId)
         {
-            var allPlayersData = this.LeaderboardSerializer.Leaderboard;
+            var allPlayersData = this.leaderboardSerializer.Leaderboard;
 
             for (int i = 0; i < allPlayersData.Count; i++)
             {
@@ -45,13 +59,13 @@ namespace Assets.Scripts.Network.Leaderboard
                 var sendEntityCommand = new NetworkCommandData("LeaderboardEntity");
                 sendEntityCommand.AddOption("PlayerScoreJSON", json);
 
-                this.NetworkManager.SendClientCommand(connectionId, sendEntityCommand);
+                this.networkManager.SendClientCommand(connectionId, sendEntityCommand);
             }
 
             var noMoreEntitiesCommand = new NetworkCommandData("LeaderboardNoMoreEntities");
-            this.NetworkManager.SendClientCommand(connectionId, noMoreEntitiesCommand);
+            this.networkManager.SendClientCommand(connectionId, noMoreEntitiesCommand);
+
+            OnSentLeaderboard(this, new LeaderboardDataEventArgs(allPlayersData));
         }
-
     }
-
 }

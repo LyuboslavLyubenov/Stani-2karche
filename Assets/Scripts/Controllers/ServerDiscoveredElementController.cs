@@ -32,12 +32,7 @@
 
         public void SetData(CreatedGameInfo_DTO gameInfo)
         {
-            var serverGameName = gameInfo.GameTypeFullName.Split(
-                new char[]
-                {
-                    '.'
-                })
-                .Last();
+            var serverGameName = gameInfo.GameTypeFullName.Split('.').Last();
             var translatedGameName = LanguagesManager.Instance.GetValue(serverGameName);
 
             this.category.text = translatedGameName;

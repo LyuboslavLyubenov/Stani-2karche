@@ -3,6 +3,9 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Timers;
+
+    using Assets.Scripts.Utils;
 
     using UnityEngine;
 
@@ -19,7 +22,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class AudienceAnswerPollRouter : ExtendedMonoBehaviour
+    public class AudienceAnswerPollRouter
     {
         public const int MinTimeToAnswerInSeconds = 10;
 
@@ -56,19 +59,21 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         private List<int> votedClientsConnectionId = new List<int>();
 
         private Dictionary<string, int> answersVotes = new Dictionary<string, int>();
-        
+
+        private Timer updateTimeTimer;
+
         public bool Activated
         {
             get;
             private set;
         }
-        
-        // ReSharper disable once ArrangeTypeMemberModifiers
-        void Start()
+
+        public AudienceAnswerPollRouter()
         {
-            this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
+            this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTime);
             this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
         }
+
         
         private void OnReceivedVote(int connectionId, string answer)
         {
@@ -93,7 +98,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             }
         }
 
-        private void UpdateTimer()
+        private void UpdateTime()
         {
             if (!this.Activated)
             {
@@ -141,8 +146,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
             this.OnSent(this, EventArgs.Empty);
         }
-
-
+        
         private bool AreFinishedVoting()
         {
             if (this.elapsedTime >= this.timeToAnswerInSeconds)
@@ -229,28 +233,33 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         private void SendGeneratedResultToMainPlayer()
         {
             var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
-            this.CoroutineUtils.WaitForSeconds(secondsToWait, () =>
-                {
-                    this.LocalGameData.GetCurrentQuestion((question) =>
-                        {
-                            this.GenerateAudienceVotes(question);
-                            this.SendMainPlayerVoteResult();
-                            this.Deactivate();
-                        }, (exception) =>
-                            {
-                                Debug.LogException(exception);
-                                this.Deactivate();
-                                this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                            });    
-                });
+            var timer = TimerUtils.ExecuteAfter(
+                secondsToWait,
+                () =>
+                    {
+                        this.LocalGameData.GetCurrentQuestion(
+                            (question) =>
+                                {
+                                    this.GenerateAudienceVotes(question);
+                                    this.SendMainPlayerVoteResult();
+                                    this.Deactivate();
+                                },
+                            (exception) =>
+                                {
+                                    Debug.LogException(exception);
+                                    this.Deactivate();
+                                    this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                                });
+                    });
+            
+            timer.AutoDispose = true;
+            timer.RunOnUnityThread = true;
         }
 
         public void Deactivate()
         {
             this.TellClientsThatJokerIsDeactivated();
-
-            this.StopAllCoroutines();
-
+            
             this.clientsThatMustVote.Clear();
             this.votedClientsConnectionId.Clear();
             this.answersVotes.Clear();
