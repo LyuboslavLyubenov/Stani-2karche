@@ -7,16 +7,14 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
     using Commands.Client;
     using Commands.Jokers;
     using EventArgs;
+
     using Network.NetworkManagers;
     using Utils;
-    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
-    public class AskPlayerQuestionResultRetriever : ExtendedMonoBehaviour
+    public class AskPlayerQuestionResultRetriever : IDisposable
     {
-        private const int SettingsReceiveTimeoutInSeconds = 5;
-
         public event EventHandler<AskPlayerResponseEventArgs> OnReceivedAnswer = delegate
             {
             };
@@ -35,13 +33,39 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         private ClientNetworkManager networkManager;
 
-        private Timer timer;
+        private readonly int receiveAnswerTimeout;
+        private readonly int receiveSettingsTimeout;
 
-        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager)
+        private Timer_ExecuteMethodAfterTime timer;
+
+        public bool Active
         {
-            this.networkManager = networkManager;
+            get;
+            private set;
         }
-        
+
+        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager, int receiveAnswerTimeout, int receiveSettingsTimeout)
+        {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (receiveAnswerTimeout <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveAnswerTimeout");
+            }
+
+            if (receiveSettingsTimeout <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveSettingsTimeout");
+            }
+
+            this.networkManager = networkManager;
+            this.receiveAnswerTimeout = receiveAnswerTimeout;
+            this.receiveSettingsTimeout = receiveSettingsTimeout;
+        }
+
         private void _OnReceivedSettings(int timeToAnswerInSeconds)
         {
             this.timer.Stop();
@@ -50,36 +74,44 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             var responseCommand = new AskPlayerResponseCommand(this._OnReceivedAnswer);
             this.networkManager.CommandsManager.AddCommand(responseCommand);
 
-            this.timer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-            this.timer.AutoReset = false;
-            this.timer.Elapsed += this.Timer_OnReceiveAnswerTimeout;
+            this.timer = TimerUtils.ExecuteAfter(this.receiveAnswerTimeout, Timer_OnReceiveAnswerTimeout);
+            this.timer.Start();
 
             this.OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));
         }
 
-        private void Timer_OnReceiveSettingsTimeout(object sender, ElapsedEventArgs args)
+        private void Timer_OnReceiveSettingsTimeout()
         {
-            ThreadUtils.Instance.RunOnMainThread(() =>
-                {
-                    this.timer.Close();
-                    this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
-                    this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
-                });
+            this.DisposeTimer();
+            this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
+
+            this.Active = false;
+
+            this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
         }
 
         private void _OnReceivedAnswer(string username, string answer)
         {
+            this.Active = false;
+
             this.OnReceivedAnswer(this, new AskPlayerResponseEventArgs(username, answer));
         }
 
-        private void Timer_OnReceiveAnswerTimeout(object sender, ElapsedEventArgs args)
+        private void Timer_OnReceiveAnswerTimeout()
         {
-            ThreadUtils.Instance.RunOnMainThread(() =>
-                {
-                    this.timer.Close();
-                    this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
-                    this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
-                });
+            this.DisposeTimer();
+            this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
+            
+            this.Active = false;
+
+            this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
+        }
+
+        void DisposeTimer()
+        {
+            this.timer.Stop();
+            this.timer.Dispose();
+            this.timer = null;
         }
 
         public void Activate(int playerConnectionId)
@@ -92,10 +124,16 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             var receivedSettingsCommand = new HelpFromFriendJokerSettingsCommand(this._OnReceivedSettings);
             this.networkManager.CommandsManager.AddCommand(receivedSettingsCommand);
 
-            this.timer = new Timer(SettingsReceiveTimeoutInSeconds * 1000);
-            this.timer.AutoReset = false;
-            this.timer.Elapsed += this.Timer_OnReceiveSettingsTimeout;
+            this.timer = TimerUtils.ExecuteAfter(this.receiveSettingsTimeout, Timer_OnReceiveSettingsTimeout);
+            this.timer.RunOnUnityThread = true;
+            this.timer.Start();
+
+            this.Active = true;
+        }
+
+        public void Dispose()
+        {
+            DisposeTimer();
         }
     }
-
 }

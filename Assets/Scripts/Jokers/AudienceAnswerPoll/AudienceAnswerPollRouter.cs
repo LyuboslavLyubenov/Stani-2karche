@@ -16,6 +16,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     using DTOs;
     using Interfaces;
     using IO;
+
     using Network.NetworkManagers;
     using Utils.Unity;
 
@@ -47,18 +48,19 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
             {
             };
-    
-        public ServerNetworkManager NetworkManager;
-        public GameDataIterator LocalGameData;
+
+        private readonly ServerNetworkManager networkManager;
+
+        private readonly GameDataIterator gameDataIterator;
 
         private int timeToAnswerInSeconds;
         private int senderConnectionId;
         private int elapsedTime;
 
-        private List<int> clientsThatMustVote = new List<int>();
-        private List<int> votedClientsConnectionId = new List<int>();
+        private readonly List<int> clientsThatMustVote = new List<int>();
+        private readonly List<int> votedClientsConnectionId = new List<int>();
 
-        private Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> answersVotes = new Dictionary<string, int>();
 
         private Timer updateTimeTimer;
 
@@ -68,12 +70,31 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             private set;
         }
 
-        public AudienceAnswerPollRouter()
+        public AudienceAnswerPollRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator, int timeToAnswerInSeconds)
         {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (gameDataIterator == null)
+            {
+                throw new ArgumentNullException("gameDataIterator");
+            }
+                
+            if (timeToAnswerInSeconds <= 0)
+            {
+                throw new ArgumentNullException();
+            }
+
+            this.networkManager = networkManager;
+            this.gameDataIterator = gameDataIterator;
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTime);
             this.updateTimeTimer.Start();
 
-            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
+            this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
         }
         
         private void OnReceivedVote(int connectionId, string answer)
@@ -120,7 +141,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         private void NoMoreTimeToAnswer()
         {
             var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
-            this.NetworkManager.SendAllClientsCommand(answerTimeoutCommandData, this.senderConnectionId);
+            this.networkManager.SendAllClientsCommand(answerTimeoutCommandData, this.senderConnectionId);
         }
 
         private void SendMainPlayerVoteResult()
@@ -141,7 +162,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                 voteResultCommandData.AddOption(answer, answerVoteCount.ToString());
             }
 
-            this.NetworkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
+            this.networkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
 
             this.Deactivate();
 
@@ -172,7 +193,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         {
             var setAskAudienceJokerSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
             setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
-            this.NetworkManager.SendClientCommand(this.senderConnectionId, setAskAudienceJokerSettingsCommand);
+            this.networkManager.SendClientCommand(this.senderConnectionId, setAskAudienceJokerSettingsCommand);
         }
 
         private void SendQuestionToAudience(ISimpleQuestion question)
@@ -180,7 +201,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             var questionJSON = JsonUtility.ToJson(question.Serialize());
             sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
-            this.NetworkManager.SendAllClientsCommand(sendQuestionCommand, this.senderConnectionId);
+            this.networkManager.SendAllClientsCommand(sendQuestionCommand, this.senderConnectionId);
         }
 
         private void TellClientsThatJokerIsDeactivated()
@@ -195,7 +216,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             for (int i = 0; i < clients.Count; i++)
             {
                 var connectionId = clients[i];
-                this.NetworkManager.SendClientCommand(connectionId, notificationCommand);
+                this.networkManager.SendClientCommand(connectionId, notificationCommand);
             }
         }
 
@@ -238,7 +259,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                 secondsToWait,
                 () =>
                     {
-                        this.LocalGameData.GetCurrentQuestion(
+                        this.gameDataIterator.GetCurrentQuestion(
                             (question) =>
                                 {
                                     this.GenerateAudienceVotes(question);
@@ -273,18 +294,13 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.Activated = false;
         }
 
-        public void Activate(int senderConnectionId, int timeToAnswerInSeconds, MainPlayerData mainPlayerData)
+        public void Activate(int senderConnectionId, MainPlayerData mainPlayerData)
         {
             if (this.Activated)
             {
                 throw new InvalidOperationException("Already active");
             }
-
-            if (timeToAnswerInSeconds <= 0)
-            {
-                throw new ArgumentNullException();
-            }
-
+            
             if (mainPlayerData == null)
             {
                 throw new ArgumentNullException("mainPlayerData");
@@ -293,9 +309,8 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
 
             this.senderConnectionId = senderConnectionId;
-            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
             
-            if (this.NetworkManager.ConnectedClientsCount < minClients)
+            if (this.networkManager.ConnectedClientsCount < minClients)
             {
                 this.answersVotes.Clear();
                 this.SendJokerSettings();
@@ -305,10 +320,10 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
             this.elapsedTime = 1;
 
-            var audienceConnectionIds = this.NetworkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
+            var audienceConnectionIds = this.networkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
             this.clientsThatMustVote.AddRange(audienceConnectionIds);
 
-            this.LocalGameData.GetCurrentQuestion((question) =>
+            this.gameDataIterator.GetCurrentQuestion((question) =>
                 {
                     this.ResetAnswerVotes(question);
                     this.SendJokerSettings();

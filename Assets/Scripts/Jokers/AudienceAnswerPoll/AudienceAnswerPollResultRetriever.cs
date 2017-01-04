@@ -38,7 +38,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             {
             };
 
-        private ClientNetworkManager networkManager;
+        private readonly ClientNetworkManager networkManager;
         private Timer timer;
 
         public EventHandler OnActivated

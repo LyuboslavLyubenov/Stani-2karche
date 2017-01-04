@@ -10,35 +10,38 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
     using Commands.Jokers;
     using Commands.Server;
     using IO;
+
     using Network.NetworkManagers;
     using Utils;
-    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class AskPlayerQuestionRouter : ExtendedMonoBehaviour
+    public class AskPlayerQuestionRouter : IDisposable
     {
+        private readonly ServerNetworkManager networkManager;
+
+        private readonly GameDataIterator gameDataIterator;
+
         public const int MinTimeToAnswerInSeconds = 10;
 
         private const float ChanceToGenerateCorrectAnswer = 0.8f;
         private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
         private const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
-
-        public ServerNetworkManager NetworkManager;
-        public GameDataIterator LocalGameData;
-
-        private int timeToAnswerInSeconds;
+        
+        private readonly int timeToAnswerInSeconds;
         private int senderConnectionId;
         private int friendConnectionId;
         private int elapsedTime;
-        private bool activated = false;
+        private bool active = false;
 
-        public bool Activated
+        private Timer_ExecuteMethodEverySeconds updateTimeTimer;
+
+        public bool Active
         {
             get
             {
-                return this.activated;
+                return this.active;
             }
         }
 
@@ -54,21 +57,42 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             {
             };
 
-        // ReSharper disable once ArrangeTypeMemberModifiers
-        void Start()
+        public AskPlayerQuestionRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator, int timeToAnswerInSeconds)
         {
-            base.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
-        }
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
 
+            if (gameDataIterator == null)
+            {
+                throw new ArgumentNullException("gameDataIterator");
+            }
+            
+            if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
+            {
+                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
+            }
+
+            this.networkManager = networkManager;
+            this.gameDataIterator = gameDataIterator;
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+
+            this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTimer);
+            this.updateTimeTimer.RunOnUnityThread = true;
+            this.updateTimeTimer.Start();
+        }
+        
         private void OnReceivedFriendResponse(int connectionId, string answer)
         {
             if (connectionId != this.friendConnectionId)
             {
-                this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
+                this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
                 return;
             }
 
-            if (this.elapsedTime >= this.timeToAnswerInSeconds || !this.NetworkManager.IsConnected(this.senderConnectionId))
+            if (this.elapsedTime >= this.timeToAnswerInSeconds || 
+                !this.networkManager.IsConnected(this.senderConnectionId))
             {
                 return;
             }
@@ -79,12 +103,12 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         private void SendMainPlayerAnswerResponse(int connectionId, string answer)
         {
             var sendFriendResponseCommand = NetworkCommandData.From<AskPlayerResponseCommand>();
-            var friendUsername = this.NetworkManager.GetClientUsername(connectionId);
+            var friendUsername = this.networkManager.GetClientUsername(connectionId);
 
             sendFriendResponseCommand.AddOption("Username", friendUsername);
             sendFriendResponseCommand.AddOption("Answer", answer);
 
-            this.NetworkManager.SendClientCommand(this.senderConnectionId, sendFriendResponseCommand);
+            this.networkManager.SendClientCommand(this.senderConnectionId, sendFriendResponseCommand);
 
             this.Deactivate();
 
@@ -93,7 +117,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         private void UpdateTimer()
         {
-            if (!this.Activated)
+            if (!this.Active)
             {
                 return;
             }
@@ -108,24 +132,25 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.Deactivate();
 
             var answerTimeoutCommandData = new NetworkCommandData("AnswerTimeout");
-            this.NetworkManager.SendClientCommand(this.senderConnectionId, answerTimeoutCommandData);
-            this.NetworkManager.SendClientCommand(this.friendConnectionId, answerTimeoutCommandData);
+            this.networkManager.SendClientCommand(this.senderConnectionId, answerTimeoutCommandData);
+            this.networkManager.SendClientCommand(this.friendConnectionId, answerTimeoutCommandData);
         }
 
         private void SendComputerGeneratedAnswer()
         {
             var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
-
-            this.CoroutineUtils.WaitForSeconds(secondsToWait, () =>
-                {
-                    this.LocalGameData.GetCurrentQuestion((question) =>
+            var timer = TimerUtils.ExecuteAfter(
+                secondsToWait,
+                () =>
+                    {
+                        this.gameDataIterator.GetCurrentQuestion((question) =>
                         {
                             var shouldSendCorrect = UnityEngine.Random.value <= ChanceToGenerateCorrectAnswer;
                             var correctAnswer = question.Answers[question.CorrectAnswerIndex];
 
                             if (shouldSendCorrect)
                             {
-                                this.SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, correctAnswer);    
+                                this.SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, correctAnswer);
                             }
                             else
                             {
@@ -133,26 +158,28 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                                 this.SendMainPlayerAnswerResponse(NetworkCommandData.CODE_Option_ClientConnectionId_AI, rndWrongAnswer);
                             }
                         }, (exception) =>
-                            {
-                                Debug.LogException(exception);
-                                this.Deactivate();
-                                this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                            });
-               
-                });
+                        {
+                            Debug.LogException(exception);
+                            this.Deactivate();
+                            this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                        });
+                    });
+
+            timer.AutoDispose = true;
+            timer.RunOnUnityThread = true;
         }
 
         private void SendQuestionToFriend()
         {
-            this.LocalGameData.GetCurrentQuestion((question) =>
+            this.gameDataIterator.GetCurrentQuestion((question) =>
                 {
                     var sendQuestionToFriend = NetworkCommandData.From<LoadQuestionCommand>(); 
                     var questionJSON = JsonUtility.ToJson(question.Serialize());
-                    sendQuestionToFriend.AddOption("TimeToAnswer", this.LocalGameData.SecondsForAnswerQuestion.ToString());
+                    sendQuestionToFriend.AddOption("TimeToAnswer", this.gameDataIterator.SecondsForAnswerQuestion.ToString());
                     sendQuestionToFriend.AddOption("QuestionJSON", questionJSON);
 
-                    this.NetworkManager.SendClientCommand(this.friendConnectionId, sendQuestionToFriend);
-                    this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
+                    this.networkManager.SendClientCommand(this.friendConnectionId, sendQuestionToFriend);
+                    this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedFriendResponse));
                 }, (exception) =>
                     {
                         Debug.LogException(exception);
@@ -165,22 +192,16 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         {
             var settingsCommandData = NetworkCommandData.From<HelpFromFriendJokerSettingsCommand>();
             settingsCommandData.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
-            this.NetworkManager.SendClientCommand(connectionId, settingsCommandData);
+            this.networkManager.SendClientCommand(connectionId, settingsCommandData);
         }
 
-        public void Activate(int timeToAnswerInSeconds, int senderConnectionId, int friendConnectionId)
+        public void Activate(int senderConnectionId, int friendConnectionId)
         {
-            if (this.Activated)
+            if (this.Active)
             {
                 throw new InvalidOperationException("Already active");
             }
-
-            if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
-            {
-                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
-            }
             
-            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
             this.senderConnectionId = senderConnectionId;
             this.friendConnectionId = friendConnectionId;
 
@@ -196,19 +217,23 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             }
 
             this.OnActivated(this, EventArgs.Empty);
-            this.activated = true;
+            this.active = true;
         }
 
         public void Deactivate()
         {
-            this.StopAllCoroutines();
-
-            this.timeToAnswerInSeconds = 0;
             this.senderConnectionId = 0;
             this.friendConnectionId = 0;
             this.elapsedTime = 0;
 
-            this.activated = false;
+            this.active = false;
+        }
+
+        public void Dispose()
+        {
+            this.updateTimeTimer.Stop();
+            this.updateTimeTimer.Dispose();
+            this.updateTimeTimer = null;
         }
     }
 
