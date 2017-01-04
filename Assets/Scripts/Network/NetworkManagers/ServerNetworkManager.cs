@@ -69,6 +69,21 @@ namespace Assets.Scripts.Network.NetworkManagers
 
         private Timer updateAliveClientsTimer;
 
+        private static ServerNetworkManager instance;
+
+        public static ServerNetworkManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ServerNetworkManager();
+                }
+
+                return instance;
+            }
+        }
+
         public bool IsRunning
         {
             get

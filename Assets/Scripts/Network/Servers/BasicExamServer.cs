@@ -1,24 +1,25 @@
-﻿namespace Assets.Scripts.Network.Servers
+﻿// ReSharper disable ArrangeTypeMemberModifiers
+namespace Assets.Scripts.Network.Servers
 {
 
     using System;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Jokers.AskPlayerQuestion;
-    using Assets.Scripts.Jokers.AudienceAnswerPoll;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Statistics;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers;
+    using Commands.Server;
+    using Controllers;
+    using DTOs;
+    using EventArgs;
+    using Interfaces;
+    using IO;
+    using Jokers;
+    using Jokers.AskPlayerQuestion;
+    using Jokers.AudienceAnswerPoll;
+    using NetworkManagers;
+    using Statistics;
+    using Utils;
+    using Utils.Unity;
 
     using UnityEngine;
 
@@ -37,24 +38,10 @@
         public event EventHandler<AnswerEventArgs> OnMainPlayerSelectedAnswer = delegate
             {
             };
-
-        public ServerNetworkManager NetworkManager;
-
-        public GameDataIterator GameData;
-        public GameDataSender GameDataSender;
-
-        public LeaderboardSerializer LeaderboardSerializer;
-
-        public AskPlayerQuestionRouter AskPlayerQuestionRouter;
-        public AudienceAnswerPollRouter AudiencePollRouter;
-        public DisableRandomAnswersJokerRouter DisableRandomAnswersJokerRouter;
-        public AddRandomJokerRouter AddRandomJokerRouter;
-
+        
         public ConnectedClientsUIController ConnectedClientsUIController;
         public BasicExamClientOptionsUIController ClientOptionsUIController;
-
-        public BasicExamStatisticsCollector StatisticsCollector;
-
+        
         public int RemainingTimetoAnswerInSeconds
         {
             get
@@ -87,11 +74,35 @@
 
         private ISimpleQuestion lastQuestion;
 
-        private void Awake()
-        {
-            this.LoadServerSettings();
+        private BasicExamStatisticsCollector statisticsCollector;
 
-            this.InitializeMainPlayerData();
+        private GameDataIterator gameDataIterator = null;
+        private GameDataSender gameDataSender = null;
+
+        private LeaderboardSerializer leaderboardSerializer = null;
+
+        private AskPlayerQuestionRouter askPlayerQuestionRouter = null;
+        private AudienceAnswerPollRouter audiencePollRouter = null;
+        private DisableRandomAnswersJokerRouter disableRandomAnswersJokerRouter = null;
+        private AddRandomJokerRouter addRandomJokerRouter = null;
+
+        void Awake()
+        {
+            var serverNetworkManager = ServerNetworkManager.Instance;
+
+            this.gameDataIterator = new GameDataIterator();
+            this.gameDataSender = new GameDataSender(this.gameDataIterator, serverNetworkManager);
+            this.leaderboardSerializer = new LeaderboardSerializer();
+            this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.gameDataIterator);
+            this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.gameDataIterator);
+            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter();
+            this.addRandomJokerRouter = new AddRandomJokerRouter();
+            this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.gameDataSender, this.gameDataIterator);
+            this.MainPlayerData = new MainPlayerData(serverNetworkManager);
+            this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(serverNetworkManager, this.MainPlayerData);
+
+            this.LoadServerSettings();
+            
             this.InitializeCommands();
 
             this.AttachEventHandlers();
@@ -101,11 +112,11 @@
             this.MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
         }
 
-        private void Start()
+        void Start()
         {
             this.CoroutineUtils.RepeatEverySeconds(1f, () =>
                 {
-                    if (!this.NetworkManager.IsRunning || this.IsGameOver || this.paused || this.remainingTimeToAnswerMainQuestion == -1)
+                    if (!ServerNetworkManager.Instance.IsRunning || this.IsGameOver || this.paused || this.remainingTimeToAnswerMainQuestion == -1)
                     {
                         return;
                     }
@@ -114,7 +125,7 @@
                 });
         }
 
-        private void OnApplicationQuit()
+        void OnApplicationQuit()
         {
             this.EndGame();
         }
@@ -145,8 +156,8 @@
 
         private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
         {
-            this.AskPlayerQuestionRouter.Deactivate();
-            this.AudiencePollRouter.Deactivate();
+            this.askPlayerQuestionRouter.Deactivate();
+            this.audiencePollRouter.Deactivate();
         }
 
         private void OnReceivedSelectedAnswer(int clientId, string answer)
@@ -178,7 +189,7 @@
             if (UnityEngine.Random.value < this.chanceToAddRandomJoker)
             {
                 var jokers = JokerUtils.AllJokersTypes;
-                this.AddRandomJokerRouter.Activate(this.MainPlayerData.ConnectionId, jokers, this.MainPlayerData.JokersData);
+                this.addRandomJokerRouter.Activate(this.MainPlayerData.ConnectionId, jokers, this.MainPlayerData.JokersData);
                 //TODO send next question  
             }
         }
@@ -221,14 +232,14 @@
 
         private void OnLoadedGameData(object sender, EventArgs args)
         {
-            this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
+            this.remainingTimeToAnswerMainQuestion = this.gameDataIterator.SecondsForAnswerQuestion;
         }
 
         private void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             if (args.QuestionType == QuestionRequestType.Next)
             {
-                this.remainingTimeToAnswerMainQuestion = this.GameData.SecondsForAnswerQuestion;
+                this.remainingTimeToAnswerMainQuestion = this.gameDataIterator.SecondsForAnswerQuestion;
                 this.playerSentAnswer = false;
                 this.lastQuestion = args.Question;
             }
@@ -263,30 +274,24 @@
         {
             this.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
 
-            this.GameData.OnLoaded += this.OnLoadedGameData;
-            this.GameDataSender.OnSentQuestion += this.OnSentQuestion;
-            this.GameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
+            this.gameDataIterator.OnLoaded += this.OnLoadedGameData;
+            this.gameDataSender.OnSentQuestion += this.OnSentQuestion;
+            this.gameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
 
             this.NetworkManager.OnClientConnected += this.OnClientConnected;
 
-            this.AskPlayerQuestionRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
-            this.AudiencePollRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
+            this.askPlayerQuestionRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
+            this.audiencePollRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
 
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
         }
-
-        private void InitializeMainPlayerData()
-        {
-            this.MainPlayerData = new MainPlayerData(this.NetworkManager);
-            this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(this.NetworkManager, this.MainPlayerData);
-        }
-
+        
         private void InitializeCommands()
         {
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
-            var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(this.NetworkManager, this.MainPlayerData, this.AskPlayerQuestionRouter, 60);
-            var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.AudiencePollRouter, 60);
-            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.DisableRandomAnswersJokerRouter, this.NetworkManager, 2);
+            var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(this.NetworkManager, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
+            var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.audiencePollRouter, 60);
+            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, this.NetworkManager, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };
 
@@ -329,22 +334,22 @@
         private void SendEndGameInfo()
         {
             var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
-            commandData.AddOption("Mark", this.GameData.CurrentMark.ToString());
+            commandData.AddOption("Mark", this.gameDataIterator.CurrentMark.ToString());
             this.NetworkManager.SendAllClientsCommand(commandData);
         }
 
         private void SavePlayerScoreToLeaderboard()
         {
             var mainPlayerName = this.MainPlayerData.Username;
-            var playerScore = new PlayerScore(mainPlayerName, this.StatisticsCollector.PlayerScore, DateTime.Now);
+            var playerScore = new PlayerScore(mainPlayerName, this.statisticsCollector.PlayerScore, DateTime.Now);
 
-            this.LeaderboardSerializer.SavePlayerScore(playerScore);
+            this.leaderboardSerializer.SavePlayerScore(playerScore);
         }
 
         private void ExportStatistics()
         {
-            new BasicExamGeneralStatiticsExporter(this.StatisticsCollector).Export();
-            new BasicExamGameDataStatisticsExporter(this.StatisticsCollector, this.GameData).Export();
+            new BasicExamGeneralStatiticsExporter(this.statisticsCollector).Export();
+            new BasicExamGameDataStatisticsExporter(this.statisticsCollector, this.gameDataIterator).Export();
         }
 
         public void EndGame()

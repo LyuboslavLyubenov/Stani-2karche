@@ -70,7 +70,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             private set;
         }
 
-        public AudienceAnswerPollRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator, int timeToAnswerInSeconds)
+        public AudienceAnswerPollRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator)
         {
             if (networkManager == null)
             {
@@ -81,15 +81,10 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             {
                 throw new ArgumentNullException("gameDataIterator");
             }
-                
-            if (timeToAnswerInSeconds <= 0)
-            {
-                throw new ArgumentNullException();
-            }
+
 
             this.networkManager = networkManager;
             this.gameDataIterator = gameDataIterator;
-            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
 
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTime);
             this.updateTimeTimer.Start();
@@ -294,7 +289,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.Activated = false;
         }
 
-        public void Activate(int senderConnectionId, MainPlayerData mainPlayerData)
+        public void Activate(int senderConnectionId, MainPlayerData mainPlayerData, int timeToAnswerInSeconds)
         {
             if (this.Activated)
             {
@@ -305,7 +300,14 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             {
                 throw new ArgumentNullException("mainPlayerData");
             }
-            
+
+            if (timeToAnswerInSeconds <= 0)
+            {
+                throw new ArgumentNullException();
+            }
+
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+
             var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
 
             this.senderConnectionId = senderConnectionId;

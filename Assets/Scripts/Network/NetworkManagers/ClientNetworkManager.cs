@@ -1,19 +1,18 @@
 ﻿namespace Assets.Scripts.Network.NetworkManagers
 {
-
     using System;
     using System.Collections;
     using System.Timers;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Commands.Client;
+    using Commands.Server;
+    using DTOs;
+    using EventArgs;
+    using Exceptions;
+    using Notifications;
+    using Utils;
+    using Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.Networking;
@@ -26,28 +25,20 @@
         public const int Port = 7788;
 
         private const float ReceiveNetworkMessagesDelayInSeconds = 0.5f;
-
         private const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
-
         private const float SendKeepAliveRequestDelayInSeconds = 3f;
-
         private const float ReceiveConnectedClientsCountDelayInSeconds = 3f;
 
         private const int MaxConnectionAttempts = 3;
-
         private const int MaxServerReactionTimeInSeconds = 6;
-
         private const int MaxNetworkErrorsBeforeDisconnect = 5;
 
         public NotificationsServiceController NotificationsServiceController;
         public bool ShowDebugMenu = false;
 
         private int connectionId = 0;
-
         private int genericHostId = 0;
-
         private ConnectionConfig connectionConfig = null;
-
         private byte communicationChannel = 0;
 
         private ValueWrapper<bool> isConnected = new ValueWrapper<bool>(false);
@@ -59,26 +50,28 @@
         private ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
 
         private float elapsedTimeSinceNetworkError = 0;
-
         private int networkErrorsCount = 0;
 
-        public EventHandler OnConnectedEvent
+        private static ClientNetworkManager instance;
+
+        public static ClientNetworkManager Instance
         {
-            get;
-            set;
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new ClientNetworkManager();
+                }
+
+                return instance;
+            }
         }
 
-        public EventHandler<DataSentEventArgs> OnReceivedDataEvent
-        {
-            get;
-            set;
-        }
+        public event EventHandler OnConnectedEvent;
 
-        public EventHandler OnDisconnectedEvent
-        {
-            get;
-            set;
-        }
+        public event EventHandler<DataSentEventArgs> OnReceivedDataEvent;
+
+        public event EventHandler OnDisconnectedEvent;
 
         public bool IsConnected
         {
@@ -117,42 +110,45 @@
             }
         }
 
-        private void Awake()
+        private Timer keepAliveTimer;
+        private Timer connectedClientsCountTimer;
+        private Timer receiveNetworkMessagesTimer;
+
+        public ClientNetworkManager()
         {
             NetworkTransport.Init();
 
             this.OnConnectedEvent = delegate
-                {
-                };
+            {
+            };
 
             this.OnReceivedDataEvent = delegate
-                {
-                };
+            {
+            };
 
             this.OnDisconnectedEvent = delegate
-                {
-                };
-        }
+            {
+            };
 
-        private Timer keepAliveTimer;
-
-        private Timer connectedClientsCountTimer;
-
-        private Timer receiveNetworkMessagesTimer;
-
-        private void Start()
-        {
             this.ConfigureCommands();
             this.ConfigureClient();
 
-            this.keepAliveTimer = 
+            this.keepAliveTimer =
                 TimerUtils.ExecuteEvery(SendKeepAliveRequestDelayInSeconds, this.SendKeepAliveRequest);
 
-            this.connectedClientsCountTimer = 
+            this.connectedClientsCountTimer =
                 TimerUtils.ExecuteEvery(ReceiveConnectedClientsCountDelayInSeconds, this.BeginReceiveConnectedClientsCount);
 
-            this.receiveNetworkMessagesTimer = 
+            this.receiveNetworkMessagesTimer =
                 TimerUtils.ExecuteEvery(ReceiveNetworkMessagesDelayInSeconds, this.ReceiveMessages);
+
+            ((IExtendedTimer)this.keepAliveTimer).RunOnUnityThread = true;
+            ((IExtendedTimer)this.connectedClientsCountTimer).RunOnUnityThread = true;
+            ((IExtendedTimer)this.receiveNetworkMessagesTimer).RunOnUnityThread = true;
+
+            this.keepAliveTimer.Start();
+            this.connectedClientsCountTimer.Start();
+            this.receiveNetworkMessagesTimer.Start();
         }
 
         private void Update()
@@ -376,8 +372,9 @@
             }
             else
             {
+                //TODO
                 this.isRunning = true;
-                this.StartCoroutine(this.CheckCommandAllowedToConnectReceivedCoroutine());
+                //this.StartCoroutine(this.CheckCommandAllowedToConnectReceivedCoroutine());
             }
         }
 

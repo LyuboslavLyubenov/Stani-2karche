@@ -29,7 +29,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
         private const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
         
-        private readonly int timeToAnswerInSeconds;
+        private int timeToAnswerInSeconds;
         private int senderConnectionId;
         private int friendConnectionId;
         private int elapsedTime;
@@ -57,7 +57,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             {
             };
 
-        public AskPlayerQuestionRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator, int timeToAnswerInSeconds)
+        public AskPlayerQuestionRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator)
         {
             if (networkManager == null)
             {
@@ -69,14 +69,8 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                 throw new ArgumentNullException("gameDataIterator");
             }
             
-            if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
-            {
-                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
-            }
-
             this.networkManager = networkManager;
             this.gameDataIterator = gameDataIterator;
-            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
 
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTimer);
             this.updateTimeTimer.RunOnUnityThread = true;
@@ -195,13 +189,20 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.networkManager.SendClientCommand(connectionId, settingsCommandData);
         }
 
-        public void Activate(int senderConnectionId, int friendConnectionId)
+        public void Activate(int senderConnectionId, int friendConnectionId, int timeToAnswerInSeconds)
         {
             if (this.Active)
             {
                 throw new InvalidOperationException("Already active");
             }
-            
+
+            if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
+            {
+                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
+            }
+
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+
             this.senderConnectionId = senderConnectionId;
             this.friendConnectionId = friendConnectionId;
 
