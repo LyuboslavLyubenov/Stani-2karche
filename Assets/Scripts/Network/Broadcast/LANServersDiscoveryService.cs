@@ -1,8 +1,7 @@
 ﻿namespace Assets.Scripts.Network.Broadcast
 {
-
     using System;
-
+    using Utils;
     using EventArgs;
 
     public class LANServersDiscoveryService : LANBroadcastService
@@ -13,15 +12,20 @@
 
         private const int RetrieveMessageDelayInSeconds = 1;
         
-        // ReSharper disable once ArrangeTypeMemberModifiers
-        void Start()
-        {
-            base.Initialize();
-            this.CoroutineUtils.WaitForFrames(1, this.ReceiveIsServerOnlineMessage);
-        }
 
+        public LANServersDiscoveryService()
+        {
+            this.ReceiveIsServerOnlineMessage();
+        }
+        
         private void ReceiveIsServerOnlineMessage()
         {
+            var timer = TimerUtils.ExecuteAfter(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
+
+            timer.RunOnUnityThread = true;
+            timer.AutoDispose = true;
+            timer.Start();
+
             base.ReceiveBroadcastMessageAsync(this.ReceivedBroadcastMessage);
         }
 
@@ -32,9 +36,11 @@
                 this.OnFound(this, new IpEventArgs(ip));
             }
 
-            this.CoroutineUtils.WaitForSeconds(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
-        }
-	
-    }
+            var timer = TimerUtils.ExecuteAfter(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
 
+            timer.RunOnUnityThread = true;
+            timer.AutoDispose = true;
+            timer.Start();
+        }
+    }
 }

@@ -47,27 +47,22 @@
 
         public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
         public BasicExamPlayerTutorialUIController TutorialUIController;
-
-        public NotificationsServiceController NotificationService;
-
         public AvailableJokersUIController AvailableJokersUIController;
         public QuestionUIController QuestionUIController;
         public MarkPanelController MarkPanelController;
         public QuestionsRemainingUIController QuestionsRemainingUIController;
         public ClientChooseCategoryUIController ChooseCategoryUIController;
         public SecondsRemainingUIController SecondsRemainingUIController;
-
         public SelectRandomJokerUIController SelectRandomJokerUIController;
-
-        private RemoteGameDataIterator remoteGameDataIterator = null;
 
         private UnableToConnectUIController unableToConnectUIController;
 
-        private AudienceAnswerPollResultRetriever audienceAnswerPollResultRetriever;
+        private RemoteGameDataIterator remoteGameDataIterator = null;
+        private AudienceAnswerPollResultRetriever audienceAnswerPollResultRetriever = null;
+        private AskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
 
-        private AskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever;
-
-        private void Start()
+        // ReSharper disable once ArrangeTypeMemberModifiers
+        void Start()
         {
             PlayerPrefs.DeleteKey("LoadedGameData");
 
@@ -271,10 +266,7 @@
 
         private void ShowNotification(Color color, string message)
         {
-            if (this.NotificationService != null)
-            {
-                this.NotificationService.AddNotification(color, message);
-            }
+            NotificationsServiceController.Instance.AddNotification(color, message);
         }
 
         private void StartLoadingCategories()

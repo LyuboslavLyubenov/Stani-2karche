@@ -41,6 +41,8 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         private readonly ClientNetworkManager networkManager;
         private Timer timer;
 
+        private int receiveSettingsTimeoutInSeconds;
+        
         public EventHandler OnActivated
         {
             get;
@@ -73,7 +75,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
             try
             {
-                this.timer.Close();
+                DisposeTimer();
                 this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
             }
             catch
@@ -90,7 +92,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.networkManager.CommandsManager.AddCommand(receivedAskAudienceVoteResultCommand);
 
             this.timer.Dispose();
-            this.timer = TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, Timer_OnReceiveAudienceVoteTimeout);
+            this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, Timer_OnReceiveAudienceVoteTimeout);
             this.timer.Start();
 
             ((IExtendedTimer)this.timer).RunOnUnityThread = true;
@@ -98,8 +100,9 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));
         }
 
-        void DisposeTimer()
+        private void DisposeTimer()
         {
+            this.timer.Stop();
             this.timer.Dispose();
             this.timer = null;
         }
@@ -124,8 +127,15 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
         }
 
-        public void Activate()
+        public void Activate(int receiveSettingsTimeoutInSeconds)
         {
+            if (receiveSettingsTimeoutInSeconds <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveSettingsTimeoutInSeconds");
+            }
+            
+            this.receiveSettingsTimeoutInSeconds = receiveSettingsTimeoutInSeconds;
+
             var selected = NetworkCommandData.From<SelectedAudiencePollCommand>();
             this.networkManager.SendServerCommand(selected);
 

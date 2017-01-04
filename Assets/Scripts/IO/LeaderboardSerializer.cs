@@ -7,15 +7,16 @@
     using System.Linq;
     using System.Reflection;
 
+    using Assets.Scripts.Utils;
+
     using CielaSpike.Thread_Ninja;
     using DTOs;
 
     using UnityEngine;
 
-    public class LeaderboardSerializer : MonoBehaviour
+    public class LeaderboardSerializer
     {
         private const string FilePath = "LevelData\\теми";
-
         private const string FileName = "Rating.csv";
 
         public string LevelCategory = "философия";
@@ -153,12 +154,12 @@
             }
 
             this.leaderboard.Add(playerScore);
-            this.StartCoroutineAsync(this.SavePlayerScoreAsync(playerScore));
+            ThreadUtils.Instance.RunOnBackgroundThread(this.SavePlayerScoreAsync(playerScore));
         }
 
         public void LoadDataAsync()
         {
-            this.StartCoroutineAsync(this.LoadLeaderboardAsync());
+            ThreadUtils.Instance.RunOnBackgroundThread(this.LoadLeaderboardAsync());
         }
     }
 }

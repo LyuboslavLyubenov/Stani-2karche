@@ -21,6 +21,12 @@
 
         private IPEndPoint listenEndPoint = new IPEndPoint(IPAddress.Any, Port);
 
+        protected LANBroadcastService()
+        {
+            var endPoint = this.listenEndPoint;
+            this.ConfigUDPCLient(endPoint);
+        }
+
         private void ConfigUDPCLient(IPEndPoint endPoint)
         {
             this.udpClient = new UdpClient();
@@ -58,13 +64,7 @@
 
             onReceivedMessage(receivedEndPoint.Address.GetIPAddress(), messageDecrypted);
         }
-
-        protected virtual void Initialize()
-        {
-            var endPoint = this.listenEndPoint;
-            this.ConfigUDPCLient(endPoint);
-        }
-
+        
         protected virtual void Dispose()
         {
             this.udpClient.Close();

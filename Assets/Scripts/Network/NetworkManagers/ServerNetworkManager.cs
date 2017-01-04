@@ -5,6 +5,9 @@ namespace Assets.Scripts.Network.NetworkManagers
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Timers;
+
+    using CielaSpike.Thread_Ninja;
 
     using Broadcast;
 
@@ -24,7 +27,7 @@ namespace Assets.Scripts.Network.NetworkManagers
 
     using Debug = UnityEngine.Debug;
 
-    public class ServerNetworkManager : ExtendedMonoBehaviour
+    public class ServerNetworkManager
     {
         private const int Port = 7788;
 
@@ -32,9 +35,8 @@ namespace Assets.Scripts.Network.NetworkManagers
 
         public bool AutoStart = true;
         //how many clients can be connected to the server
-        public int MaxConnections;
-        public LANServerOnlineBroadcastService LANServerOnlineBroadcastService;
-
+        public int MaxConnections = 30;
+        
         public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
             {
             };
@@ -52,24 +54,20 @@ namespace Assets.Scripts.Network.NetworkManagers
             };
 
         private int genericHostId = 0;
-
         private ConnectionConfig connectionConfig = null;
-
         private HostTopology topology = null;
-
         private byte communicationChannel = 0;
 
         private bool isRunning = false;
         //Id of all connected clients
-        private List<int> connectedClientsIds = new List<int>();
+        private readonly List<int> connectedClientsIds = new List<int>();
+        private readonly List<int> bannedConnections = new List<int>();
+        private readonly HashSet<int> aliveClientsId = new HashSet<int>();
+        private readonly Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
+        private readonly CommandsManager commandsManager = new CommandsManager();
+        private readonly LANServerOnlineBroadcastService LANServerOnlineBroadcastService = new LANServerOnlineBroadcastService();
 
-        private List<int> bannedConnections = new List<int>();
-
-        private HashSet<int> aliveClientsId = new HashSet<int>();
-
-        private Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
-
-        private CommandsManager commandsManager = new CommandsManager();
+        private Timer updateAliveClientsTimer;
 
         public bool IsRunning
         {
@@ -108,31 +106,26 @@ namespace Assets.Scripts.Network.NetworkManagers
             }
         }
 
-        void Start()
+        public ServerNetworkManager()
         {
             this.ConfigureCommands();
             this.ConfigureServer();
 
             if (this.AutoStart)
             {
-                this.StartServer();    
+                this.StartServer();
             }
 
-            if (this.LANServerOnlineBroadcastService != null)
-            {
-                this.LANServerOnlineBroadcastService.Start();     
-            }
-       
-            this.CoroutineUtils.RepeatEverySeconds(CheckForDeadClientsDelayInSeconds, this.UpdateAliveClients);
-            this.StartCoroutine(this.UpdateCoroutine());
-        }
+            this.updateAliveClientsTimer = TimerUtils.ExecuteEvery(
+                CheckForDeadClientsDelayInSeconds,
+                this.UpdateAliveClients);
 
-        void OnDisable()
-        {
-            this.StopAllCoroutines();
-            this.StopServer();
-        }
+            ((IExtendedTimer)this.updateAliveClientsTimer).RunOnUnityThread = true;
+            this.updateAliveClientsTimer.Start();
 
+            ThreadUtils.Instance.RunOnBackgroundThread(UpdateCoroutine());
+        }
+        
         private void ConfigureServer()
         {
             this.connectionConfig = new ConnectionConfig();
@@ -150,6 +143,8 @@ namespace Assets.Scripts.Network.NetworkManagers
 
         private IEnumerator UpdateCoroutine()
         {
+            yield return Ninja.JumpToUnity;
+
             while (true)
             {
                 if (this.isRunning)
@@ -459,6 +454,7 @@ namespace Assets.Scripts.Network.NetworkManagers
             try
             {
                 var commandLine = new NetworkCommandData("ShowNotification");
+
                 commandLine.AddOption("Color", "red");
                 commandLine.AddOption("Message", message);
 
@@ -468,12 +464,9 @@ namespace Assets.Scripts.Network.NetworkManagers
             {
                 Debug.Log(ex.Message);
             }
-            
-            this.CoroutineUtils.WaitForFrames(1, () =>
-                {
-                    byte error;
-                    NetworkTransport.Disconnect(this.genericHostId, connectionId, out error);
-                });
+
+            byte error;
+            NetworkTransport.Disconnect(this.genericHostId, connectionId, out error);
         }
 
         public void KickPlayer(int connectionId)

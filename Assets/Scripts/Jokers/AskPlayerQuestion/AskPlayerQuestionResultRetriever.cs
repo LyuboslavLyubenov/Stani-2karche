@@ -33,8 +33,8 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         private ClientNetworkManager networkManager;
 
-        private readonly int receiveAnswerTimeout;
-        private readonly int receiveSettingsTimeout;
+        private int receiveAnswerTimeout;
+        private int receiveSettingsTimeout;
 
         private Timer_ExecuteMethodAfterTime timer;
 
@@ -44,26 +44,14 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             private set;
         }
 
-        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager, int receiveAnswerTimeout, int receiveSettingsTimeout)
+        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
-
-            if (receiveAnswerTimeout <= 0)
-            {
-                throw new ArgumentOutOfRangeException("receiveAnswerTimeout");
-            }
-
-            if (receiveSettingsTimeout <= 0)
-            {
-                throw new ArgumentOutOfRangeException("receiveSettingsTimeout");
-            }
-
+            
             this.networkManager = networkManager;
-            this.receiveAnswerTimeout = receiveAnswerTimeout;
-            this.receiveSettingsTimeout = receiveSettingsTimeout;
         }
 
         private void _OnReceivedSettings(int timeToAnswerInSeconds)
@@ -114,8 +102,21 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.timer = null;
         }
 
-        public void Activate(int playerConnectionId)
+        public void Activate(int playerConnectionId, int receiveAnswerTimeout, int receiveSettingsTimeout)
         {
+            if (receiveAnswerTimeout <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveAnswerTimeout");
+            }
+
+            if (receiveSettingsTimeout <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveSettingsTimeout");
+            }
+            
+            this.receiveAnswerTimeout = receiveAnswerTimeout;
+            this.receiveSettingsTimeout = receiveSettingsTimeout;
+
             var selected = NetworkCommandData.From<SelectedAskPlayerQuestionCommand>();
             selected.AddOption("PlayerConnectionId", playerConnectionId.ToString());
 
