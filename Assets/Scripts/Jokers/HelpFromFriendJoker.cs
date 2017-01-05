@@ -124,7 +124,7 @@
             this.resultRetriever.OnReceivedAnswer += this.OnReceivedAnswer;
             this.resultRetriever.OnReceiveAnswerTimeout += this.OnReceiveAnswerTimeout;
 
-            this.resultRetriever.Activate(args.PlayerConnectionId, );
+            this.resultRetriever.Activate(args.PlayerConnectionId);
         }
 
         private void OnReceivedSettings(object sender, JokerSettingsEventArgs args)

@@ -1,6 +1,7 @@
 ﻿namespace Assets.Scripts.Network.Broadcast
 {
 
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Utils;
 
     public class LANServerOnlineBroadcastService : LANBroadcastService
@@ -15,8 +16,7 @@
         {
             this.SendServerOnline();
 
-            timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, this.OnMessageSent);
-            timer.RunOnUnityThread = true;
+            timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
         }
         
         private void SendServerOnline()
@@ -26,8 +26,7 @@
 
         private void OnMessageSent()
         {
-            this.timer.Stop();
-            this.timer.Start();
+            this.timer.Reset();
         }
     }
 

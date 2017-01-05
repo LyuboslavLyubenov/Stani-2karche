@@ -1,6 +1,9 @@
 ﻿//Mediator
 namespace Assets.Scripts.Controllers.GameController
 {
+
+    using Assets.Scripts.Network.Leaderboard;
+
     using Commands;
     using Commands.Client;
     using EventArgs;
@@ -23,8 +26,7 @@ namespace Assets.Scripts.Controllers.GameController
         public GameObject UnableToConnectUI;
         public GameObject SecondsRemainingUI;
         public GameObject MainPlayerDialogUI;
-
-        public ClientNetworkManager NetworkManager;
+        
         public NotificationsServiceController NotificationsController;
         public SecondsRemainingUIController SecondsRemainingUIController;
         public DialogController MainPlayerDialogController;
@@ -33,10 +35,14 @@ namespace Assets.Scripts.Controllers.GameController
 
         private UnableToConnectUIController unableToConnectUIController = null;
 
+        private LeaderboardReceiver leaderboardReceiver;
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+            this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 5);
 
             this.LoadControllers();
             this.LoadCommands();
@@ -71,17 +77,18 @@ namespace Assets.Scripts.Controllers.GameController
         {
             var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, this.NotificationsController);
             var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
-            var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI);
+            var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, leaderboardReceiver);
 
-            this.NetworkManager.CommandsManager.AddCommand(answerTimeout);
-            this.NetworkManager.CommandsManager.AddCommand(loadQuestion);
-            this.NetworkManager.CommandsManager.AddCommand(basicExamGameEnd);
+            ClientNetworkManager.Instance.CommandsManager.AddCommand(answerTimeout);
+            ClientNetworkManager.Instance.CommandsManager.AddCommand(loadQuestion);
+            ClientNetworkManager.Instance.CommandsManager.AddCommand(basicExamGameEnd);
         }
 
         private void AttachEventsHooks()
         {
-            this.NetworkManager.OnConnectedEvent += this.OnConnected;
-            this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectFromServer;
+            ClientNetworkManager.Instance.OnConnectedEvent += this.OnConnected;
+            ClientNetworkManager.Instance.OnDisconnectedEvent += this.OnDisconnectFromServer;
+
             this.questionUIController.OnAnswerClick += this.OnAnswerClick;
         }
 
@@ -89,7 +96,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
             answerSelectedCommand.AddOption("Answer", args.Answer);
-            this.NetworkManager.SendServerCommand(answerSelectedCommand);
+            ClientNetworkManager.Instance.SendServerCommand(answerSelectedCommand);
 
             this.QuestionPanelUI.SetActive(false);
             this.SecondsRemainingUI.SetActive(false);
@@ -134,7 +141,7 @@ namespace Assets.Scripts.Controllers.GameController
 
             try
             {
-                this.NetworkManager.ConnectToHost(ip);    
+                ClientNetworkManager.Instance.ConnectToHost(ip);    
             }
             catch (NetworkException e)
             {
@@ -148,7 +155,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             try
             {
-                this.NetworkManager.Disconnect();
+                ClientNetworkManager.Instance.Disconnect();
             }
             catch (NetworkException e)
             {
