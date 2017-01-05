@@ -26,7 +26,7 @@ namespace Assets.Scripts.Controllers.GameController
         public GameObject UnableToConnectUI;
         public GameObject SecondsRemainingUI;
         public GameObject MainPlayerDialogUI;
-        
+
         public NotificationsServiceController NotificationsController;
         public SecondsRemainingUIController SecondsRemainingUIController;
         public DialogController MainPlayerDialogController;
@@ -54,8 +54,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
             var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
-
-            //TODO: use NetworkManager.GetServerIp()
+            
             this.CoroutineUtils.WaitForFrames(1, () =>
                 {
                     NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
@@ -116,7 +115,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
 #if UNITY_ANDROID
         Handheld.Vibrate();
-        #endif
+#endif
         }
 
         private void OnDisconnectFromServer(object sender, EventArgs args)
@@ -141,7 +140,7 @@ namespace Assets.Scripts.Controllers.GameController
 
             try
             {
-                ClientNetworkManager.Instance.ConnectToHost(ip);    
+                ClientNetworkManager.Instance.ConnectToHost(ip);
             }
             catch (NetworkException e)
             {

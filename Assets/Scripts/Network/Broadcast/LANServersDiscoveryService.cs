@@ -1,31 +1,31 @@
 ﻿namespace Assets.Scripts.Network.Broadcast
 {
     using System;
+
+    using Assets.Scripts.Extensions;
+
     using Utils;
     using EventArgs;
 
     public class LANServersDiscoveryService : LANBroadcastService
     {
+        private const int RetrieveMessageDelayInSeconds = 1;
+
         public EventHandler<IpEventArgs> OnFound = delegate
             {
             };
 
-        private const int RetrieveMessageDelayInSeconds = 1;
+        private Timer_ExecuteMethodAfterTime timer;
         
-
         public LANServersDiscoveryService()
         {
-            this.ReceiveIsServerOnlineMessage();
+            this.timer = TimerUtils.ExecuteAfter(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
+            this.timer.RunOnUnityThread = true;
+            this.timer.Start();
         }
-        
+
         private void ReceiveIsServerOnlineMessage()
         {
-            var timer = TimerUtils.ExecuteAfter(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
-
-            timer.RunOnUnityThread = true;
-            timer.AutoDispose = true;
-            timer.Start();
-
             base.ReceiveBroadcastMessageAsync(this.ReceivedBroadcastMessage);
         }
 
@@ -35,12 +35,8 @@
             {
                 this.OnFound(this, new IpEventArgs(ip));
             }
-
-            var timer = TimerUtils.ExecuteAfter(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
-
-            timer.RunOnUnityThread = true;
-            timer.AutoDispose = true;
-            timer.Start();
+            
+            this.timer.Reset();
         }
     }
 }
