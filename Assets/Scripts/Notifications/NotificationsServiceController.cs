@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Notifications
+﻿namespace Assets.Scripts.Notifications
 {
+    using System.Collections.Generic;
 
+    using UnityEngine;
+    using UnityEngine.UI;
     using Assets.Scripts.Interfaces;
 
     public class NotificationsServiceController : MonoBehaviour, INotificationService
@@ -16,6 +14,13 @@ namespace Assets.Scripts.Notifications
         {
             get
             {
+                var existingInstance = GameObject.FindObjectOfType<NotificationsServiceController>();
+
+                if (existingInstance != null)
+                {
+                    instance = existingInstance;
+                }
+
                 if (instance == null)
                 {
                     var prefab = Resources.Load<GameObject>("Prefabs/Notifications");
@@ -29,9 +34,7 @@ namespace Assets.Scripts.Notifications
         }
 
         private const int SpaceBetweenNotifications = 20;
-
         private const int StartOffset = 10;
-
         private const int NormalDisableDelayInSeconds = 5;
 
         public Transform Container;
@@ -82,5 +85,4 @@ namespace Assets.Scripts.Notifications
             this._AddNotification(color, message, disableDelayInSeconds);
         }
     }
-
 }
