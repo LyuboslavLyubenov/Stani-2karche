@@ -2,9 +2,6 @@
 {
     using System;
 
-    using Enums;
-    using Network;
-
     [Serializable]
     public class CreatedGameInfo_DTO
     {

@@ -3,7 +3,6 @@
 
     using Assets.Scripts.Controllers;
     using Assets.Scripts.Jokers;
-    using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 
     public class TEST_AddJoker_AvailableJokers : ExtendedMonoBehaviour

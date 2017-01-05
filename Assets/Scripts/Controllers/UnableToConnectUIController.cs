@@ -1,13 +1,12 @@
-﻿using System;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
+﻿
 namespace Assets.Scripts.Controllers
 {
+    using System;
 
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
+    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
@@ -22,12 +21,10 @@ namespace Assets.Scripts.Controllers
             get;
             set;
         }
-
-        public ClientNetworkManager NetworkManager;
-
+        
         public void TryAgainToConnectToServer()
         {
-            this.NetworkManager.ConnectToHost(this.ServerIP);
+            ClientNetworkManager.Instance.ConnectToHost(this.ServerIP);
             this.OnTryingAgainToConnectToServer(this, new EventArgs());
             this.gameObject.SetActive(false);
         }

@@ -3,7 +3,6 @@
 namespace Assets.Tests.Test_Kinvey_Wrapper.Delete
 {
 
-    using Assets.Scripts;
     using Assets.Scripts.Network;
 
     public class TEST_DeleteEntity : MonoBehaviour

@@ -13,7 +13,6 @@
     using IO;
 
     using Interfaces;
-    using Utils;
 
     public class BasicExamGameDataStatisticsExporter : IStatisticsExporter
     {

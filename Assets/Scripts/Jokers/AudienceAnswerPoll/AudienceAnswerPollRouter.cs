@@ -18,7 +18,6 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     using IO;
 
     using Network.NetworkManagers;
-    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;

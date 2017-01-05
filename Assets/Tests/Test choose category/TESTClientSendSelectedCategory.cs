@@ -3,9 +3,7 @@
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Controllers;
-    using Assets.Scripts.Network;
     using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 
     public class TESTClientSendSelectedCategory : ExtendedMonoBehaviour

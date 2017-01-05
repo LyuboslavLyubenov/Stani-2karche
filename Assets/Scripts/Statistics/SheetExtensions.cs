@@ -1,5 +1,3 @@
-using System;
-
 using CSharpJExcel.Jxl;
 using CSharpJExcel.Jxl.Biff;
 

@@ -3,7 +3,6 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Controllers
 {
-
     public class EndGameUIController : MonoBehaviour
     {
         public void SetMark(int mark)

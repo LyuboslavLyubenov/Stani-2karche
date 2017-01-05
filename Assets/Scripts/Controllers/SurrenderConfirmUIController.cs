@@ -4,7 +4,6 @@ namespace Assets.Scripts.Controllers
 {
 
     using Assets.Scripts.Commands;
-    using Assets.Scripts.Network;
     using Assets.Scripts.Network.NetworkManagers;
 
     public class SurrenderConfirmUIController : MonoBehaviour

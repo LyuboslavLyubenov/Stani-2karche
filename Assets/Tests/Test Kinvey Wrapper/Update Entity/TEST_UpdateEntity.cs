@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Assets.Tests.Test_Kinvey_Wrapper.Update_Entity
 {
 
-    using Assets.Scripts;
     using Assets.Scripts.DTOs;
     using Assets.Scripts.Network;
 

@@ -10,7 +10,7 @@
     using UnityEngine.UI;
 
     using DTOs;
-    using Enums;
+
     using EventArgs;
     using Network;
     using Notifications;

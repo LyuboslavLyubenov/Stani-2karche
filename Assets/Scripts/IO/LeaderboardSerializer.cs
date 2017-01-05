@@ -9,10 +9,7 @@
 
     using Assets.Scripts.Utils;
 
-    using CielaSpike.Thread_Ninja;
     using DTOs;
-
-    using UnityEngine;
 
     public class LeaderboardSerializer
     {

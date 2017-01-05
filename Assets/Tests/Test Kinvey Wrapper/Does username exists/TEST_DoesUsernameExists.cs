@@ -5,8 +5,6 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Does_username_exists
 
     using Assets.Scripts.Network;
 
-    using Scripts;
-
     public class TEST_DoesUsernameExists : MonoBehaviour
     {
         private void Start()

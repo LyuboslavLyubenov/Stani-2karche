@@ -1,12 +1,12 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-    using System;
+
     using System.Linq;
 
     using UnityEngine.UI;
 
     using DTOs;
-    using Enums;
+
     using Localization;
     using Utils.Unity;
 

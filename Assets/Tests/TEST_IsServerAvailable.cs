@@ -5,7 +5,6 @@ using UnityEngine.UI;
 namespace Assets.Tests
 {
 
-    using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
 
     public class TEST_IsServerAvailable : MonoBehaviour

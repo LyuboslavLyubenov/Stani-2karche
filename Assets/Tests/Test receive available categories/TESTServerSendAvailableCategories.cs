@@ -6,9 +6,7 @@ namespace Assets.Tests.Test_receive_available_categories
     using Assets.Scripts.IO;
     using Assets.Scripts.Network.NetworkManagers;
 
-    using Scripts;
     using Scripts.Commands.Server;
-    using Scripts.Network;
 
     public class TESTServerSendAvailableCategories : MonoBehaviour
     {
