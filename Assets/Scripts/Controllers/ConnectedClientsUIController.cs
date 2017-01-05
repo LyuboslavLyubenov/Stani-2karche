@@ -23,7 +23,6 @@
             };
 
         public Transform Content;
-        public ServerNetworkManager NetworkManager;
         public ObjectsPool ConnectedClientsDataPool;
 
         private float clientElementPrefabHeight;
@@ -42,9 +41,9 @@
 
             this.contentRectTransform = this.Content.GetComponent<RectTransform>();
 
-            this.NetworkManager.OnClientConnected += this.OnClientConnected;
-            this.NetworkManager.OnClientDisconnected += this.OnClientDisconnected;
-            this.NetworkManager.OnClientSetUsername += this.OnClientSetUsername;
+            ServerNetworkManager.Instance.OnClientConnected += this.OnClientConnected;
+            ServerNetworkManager.Instance.OnClientDisconnected += this.OnClientDisconnected;
+            ServerNetworkManager.Instance.OnClientSetUsername += this.OnClientSetUsername;
         }
 
         private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
@@ -95,7 +94,7 @@
             var newY = YOffset + ((this.clientElementPrefabHeight + DistanceBetweenElements) * this.connectionIdClientElement.Count);
             rectTransform.anchoredPosition = new Vector2(0, -newY);
 
-            var username = this.NetworkManager.GetClientUsername(connectionId);
+            var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
             var clientData = new ConnectedClientData(connectionId, username);
             var connectedClientElementController = connectedClientElement.GetComponent<ConnectedClientDataElementUIController>();
             this.CoroutineUtils.WaitForFrames(0, () => connectedClientElementController.Fill(clientData));

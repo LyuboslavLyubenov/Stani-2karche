@@ -62,6 +62,16 @@ namespace Assets.Scripts.Network.Servers
             private set;
         }
 
+        public GameDataIterator GameDataIterator
+        {
+            get; private set;
+        }
+
+        public GameDataSender GameDataSender
+        {
+            get; private set;
+        }
+        
         private MainPlayerJokersDataSynchronizer mainPlayerJokersDataSynchronizer;
 
         private float chanceToAddRandomJoker = DefaultChanceToAddRandomJokerOnMarkChange;
@@ -76,9 +86,6 @@ namespace Assets.Scripts.Network.Servers
 
         private BasicExamStatisticsCollector statisticsCollector;
 
-        private GameDataIterator gameDataIterator = null;
-        private GameDataSender gameDataSender = null;
-
         private LeaderboardSerializer leaderboardSerializer = null;
 
         private AskPlayerQuestionRouter askPlayerQuestionRouter = null;
@@ -90,14 +97,14 @@ namespace Assets.Scripts.Network.Servers
         {
             var serverNetworkManager = ServerNetworkManager.Instance;
 
-            this.gameDataIterator = new GameDataIterator();
-            this.gameDataSender = new GameDataSender(this.gameDataIterator, serverNetworkManager);
+            this.GameDataIterator = new GameDataIterator();
+            this.GameDataSender = new GameDataSender(this.GameDataIterator, serverNetworkManager);
             this.leaderboardSerializer = new LeaderboardSerializer();
-            this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.gameDataIterator);
-            this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.gameDataIterator);
+            this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
+            this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.GameDataIterator);
             this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter();
             this.addRandomJokerRouter = new AddRandomJokerRouter();
-            this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.gameDataSender, this.gameDataIterator);
+            this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataSender, this.GameDataIterator);
             this.MainPlayerData = new MainPlayerData(serverNetworkManager);
             this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(serverNetworkManager, this.MainPlayerData);
 
@@ -111,7 +118,7 @@ namespace Assets.Scripts.Network.Servers
             this.MainPlayerData.JokersData.AddJoker<AskAudienceJoker>();
             this.MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
         }
-
+        
         void Start()
         {
             this.CoroutineUtils.RepeatEverySeconds(1f, () =>
@@ -232,14 +239,14 @@ namespace Assets.Scripts.Network.Servers
 
         private void OnLoadedGameData(object sender, EventArgs args)
         {
-            this.remainingTimeToAnswerMainQuestion = this.gameDataIterator.SecondsForAnswerQuestion;
+            this.remainingTimeToAnswerMainQuestion = this.GameDataIterator.SecondsForAnswerQuestion;
         }
 
         private void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             if (args.QuestionType == QuestionRequestType.Next)
             {
-                this.remainingTimeToAnswerMainQuestion = this.gameDataIterator.SecondsForAnswerQuestion;
+                this.remainingTimeToAnswerMainQuestion = this.GameDataIterator.SecondsForAnswerQuestion;
                 this.playerSentAnswer = false;
                 this.lastQuestion = args.Question;
             }
@@ -274,9 +281,9 @@ namespace Assets.Scripts.Network.Servers
         {
             this.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
 
-            this.gameDataIterator.OnLoaded += this.OnLoadedGameData;
-            this.gameDataSender.OnSentQuestion += this.OnSentQuestion;
-            this.gameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
+            this.GameDataIterator.OnLoaded += this.OnLoadedGameData;
+            this.GameDataSender.OnSentQuestion += this.OnSentQuestion;
+            this.GameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
 
             ServerNetworkManager.Instance.OnClientConnected += this.OnClientConnected;
 
@@ -334,7 +341,7 @@ namespace Assets.Scripts.Network.Servers
         private void SendEndGameInfo()
         {
             var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
-            commandData.AddOption("Mark", this.gameDataIterator.CurrentMark.ToString());
+            commandData.AddOption("Mark", this.GameDataIterator.CurrentMark.ToString());
             ServerNetworkManager.Instance.SendAllClientsCommand(commandData);
         }
 
@@ -349,7 +356,7 @@ namespace Assets.Scripts.Network.Servers
         private void ExportStatistics()
         {
             new BasicExamGeneralStatiticsExporter(this.statisticsCollector).Export();
-            new BasicExamGameDataStatisticsExporter(this.statisticsCollector, this.gameDataIterator).Export();
+            new BasicExamGameDataStatisticsExporter(this.statisticsCollector, this.GameDataIterator).Export();
         }
 
         public void EndGame()

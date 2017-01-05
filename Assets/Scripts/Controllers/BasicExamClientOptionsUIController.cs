@@ -2,18 +2,17 @@
 {
     using System;
 
+    using Assets.Scripts.Network.NetworkManagers;
+
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.UI;
 
     using DTOs;
     using Localization;
-    using Network.NetworkManagers;
 
     public class BasicExamClientOptionsUIController : MonoBehaviour
     {
-        public ServerNetworkManager NetworkManager;
-
         private FieldUIController connectionIdField;
         private FieldUIController usernameField;
         private FieldUIController roleField;
@@ -41,11 +40,11 @@
 
             if (string.IsNullOrEmpty(reason))
             {
-                this.NetworkManager.KickPlayer(connectionId);    
+                ServerNetworkManager.Instance.KickPlayer(connectionId);    
             }
             else
             {
-                this.NetworkManager.KickPlayer(connectionId, reason);    
+                ServerNetworkManager.Instance.KickPlayer(connectionId, reason);    
             }
 
             this.gameObject.SetActive(false);
@@ -54,7 +53,7 @@
         private void OnBan()
         {
             var connectionId = int.Parse(this.connectionIdField.Value);
-            this.NetworkManager.BanPlayer(connectionId);
+            ServerNetworkManager.Instance.BanPlayer(connectionId);
 
             this.gameObject.SetActive(false);
         }
