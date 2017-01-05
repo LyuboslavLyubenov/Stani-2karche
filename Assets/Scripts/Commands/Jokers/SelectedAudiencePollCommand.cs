@@ -7,7 +7,6 @@ namespace Assets.Scripts.Commands.Jokers
     using Interfaces;
     using Scripts.Jokers;
     using Scripts.Jokers.AudienceAnswerPoll;
-    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 

@@ -3,16 +3,13 @@ using System;
 namespace Assets.Scripts.Jokers
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Interfaces;
+    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
-    public class DisableRandomAnswersJokerRouter : ExtendedMonoBehaviour
+    public class DisableRandomAnswersJokerRouter
     {
         public EventHandler OnActivated = delegate
             {
@@ -21,6 +18,11 @@ namespace Assets.Scripts.Jokers
         public EventHandler<UnhandledExceptionEventArgs> OnError = delegate
             {
             };
+
+        public DisableRandomAnswersJokerRouter()
+        {
+            
+        }
 
         public void Activate(int answersToDisableCount, IPlayerData playerData, ServerNetworkManager networkManager)
         {
@@ -46,5 +48,4 @@ namespace Assets.Scripts.Jokers
             this.OnActivated(this, EventArgs.Empty);
         }
     }
-
 }

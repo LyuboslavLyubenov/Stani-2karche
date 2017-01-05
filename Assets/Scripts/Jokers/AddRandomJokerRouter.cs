@@ -1,21 +1,19 @@
-using System;
-using System.Linq;
 
 namespace Assets.Scripts.Jokers
 {
+    using System;
+    using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Jokers.Add;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
+    using Commands;
+    using Commands.Jokers.Add;
+    using DTOs;
+    using Interfaces;
+    using Network.NetworkManagers;
+    using Utils;
 
     using EventArgs = System.EventArgs;
 
-    public class AddRandomJokerRouter : ExtendedMonoBehaviour
+    public class AddRandomJokerRouter
     {
         public EventHandler OnActivated = delegate
             {
@@ -38,7 +36,10 @@ namespace Assets.Scripts.Jokers
             var selectedJokerIndex = UnityEngine.Random.Range(0, jokersTypeNames.Length);
             var selectedJoker = jokersToSelectFrom[selectedJokerIndex];
 
-            this.CoroutineUtils.WaitForSeconds(1f, () => jokersData.AddJoker(selectedJoker));
+            var timer = TimerUtils.ExecuteAfter(1f, () => jokersData.AddJoker(selectedJoker));
+            timer.RunOnUnityThread = true;
+            timer.AutoDispose = true;
+            timer.Start();
 
             var command = NetworkCommandData.From<AddRandomJokerCommand>();
             command.AddOption("JokersTypeNamesJSON", jokersTypeNamesJSON);
