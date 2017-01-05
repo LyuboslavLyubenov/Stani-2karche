@@ -62,7 +62,7 @@ namespace Assets.Scripts.Commands.Jokers
             }
 
             this.mainPlayerData.JokersData.RemoveJoker(this.askAudienceJokerType);
-            this.askAudienceJokerRouter.Activate(senderConnectionId, timeToAnswerInSeconds, this.mainPlayerData);
+            this.askAudienceJokerRouter.Activate(senderConnectionId, this.mainPlayerData, this.timeToAnswerInSeconds);
 
             if (this.OnExecuted != null)
             {

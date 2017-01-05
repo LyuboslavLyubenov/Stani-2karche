@@ -135,7 +135,7 @@ namespace Assets.Scripts.Network.Servers
             this.ClientOptionsUIController.gameObject.SetActive(true);
             this.CoroutineUtils.WaitForFrames(0, () =>
             {
-                var username = this.NetworkManager.GetClientUsername(connectionId);
+                var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
                 var clientData = new ConnectedClientData(connectionId, username);
                 var role =
                     (this.MainPlayerData.IsConnected && this.MainPlayerData.ConnectionId == connectionId)
@@ -267,7 +267,7 @@ namespace Assets.Scripts.Network.Servers
                 serverMaxPlayers = int.Parse(PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers"));    
             }
 
-            this.NetworkManager.MaxConnections = serverMaxPlayers;    
+            ServerNetworkManager.Instance.MaxConnections = serverMaxPlayers;    
         }
 
         private void AttachEventHandlers()
@@ -278,7 +278,7 @@ namespace Assets.Scripts.Network.Servers
             this.gameDataSender.OnSentQuestion += this.OnSentQuestion;
             this.gameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
 
-            this.NetworkManager.OnClientConnected += this.OnClientConnected;
+            ServerNetworkManager.Instance.OnClientConnected += this.OnClientConnected;
 
             this.askPlayerQuestionRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
             this.audiencePollRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
@@ -289,9 +289,9 @@ namespace Assets.Scripts.Network.Servers
         private void InitializeCommands()
         {
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
-            var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(this.NetworkManager, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
+            var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
             var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.audiencePollRouter, 60);
-            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, this.NetworkManager, 2);
+            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, ServerNetworkManager.Instance, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };
 
@@ -300,20 +300,20 @@ namespace Assets.Scripts.Network.Servers
                 selectedJokerCommands[i].OnExecuted += this.OnMainPlayerSelectedJoker;
             }
 
-            this.NetworkManager.CommandsManager.AddCommand("AnswerSelected", selectedAnswerCommand);
-            this.NetworkManager.CommandsManager.AddCommand(selectedAskPlayerQuestionCommand);
-            this.NetworkManager.CommandsManager.AddCommand(selectedAudiencePollCommand);
-            this.NetworkManager.CommandsManager.AddCommand(selectedFifthyFifthyChanceCommand);
-            this.NetworkManager.CommandsManager.AddCommand("Surrender", surrenderCommand);
+            ServerNetworkManager.Instance.CommandsManager.AddCommand("AnswerSelected", selectedAnswerCommand);
+            ServerNetworkManager.Instance.CommandsManager.AddCommand(selectedAskPlayerQuestionCommand);
+            ServerNetworkManager.Instance.CommandsManager.AddCommand(selectedAudiencePollCommand);
+            ServerNetworkManager.Instance.CommandsManager.AddCommand(selectedFifthyFifthyChanceCommand);
+            ServerNetworkManager.Instance.CommandsManager.AddCommand("Surrender", surrenderCommand);
         }
 
         private void Cleanup()
         {
             this.mainPlayerJokersDataSynchronizer = null;
-            this.NetworkManager.CommandsManager.RemoveCommand("AnswerSelected");
-            this.NetworkManager.CommandsManager.RemoveCommand<SelectedAskPlayerQuestionCommand>();
-            this.NetworkManager.CommandsManager.RemoveCommand<SelectedAudiencePollCommand>();
-            this.NetworkManager.CommandsManager.RemoveCommand("Surrender");
+            ServerNetworkManager.Instance.CommandsManager.RemoveCommand("AnswerSelected");
+            ServerNetworkManager.Instance.CommandsManager.RemoveCommand<SelectedAskPlayerQuestionCommand>();
+            ServerNetworkManager.Instance.CommandsManager.RemoveCommand<SelectedAudiencePollCommand>();
+            ServerNetworkManager.Instance.CommandsManager.RemoveCommand("Surrender");
         }
 
         private void UpdateRemainingTime()
@@ -335,7 +335,7 @@ namespace Assets.Scripts.Network.Servers
         {
             var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
             commandData.AddOption("Mark", this.gameDataIterator.CurrentMark.ToString());
-            this.NetworkManager.SendAllClientsCommand(commandData);
+            ServerNetworkManager.Instance.SendAllClientsCommand(commandData);
         }
 
         private void SavePlayerScoreToLeaderboard()
@@ -363,5 +363,4 @@ namespace Assets.Scripts.Network.Servers
             this.OnGameOver(this, EventArgs.Empty);
         }
     }
-
 }

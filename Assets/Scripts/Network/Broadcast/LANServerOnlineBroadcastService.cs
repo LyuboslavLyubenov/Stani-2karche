@@ -1,8 +1,7 @@
 ﻿namespace Assets.Scripts.Network.Broadcast
 {
-
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Utils;
+    using Extensions;
+    using Utils;
 
     public class LANServerOnlineBroadcastService : LANBroadcastService
     {
