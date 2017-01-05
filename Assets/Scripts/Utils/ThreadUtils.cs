@@ -9,49 +9,52 @@
 
     public class ThreadUtils : MonoBehaviour
     {
-        private readonly Queue<Action> MethodsQueue = new Queue<Action>();
+        private readonly Queue<Action> methodsQueue = new Queue<Action>();
 
-        private readonly object MyLock = new object();
+        private readonly object myLock = new object();
 
+        private static readonly object instanceLock = new object();
         private static ThreadUtils instance;
 
         public static ThreadUtils Instance
         {
             get
             {
-                if (instance == null)
+                lock (instanceLock)
                 {
-                    var gameObject = new GameObject();
-                    var threadUtilsComponent = gameObject.AddComponent<ThreadUtils>();
+                    if (instance == null)
+                    {
+                        var gameObject = new GameObject("ThreadUtils");
+                        var threadUtilsComponent = gameObject.AddComponent<ThreadUtils>();
 
-                    instance = threadUtilsComponent;
-                    gameObject.name = "ThreadUtils";
+                        instance = threadUtilsComponent;
+                    }
                 }
 
                 return instance;
             }
         }
-
+        
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Update()
         {
-            lock (this.MyLock)
+            lock (this.myLock)
             {
-                if (this.MethodsQueue.Count < 1)
+                if (this.methodsQueue.Count < 1)
                 {
                     return;
                 }
 
-                var methodToRun = this.MethodsQueue.Dequeue();
+                var methodToRun = this.methodsQueue.Dequeue();
                 methodToRun();    
             }
         }
         
         public void RunOnMainThread(Action method)
         {
-            lock (this.MyLock)
+            lock (this.myLock)
             {
-                this.MethodsQueue.Enqueue(method);        
+                this.methodsQueue.Enqueue(method);        
             }
         }
 
