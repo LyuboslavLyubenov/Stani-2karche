@@ -1,7 +1,6 @@
 namespace Assets.Scripts.Jokers.AskPlayerQuestion
 {
     using System;
-    using System.Timers;
 
     using Commands;
     using Commands.Client;
@@ -32,8 +31,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             };
 
         private ClientNetworkManager networkManager;
-
-        private int receiveAnswerTimeout;
+        
         private int receiveSettingsTimeout;
 
         private Timer_ExecuteMethodAfterTime timer;
@@ -44,14 +42,20 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             private set;
         }
 
-        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager)
+        public AskPlayerQuestionResultRetriever(ClientNetworkManager networkManager, int receiveSettingsTimeout)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
+
+            if (receiveSettingsTimeout <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveSettingsTimeout");
+            }
             
             this.networkManager = networkManager;
+            this.receiveSettingsTimeout = receiveSettingsTimeout;
         }
 
         private void _OnReceivedSettings(int timeToAnswerInSeconds)
@@ -62,7 +66,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             var responseCommand = new AskPlayerResponseCommand(this._OnReceivedAnswer);
             this.networkManager.CommandsManager.AddCommand(responseCommand);
 
-            this.timer = TimerUtils.ExecuteAfter(this.receiveAnswerTimeout, Timer_OnReceiveAnswerTimeout);
+            this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, Timer_OnReceiveAnswerTimeout);
             this.timer.Start();
 
             this.OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));
@@ -80,8 +84,9 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         private void _OnReceivedAnswer(string username, string answer)
         {
+            this.DisposeTimer();
             this.Active = false;
-
+            
             this.OnReceivedAnswer(this, new AskPlayerResponseEventArgs(username, answer));
         }
 
@@ -92,7 +97,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             
             this.Active = false;
 
-            this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
+            this.OnReceiveAnswerTimeout(this, EventArgs.Empty);
         }
 
         void DisposeTimer()
@@ -102,21 +107,8 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.timer = null;
         }
 
-        public void Activate(int playerConnectionId, int receiveAnswerTimeout, int receiveSettingsTimeout)
+        public void Activate(int playerConnectionId)
         {
-            if (receiveAnswerTimeout <= 0)
-            {
-                throw new ArgumentOutOfRangeException("receiveAnswerTimeout");
-            }
-
-            if (receiveSettingsTimeout <= 0)
-            {
-                throw new ArgumentOutOfRangeException("receiveSettingsTimeout");
-            }
-            
-            this.receiveAnswerTimeout = receiveAnswerTimeout;
-            this.receiveSettingsTimeout = receiveSettingsTimeout;
-
             var selected = NetworkCommandData.From<SelectedAskPlayerQuestionCommand>();
             selected.AddOption("PlayerConnectionId", playerConnectionId.ToString());
 

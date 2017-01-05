@@ -1,7 +1,7 @@
-﻿using System.Net.Sockets;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Extensions
 {
+
+    using System.Net.Sockets;
 
     public static class SocketExtensions
     {

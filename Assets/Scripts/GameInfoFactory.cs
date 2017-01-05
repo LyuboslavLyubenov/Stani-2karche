@@ -3,6 +3,8 @@
     using System;
     using System.Reflection;
 
+    using Assets.Scripts.Interfaces;
+
     using Network.NetworkManagers;
     using Network.Servers;
     

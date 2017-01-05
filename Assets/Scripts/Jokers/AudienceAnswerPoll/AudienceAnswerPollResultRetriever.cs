@@ -55,12 +55,19 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             private set;
         }
 
-        public AudienceAnswerPollResultRetriever(ClientNetworkManager networkManager)
+        public AudienceAnswerPollResultRetriever(ClientNetworkManager networkManager, int receiveSettingsTimeoutInSeconds)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
+
+            if (receiveSettingsTimeoutInSeconds <= 0)
+            {
+                throw new ArgumentOutOfRangeException("receiveSettingsTimeoutInSeconds");
+            }
+
+            this.receiveSettingsTimeoutInSeconds = receiveSettingsTimeoutInSeconds;
 
             this.networkManager = networkManager;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnected;
@@ -127,14 +134,8 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
         }
 
-        public void Activate(int receiveSettingsTimeoutInSeconds)
+        public void Activate()
         {
-            if (receiveSettingsTimeoutInSeconds <= 0)
-            {
-                throw new ArgumentOutOfRangeException("receiveSettingsTimeoutInSeconds");
-            }
-            
-            this.receiveSettingsTimeoutInSeconds = receiveSettingsTimeoutInSeconds;
 
             var selected = NetworkCommandData.From<SelectedAudiencePollCommand>();
             this.networkManager.SendServerCommand(selected);

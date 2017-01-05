@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Extensions
 {
+
+    using System;
 
     public static class StringExtensions
     {
@@ -58,7 +58,7 @@ namespace Assets.Scripts.Utils
             {
                 result = value.ConvertTo<T>();
             }
-            catch (Exception ex)
+            catch
             {
             
             }

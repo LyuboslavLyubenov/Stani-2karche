@@ -31,7 +31,7 @@
 
         private void ReceivedBroadcastMessage(string ip, string message)
         {
-            if (message.Equals(LANServerOnlineBroadcastService.MessageIAmServer))
+            if (message.Equals(LANServerOnlineBroadcastService.BroadcastMessage))
             {
                 this.OnFound(this, new IpEventArgs(ip));
             }

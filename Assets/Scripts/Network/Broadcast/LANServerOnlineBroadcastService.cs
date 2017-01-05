@@ -5,32 +5,29 @@
 
     public class LANServerOnlineBroadcastService : LANBroadcastService
     {
-        public const string MessageIAmServer = "Stani2karcheIAmServer";
+        public const string BroadcastMessage = "Stani2karcheIAmServer";
 
         private const float TimeDelaySendServerIsOnlineInSeconds = 1f;
-
+        
+        private Timer_ExecuteMethodAfterTime timer;
+        
         public LANServerOnlineBroadcastService()
         {
             this.SendServerOnline();
-        }
 
-        private void StartTimer()
-        {
-            var timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, this.OnMessageSent);
-
+            timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, this.OnMessageSent);
             timer.RunOnUnityThread = true;
-            timer.AutoDispose = true;
         }
-
+        
         private void SendServerOnline()
         {
-            StartTimer();
-            base.BroadcastMessageAsync(MessageIAmServer, this.OnMessageSent);
+            base.BroadcastMessageAsync(BroadcastMessage, this.OnMessageSent);
         }
 
         private void OnMessageSent()
         {
-            StartTimer();
+            this.timer.Stop();
+            this.timer.Start();
         }
     }
 

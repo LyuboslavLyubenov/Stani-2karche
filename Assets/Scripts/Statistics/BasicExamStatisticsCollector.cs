@@ -27,7 +27,9 @@
             new Dictionary<ISimpleQuestion, List<Type>>();
         private Dictionary<Type, int> jokersUsedTimes = new Dictionary<Type, int>();
         private List<ISimpleQuestion> correctAnsweredQuestions = new List<ISimpleQuestion>();
-        private ISimpleQuestion lastQuestion = null
+
+        private ISimpleQuestion lastQuestion = null;
+
         private string lastSelectedAnswer = string.Empty;
         
         public IDictionary<ISimpleQuestion, List<Type>> QuestionsUsedJokers

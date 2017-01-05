@@ -9,6 +9,8 @@ namespace Assets.Scripts.Network.TcpSockets
     using System.Text;
     using System.Threading;
 
+    using Assets.Scripts.Extensions;
+
     using EventArgs;
     using SecuritySettings;
     using Utils;

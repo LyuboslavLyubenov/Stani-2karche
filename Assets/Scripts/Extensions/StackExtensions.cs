@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Assets.Scripts.Utils
+﻿namespace Assets.Scripts.Extensions
 {
+
+    using System.Collections.Generic;
 
     public static class StackExtensions
     {

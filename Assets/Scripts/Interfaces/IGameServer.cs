@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Network.Servers
+namespace Assets.Scripts.Interfaces
 {
 
     using System;

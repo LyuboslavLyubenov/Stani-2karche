@@ -1,9 +1,9 @@
 ﻿namespace Assets.Scripts.Controllers.GameController
 {
-
     using System.Collections;
 
-    using Assets.Scripts.Jokers.AskPlayerQuestion;
+    using Scripts.Jokers.AskPlayerQuestion;
+    using Network.Leaderboard;
 
     using Commands;
     using Commands.Client;
@@ -42,9 +42,7 @@
         public GameObject UnableToConnectUI;
         public GameObject ChooseCategoryUI;
         public GameObject MarkChangedConfetti;
-
-        public ClientNetworkManager NetworkManager;
-
+        
         public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
         public BasicExamPlayerTutorialUIController TutorialUIController;
         public AvailableJokersUIController AvailableJokersUIController;
@@ -61,14 +59,17 @@
         private AudienceAnswerPollResultRetriever audienceAnswerPollResultRetriever = null;
         private AskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
 
+        private LeaderboardReceiver leaderboardReceiver = null;
+        
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             PlayerPrefs.DeleteKey("LoadedGameData");
 
-            this.remoteGameDataIterator = new RemoteGameDataIterator(this.NetworkManager);
-            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(this.NetworkManager);
-            this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(this.NetworkManager);
+            this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
+            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 5);
+            this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 5);
+            this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 5);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
@@ -94,7 +95,7 @@
         {
             try
             {
-                this.NetworkManager.ConnectToHost(ip);
+                ClientNetworkManager.Instance.ConnectToHost(ip);
                 this.unableToConnectUIController.ServerIP = ip;
             }
             catch
@@ -115,11 +116,12 @@
 
         private void InitializeCommands()
         {
-            this.NetworkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI));
-            this.NetworkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
-            this.NetworkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
-            this.NetworkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, this.NetworkManager, this.QuestionUIController));
-            this.NetworkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, this.NetworkManager));
+            var networkManager = ClientNetworkManager.Instance;
+            networkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, ));
+            networkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, networkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
+            networkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, networkManager, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
+            networkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, networkManager, this.QuestionUIController));
+            networkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, networkManager));
         }
 
         private void OnLoadedGameData(object sender, EventArgs args)
@@ -135,8 +137,10 @@
 
         private void AttachEventHandlers()
         {
-            this.NetworkManager.OnConnectedEvent += this.OnConnectedToServer;
-            this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+            var networkManager = ClientNetworkManager.Instance;
+
+            networkManager.OnConnectedEvent += this.OnConnectedToServer;
+            networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
 
             this.QuestionUIController.OnAnswerClick += this.OnAnswerClick;
             this.QuestionUIController.OnQuestionLoaded += this.OnQuestionLoaded;
@@ -163,7 +167,7 @@
         {
             var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
             selectedCategoryCommand.AddOption("Category", args.Name);
-            this.NetworkManager.SendServerCommand(selectedCategoryCommand);
+            ClientNetworkManager.Instance.SendServerCommand(selectedCategoryCommand);
         }
 
         private void OnAddedJoker(object sender, JokerEventArgs args)
@@ -226,13 +230,13 @@
             this.ChooseCategoryUIController.gameObject.SetActive(false);
 
             var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
-            this.NetworkManager.SendServerCommand(commandData);
+            ClientNetworkManager.Instance.SendServerCommand(commandData);
 
             if (PlayerPrefs.HasKey("LoadedGameData"))
             {
                 var loadedGameData = NetworkCommandData.From<LoadedGameDataCommand>();
                 loadedGameData.AddOption("LevelCategory", this.remoteGameDataIterator.LevelCategory);
-                this.NetworkManager.CommandsManager.Execute(loadedGameData);
+                ClientNetworkManager.Instance.CommandsManager.Execute(loadedGameData);
                 return;
             }
 
@@ -250,7 +254,7 @@
             var commandData = new NetworkCommandData("AnswerSelected");
             commandData.AddOption("Answer", answer);
 
-            this.NetworkManager.SendServerCommand(commandData);
+            ClientNetworkManager.Instance.SendServerCommand(commandData);
 
             yield return null;
 
@@ -271,14 +275,14 @@
 
         private void StartLoadingCategories()
         {
-            var remoteCategoriesReader = new RemoteAvailableCategoriesReader(this.NetworkManager, () =>
+            var remoteCategoriesReader = new RemoteAvailableCategoriesReader(ClientNetworkManager.Instance, () =>
                 {
                     var errorMsg = LanguagesManager.Instance.GetValue("Errors/CantLoadCategories");
                     Debug.LogError(errorMsg);
                     this.ShowNotification(Color.red, errorMsg);
 
                     this.ChooseCategoryUI.SetActive(false);
-                    this.NetworkManager.Disconnect();
+                    ClientNetworkManager.Instance.Disconnect();
                 }, 10);
             
             this.ChooseCategoryUIController.gameObject.SetActive(true);
