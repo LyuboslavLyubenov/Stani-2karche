@@ -16,7 +16,7 @@
 
     using EventArgs = System.EventArgs;
 
-    public class DisableRandomAnswersJoker : IJoker
+    public class DisableRandomAnswersJoker : IJoker, IDisposable
     {
         private const int SettingsReceiveTimeoutInSeconds = 5;
 
@@ -149,6 +149,13 @@
             }
 
             this.Activated = true;
+        }
+
+        public void Dispose()
+        {
+            this.receiveSettingsTimeoutTimer.Stop();
+            this.receiveSettingsTimeoutTimer.Dispose();
+            this.receiveSettingsTimeoutTimer = null;
         }
     }
 }

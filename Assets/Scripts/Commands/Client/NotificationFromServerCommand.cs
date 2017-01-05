@@ -9,7 +9,7 @@
     using Interfaces;
     using Notifications;
 
-    public class ReceivedNotificationFromServerCommand : INetworkManagerCommand
+    public class NotificationFromServerCommand : INetworkManagerCommand
     {
         private readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
                                                            {
@@ -35,7 +35,7 @@
 
         private NotificationsServiceController notificationsService;
 
-        public ReceivedNotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
+        public NotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
         {
             if (notificationsServiceController == null)
             {

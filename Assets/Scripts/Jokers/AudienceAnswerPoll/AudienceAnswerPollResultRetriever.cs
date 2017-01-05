@@ -15,7 +15,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
     using EventArgs = System.EventArgs;
 
-    public class AudienceAnswerPollResultRetriever : MonoBehaviour
+    public class AudienceAnswerPollResultRetriever : IDisposable
     {
         public const int MinClientsForOnlineVote_Release = 4;
         public const int MinClientsForOnlineVote_Development = 1;
@@ -154,6 +154,13 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             {
                 this.OnActivated(this, EventArgs.Empty);
             }
+        }
+
+        public void Dispose()
+        {
+            this.timer.Stop();
+            this.timer.Dispose();
+            this.timer = null;
         }
     }
 

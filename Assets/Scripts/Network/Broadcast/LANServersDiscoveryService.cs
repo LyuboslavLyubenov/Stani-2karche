@@ -38,5 +38,14 @@
             
             this.timer.Reset();
         }
+
+        public override void Dispose()
+        {
+            this.timer.Stop();
+            this.timer.Dispose();
+            this.timer = null;
+
+            base.Dispose();
+        }
     }
 }

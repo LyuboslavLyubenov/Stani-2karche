@@ -22,7 +22,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class AudienceAnswerPollRouter
+    public class AudienceAnswerPollRouter : IDisposable
     {
         public const int MinTimeToAnswerInSeconds = 10;
 
@@ -336,6 +336,13 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                         this.Deactivate();
                         this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
                     });
+        }
+
+        public void Dispose()
+        {
+            this.updateTimeTimer.Stop();
+            this.updateTimeTimer.Dispose();
+            this.updateTimeTimer = null;
         }
     }
 

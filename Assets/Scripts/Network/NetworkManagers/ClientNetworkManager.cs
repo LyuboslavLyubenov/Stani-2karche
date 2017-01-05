@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Timers;
 
+    using Assets.CielaSpike.Thread_Ninja;
     using Assets.Scripts.Extensions;
 
     using Commands;
@@ -22,7 +23,7 @@
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class ClientNetworkManager
+    public class ClientNetworkManager : IDisposable
     {
         public const int Port = 7788;
 
@@ -34,8 +35,7 @@
         private const int MaxConnectionAttempts = 3;
         private const int MaxServerReactionTimeInSeconds = 6;
         private const int MaxNetworkErrorsBeforeDisconnect = 5;
-
-        public NotificationsServiceController NotificationsServiceController;
+        
         public bool ShowDebugMenu = false;
 
         private int connectionId = 0;
@@ -51,7 +51,7 @@
 
         private ValueWrapper<int> serverConnectedClientsCount = new ValueWrapper<int>();
 
-        private float elapsedTimeSinceNetworkError = 0;
+        private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
 
         private static ClientNetworkManager instance;
@@ -115,6 +115,7 @@
         private Timer keepAliveTimer;
         private Timer connectedClientsCountTimer;
         private Timer receiveNetworkMessagesTimer;
+        private Timer validateConnectionTimer;
 
         public ClientNetworkManager()
         {
@@ -144,16 +145,21 @@
             this.receiveNetworkMessagesTimer =
                 TimerUtils.ExecuteEvery(ReceiveNetworkMessagesDelayInSeconds, this.ReceiveMessages);
 
+            this.validateConnectionTimer = 
+                TimerUtils.ExecuteEvery(1f, this.ValidateConnection);
+
             ((IExtendedTimer)this.keepAliveTimer).RunOnUnityThread = true;
             ((IExtendedTimer)this.connectedClientsCountTimer).RunOnUnityThread = true;
             ((IExtendedTimer)this.receiveNetworkMessagesTimer).RunOnUnityThread = true;
+            ((IExtendedTimer)this.validateConnectionTimer).RunOnUnityThread = true;
 
             this.keepAliveTimer.Start();
             this.connectedClientsCountTimer.Start();
             this.receiveNetworkMessagesTimer.Start();
+            this.validateConnectionTimer.Start();
         }
 
-        private void Update()
+        private void ValidateConnection()
         {
             if (!this.IsConnected)
             {
@@ -171,7 +177,7 @@
                 this.networkErrorsCount = 0;
             }
 
-            this.elapsedTimeSinceNetworkError += Time.deltaTime;
+            this.elapsedTimeSinceNetworkError++;
         }
 
         private void ConfigureClient()
@@ -183,11 +189,8 @@
 
         private void ConfigureCommands()
         {
-            if (this.NotificationsServiceController != null)
-            {
-                this.commandsManager.AddCommand("ShowNotification", new ReceivedNotificationFromServerCommand(this.NotificationsServiceController));
-            }
-
+            this.commandsManager.AddCommand("ShowNotification", new NotificationFromServerCommand(NotificationsServiceController.Instance));
+            
             var allowedToConnect = new DummyCommand();
             allowedToConnect.OnExecuted += (sender, args) =>
                 {
@@ -222,10 +225,7 @@
 
         private void ShowNotification(Color color, string message)
         {
-            if (this.NotificationsServiceController != null)
-            {
-                this.NotificationsServiceController.AddNotification(color, message);
-            }
+            NotificationsServiceController.Instance.AddNotification(color, message);
         }
 
         private void ReceiveMessages()
@@ -337,7 +337,7 @@
 
                 yield return null;
             }
-
+            
             if (!this.IsConnected)
             {
                 this.Disconnect();
@@ -350,9 +350,7 @@
             {
                 throw new ArgumentException("Invalid ipv4 address");
             }
-
-            Debug.Log("Connecting to " + ip);
-
+            
             if (this.IsConnected)
             {
                 this.Disconnect();
@@ -374,9 +372,8 @@
             }
             else
             {
-                //TODO
                 this.isRunning = true;
-                //this.StartCoroutine(this.CheckCommandAllowedToConnectReceivedCoroutine());
+                ThreadUtils.Instance.RunOnMainThread(this.CheckCommandAllowedToConnectReceivedCoroutine());
             }
         }
 
@@ -431,10 +428,28 @@
                 });
         }
 
+        public void Dispose()
+        {
+            this.keepAliveTimer.Stop();
+            this.connectedClientsCountTimer.Stop();
+            this.receiveNetworkMessagesTimer.Stop();
+            this.validateConnectionTimer.Stop();
+
+            this.keepAliveTimer.Dispose();
+            this.connectedClientsCountTimer.Dispose();
+            this.receiveNetworkMessagesTimer.Dispose();
+            this.validateConnectionTimer.Dispose();
+
+            this.keepAliveTimer = null;
+            this.connectedClientsCountTimer = null;
+            this.receiveNetworkMessagesTimer = null;
+            this.validateConnectionTimer = null;
+        }
 
         #region DEBUG
 
         private string debug_connectIp = "(example 127.0.0.1)";
+
 
         private void OnGUI()
         {
@@ -459,5 +474,6 @@
         }
 
         #endregion
+
     }
 }

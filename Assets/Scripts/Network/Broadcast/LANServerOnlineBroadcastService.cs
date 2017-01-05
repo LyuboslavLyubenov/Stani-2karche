@@ -1,5 +1,8 @@
 ﻿namespace Assets.Scripts.Network.Broadcast
 {
+
+    using System;
+
     using Extensions;
     using Utils;
 
@@ -26,6 +29,15 @@
         private void OnMessageSent()
         {
             this.timer.Reset();
+        }
+
+        public override void Dispose()
+        {
+            this.timer.Stop();
+            this.timer.Dispose();
+            this.timer = null;
+
+            base.Dispose();
         }
     }
 

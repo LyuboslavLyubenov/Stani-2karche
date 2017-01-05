@@ -49,7 +49,17 @@
                 methodToRun();    
             }
         }
+
+        public void CancelThread(IEnumerator coroutine)
+        {
+            this.StopCoroutine(coroutine);
+        }
         
+        public void RunOnMainThread(IEnumerator coroutine)
+        {
+            this.StartCoroutine(coroutine);
+        }
+
         public void RunOnMainThread(Action method)
         {
             lock (this.myLock)

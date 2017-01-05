@@ -18,7 +18,7 @@ namespace Assets.Scripts.Network.TcpSockets
     using Debug = UnityEngine.Debug;
     using Timer = System.Timers.Timer;
 
-    public class SimpleTcpServer
+    public class SimpleTcpServer : IDisposable
     {
         private const int MessageBuffer = 1024;
 

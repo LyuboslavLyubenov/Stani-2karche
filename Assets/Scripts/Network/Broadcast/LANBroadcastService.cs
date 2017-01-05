@@ -1,5 +1,7 @@
 ﻿namespace Assets.Scripts.Network.Broadcast
 {
+
+    using System;
     using System.Collections;
     using System.Net;
     using System.Net.Sockets;
@@ -10,7 +12,7 @@
     using Utils;
     using SecuritySettings;
 
-    public abstract class LANBroadcastService
+    public abstract class LANBroadcastService : IDisposable
     {
         private const int Port = 7771;
 
@@ -64,12 +66,6 @@
 
             onReceivedMessage(receivedEndPoint.Address.GetIPAddress(), messageDecrypted);
         }
-        
-        protected virtual void Dispose()
-        {
-            this.udpClient.Close();
-            this.udpClient = null;
-        }
 
         protected void BroadcastMessageAsync(string message, OnSentMessage onSentMessage = null)
         {
@@ -79,6 +75,13 @@
         protected void ReceiveBroadcastMessageAsync(OnReceivedMessage onReceivedMessage)
         {
             ThreadUtils.Instance.RunOnBackgroundThread(this.ReceiveMessageCoroutine(onReceivedMessage));
+        }
+
+        
+        public virtual void Dispose()
+        {
+            this.udpClient.Close();
+            this.udpClient = null;
         }
     }
 

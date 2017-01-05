@@ -16,7 +16,7 @@
 
     using EventArgs = System.EventArgs;
 
-    public class LeaderboardReceiver
+    public class LeaderboardReceiver : IDisposable
     {
         public event EventHandler<LeaderboardDataEventArgs> OnReceived = delegate
             { };
@@ -68,12 +68,9 @@
         {
             this.networkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
             this.networkManager.CommandsManager.RemoveCommand("LeaderboardNoMoreEntities");
-
-            this.updateElapsedTimeTimer.Stop();
-            this.updateElapsedTimeTimer.Dispose();
-            this.updateElapsedTimeTimer = null;
         }
-        
+
+
         private void UpdateElapsedTime()
         {
             if (!this.Receiving)
@@ -126,6 +123,13 @@
             }
             
             this.StartReceiving();
+        }
+
+        public void Dispose()
+        {
+            this.updateElapsedTimeTimer.Stop();
+            this.updateElapsedTimeTimer.Dispose();
+            this.updateElapsedTimeTimer = null;
         }
     }
 }

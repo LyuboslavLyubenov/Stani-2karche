@@ -1,14 +1,11 @@
-﻿// ReSharper disable ArrangeTypeMemberModifiers
-namespace Assets.Scripts.Network.NetworkManagers
+﻿namespace Assets.Scripts.Network.NetworkManagers
 {
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Timers;
-
-    using CielaSpike.Thread_Ninja;
-
+    
     using Broadcast;
 
     using Commands;
@@ -27,7 +24,7 @@ namespace Assets.Scripts.Network.NetworkManagers
 
     using Debug = UnityEngine.Debug;
 
-    public class ServerNetworkManager
+    public class ServerNetworkManager : IDisposable
     {
         private const int Port = 7788;
 
@@ -138,7 +135,7 @@ namespace Assets.Scripts.Network.NetworkManagers
             ((IExtendedTimer)this.updateAliveClientsTimer).RunOnUnityThread = true;
             this.updateAliveClientsTimer.Start();
 
-            ThreadUtils.Instance.RunOnBackgroundThread(UpdateCoroutine());
+            ThreadUtils.Instance.RunOnMainThread(this.ReceiveMessagesCoroutine());
         }
         
         private void ConfigureServer()
@@ -156,22 +153,20 @@ namespace Assets.Scripts.Network.NetworkManagers
             this.commandsManager.AddCommand(new ServerSendConnectedClientsIdsNamesCommand(this, this.connectedClientsNames));
         }
 
-        private IEnumerator UpdateCoroutine()
+        private IEnumerator ReceiveMessagesCoroutine()
         {
-            yield return Ninja.JumpToUnity;
-
             while (true)
             {
                 if (this.isRunning)
                 {
-                    this.UpdateServer();
+                    this.ReceiveMessage();
                 }
 
                 yield return null;
             }
         }
 
-        private void UpdateServer()
+        private void ReceiveMessage()
         {
             NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedDataFromClientAsync, (exception) =>
                 {
@@ -237,7 +232,7 @@ namespace Assets.Scripts.Network.NetworkManagers
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(e.Message);
+                    Debug.LogWarning(e.Message);
                 }
 
                 this.connectedClientsNames.Remove(deadClientConnectionId);
@@ -323,7 +318,7 @@ namespace Assets.Scripts.Network.NetworkManagers
             }
             catch (Exception ex)
             {
-                Debug.Log(ex.Message);
+                Debug.LogWarning(ex.Message);
             }
 
             if (commmandData != null)
@@ -505,6 +500,15 @@ namespace Assets.Scripts.Network.NetworkManagers
             return this.connectedClientsIds.Contains(connectionId);
         }
 
+        public void Dispose()
+        {
+            this.updateAliveClientsTimer.Stop();
+            this.updateAliveClientsTimer.Dispose();
+            this.updateAliveClientsTimer = null;
+
+            ThreadUtils.Instance.CancelThread(this.ReceiveMessagesCoroutine());
+        }
+
         #region DEBUG_MENU
 
         public bool ShowDebugMenu;
@@ -557,5 +561,4 @@ namespace Assets.Scripts.Network.NetworkManagers
 
         #endregion
     }
-
 }

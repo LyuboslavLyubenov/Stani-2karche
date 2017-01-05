@@ -49,7 +49,5 @@ namespace Assets.Scripts.Jokers
 
             this.OnActivated(this, EventArgs.Empty);
         }
-
     }
-
 }
