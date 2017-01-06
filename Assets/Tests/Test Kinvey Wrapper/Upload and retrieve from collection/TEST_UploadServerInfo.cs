@@ -3,12 +3,11 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
 {
 
     using Assets.Scripts.DTOs.KinveySerializableObj;
+    using Assets.Scripts.Network.Servers;
 
     using UnityEngine;
 
-    using Scripts;
     using Scripts.DTOs;
-    using Scripts.Enums;
     using Scripts.Network;
     using Scripts.Utils.Unity;
 
@@ -42,7 +41,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
             var gameInfo = new CreatedGameInfo_DTO()
             {
                 ServerInfo = serverInfo,
-                GameType = GameType.BasicExam,
+                GameTypeFullName = typeof(BasicExamServer).FullName,
                 HostUsername = "ivan gotiniq"
             };
 

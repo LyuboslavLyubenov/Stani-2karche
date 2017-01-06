@@ -10,17 +10,9 @@ namespace Assets.Scripts.DTOs
     public class MainPlayerData : IPlayerData
     {
 
-        public EventHandler<ClientConnectionDataEventArgs> OnConnected
-        {
-            get;
-            set;
-        }
+        public event EventHandler<ClientConnectionDataEventArgs> OnConnected = delegate { };
 
-        public EventHandler<ClientConnectionDataEventArgs> OnDisconnected
-        {
-            get;
-            set;
-        }
+        public event EventHandler<ClientConnectionDataEventArgs> OnDisconnected = delegate { };
 
         public JokersData JokersData
         {
@@ -52,7 +44,7 @@ namespace Assets.Scripts.DTOs
                 return this.networkManager.GetClientUsername(this.ConnectionId);
             }
         }
-        
+
         private ServerNetworkManager networkManager;
 
         public MainPlayerData(ServerNetworkManager networkManager)
@@ -90,6 +82,7 @@ namespace Assets.Scripts.DTOs
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
 
             this.IsConnected = false;
+
             this.OnDisconnected(this, args);
         }
 

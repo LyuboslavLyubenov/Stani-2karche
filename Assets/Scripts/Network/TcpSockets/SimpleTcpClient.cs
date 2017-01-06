@@ -16,7 +16,7 @@
 
     using Debug = UnityEngine.Debug;
 
-    public class SimpleTcpClient
+    public class SimpleTcpClient : IDisposable
     {
         private const int ReceiveMessageTimeoutInMiliseconds = 1000;
         private const int SendMessageTimeoutInMiliseconds = 1000;

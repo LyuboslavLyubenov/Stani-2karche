@@ -22,16 +22,13 @@ namespace Assets.Scripts.Commands.Jokers
 
         private DisableRandomAnswersJokerRouter jokerRouter;
 
-        private ServerNetworkManager networkManager;
-
         private int answersToDisableCount;
 
         private Type jokerType;
 
         public SelectedDisableRandomAnswersJokerCommand(
             MainPlayerData mainPlayerData, 
-            DisableRandomAnswersJokerRouter jokerRouter, 
-            ServerNetworkManager networkManager,
+            DisableRandomAnswersJokerRouter jokerRouter,
             int answersToDisableCount
             )
         {
@@ -45,14 +42,9 @@ namespace Assets.Scripts.Commands.Jokers
                 throw new ArgumentNullException("jokerRouter");
             }
             
-            if (networkManager == null)
-            {
-                throw new ArgumentNullException("networkManager");
-            }
             
             this.mainPlayerData = mainPlayerData;
             this.jokerRouter = jokerRouter;
-            this.networkManager = networkManager;
             this.answersToDisableCount = answersToDisableCount;
             this.jokerType = typeof(DisableRandomAnswersJoker);
         }
@@ -67,7 +59,7 @@ namespace Assets.Scripts.Commands.Jokers
             }
 
             this.mainPlayerData.JokersData.RemoveJoker(this.jokerType);
-            this.jokerRouter.Activate(this.answersToDisableCount, this.mainPlayerData, this.networkManager);
+            this.jokerRouter.Activate(this.answersToDisableCount);
 
             if (this.OnExecuted != null)
             {

@@ -5,12 +5,19 @@ namespace Assets.Scripts.Jokers
 
     using Commands;
     using Interfaces;
+
+    using JetBrains.Annotations;
+
     using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
     public class DisableRandomAnswersJokerRouter
     {
+        private readonly ServerNetworkManager networkManager;
+
+        private readonly IPlayerData playerData;
+
         public EventHandler OnActivated = delegate
             {
             };
@@ -19,26 +26,27 @@ namespace Assets.Scripts.Jokers
             {
             };
 
-        public DisableRandomAnswersJokerRouter()
+        public DisableRandomAnswersJokerRouter(ServerNetworkManager networkManager, IPlayerData playerData)
         {
-            
-        }
-
-        public void Activate(int answersToDisableCount, IPlayerData playerData, ServerNetworkManager networkManager)
-        {
-            if (answersToDisableCount < 0)
+            if (networkManager == null)
             {
-                throw new ArgumentOutOfRangeException("answersToDisableCount");
+                throw new ArgumentNullException("networkManager");
             }
 
             if (playerData == null)
             {
                 throw new ArgumentNullException("playerData");
             }
+            
+            this.networkManager = networkManager;
+            this.playerData = playerData;
+        }
 
-            if (networkManager == null)
+        public void Activate(int answersToDisableCount)
+        {
+            if (answersToDisableCount < 0)
             {
-                throw new ArgumentNullException("networkManager");
+                throw new ArgumentOutOfRangeException("answersToDisableCount");
             }
 
             var settingsCommand = new NetworkCommandData("DisableRandomAnswersJokerSettings");

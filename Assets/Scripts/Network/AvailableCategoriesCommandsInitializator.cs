@@ -13,7 +13,7 @@
 
         public static void Initialize(ServerNetworkManager networkManager, GameDataExtractor extractor, LeaderboardSerializer leaderboard)
         {
-            networkManager.CommandsManager.AddCommand(new GetAllAvailableCategoriesCommand(networkManager));
+            networkManager.CommandsManager.AddCommand(new GetAvailableCategoriesCommand(networkManager));
             networkManager.CommandsManager.AddCommand(new SelectedCategoryCommand(extractor, leaderboard));
         }
     }

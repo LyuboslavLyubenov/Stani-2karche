@@ -143,7 +143,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             var receiveSettingsCommand = new AudiencePollSettingsCommand(this.OnReceivedJokerSettings);
             this.networkManager.CommandsManager.AddCommand(receiveSettingsCommand);
 
-            this.timer = TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds, this.Timer_OnReceiveSettingsTimeout);
+            this.timer = TimerUtils.ExecuteAfter(this.receiveSettingsTimeoutInSeconds, this.Timer_OnReceiveSettingsTimeout);
             this.timer.Start();
 
             ((IExtendedTimer)this.timer).RunOnUnityThread = true;

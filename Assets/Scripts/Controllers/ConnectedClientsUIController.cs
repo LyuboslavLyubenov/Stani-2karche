@@ -31,7 +31,8 @@
 
         private Dictionary<int, Transform> connectionIdClientElement = new Dictionary<int, Transform>();
 
-        private void Start()
+        // ReSharper disable once ArrangeTypeMemberModifiers
+        void Start()
         {
             var connectedClientDataPrefab = Resources.Load<GameObject>("Prefabs/ConnectedClientElementData");
             var rectTransform = connectedClientDataPrefab.GetComponent<RectTransform>();
@@ -97,7 +98,7 @@
             var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
             var clientData = new ConnectedClientData(connectionId, username);
             var connectedClientElementController = connectedClientElement.GetComponent<ConnectedClientDataElementUIController>();
-            this.CoroutineUtils.WaitForFrames(0, () => connectedClientElementController.Fill(clientData));
+            this.CoroutineUtils.WaitForFrames(1, () => connectedClientElementController.Fill(clientData));
         
             var button = connectedClientElement.transform.GetComponent<Button>();
             button.onClick.AddListener(this.ClickedOnPlayer);

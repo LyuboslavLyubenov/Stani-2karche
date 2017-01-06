@@ -1,6 +1,9 @@
 ﻿namespace Assets.Scripts.Controllers.GameController
 {
+    using System;
     using System.Collections;
+
+    using Assets.Scripts.Utils;
 
     using Scripts.Jokers.AskPlayerQuestion;
     using Network.Leaderboard;
@@ -28,7 +31,7 @@
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class BasicExamMainPlayerController : ExtendedMonoBehaviour
+    public class BasicExamMainPlayerController : ExtendedMonoBehaviour, IDisposable
     {
         private const string ServerBinaryName = "stani2karcheserver";
 
@@ -65,6 +68,8 @@
         void Start()
         {
             PlayerPrefs.DeleteKey("LoadedGameData");
+
+            var threadUtils = ThreadUtils.Instance;
 
             this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
             this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 5);
@@ -166,7 +171,7 @@
 
         private void OnChoosedCategory(object sender, ChoosedCategoryEventArgs args)
         {
-            var selectedCategoryCommand = new NetworkCommandData("SelectedCategory");
+            var selectedCategoryCommand = NetworkCommandData.From<SelectedCategoryCommand>();
             selectedCategoryCommand.AddOption("Category", args.Name);
             ClientNetworkManager.Instance.SendServerCommand(selectedCategoryCommand);
         }
@@ -204,14 +209,14 @@
         private void OnActivateSceneChanged(Scene oldScene, Scene newScene)
         {
             this.KillLocalServer();
-            this.CleanUp();
+            this.Dispose();
             SceneManager.activeSceneChanged -= this.OnActivateSceneChanged;
         }
 
         private void OnApplicationQuit()
         {
             this.KillLocalServer();
-            this.CleanUp();
+            this.Dispose();
         }
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
@@ -299,13 +304,7 @@
                 SceneManager.activeSceneChanged += this.OnActivateSceneChanged;
             }
         }
-
-        private void CleanUp()
-        {
-            PlayerPrefs.DeleteKey("LoadedGameData");
-            PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
-        }
-
+        
         private void KillLocalServer()
         {
             if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
@@ -318,6 +317,20 @@
                 }
             }
         }
-    }
 
+        public void Dispose()
+        {
+            this.audienceAnswerPollResultRetriever.Dispose();
+            this.askPlayerQuestionResultRetriever.Dispose();
+            this.leaderboardReceiver.Dispose();
+
+            this.remoteGameDataIterator = null;
+            this.audienceAnswerPollResultRetriever = null;
+            this.askPlayerQuestionResultRetriever = null;
+            this.leaderboardReceiver = null;
+
+            PlayerPrefs.DeleteKey("LoadedGameData");
+            PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
+        }
+    }
 }

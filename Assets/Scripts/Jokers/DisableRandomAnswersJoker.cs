@@ -116,7 +116,7 @@
                 this.questionUIController.HideAnswer(disabledAnswerIndex);
             }
 
-            DisposeTimer();
+            this.Dispose();
 
             if (OnFinishedExecution != null)
             {

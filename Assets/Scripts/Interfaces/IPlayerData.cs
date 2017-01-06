@@ -7,17 +7,9 @@ namespace Assets.Scripts.Interfaces
 
     public interface IPlayerData
     {
-        EventHandler<ClientConnectionDataEventArgs> OnConnected
-        {
-            get;
-            set;
-        }
+        event EventHandler<ClientConnectionDataEventArgs> OnConnected;
 
-        EventHandler<ClientConnectionDataEventArgs> OnDisconnected
-        {
-            get;
-            set;
-        }
+        event EventHandler<ClientConnectionDataEventArgs> OnDisconnected;
 
         bool IsConnected
         {

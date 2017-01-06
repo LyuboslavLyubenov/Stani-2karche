@@ -16,7 +16,7 @@ namespace Assets.Tests.Test_receive_available_categories
 
         private void Start()
         {
-            this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new GetAllAvailableCategoriesCommand(this.NetworkManager));
+            this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new GetAvailableCategoriesCommand(this.NetworkManager));
             this.NetworkManager.CommandsManager.AddCommand("SelectedCategory", new SelectedCategoryCommand(this.GameData, this.Leaderboard));
         }
     }

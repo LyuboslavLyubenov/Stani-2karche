@@ -19,11 +19,32 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
     public class AskPlayerQuestionRouter : IDisposable
     {
+        public const int MinTimeToAnswerInSeconds = 10;
+
+        public event EventHandler OnActivated = delegate
+        {
+        };
+
+        public event EventHandler OnSent = delegate
+        {
+        };
+
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+        {
+        };
+
+        public bool Active
+        {
+            get
+            {
+                return this.active;
+            }
+        }
+
         private readonly ServerNetworkManager networkManager;
 
         private readonly GameDataIterator gameDataIterator;
 
-        public const int MinTimeToAnswerInSeconds = 10;
 
         private const float ChanceToGenerateCorrectAnswer = 0.8f;
         private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
@@ -36,26 +57,6 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         private bool active = false;
 
         private Timer_ExecuteMethodEverySeconds updateTimeTimer;
-
-        public bool Active
-        {
-            get
-            {
-                return this.active;
-            }
-        }
-
-        public event EventHandler OnActivated = delegate
-            {
-            };
-
-        public event EventHandler OnSent = delegate
-            {
-            };
-
-        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
-            {
-            };
 
         public AskPlayerQuestionRouter(ServerNetworkManager networkManager, GameDataIterator gameDataIterator)
         {
@@ -200,11 +201,10 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             {
                 throw new ArgumentOutOfRangeException("timeToAnswerInSeconds", "Time must be minimum " + MinTimeToAnswerInSeconds + " seconds");
             }
-
-            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
-
+            
             this.senderConnectionId = senderConnectionId;
             this.friendConnectionId = friendConnectionId;
+            this.timeToAnswerInSeconds = timeToAnswerInSeconds;
 
             this.SendJokerSettings(senderConnectionId);
 
@@ -237,5 +237,4 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.updateTimeTimer = null;
         }
     }
-
 }

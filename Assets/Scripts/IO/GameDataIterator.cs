@@ -124,9 +124,23 @@
         private ExtractedQuestion currentQuestion = null;
         private readonly GameDataExtractor extractor;
 
-        public GameDataIterator()
+        public GameDataIterator(GameDataExtractor extractor)
         {
-            this.extractor = new GameDataExtractor();
+            if (extractor == null)
+            {
+                throw new ArgumentNullException("extractor");
+            }
+
+            this.extractor = extractor;
+            this.extractor.OnLoaded += this.OnLoadedGameData;
+        }
+
+        private void OnLoadedGameData(object sender, EventArgs args)
+        {
+            if (OnLoaded != null)
+            {
+                OnLoaded(this, EventArgs.Empty);
+            }
         }
 
         private ISimpleQuestion _GetCurrentQuestion()

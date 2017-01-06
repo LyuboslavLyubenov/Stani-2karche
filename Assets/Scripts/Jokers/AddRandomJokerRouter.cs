@@ -8,6 +8,9 @@ namespace Assets.Scripts.Jokers
     using Commands.Jokers.Add;
     using DTOs;
     using Interfaces;
+
+    using JetBrains.Annotations;
+
     using Network.NetworkManagers;
     using Utils;
 
@@ -19,9 +22,26 @@ namespace Assets.Scripts.Jokers
             {
             };
 
-        public ServerNetworkManager NetworkManager;
+        private readonly ServerNetworkManager networkManager;
+        private readonly JokersData jokersData;
 
-        public void Activate(int playerConnectionId, Type[] jokersToSelectFrom, JokersData jokersData)
+        public AddRandomJokerRouter(ServerNetworkManager networkManager, JokersData jokersData)
+        {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (jokersData == null)
+            {
+                throw new ArgumentNullException("jokersData");
+            }
+            
+            this.networkManager = networkManager;
+            this.jokersData = jokersData;
+        }
+
+        public void Activate(int playerConnectionId, Type[] jokersToSelectFrom)
         {
             var jokerInterfaceType = typeof(IJoker);
             var areAllJokers = jokersToSelectFrom.All(j => j.GetInterface(jokerInterfaceType.Name) != null);
@@ -45,7 +65,7 @@ namespace Assets.Scripts.Jokers
             command.AddOption("JokersTypeNamesJSON", jokersTypeNamesJSON);
             command.AddOption("SelectedJokerIndex", selectedJokerIndex.ToString());
 
-            this.NetworkManager.SendClientCommand(playerConnectionId, command);
+            this.networkManager.SendClientCommand(playerConnectionId, command);
 
             this.OnActivated(this, EventArgs.Empty);
         }

@@ -1,4 +1,5 @@
 ﻿//Mediator
+// ReSharper disable ArrangeTypeMemberModifiers
 namespace Assets.Scripts.Controllers.GameController
 {
 
@@ -26,8 +27,7 @@ namespace Assets.Scripts.Controllers.GameController
         public GameObject UnableToConnectUI;
         public GameObject SecondsRemainingUI;
         public GameObject MainPlayerDialogUI;
-
-        public NotificationsServiceController NotificationsController;
+        
         public SecondsRemainingUIController SecondsRemainingUIController;
         public DialogController MainPlayerDialogController;
 
@@ -37,7 +37,6 @@ namespace Assets.Scripts.Controllers.GameController
 
         private LeaderboardReceiver leaderboardReceiver;
 
-        // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -48,6 +47,12 @@ namespace Assets.Scripts.Controllers.GameController
             this.LoadCommands();
             this.AttachEventsHooks();
             this.ConnectToServer();
+        }
+
+        void OnApplicationQuit()
+        {
+            this.leaderboardReceiver.Dispose();
+            this.leaderboardReceiver = null;
         }
 
         private void ConnectToServer()
@@ -74,7 +79,7 @@ namespace Assets.Scripts.Controllers.GameController
 
         private void LoadCommands()
         {
-            var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, this.NotificationsController);
+            var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, NotificationsServiceController.Instance);
             var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
             var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, leaderboardReceiver);
 
@@ -146,7 +151,7 @@ namespace Assets.Scripts.Controllers.GameController
             {
                 var error = (NetworkConnectionError)e.ErrorN;
                 var errorMessage = NetworkErrorUtils.GetMessage(error);
-                this.NotificationsController.AddNotification(Color.red, errorMessage);
+                NotificationsServiceController.Instance.AddNotification(Color.red, errorMessage);
             }
         }
 
@@ -160,7 +165,7 @@ namespace Assets.Scripts.Controllers.GameController
             {
                 var error = (NetworkConnectionError)e.ErrorN;
                 var errorMessage = NetworkErrorUtils.GetMessage(error);
-                this.NotificationsController.AddNotification(Color.red, errorMessage);
+                NotificationsServiceController.Instance.AddNotification(Color.red, errorMessage);
             }
         }
     }

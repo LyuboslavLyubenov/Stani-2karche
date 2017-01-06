@@ -5,7 +5,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     using System.Linq;
     using System.Timers;
 
-    using Assets.Scripts.Utils;
+    using Utils;
 
     using UnityEngine;
 
@@ -80,8 +80,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             {
                 throw new ArgumentNullException("gameDataIterator");
             }
-
-
+            
             this.networkManager = networkManager;
             this.gameDataIterator = gameDataIterator;
 
@@ -305,12 +304,12 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                 throw new ArgumentNullException();
             }
 
+
+            this.senderConnectionId = senderConnectionId;
             this.timeToAnswerInSeconds = timeToAnswerInSeconds;
 
             var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
 
-            this.senderConnectionId = senderConnectionId;
-            
             if (this.networkManager.ConnectedClientsCount < minClients)
             {
                 this.answersVotes.Clear();

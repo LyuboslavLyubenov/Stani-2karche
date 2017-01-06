@@ -19,7 +19,7 @@ namespace Assets.Scripts.IO
 
     public class GameDataExtractor
     {
-        public const string LevelPath = "LevelData\\теми\\";
+        public const string LevelPath = "LevelData\\С‚РµРјРё\\";
         public const int QuestionsStartRow = 5;
 
         private const int DefaultSecondsForAnswerQuestion = 60;
@@ -27,8 +27,9 @@ namespace Assets.Scripts.IO
         private const int DefaultQuestionToTakePerMark = int.MaxValue;
 
         private readonly JExcelCellPosition QuestionsToTakePosition = new JExcelCellPosition(1, 1);
-
         private readonly JExcelCellPosition SecondsForAnswerQuestionPosition = new JExcelCellPosition(3, 1);
+
+        public event EventHandler OnLoaded = delegate { };
 
         /// <summary>
         /// If true questions for given marks are aways with random order
@@ -56,9 +57,7 @@ namespace Assets.Scripts.IO
             get;
             private set;
         }
-
-        public event EventHandler OnLoaded = delegate { };
-
+        
         public int MaxMarkIndex
         {
             get
@@ -68,7 +67,6 @@ namespace Assets.Scripts.IO
         }
 
         private readonly List<ISimpleQuestion[]> marksQuestions = new List<ISimpleQuestion[]>();
-
         private readonly List<int> secondsForAnswerQuestionPerMark = new List<int>();
 
         private IEnumerator ExtractDataAsyncCoroutine(Action<Exception> onError)
@@ -214,7 +212,7 @@ namespace Assets.Scripts.IO
                 
                 var isCorrect = sheet.GetCellOrDefault(1, answersRowI)
                     .getContents()
-                    .ToUpperInvariant() == ("верен").ToUpperInvariant();
+                    .ToUpperInvariant() == ("РІРµСЂРµРЅ").ToUpperInvariant();
 
                 answers.Add(answerText);
 
