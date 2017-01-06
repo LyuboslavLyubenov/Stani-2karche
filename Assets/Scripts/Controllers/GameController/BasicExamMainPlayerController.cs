@@ -266,7 +266,7 @@
 
             if (isCorrect)
             {
-                this.remoteGameDataIterator.GetCurrentQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
+                this.remoteGameDataIterator.GetNextQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
             }
             else
             {

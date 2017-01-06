@@ -12,6 +12,8 @@
     using Interfaces;
     using AskPlayerQuestion;
 
+    using Assets.Scripts.Commands.Server;
+
     using DTOs;
     using Exceptions;
     using Network.NetworkManagers;
@@ -25,6 +27,18 @@
     public class HelpFromFriendJoker : IJoker
     {
         public event EventHandler<AnswerEventArgs> OnFriendAnswered = delegate
+            {
+            };
+
+        public event EventHandler OnActivated = delegate
+            {
+            };
+
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+            {
+            };
+
+        public event EventHandler OnFinishedExecution = delegate
             {
             };
 
@@ -44,26 +58,20 @@
             private set;
         }
 
-        public event EventHandler OnActivated;
-
-        public event EventHandler<UnhandledExceptionEventArgs> OnError;
-
-        public event EventHandler OnFinishedExecution;
-
         public bool Activated
         {
             get;
             private set;
         }
 
-        public HelpFromFriendJoker(ClientNetworkManager networkManager, 
-                                   AskPlayerQuestionResultRetriever resultRetriever, 
-                                   GameObject callAFriendUI, 
-                                   GameObject friendAnswerUI, 
+        public HelpFromFriendJoker(ClientNetworkManager networkManager,
+                                   AskPlayerQuestionResultRetriever resultRetriever,
+                                   GameObject callAFriendUI,
+                                   GameObject friendAnswerUI,
                                    GameObject waitingToAnswerUI,
                                    GameObject loadingUI)
         {
-            
+
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
@@ -108,7 +116,7 @@
 
             this.loadingUI.SetActive(false);
             this.callAFriendUI.SetActive(true);
-        
+
             this.callAFriendUIController.SetContacts(connectedClientsIdsNames);
             this.callAFriendUIController.OnCalledPlayer += this.OnCalledPlayer;
         }
@@ -118,7 +126,6 @@
             this.callAFriendUI.SetActive(false);
             this.loadingUI.SetActive(true);
             
-        
             this.resultRetriever.OnReceivedSettings += this.OnReceivedSettings;
             this.resultRetriever.OnReceiveSettingsTimeout += this.OnReceiveSettingsTimeout;
             this.resultRetriever.OnReceivedAnswer += this.OnReceivedAnswer;
@@ -180,7 +187,7 @@
 
         private void BeginReceiveConnectedClientsIdsNames()
         {
-            var commandData = new NetworkCommandData("ConnectedClientsIdsNames");
+            var commandData = NetworkCommandData.From<ServerSendConnectedClientsIdsNamesCommand>();
             this.networkManager.SendServerCommand(commandData);
             this.networkManager.CommandsManager.AddCommand("ConnectedClientsIdsNames", new ConnectedClientsDataCommand(this.OnReceivedConnectedClientsIdsNames));
         }
@@ -193,7 +200,7 @@
 
             if (this.OnActivated != null)
             {
-                this.OnActivated(this, EventArgs.Empty);    
+                this.OnActivated(this, EventArgs.Empty);
             }
         }
     }

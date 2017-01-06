@@ -5,11 +5,11 @@
     using Interfaces;
     using Utils;
 
-    public class ConnectedClientsCountCommand : INetworkManagerCommand
+    public class ClientReceiveConnectedClientsCountCommand : INetworkManagerCommand
     {
         private ValueWrapper<int> serverConnectedClientsCount;
 
-        public ConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
+        public ClientReceiveConnectedClientsCountCommand(ValueWrapper<int> serverConnectedClientsCount)
         {
             if (serverConnectedClientsCount == null)
             {

@@ -177,7 +177,7 @@ namespace Assets.Scripts.Network.Servers
         {
             if (this.IsGameOver ||
                 !this.MainPlayerData.IsConnected ||
-                clientId != this.MainPlayerData.ConnectionId ||
+                this.MainPlayerData.ConnectionId != clientId ||
                 this.paused)
             {
                 return;
@@ -203,7 +203,6 @@ namespace Assets.Scripts.Network.Servers
             {
                 var jokers = JokerUtils.AllJokersTypes;
                 this.addRandomJokerRouter.Activate(this.MainPlayerData.ConnectionId, jokers);
-                //TODO send next question  
             }
         }
 
@@ -254,8 +253,9 @@ namespace Assets.Scripts.Network.Servers
             {
                 this.remainingTimeToAnswerMainQuestion = this.GameDataIterator.SecondsForAnswerQuestion;
                 this.playerSentAnswer = false;
-                this.lastQuestion = args.Question;
             }
+
+            this.lastQuestion = args.Question;
         }
 
         private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)

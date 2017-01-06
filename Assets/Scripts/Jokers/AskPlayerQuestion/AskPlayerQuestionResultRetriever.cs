@@ -60,13 +60,13 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         private void _OnReceivedSettings(int timeToAnswerInSeconds)
         {
-            this.timer.Stop();
-            this.timer.Close();
+            this.DisposeTimer();
 
             var responseCommand = new AskPlayerResponseCommand(this._OnReceivedAnswer);
             this.networkManager.CommandsManager.AddCommand(responseCommand);
 
             this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, Timer_OnReceiveAnswerTimeout);
+            this.timer.RunOnUnityThread = true;
             this.timer.Start();
 
             this.OnReceivedSettings(this, new JokerSettingsEventArgs(timeToAnswerInSeconds));

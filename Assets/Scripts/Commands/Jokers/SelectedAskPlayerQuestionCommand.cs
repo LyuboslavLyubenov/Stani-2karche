@@ -66,7 +66,7 @@ namespace Assets.Scripts.Commands.Jokers
             }
 
             this.mainPlayerData.JokersData.RemoveJoker(this.helpFromFriendJokerType);
-            this.jokerServerRouter.Activate(this.timeToAnswerInSeconds, senderConnectionId, sendClientId);
+            this.jokerServerRouter.Activate(senderConnectionId, sendClientId, this.timeToAnswerInSeconds);
 
             if (this.OnExecuted != null)
             {

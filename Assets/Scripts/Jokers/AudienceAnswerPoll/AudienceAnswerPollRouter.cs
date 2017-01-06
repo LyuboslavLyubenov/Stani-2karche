@@ -312,7 +312,6 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
             if (this.networkManager.ConnectedClientsCount < minClients)
             {
-                this.answersVotes.Clear();
                 this.SendJokerSettings();
                 this.SendGeneratedResultToMainPlayer();
                 return;

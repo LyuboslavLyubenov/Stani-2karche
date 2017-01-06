@@ -198,7 +198,7 @@
                 };
 
             this.commandsManager.AddCommand("AllowedToConnect", allowedToConnect);
-            this.commandsManager.AddCommand("ConnectedClientsCount", new ConnectedClientsCountCommand(this.serverConnectedClientsCount));
+            this.commandsManager.AddCommand("ConnectedClientsCount", new ClientReceiveConnectedClientsCountCommand(this.serverConnectedClientsCount));
         }
 
         private void BeginReceiveConnectedClientsCount()

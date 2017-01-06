@@ -44,8 +44,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         private readonly ServerNetworkManager networkManager;
 
         private readonly GameDataIterator gameDataIterator;
-
-
+        
         private const float ChanceToGenerateCorrectAnswer = 0.8f;
         private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
         private const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
