@@ -1,6 +1,5 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-
     using System.Linq;
 
     using UnityEngine;
@@ -17,7 +16,6 @@
         private const int ConnectionTimeoutInSeconds = 5;
 
         public CreatedGameInfoReceiverService GameInfoReceiverService;
-        public NotificationsServiceController NotificationService;
         public BasicExamServerSelectPlayerTypeUIController SelectPlayerTypeUIController;
         public GameObject LoadingUI;
         public Text IPText;
@@ -56,7 +54,8 @@
             if (this.elapsedTimeTryingToConnect >= ConnectionTimeoutInSeconds)
             {
                 this.LoadingUI.SetActive(false);
-                this.NotificationService.AddNotification(Color.red, "Няма връзка със сървъра");
+
+                NotificationsServiceController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
 
                 try
                 {
@@ -64,7 +63,6 @@
                 }
                 catch
                 {
-                
                 }
 
                 this.connecting = false;
@@ -87,7 +85,7 @@
                     break;
 
                 default:
-                    this.NotificationService.AddNotification(Color.red, "Неподържан вид игра", 10);
+                    NotificationsServiceController.Instance.AddNotification(Color.red, "Неподържан вид игра", 10);
                     break;
             }
         }

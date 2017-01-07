@@ -23,9 +23,7 @@
         public LANServersDiscoveryService LANServersDiscoveryService;
         public CreatedGameInfoReceiverService GameInfoReceiverService;
         public BasicExamServerSelectPlayerTypeUIController BasicExamSelectPlayerTypeController;
-
-        public NotificationsServiceController NotificationsService;
-
+        
         public ObjectsPool ServerFoundElementsPool;
 
         public GameObject Container;
@@ -40,6 +38,7 @@
                     this.ClearFoundServerList();
                     this.StartLoadingExternalServersIfConnectedToInternet();
                 });
+
             this.LANServersDiscoveryService.OnFound += this.OnLocalServerFound;
         }
 
@@ -117,7 +116,7 @@
         {
             if (gameInfo_DTO.ServerInfo.IsFull)
             {
-                this.NotificationsService.AddNotification(Color.red, "Server is full");
+                NotificationsServiceController.Instance.AddNotification(Color.red, "Server is full");
                 return;
             }
 

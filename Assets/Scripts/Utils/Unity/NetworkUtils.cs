@@ -39,12 +39,12 @@
 
         public static void GetExternalIP(Action<string> onFound, Action<string> onNetworkError = null)
         {
-            ThreadUtils.Instance.RunOnBackgroundThread(GetExternalIPCoroutine(onFound, onNetworkError));
+            ThreadUtils.Instance.RunOnMainThread(GetExternalIPCoroutine(onFound, onNetworkError));
         }
 
         public static void CheckInternetConnection(OnCheckCompleted onCheckCompleted)
         {
-            ThreadUtils.Instance.RunOnBackgroundThread(CheckInternetConnectionCoroutine(onCheckCompleted));
+            ThreadUtils.Instance.RunOnMainThread(CheckInternetConnectionCoroutine(onCheckCompleted));
         }
 
         public static string GetLocalIP()
