@@ -506,7 +506,7 @@
             this.updateAliveClientsTimer.Dispose();
             this.updateAliveClientsTimer = null;
 
-            ThreadUtils.Instance.CancelThread(this.ReceiveMessagesCoroutine());
+            ThreadUtils.Instance.CancelCoroutine(this.ReceiveMessagesCoroutine());
         }
 
         #region DEBUG_MENU

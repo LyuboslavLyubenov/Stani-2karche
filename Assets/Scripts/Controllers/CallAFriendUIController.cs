@@ -53,22 +53,12 @@
         {
             this.currentPageIndex++;
             this.ReloadContacts();
-
-            if (this.currentPageIndex < this.pages.Count - 1)
-            {
-                this.NextButton.interactable = true;
-            }
         }
 
         private void OnPreviousButtonClick()
         {
             this.currentPageIndex--;
             this.ReloadContacts();
-
-            if (this.currentPageIndex > 0)
-            {
-                this.PrevButton.interactable = true;
-            }
         }
 
         private void ReloadContacts()
@@ -81,10 +71,18 @@
             {
                 this.NextButton.interactable = false;
             }
+            else
+            {
+                this.NextButton.interactable = true;
+            }
 
             if (this.currentPageIndex <= 0)
             {
                 this.PrevButton.interactable = false;
+            }
+            else
+            {
+                this.PrevButton.interactable = true;
             }
         }
 
@@ -94,7 +92,6 @@
 
             for (int i = 0; i < page.Length; i++)
             {
-                //reload
                 var friendData = page[i];
                 var friendConnectionId = friendData.ConnectionId;
                 var eventArgs = new PlayerCalledEventArgs(friendConnectionId);
@@ -123,7 +120,5 @@
 
             this.ReloadContacts();
         }
-
     }
-
 }

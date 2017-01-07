@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 
 using UnityEngine;
-
 namespace Assets.Scripts.Commands.GameData
 {
-
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using EventArgs;
+    using Interfaces;
+    using Network;
+    using Network.NetworkManagers;
 
     public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerCommand
     {
@@ -28,13 +25,13 @@ namespace Assets.Scripts.Commands.GameData
             private set;
         }
 
-        protected GameDataIterator GameData
+        protected IGameDataIterator GameData
         {
             get;
             private set;
         }
 
-        protected GameDataGetQuestionAbstractCommand(GameDataIterator gameData, ServerNetworkManager networkManager)
+        protected GameDataGetQuestionAbstractCommand(IGameDataIterator gameData, ServerNetworkManager networkManager)
         {
             if (gameData == null)
             {

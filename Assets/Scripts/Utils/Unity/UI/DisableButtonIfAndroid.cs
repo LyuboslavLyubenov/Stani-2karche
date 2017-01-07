@@ -2,10 +2,12 @@
 {
 
     using UnityEngine;
+    using UnityEngine.UI;
 
     public class DisableButtonIfAndroid : MonoBehaviour
     {
-        private void Start()
+        // ReSharper disable once ArrangeTypeMemberModifiers
+        void Start()
         {
 #if UNITY_ANDROID
         GetComponent<Button>().interactable = false;

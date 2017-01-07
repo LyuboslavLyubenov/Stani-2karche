@@ -112,9 +112,9 @@ namespace Assets.Scripts.Network.Servers
             this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
             this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.GameDataIterator);
             this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataSender, this.GameDataIterator);
-            this.leaderboardSender = new LeaderboardSender(ServerNetworkManager.Instance, this.leaderboardSerializer);
+            this.leaderboardSender = new LeaderboardSender(serverNetworkManager, this.leaderboardSerializer);
 
-            AvailableCategoriesCommandsInitializator.Initialize(ServerNetworkManager.Instance, this.gameDataExtractor, this.leaderboardSerializer);
+            AvailableCategoriesCommandsInitializator.Initialize(serverNetworkManager, this.gameDataExtractor, this.leaderboardSerializer);
 
             this.LoadServerSettings();
             this.InitializeCommands();

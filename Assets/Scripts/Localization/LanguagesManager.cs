@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Xml;
-
-using UnityEngine;
-
-namespace Assets.Scripts.Localization
+﻿namespace Assets.Scripts.Localization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Xml;
 
+    using UnityEngine;
     using Assets.Scripts.EventArgs;
 
     using Debug = UnityEngine.Debug;
