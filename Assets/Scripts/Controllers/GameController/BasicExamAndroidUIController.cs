@@ -15,6 +15,7 @@ namespace Assets.Scripts.Controllers.GameController
     using Utils.Unity;
 
     using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     using EventArgs = System.EventArgs;
 
@@ -41,7 +42,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-            this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 5);
+            this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 10);
 
             this.LoadControllers();
             this.LoadCommands();
@@ -51,6 +52,8 @@ namespace Assets.Scripts.Controllers.GameController
 
         void OnApplicationQuit()
         {
+            ClientNetworkManager.Instance.Dispose();
+
             this.leaderboardReceiver.Dispose();
             this.leaderboardReceiver = null;
         }
@@ -94,6 +97,15 @@ namespace Assets.Scripts.Controllers.GameController
             ClientNetworkManager.Instance.OnDisconnectedEvent += this.OnDisconnectFromServer;
 
             this.questionUIController.OnAnswerClick += this.OnAnswerClick;
+
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        }
+
+        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
+        {
+            ClientNetworkManager.Instance.OnConnectedEvent -= this.OnConnected;
+            ClientNetworkManager.Instance.OnDisconnectedEvent -= this.OnDisconnectFromServer;
+            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
         }
 
         private void OnAnswerClick(object sender, AnswerEventArgs args)

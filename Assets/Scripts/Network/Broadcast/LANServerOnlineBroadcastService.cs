@@ -14,6 +14,7 @@
         public LANServerOnlineBroadcastService()
         {
             timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
+            this.timer.Start();
         }
         
         private void SendServerOnline()

@@ -20,6 +20,7 @@
     using Utils.Unity;
 
     using UnityEngine;
+    using UnityEngine.Assertions.Must;
     using UnityEngine.Networking;
 
     using Debug = UnityEngine.Debug;
@@ -140,6 +141,8 @@
         
         private void ConfigureServer()
         {
+            NetworkTransport.Init();
+
             this.connectionConfig = new ConnectionConfig();
             this.communicationChannel = this.connectionConfig.AddChannel(QosType.ReliableSequenced);
             this.topology = new HostTopology(this.connectionConfig, this.MaxConnections);
@@ -502,11 +505,18 @@
 
         public void Dispose()
         {
+            this.OnClientConnected = null;
+            this.OnClientDisconnected = null;
+            this.OnClientSetUsername = null;
+            this.OnReceivedData = null;
+
             this.updateAliveClientsTimer.Stop();
             this.updateAliveClientsTimer.Dispose();
             this.updateAliveClientsTimer = null;
 
             ThreadUtils.Instance.CancelCoroutine(this.ReceiveMessagesCoroutine());
+
+            instance = null;
         }
 
         #region DEBUG_MENU

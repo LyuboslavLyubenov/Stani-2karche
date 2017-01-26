@@ -7,7 +7,7 @@
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Utils;
+    using Utils;
 
     using DTOs;
 

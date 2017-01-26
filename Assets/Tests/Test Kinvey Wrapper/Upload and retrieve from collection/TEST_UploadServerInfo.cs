@@ -41,7 +41,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
             var gameInfo = new CreatedGameInfo_DTO()
             {
                 ServerInfo = serverInfo,
-                GameTypeFullName = typeof(BasicExamServer).FullName,
+                GameType = typeof(BasicExamServer).FullName,
                 HostUsername = "ivan gotiniq"
             };
 

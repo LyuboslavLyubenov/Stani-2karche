@@ -25,7 +25,7 @@
             this.GuestButton.gameObject.SetActive(gameInfo_DTO.CanConnectAsAudience);
 
             var serverInfo = gameInfo_DTO.ServerInfo;
-
+            
             if (!string.IsNullOrEmpty(serverInfo.ExternalIpAddress))
             {
                 PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", serverInfo.ExternalIpAddress);    

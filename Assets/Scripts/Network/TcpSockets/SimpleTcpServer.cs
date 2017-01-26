@@ -22,8 +22,8 @@ namespace Assets.Scripts.Network.TcpSockets
     {
         private const int MessageBuffer = 1024;
 
-        private const int ReceiveMessageTimeoutInMiliseconds = 1000;
-        private const int SendMessageTimeoutInMiliseconds = 1000;
+        private const int ReceiveMessageTimeoutInMiliseconds = 4000;
+        private const int SendMessageTimeoutInMiliseconds = 4000;
 
         private const int AcceptNewConnectionDelayInMiliseconds = 200;
 
@@ -318,8 +318,6 @@ namespace Assets.Scripts.Network.TcpSockets
                 });
 
             this.socketsMessageState.Clear();
-
-            Debug.Log("SimpleTcpServer disposed");
         }
 
         public bool IsClientConnected(string ipAddress)

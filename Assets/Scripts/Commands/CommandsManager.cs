@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Interfaces;
 
@@ -48,8 +49,13 @@
             {
                 throw new ArgumentException("Command " + commandName + " cannot be found");
             }
-
+            
             this.commands.Remove(commandName);
+        }
+
+        public void RemoveAllCommands()
+        {
+            this.commands.Clear();
         }
 
         public void Execute(NetworkCommandData command)

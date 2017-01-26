@@ -8,6 +8,8 @@
     using UnityEngine;
     using CielaSpike.Thread_Ninja;
 
+    using UnityEngine.SceneManagement;
+
     public class ThreadUtils : MonoBehaviour
     {
         private readonly Queue<Action> methodsQueue = new Queue<Action>();
@@ -28,13 +30,44 @@
                     {
                         var gameObject = new GameObject("ThreadUtils");
                         var threadUtilsComponent = gameObject.AddComponent<ThreadUtils>();
-
+                        
                         instance = threadUtilsComponent;
                     }
                 }
 
                 return instance;
             }
+        }
+
+        void Start()
+        {
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        }
+
+        void OnDisable()
+        {
+            this.StopAllThreads();
+        }
+
+        void OnApplicationQuit()
+        {
+            this.StopAllThreads();
+        }
+
+        private void StopAllThreads()
+        {
+            lock (this.myLock)
+            {
+                this.methodsQueue.Clear();
+                this.coroutinesQueue.Clear();
+                this.StopAllCoroutines();
+            }
+        }
+
+        private void OnActiveSceneChanged(Scene arg0, Scene scene)
+        {
+            this.StopAllThreads();
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         }
 
         // ReSharper disable once ArrangeTypeMemberModifiers

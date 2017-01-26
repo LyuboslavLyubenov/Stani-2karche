@@ -20,16 +20,11 @@
         void Start()
         {
             this.PlayerScorePrefab = Resources.Load<GameObject>("Prefabs/LeaderboardPlayerScoreElement");
-
+            
             if (this.ContentPanel == null)
             {
                 throw new Exception("ContentPanel is null on LeaderboardUIController obj");
             }
-        }
-
-        public void Populate(PlayerScore[] playersScore)
-        {
-            this.StartCoroutine(this.PopulateCoroutine(playersScore));
         }
 
         private IEnumerator PopulateCoroutine(PlayerScore[] playersScore)
@@ -65,7 +60,7 @@
                 var scoreRect = scoreObj.GetComponent<RectTransform>();
                 var nextY = ((rectHeight + SpaceBetweenScore) * (i + 1));
                 scoreRect.anchoredPosition = new Vector2(0, -nextY);
-                
+
                 yield return new WaitForSeconds(0.05f);
                 yield return null;
             }
@@ -86,6 +81,15 @@
 
             contentPanelRect.sizeDelta = new Vector2(0, contentPanelHeight);
         }
-    }
 
+        public void Populate(PlayerScore[] playersScore)
+        {
+            if (playersScore == null || playersScore.Length < 1)
+            {
+                return;
+            }
+
+            this.StartCoroutine(this.PopulateCoroutine(playersScore));
+        }
+    }
 }

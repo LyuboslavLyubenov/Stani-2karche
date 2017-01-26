@@ -11,7 +11,7 @@
     }
 
     [Serializable]
-    public class OnlineClientsData_Serializable
+    public class OnlineClientsData_DTO
     {
         public ClientData_Serializable[] OnlinePlayers;
     }

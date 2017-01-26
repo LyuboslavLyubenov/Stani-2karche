@@ -50,7 +50,7 @@
             {
                 var joker = jokers[i];
                 var parent = (i % 2 == 0) ? this.upperContainer : this.lowerContainer;
-                var obj = (GameObject)Instantiate(this.jokerPrefab, parent, false);
+                var obj = Instantiate(this.jokerPrefab, parent, false);
                 var jokerName = joker.Name.Replace("Joker", "");
 
                 obj.name = jokerName;

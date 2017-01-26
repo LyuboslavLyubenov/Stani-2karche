@@ -90,7 +90,7 @@ namespace Assets.Scripts.Network
             }
 
             var commandData = new NetworkCommandData("GetAvailableCategories");
-            var receivedAvailableCategoriesCommand = new ReceivedAvailableCategoriesCommand(onGetAllCategories);
+            var receivedAvailableCategoriesCommand = new AvailableCategoriesCommand(onGetAllCategories);
 
             receivedAvailableCategoriesCommand.OnFinishedExecution += (sender, args) =>
                 {

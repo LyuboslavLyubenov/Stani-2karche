@@ -11,6 +11,7 @@
 
     using UnityEngine;
     using UnityEngine.Networking;
+    using UnityEngine.SceneManagement;
 
     public class NetworkTransportUtils
     {
@@ -171,17 +172,28 @@
         {
             get
             {
-                if (_instance == null)
+                if (instance == null)
                 {
                     var obj = new GameObject();
                     obj.name = "NetworkTransportUtilsDummyClass";
-                    _instance = obj.AddComponent<NetworkTransportUtilsDummyClass>();
+                    instance = obj.AddComponent<NetworkTransportUtilsDummyClass>();
                 }
 
-                return _instance;
+                return instance;
             }
         }
 
-        private static NetworkTransportUtilsDummyClass _instance = null;
+        private static NetworkTransportUtilsDummyClass instance = null;
+
+        // ReSharper disable once ArrangeTypeMemberModifiers
+        void Start()
+        {
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        }
+
+        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
+        {
+            instance = null;
+        }
     }
 }

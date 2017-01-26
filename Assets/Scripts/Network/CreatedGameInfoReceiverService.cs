@@ -12,18 +12,19 @@
 
         private SimpleTcpClient client;
         private SimpleTcpServer server;
-
+        
         public CreatedGameInfoReceiverService(SimpleTcpClient client, SimpleTcpServer server)
         {
             if (client == null)
             {
                 throw new ArgumentNullException("client");
             }
+
             if (server == null)
             {
                 throw new ArgumentNullException("server");
             }
-
+            
             this.client = client;
             this.server = server;
 
@@ -32,9 +33,9 @@
 
         private void OnReceivedMessage(object sender, MessageEventArgs args)
         {
-            var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag);
+            var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag, StringComparison.Ordinal);
 
-            if (!this.pendingRequests.ContainsKey(args.IPAddress) || gameInfoTagIndex < 0)
+            if (!this.pendingRequests.ContainsKey(args.IPAddress) && gameInfoTagIndex < 0)
             {
                 return;
             }
@@ -42,16 +43,31 @@
             var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSenderService.GameInfoTag.Length);
             var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
 
-            this.pendingRequests[args.IPAddress](gameInfo);
+            var requestCallback = this.pendingRequests[args.IPAddress];
+
             this.pendingRequests.Remove(args.IPAddress);
+
+            requestCallback(gameInfo);
+        }
+
+        private void _ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
+        {
+            this.client.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag, null, onError);
+            this.pendingRequests.Add(ipAddress, receivedGameInfo);
         }
 
         public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
-            this.client.ConnectTo(ipAddress, this.server.Port, () =>
+            if (this.client.IsConnectedTo(ipAddress))
+            {
+                this._ReceiveFrom(ipAddress, receivedGameInfo, onError);
+                return;
+            }
+
+            this.client.ConnectTo(ipAddress, this.server.Port,
+                () =>
                 {
-                    this.client.Send(ipAddress, CreatedGameInfoSenderService.SendGameInfoCommandTag, null, onError);
-                    this.pendingRequests.Add(ipAddress, receivedGameInfo);
+                    this._ReceiveFrom(ipAddress, receivedGameInfo, onError);
                 },
                 (exception) =>
                     {
@@ -73,6 +89,10 @@
 
             this.pendingRequests.Remove(ipAddress);
         }
-    }
 
+        public void StopReceivingFromAll()
+        {
+            this.pendingRequests.Clear();
+        }
+    }
 }

@@ -126,7 +126,18 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         public void Dispose()
         {
-            DisposeTimer();
+            this.OnReceivedAnswer = null;
+            this.OnReceiveAnswerTimeout = null;
+            this.OnReceivedSettings = null;
+            this.OnReceiveSettingsTimeout = null;
+
+            try
+            {
+                DisposeTimer();
+            }
+            catch
+            {
+            }
         }
     }
 }

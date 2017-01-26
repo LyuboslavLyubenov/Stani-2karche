@@ -51,8 +51,6 @@ namespace Assets.Scripts.Commands.Jokers
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            var senderConnectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
-
             if (!this.mainPlayerData.JokersData.AvailableJokers.Contains(this.jokerType))
             {
                 return;

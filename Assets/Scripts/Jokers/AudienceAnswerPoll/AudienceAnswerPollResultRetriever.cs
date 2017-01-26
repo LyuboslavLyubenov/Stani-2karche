@@ -19,9 +19,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     {
         public const int MinClientsForOnlineVote_Release = 4;
         public const int MinClientsForOnlineVote_Development = 1;
-
-        private const int SettingsReceiveTimeoutInSeconds = 10;
-
+        
         public event EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
             {
             };
@@ -158,10 +156,18 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         public void Dispose()
         {
-            this.timer.Stop();
-            this.timer.Dispose();
-            this.timer = null;
+            this.OnAudienceVoted = null;
+            this.OnReceiveAudienceVoteTimeout = null;
+            this.OnReceiveSettingsTimeout = null;
+            this.OnReceivedSettings = null;
+
+            try
+            {
+                this.DisposeTimer();
+            }
+            catch
+            {
+            }    
         }
     }
-
 }

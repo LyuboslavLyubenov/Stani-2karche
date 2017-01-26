@@ -2,7 +2,7 @@
 {
     using System;
 
-    using Assets.Scripts.Network.NetworkManagers;
+    using Network.NetworkManagers;
 
     using UnityEngine;
     using UnityEngine.Events;
@@ -19,7 +19,7 @@
 
         private InputField reasonInputField;
 
-        private void Start()
+        void Start()
         {
             this.connectionIdField = this.transform.Find("ConnectionIdField").GetComponent<FieldUIController>();
             this.usernameField = this.transform.Find("UsernameField").GetComponent<FieldUIController>();

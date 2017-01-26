@@ -1,8 +1,5 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-
-    using System.Linq;
-
     using UnityEngine.UI;
 
     using DTOs;
@@ -32,8 +29,7 @@
 
         public void SetData(CreatedGameInfo_DTO gameInfo)
         {
-            var serverGameName = gameInfo.GameTypeFullName.Split('.').Last();
-            var translatedGameName = LanguagesManager.Instance.GetValue(serverGameName);
+            var translatedGameName = LanguagesManager.Instance.GetValue(gameInfo.GameType);
 
             this.category.text = translatedGameName;
             this.creatorName.text = gameInfo.HostUsername;
@@ -41,5 +37,4 @@
             this.ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
         }
     }
-
 }

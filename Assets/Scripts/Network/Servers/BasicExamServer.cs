@@ -3,7 +3,8 @@ namespace Assets.Scripts.Network.Servers
 {
     using System;
 
-    using Assets.Scripts.Network.Leaderboard;
+    using Leaderboard;
+    using TcpSockets;
 
     using Commands;
     using Commands.Client;
@@ -23,10 +24,11 @@ namespace Assets.Scripts.Network.Servers
     using Utils.Unity;
 
     using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     using EventArgs = System.EventArgs;
 
-    public class BasicExamServer : ExtendedMonoBehaviour, IGameServer, IDisposable
+    public class BasicExamServer : ExtendedMonoBehaviour, IGameServer
     {
         private const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
 
@@ -96,26 +98,37 @@ namespace Assets.Scripts.Network.Servers
         private LeaderboardSender leaderboardSender = null;
         private GameDataExtractor gameDataExtractor = null;
 
+        private CreatedGameInfoSenderService gameInfoSenderService = null;
+        private SimpleTcpServer tcpServer;
+        private SimpleTcpClient tcpClient;
+
         void Awake()
         {
             var threadUtils = ThreadUtils.Instance;//Initialize
             var serverNetworkManager = ServerNetworkManager.Instance;
             
             this.MainPlayerData = new MainPlayerData(serverNetworkManager);
+            this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(serverNetworkManager, this.MainPlayerData);
+
+            this.tcpServer = new SimpleTcpServer(7772);
+            this.tcpClient = new SimpleTcpClient();
+            this.gameInfoSenderService = new CreatedGameInfoSenderService(this.tcpClient, this.tcpServer, GameInfoFactory.Instance, ServerNetworkManager.Instance, this);
+            
             this.gameDataExtractor = new GameDataExtractor();
             this.GameDataIterator = new GameDataIterator(this.gameDataExtractor);
             this.GameDataSender = new GameDataSender(this.GameDataIterator, serverNetworkManager);
+
             this.leaderboardSerializer = new LeaderboardSerializer();
             this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, MainPlayerData);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, MainPlayerData.JokersData);
-            this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(serverNetworkManager, this.MainPlayerData);
+           
             this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
             this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.GameDataIterator);
+
             this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataSender, this.GameDataIterator);
+
             this.leaderboardSender = new LeaderboardSender(serverNetworkManager, this.leaderboardSerializer);
-
-            AvailableCategoriesCommandsInitializator.Initialize(serverNetworkManager, this.gameDataExtractor, this.leaderboardSerializer);
-
+            
             this.LoadServerSettings();
             this.InitializeCommands();
             this.AttachEventHandlers();
@@ -136,11 +149,13 @@ namespace Assets.Scripts.Network.Servers
 
                     this.UpdateRemainingTime();
                 });
+            
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
 
         void OnApplicationQuit()
         {
-            this.EndGame();
+            this.Dispose();
         }
 
         private void OnConnectedClientSelected(int connectionId)
@@ -298,9 +313,17 @@ namespace Assets.Scripts.Network.Servers
 
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
         }
-        
+
+        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
+        {
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            this.Dispose();
+        }
+
         private void InitializeCommands()
         {
+            AvailableCategoriesCommandsInitializator.Initialize(ServerNetworkManager.Instance, this.gameDataExtractor, this.leaderboardSerializer);
+
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
             var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.audiencePollRouter, 60);
@@ -320,13 +343,14 @@ namespace Assets.Scripts.Network.Servers
             ServerNetworkManager.Instance.CommandsManager.AddCommand("Surrender", surrenderCommand);
         }
 
-        public void Dispose()
+        private void Dispose()
         {
             this.OnMainPlayerSelectedAnswer = null;
             this.OnGameOver = null;
 
             this.askPlayerQuestionRouter.Dispose();
             this.audiencePollRouter.Dispose();
+            this.gameInfoSenderService.Dispose();
 
             this.MainPlayerData = null;
             this.GameDataSender = null;
@@ -388,7 +412,6 @@ namespace Assets.Scripts.Network.Servers
             this.SavePlayerScoreToLeaderboard();
             this.SendEndGameInfo();
             this.ExportStatistics();
-            this.Dispose();
 
             this.IsGameOver = true;
             this.OnGameOver(this, EventArgs.Empty);

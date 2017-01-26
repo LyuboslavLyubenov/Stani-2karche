@@ -2,6 +2,8 @@ namespace Assets.Scripts.Network.Leaderboard
 {
     using System;
 
+    using Commands.Client;
+
     using EventArgs;
 
     using Commands;
@@ -56,7 +58,7 @@ namespace Assets.Scripts.Network.Leaderboard
                 var playerScore = allPlayersData[i];
                 var playerScoreSer = new PlayerScore_Serializable(playerScore);
                 var json = JsonUtility.ToJson(playerScoreSer);
-                var sendEntityCommand = new NetworkCommandData("LeaderboardEntity");
+                var sendEntityCommand = NetworkCommandData.From<LeaderboardEntityCommand>();
                 sendEntityCommand.AddOption("PlayerScoreJSON", json);
 
                 this.networkManager.SendClientCommand(connectionId, sendEntityCommand);

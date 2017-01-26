@@ -1,7 +1,5 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-    using System.Linq;
-
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -73,11 +71,8 @@
         {
             this.LoadingUI.SetActive(false);
             this.connecting = false;
-
-            var gameType = args.GameInfo.GameTypeFullName.Split('.')
-                .Last();
-
-            switch (gameType)
+           
+            switch (args.GameInfo.GameType)
             {
                 case "BasicExam":
                     var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_DTO>(args.JSON);

@@ -50,8 +50,7 @@ namespace Assets.Scripts.Utils
             {
                 return list;
             }
-
-            var rnd = new Random(DateTime.Now.Millisecond);
+            
             var remainingElements = new List<T>(list);
             var result = new List<T>(count);
 

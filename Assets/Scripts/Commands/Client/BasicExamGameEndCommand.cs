@@ -17,10 +17,7 @@
 
     public class BasicExamGameEndCommand : INetworkManagerCommand
     {
-        private const int LoadLeaderboardTimeoutInSeconds = 10;
-
         private GameObject endGameUI;
-
         private GameObject leaderboardUI;
 
         private readonly LeaderboardReceiver leaderboardReceiver;
@@ -70,7 +67,7 @@
             var endGameUIController = this.endGameUI.GetComponent<EndGameUIController>();
             endGameUIController.SetMark(mark);
 
-            this.leaderboardReceiver.Receive();
+            this.leaderboardReceiver.StartReceiving();
         }
     }
 

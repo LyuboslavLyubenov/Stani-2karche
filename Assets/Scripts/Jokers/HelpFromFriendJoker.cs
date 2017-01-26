@@ -13,6 +13,7 @@
     using AskPlayerQuestion;
 
     using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Utils;
 
     using DTOs;
     using Exceptions;
@@ -109,7 +110,7 @@
             this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/HelpFromFriend");
         }
 
-        private void OnReceivedConnectedClientsIdsNames(OnlineClientsData_Serializable connectedClientsData)
+        private void OnReceivedConnectedClientsIdsNames(OnlineClientsData_DTO connectedClientsData)
         {
             var connectedClientsIdsNames = connectedClientsData.OnlinePlayers.ToDictionary(c => c.ConnectionId, c => c.Username);
             connectedClientsIdsNames.Add(NetworkCommandData.CODE_Option_ClientConnectionId_AI, LanguagesManager.Instance.GetValue("Computer"));
@@ -125,7 +126,7 @@
         {
             this.callAFriendUI.SetActive(false);
             this.loadingUI.SetActive(true);
-            
+
             this.resultRetriever.OnReceivedSettings += this.OnReceivedSettings;
             this.resultRetriever.OnReceiveSettingsTimeout += this.OnReceiveSettingsTimeout;
             this.resultRetriever.OnReceivedAnswer += this.OnReceivedAnswer;
@@ -160,9 +161,12 @@
         {
             this.waitingToAnswerUI.SetActive(false);
             this.friendAnswerUI.SetActive(true);
-            this.friendAnswerUI.GetComponent<FriendAnswerUIController>().SetResponse(args.Username, args.Answer);
-
+            this.friendAnswerUI.GetComponent<FriendAnswerUIController>()
+                .SetResponse(args.Username, args.Answer);
+            
             this.Activated = false;
+            
+            this.OnFriendAnswered(this, new AnswerEventArgs(args.Answer, null));
 
             if (OnFinishedExecution != null)
             {

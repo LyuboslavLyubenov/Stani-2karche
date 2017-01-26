@@ -10,6 +10,8 @@
     using EventArgs;
     using Interfaces;
 
+    using UnityEngine.SceneManagement;
+
     using Debug = UnityEngine.Debug;
 
     public class AvailableJokersUIController : MonoBehaviour
@@ -57,7 +59,7 @@
             this.jokerStartPosition = rectTransform.anchoredPosition;
             this.distanceBetweenJokers = this.jokerStartPosition.y - this.jokerButtonSize.y;
         }
-
+        
         private void OnJokerClick(GameObject jokerObj, IJoker joker)
         {
             try

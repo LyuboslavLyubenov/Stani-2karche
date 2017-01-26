@@ -5,7 +5,7 @@
 
     public class AnswerEventArgs : EventArgs
     {
-        public AnswerEventArgs(string answer, bool isCorrect)
+        public AnswerEventArgs(string answer, bool? isCorrect)
         {
             if (string.IsNullOrEmpty(answer))
             {
@@ -22,7 +22,7 @@
             private set;
         }
 
-        public bool IsCorrect
+        public bool? IsCorrect
         {
             get;
             private set;
@@ -33,7 +33,7 @@
     public class AnswerEventArgs_Serializable
     {
         public string Answer;
-        public bool IsCorrect;
+        public bool? IsCorrect;
     }
 
 }

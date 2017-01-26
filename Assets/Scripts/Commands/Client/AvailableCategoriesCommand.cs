@@ -7,7 +7,7 @@ namespace Assets.Scripts.Commands.Client
 
     using EventArgs = System.EventArgs;
 
-    public class ReceivedAvailableCategoriesCommand : IOneTimeExecuteCommand
+    public class AvailableCategoriesCommand : IOneTimeExecuteCommand
     {
         private Action<string[]> onGetAllCategories;
 
@@ -23,7 +23,7 @@ namespace Assets.Scripts.Commands.Client
             private set;
         }
 
-        public ReceivedAvailableCategoriesCommand(Action<string[]> onGetAllCategories)
+        public AvailableCategoriesCommand(Action<string[]> onGetAllCategories)
         {
             if (onGetAllCategories == null)
             {

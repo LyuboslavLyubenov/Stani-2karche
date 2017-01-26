@@ -1,7 +1,7 @@
-using System;
-
-namespace Assets.Scripts.Jokers
+namespace Assets.Scripts.EventArgs
 {
+
+    using System;
 
     using EventArgs = System.EventArgs;
 

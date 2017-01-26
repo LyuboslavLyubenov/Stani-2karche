@@ -153,7 +153,6 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
                             }
                         }, (exception) =>
                         {
-                            Debug.LogException(exception);
                             this.Deactivate();
                             this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
                         });
@@ -161,6 +160,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
             timer.AutoDispose = true;
             timer.RunOnUnityThread = true;
+            timer.Start();
         }
 
         private void SendQuestionToFriend()
@@ -231,6 +231,10 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         public void Dispose()
         {
+            this.OnActivated = null;
+            this.OnSent = null;
+            this.OnError = null;
+
             this.updateTimeTimer.Stop();
             this.updateTimeTimer.Dispose();
             this.updateTimeTimer = null;

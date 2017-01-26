@@ -45,7 +45,7 @@
         public GameObject UnableToConnectUI;
         public GameObject ChooseCategoryUI;
         public GameObject MarkChangedConfetti;
-        
+
         public BasicExamPlayerTeacherDialogSwitcher DialogSwitcher;
         public BasicExamPlayerTutorialUIController TutorialUIController;
         public AvailableJokersUIController AvailableJokersUIController;
@@ -55,7 +55,6 @@
         public ClientChooseCategoryUIController ChooseCategoryUIController;
         public SecondsRemainingUIController SecondsRemainingUIController;
         public SelectRandomJokerUIController SelectRandomJokerUIController;
-
         private UnableToConnectUIController unableToConnectUIController;
 
         private RemoteGameDataIterator remoteGameDataIterator = null;
@@ -63,7 +62,7 @@
         private AskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
 
         private LeaderboardReceiver leaderboardReceiver = null;
-        
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
@@ -74,23 +73,25 @@
             this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
             this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 5);
             this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 5);
-            this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 5);
+            this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 10);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
 
             this.InitializeCommands();
             this.AttachEventHandlers();
-            this.StartServerIfPlayerIsHost();
 
             if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
             {
-                PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
+                PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
+
                 //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-                this.CoroutineUtils.WaitForSeconds(9f, this.ConnectToServer);
+                this.CoroutineUtils.WaitForSeconds(9f, () => ConnectToServer("127.0.0.1"));
+
+                StartServer();
             }
             else
             {
-                this.ConnectToServer();
+                this.FindServerIpAndConnectToServer();
             }
 
             this.LoadingUI.SetActive(true);
@@ -98,38 +99,14 @@
 
         private void OnFoundServerIP(string ip)
         {
-            try
-            {
-                ClientNetworkManager.Instance.ConnectToHost(ip);
-                this.unableToConnectUIController.ServerIP = ip;
-            }
-            catch
-            {
-                this.OnFoundServerIPError();
-            }
+            ConnectToServer(ip);
         }
 
         private void OnFoundServerIPError()
         {
-            this.CoroutineUtils.WaitForSeconds(1f, this.ConnectToServer);
+            this.CoroutineUtils.WaitForSeconds(1f, this.FindServerIpAndConnectToServer);
         }
-
-        private void ConnectToServer()
-        {
-            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
-        }
-
-        private void InitializeCommands()
-        {
-            var networkManager = ClientNetworkManager.Instance;
-
-            networkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver));
-            networkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, networkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
-            networkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, networkManager, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
-            networkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, networkManager, this.QuestionUIController));
-            networkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController, networkManager));
-        }
-
+        
         private void OnLoadedGameData(object sender, EventArgs args)
         {
             this.LoadingUI.SetActive(false);
@@ -140,27 +117,18 @@
 
             PlayerPrefs.SetString("LoadedGameData", "true");
         }
-
-        private void AttachEventHandlers()
+        
+        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+
             var networkManager = ClientNetworkManager.Instance;
 
-            networkManager.OnConnectedEvent += this.OnConnectedToServer;
-            networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+            networkManager.OnConnectedEvent -= this.OnConnectedToServer;
+            networkManager.OnDisconnectedEvent -= this.OnDisconnectedFromServer;
 
-            this.QuestionUIController.OnAnswerClick += this.OnAnswerClick;
-            this.QuestionUIController.OnQuestionLoaded += this.OnQuestionLoaded;
-
-            this.remoteGameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
-            this.remoteGameDataIterator.OnLoaded += this.OnLoadedGameData;
-
-            this.ChooseCategoryUIController.OnLoadedCategories += (sender, args) => this.LoadingUI.SetActive(false);
-            this.ChooseCategoryUIController.OnChoosedCategory += this.OnChoosedCategory;
-
-            this.unableToConnectUIController.OnTryingAgainToConnectToServer += (s, a) => this.LoadingUI.SetActive(true);
-
-            this.AvailableJokersUIController.OnAddedJoker += this.OnAddedJoker;
-            this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
+            this.KillLocalServer();
+            this.Dispose();
         }
 
         private void OnMarkIncrease(object sender, MarkEventArgs args)
@@ -197,20 +165,13 @@
                 return;
             }
 
-            this.SecondsRemainingUIController.Paused = true;  
+            this.SecondsRemainingUIController.Paused = true;
         }
 
         private void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
         {
             this.QuestionsRemainingUIController.SetRemainingQuestions(this.remoteGameDataIterator.RemainingQuestionsToNextMark);
             this.SecondsRemainingUIController.SetSeconds(this.remoteGameDataIterator.SecondsForAnswerQuestion);
-        }
-
-        private void OnActivateSceneChanged(Scene oldScene, Scene newScene)
-        {
-            this.KillLocalServer();
-            this.Dispose();
-            SceneManager.activeSceneChanged -= this.OnActivateSceneChanged;
         }
 
         private void OnApplicationQuit()
@@ -224,7 +185,7 @@
             this.ChooseCategoryUIController.gameObject.SetActive(false);
             this.LoadingUI.SetActive(false);
             this.SecondsRemainingUIController.Paused = true;
-            this.UnableToConnectUI.SetActive(true);   
+            this.UnableToConnectUI.SetActive(true);
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
@@ -232,7 +193,7 @@
             this.AvailableJokersUIController.ClearAll();
 
             this.LoadingUI.SetActive(false);
-            this.UnableToConnectUI.SetActive(false);   
+            this.UnableToConnectUI.SetActive(false);
             this.ChooseCategoryUIController.gameObject.SetActive(false);
 
             var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
@@ -255,16 +216,21 @@
             this.StartCoroutine(this.OnAnswerClickCoroutine(args.Answer, args.IsCorrect));
         }
 
-        private IEnumerator OnAnswerClickCoroutine(string answer, bool isCorrect)
+        private IEnumerator OnAnswerClickCoroutine(string answer, bool? isCorrect)
         {
             var commandData = new NetworkCommandData("AnswerSelected");
             commandData.AddOption("Answer", answer);
 
             ClientNetworkManager.Instance.SendServerCommand(commandData);
 
-            yield return null;
+            yield return new WaitForSeconds(0.25f);
 
-            if (isCorrect)
+            if (isCorrect == null)
+            {
+                yield break;
+            }
+
+            if (isCorrect.Value)
             {
                 this.remoteGameDataIterator.GetNextQuestion(this.QuestionUIController.LoadQuestion, Debug.LogException);
             }
@@ -272,6 +238,60 @@
             {
                 this.AvailableJokersUIController.ClearAll();
             }
+        }
+
+        private void ConnectToServer(string ip)
+        {
+            try
+            {
+                ClientNetworkManager.Instance.ConnectToHost(ip);
+                this.unableToConnectUIController.ServerIP = ip;
+            }
+            catch
+            {
+                ClientNetworkManager.Instance.Disconnect();//just in case
+                this.OnFoundServerIPError();
+            }
+        }
+        
+        private void FindServerIpAndConnectToServer()
+        {
+            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
+        }
+
+        private void InitializeCommands()
+        {
+            var networkManager = ClientNetworkManager.Instance;
+
+            networkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver));
+            networkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, networkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
+            networkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, networkManager, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
+            networkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, networkManager, this.QuestionUIController));
+            networkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController));
+        }
+
+        private void AttachEventHandlers()
+        {
+            var networkManager = ClientNetworkManager.Instance;
+
+            networkManager.OnConnectedEvent += this.OnConnectedToServer;
+            networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+
+            this.QuestionUIController.OnAnswerClick += this.OnAnswerClick;
+            this.QuestionUIController.OnQuestionLoaded += this.OnQuestionLoaded;
+
+            this.remoteGameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
+            this.remoteGameDataIterator.OnLoaded += this.OnLoadedGameData;
+
+            this.ChooseCategoryUIController.OnLoadedCategories += (sender, args) => this.LoadingUI.SetActive(false);
+            this.ChooseCategoryUIController.OnChoosedCategory += this.OnChoosedCategory;
+
+            this.unableToConnectUIController.OnTryingAgainToConnectToServer += (s, a) => this.LoadingUI.SetActive(true);
+
+            this.AvailableJokersUIController.OnAddedJoker += this.OnAddedJoker;
+            this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
+
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
 
         private void ShowNotification(Color color, string message)
@@ -290,31 +310,24 @@
                     this.ChooseCategoryUI.SetActive(false);
                     ClientNetworkManager.Instance.Disconnect();
                 }, 10);
-            
+
             this.ChooseCategoryUIController.gameObject.SetActive(true);
             this.ChooseCategoryUIController.Initialize(remoteCategoriesReader);
         }
 
-        private void StartServerIfPlayerIsHost()
+        private void StartServer()
         {
-            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-            {
-                var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
-                System.Diagnostics.Process.Start(serverPath);
-                SceneManager.activeSceneChanged += this.OnActivateSceneChanged;
-            }
+            var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
+            System.Diagnostics.Process.Start(serverPath);
         }
-        
+
         private void KillLocalServer()
         {
-            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
-            {
-                var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
+            var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
 
-                for (int i = 0; i < serverProcesses.Length; i++)
-                {
-                    serverProcesses[i].Kill();
-                }
+            for (int i = 0; i < serverProcesses.Length; i++)
+            {
+                serverProcesses[i].Kill();
             }
         }
 
@@ -324,6 +337,9 @@
             this.askPlayerQuestionResultRetriever.Dispose();
             this.leaderboardReceiver.Dispose();
 
+            ClientNetworkManager.Instance.CommandsManager.RemoveAllCommands();
+            ClientNetworkManager.Instance.Dispose();
+
             this.remoteGameDataIterator = null;
             this.audienceAnswerPollResultRetriever = null;
             this.askPlayerQuestionResultRetriever = null;
@@ -331,6 +347,8 @@
 
             PlayerPrefs.DeleteKey("LoadedGameData");
             PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
+            PlayerPrefsEncryptionUtils.DeleteKey("ServerLocalIP");
+            PlayerPrefsEncryptionUtils.DeleteKey("ServerExternalIP");
         }
     }
 }

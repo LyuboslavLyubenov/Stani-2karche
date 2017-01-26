@@ -42,13 +42,13 @@
             private set;
         }
 
-        public event EventHandler OnLoaded;
-        public event EventHandler<MarkEventArgs> OnMarkIncrease;
+        public event EventHandler OnLoaded = delegate {};
+        public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate {};
 
         private ClientNetworkManager networkManager;
 
-        private readonly Stack<PendingQuestionRequest> currentQuestionRequests = new Stack<PendingQuestionRequest>();
-        private readonly Stack<PendingQuestionRequest> nextQuestionRequests = new Stack<PendingQuestionRequest>();
+        private readonly Stack<GetQuestionRequest> currentQuestionRequests = new Stack<GetQuestionRequest>();
+        private readonly Stack<GetQuestionRequest> nextQuestionRequests = new Stack<GetQuestionRequest>();
 
         private ISimpleQuestion currentQuestionCache = null;
 
@@ -97,7 +97,7 @@
 
         private void OnReceivedQuestion(QuestionRequestType requestType, ISimpleQuestion question, int remainingQuestionsToNextMark, int secondsForAnswerQuestion)
         {
-            PendingQuestionRequest questionRequest = null;
+            GetQuestionRequest questionRequest = null;
 
             switch (requestType)
             {
@@ -142,13 +142,11 @@
             {
                 this.SendGetQuestionRequest(QuestionRequestType.Current);
 
-                var requestData = new PendingQuestionRequest((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                var requestData = new GetQuestionRequest((question) => onSuccessfullyLoaded(question), (error) => onError(error));
                 this.currentQuestionRequests.Push(requestData);
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
-
                 if (onError != null)
                 {
                     onError(ex);
@@ -162,13 +160,11 @@
             {
                 this.SendGetQuestionRequest(QuestionRequestType.Next);
 
-                var requestData = new PendingQuestionRequest((question) => onSuccessfullyLoaded(question), (error) => onError(error));
+                var requestData = new GetQuestionRequest((question) => onSuccessfullyLoaded(question), (error) => onError(error));
                 this.nextQuestionRequests.Push(requestData);
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
-
                 if (onError != null)
                 {
                     onError(ex);

@@ -4,8 +4,7 @@
     using System.Collections;
     using System.Timers;
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.Extensions;
+    using Extensions;
 
     using Commands;
     using Commands.Client;
@@ -366,9 +365,8 @@
 
             if (networkError != NetworkConnectionError.NoError)
             {
-                var errorMessage = NetworkErrorUtils.GetMessage(networkError);
-                Debug.LogError(errorMessage);
                 this.Disconnect();
+                throw new NetworkException(error);
             }
             else
             {
@@ -435,6 +433,11 @@
             this.receiveNetworkMessagesTimer.Stop();
             this.validateConnectionTimer.Stop();
 
+            this.keepAliveTimer.Stop();
+            this.connectedClientsCountTimer.Stop();
+            this.receiveNetworkMessagesTimer.Stop();
+            this.validateConnectionTimer.Stop();
+
             this.keepAliveTimer.Dispose();
             this.connectedClientsCountTimer.Dispose();
             this.receiveNetworkMessagesTimer.Dispose();
@@ -444,6 +447,8 @@
             this.connectedClientsCountTimer = null;
             this.receiveNetworkMessagesTimer = null;
             this.validateConnectionTimer = null;
+
+            instance = null;
         }
 
         #region DEBUG

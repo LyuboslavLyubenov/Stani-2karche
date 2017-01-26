@@ -27,8 +27,6 @@
             {
             };
 
-        private ClientNetworkManager networkManager;
-
         private GameObject waitingToAnswerUI;
         private GameObject loadingUI;
         private GameObject audienceAnswerUI;
@@ -77,8 +75,7 @@
             {
                 throw new ArgumentNullException("loadingUI");
             }
-            
-            this.networkManager = networkManager;
+
             this.waitingToAnswerUI = waitingToAnswerUI;
             this.audienceAnswerUI = audienceAnswerUI;
             this.loadingUI = loadingUI;

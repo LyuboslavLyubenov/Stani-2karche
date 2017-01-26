@@ -5,22 +5,23 @@ namespace Assets.Scripts.Commands.Jokers.Add
     using Controllers.Jokers;
     using DTOs;
     using Interfaces;
-    using Network.NetworkManagers;
+
+    using JetBrains.Annotations;
+
     using Utils;
 
     public class AddRandomJokerCommand : INetworkManagerCommand
     {
         private SelectRandomJokerUIController selectRandomJokerUIController;
 
-        private ClientNetworkManager networkManager;
-
-        public AddRandomJokerCommand(SelectRandomJokerUIController selectRandomJokerUIController, ClientNetworkManager networkManager)
+        public AddRandomJokerCommand(SelectRandomJokerUIController selectRandomJokerUIController)
         {
-            ValidationUtils.ValidateObjectNotNull(selectRandomJokerUIController, "selectRandomJokerUIController");
-            ValidationUtils.ValidateObjectNotNull(networkManager, "networkManager");
-
+            if (selectRandomJokerUIController == null)
+            {
+                throw new ArgumentNullException("selectRandomJokerUIController");
+            }
+            
             this.selectRandomJokerUIController = selectRandomJokerUIController;
-            this.networkManager = networkManager;
         }
 
         public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)

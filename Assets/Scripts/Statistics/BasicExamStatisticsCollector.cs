@@ -22,9 +22,7 @@
         private readonly GameDataIterator gameDataIterator;
         
         private Dictionary<ISimpleQuestion, int> questionSpentTime = new Dictionary<ISimpleQuestion, int>();
-
-        private Dictionary<ISimpleQuestion, List<Type>> questionsUsedJokers =
-            new Dictionary<ISimpleQuestion, List<Type>>();
+        private Dictionary<ISimpleQuestion, List<Type>> questionsUsedJokers = new Dictionary<ISimpleQuestion, List<Type>>();
         private Dictionary<Type, int> jokersUsedTimes = new Dictionary<Type, int>();
         private List<ISimpleQuestion> correctAnsweredQuestions = new List<ISimpleQuestion>();
 
@@ -91,10 +89,21 @@
         {
             get
             {
+                if (this.QuestionsSpentTime.Count < 1)
+                {
+                    return 0;
+                }
+                else if (this.questionSpentTime.Count == 1)
+                {
+                    return this.QuestionsSpentTime.First()
+                        .Value;
+                }
+
                 var correctAnsweredQuestionsCount = this.CorrectAnsweredQuestions.Count;
                 var totalTimeSpentThinking = this.QuestionsSpentTime.Values.ToList().Sum();
                 var avgSpentTimeThinking = totalTimeSpentThinking / this.QuestionsSpentTime.Values.Count;
                 var score = (correctAnsweredQuestionsCount * 10000) / avgSpentTimeThinking;
+
                 return score;
             }
         }

@@ -25,8 +25,10 @@
         public BasicExamServerSelectPlayerTypeUIController BasicExamSelectPlayerTypeController;
         
         public ObjectsPool ServerFoundElementsPool;
-
+        
         public GameObject Container;
+
+        private KinveyWrapper kinveyWrapper = new KinveyWrapper();
 
         private List<string> foundServers = new List<string>();
 
@@ -46,14 +48,12 @@
         {
             NetworkUtils.CheckInternetConnection((isConnectedToInternet) =>
                 {
-                    var kinveyWrapper = new KinveyWrapper();
-
                     if (!isConnectedToInternet || !kinveyWrapper.IsLoggedIn)
                     {
                         return;
                     }
 
-                    kinveyWrapper.RetrieveEntityAsync<ServerInfo_DTO>("Servers", null, this.OnLoadedServers, Debug.LogException);
+                    this.kinveyWrapper.RetrieveEntityAsync<ServerInfo_DTO>("Servers", null, this.OnLoadedServers, Debug.LogException);
                 });
         }
 
@@ -87,10 +87,8 @@
         private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs receivedData)
         {
             var gameInfo = receivedData.GameInfo;
-            var gameType = receivedData.GameInfo.GameTypeFullName.Split('.')
-                .Last();
 
-            switch (gameType)
+            switch (gameInfo.GameType)
             {
                 case "BasicExam":
                     var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_DTO>(receivedData.JSON);
@@ -105,7 +103,7 @@
             var controller = obj.GetComponent<ServerDiscoveredElementController>();
 
             obj.SetParent(this.Container.transform, true);
-            this.CoroutineUtils.WaitForFrames(0, () => controller.SetData(gameInfo_DTO));
+            this.CoroutineUtils.WaitForFrames(1, () => controller.SetData(gameInfo_DTO));
 
             var button = obj.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
@@ -121,7 +119,7 @@
             }
 
             this.BasicExamSelectPlayerTypeController.gameObject.SetActive(true);
-            this.CoroutineUtils.WaitForFrames(0, () => this.BasicExamSelectPlayerTypeController.Initialize(gameInfo_DTO));
+            this.CoroutineUtils.WaitForFrames(1, () => this.BasicExamSelectPlayerTypeController.Initialize(gameInfo_DTO));
         }
 
         private void ClearFoundServerList()
@@ -135,6 +133,7 @@
             }
 
             this.foundServers.Clear();
+            this.GameInfoReceiverService.StopReceivingFromAll();
         }
     }
 }

@@ -18,8 +18,8 @@
 
     public class SimpleTcpClient : IDisposable
     {
-        private const int ReceiveMessageTimeoutInMiliseconds = 1000;
-        private const int SendMessageTimeoutInMiliseconds = 1000;
+        private const int ReceiveMessageTimeoutInMiliseconds = 4000;
+        private const int SendMessageTimeoutInMiliseconds = 4000;
 
         private Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
 
@@ -82,7 +82,7 @@
                 var serverIpEndPoint = (IPEndPoint)socket.RemoteEndPoint;
                 var ipAddress = serverIpEndPoint.Address.ToString().Split(':').First();
 
-                lock (ipAddress)
+                lock (this.myLock)
                 {
                     this.connectedToServersIPsSockets.Add(ipAddress, socket);
                 }

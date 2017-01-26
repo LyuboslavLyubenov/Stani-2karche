@@ -338,6 +338,11 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         public void Dispose()
         {
+            this.OnActivated = null;
+            this.OnBeforeSend = null;
+            this.OnSent = null;
+            this.OnError = null;
+
             this.updateTimeTimer.Stop();
             this.updateTimeTimer.Dispose();
             this.updateTimeTimer = null;

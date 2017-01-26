@@ -65,7 +65,7 @@
         private void OnReceiveSettingsTimeout()
         {
             DisposeTimer();
-            this.networkManager.CommandsManager.RemoveCommand<DisableRandomAnswerJokerSettingsCommand>();
+            this.networkManager.CommandsManager.RemoveCommand<DisableRandomAnswersJokerSettingsCommand>();
 
             if (OnError != null)
             {
@@ -134,7 +134,7 @@
             var selectedJokerCommand = NetworkCommandData.From<SelectedDisableRandomAnswersJokerCommand>();
             this.networkManager.SendServerCommand(selectedJokerCommand);
 
-            var receiveJokerSettings = new DisableRandomAnswerJokerSettingsCommand(this.OnReceivedJokerSettings);
+            var receiveJokerSettings = new DisableRandomAnswersJokerSettingsCommand(this.OnReceivedJokerSettings);
             this.networkManager.CommandsManager.AddCommand(receiveJokerSettings);
 
             this.receiveSettingsTimeoutTimer =
@@ -153,6 +153,10 @@
 
         public void Dispose()
         {
+            this.OnActivated = null;
+            this.OnError = null;
+            this.OnFinishedExecution = null;
+
             this.receiveSettingsTimeoutTimer.Stop();
             this.receiveSettingsTimeoutTimer.Dispose();
             this.receiveSettingsTimeoutTimer = null;

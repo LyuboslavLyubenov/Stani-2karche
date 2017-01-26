@@ -5,7 +5,7 @@
 
     using Assets.Scripts.Interfaces;
 
-    public class PendingQuestionRequest
+    public class GetQuestionRequest
     {
         public delegate void OnSuccessfullyLoadedDelegate(ISimpleQuestion question);
 
@@ -23,7 +23,7 @@
             private set;
         }
 
-        public PendingQuestionRequest(OnSuccessfullyLoadedDelegate onSuccessfullyLoaded, OnExceptionDelegate onException)
+        public GetQuestionRequest(OnSuccessfullyLoadedDelegate onSuccessfullyLoaded, OnExceptionDelegate onException)
         {
             if (onSuccessfullyLoaded == null)
             {

@@ -59,7 +59,7 @@
                     var elementButton = categoryElement.GetComponent<Button>();
                     elementButton.onClick.AddListener(new UnityAction(() => this.ChoosedCategory()));
 
-                    yield return new WaitForSeconds(0.05f);
+                    yield return new WaitForSeconds(0.1f);
                     yield return new WaitForEndOfFrame();
                 }
 

@@ -60,12 +60,11 @@ namespace Assets.Scripts.Network
             const string url = RequesterUtils.KinveyUrl + "user/" + RequesterUtils.AppKey + "/_logout";
 
             var requester = RequesterUtils.ConfigRequester(url, "POST", null, true);
-            string requestResult = null;
             Exception exception = null;
 
             try
             {
-                requestResult = requester.GetRequestResult();
+                requester.GetRequestResult();
             }
             catch (Exception ex)
             {
@@ -127,12 +126,11 @@ namespace Assets.Scripts.Network
             var url = RequesterUtils.KinveyUrl + "appdata/" + RequesterUtils.AppKey + "/" + tableName;
 
             var requester = RequesterUtils.ConfigRequester(url, "POST", json, true);
-            string requestResult = null;
             Exception exception = null;
 
             try
             {
-                requestResult = requester.GetRequestResult();
+                requester.GetRequestResult();
             }
             catch (Exception ex)
             {
@@ -215,12 +213,11 @@ namespace Assets.Scripts.Network
             var url = RequesterUtils.KinveyUrl + "appdata/" + RequesterUtils.AppKey + "/" + tableName + "/" + id;
             var json = JsonUtility.ToJson(entity);
             var requester = RequesterUtils.ConfigRequester(url, "PUT", json, true);
-            string requestResult = null;
             Exception exception = null;
 
             try
             {
-                requestResult = requester.GetRequestResult();
+                requester.GetRequestResult();
             }
             catch (Exception ex)
             {

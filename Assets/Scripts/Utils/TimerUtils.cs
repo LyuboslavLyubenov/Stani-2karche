@@ -38,12 +38,4 @@
         }
     }
 
-    public interface IExtendedTimer
-    {
-        bool RunOnUnityThread
-        {
-            get;
-            set;
-        }
-    }
 }

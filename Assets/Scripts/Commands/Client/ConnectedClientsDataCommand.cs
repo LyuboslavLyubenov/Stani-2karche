@@ -12,7 +12,7 @@
 
     public class ConnectedClientsDataCommand : IOneTimeExecuteCommand
     {
-        private Action<OnlineClientsData_Serializable> onReceivedOnlineClients;
+        private Action<OnlineClientsData_DTO> onReceivedOnlineClients;
 
         public bool FinishedExecution
         {
@@ -26,7 +26,7 @@
             set;
         }
 
-        public ConnectedClientsDataCommand(Action<OnlineClientsData_Serializable> onReceivedOnlineClientsData)
+        public ConnectedClientsDataCommand(Action<OnlineClientsData_DTO> onReceivedOnlineClientsData)
         {
             if (onReceivedOnlineClientsData == null)
             {
@@ -40,7 +40,7 @@
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var connectedClientsDataJSON = commandsOptionsValues["ConnectedClientsDataJSON"];
-            var onlineClientsData = JsonUtility.FromJson<OnlineClientsData_Serializable>(connectedClientsDataJSON);
+            var onlineClientsData = JsonUtility.FromJson<OnlineClientsData_DTO>(connectedClientsDataJSON);
             this.onReceivedOnlineClients(onlineClientsData);
             this.FinishedExecution = true;
 

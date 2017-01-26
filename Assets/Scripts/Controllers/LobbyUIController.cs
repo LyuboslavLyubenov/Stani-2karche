@@ -1,13 +1,14 @@
-﻿namespace Assets.Scripts.Controllers
+﻿// ReSharper disable ArrangeTypeMemberModifiers
+namespace Assets.Scripts.Controllers
 {
-
-    using Assets.Scripts.Utils;
+    using Utils;
 
     using Network;
     using Network.Broadcast;
     using Network.TcpSockets;
 
     using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     public class LobbyUIController : MonoBehaviour
     {
@@ -17,7 +18,6 @@
         private LANServersDiscoveryService LANServersDiscoveryService;
 
         private SimpleTcpServer tcpServer;
-
         private SimpleTcpClient tcpClient;
 
         private CreatedGameInfoReceiverService CreatedGameInfoReceiverService;
@@ -36,6 +36,34 @@
             this.ServersAvailableUIController.GameInfoReceiverService = this.CreatedGameInfoReceiverService;
             this.ConnectToExternalServerUIController.GameInfoReceiverService = this.CreatedGameInfoReceiverService; 
         }
-        
+
+        void Start()
+        {
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        }
+    
+        void OnApplicationQuit()
+        {
+            this.Dispose();
+        }
+
+        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
+        {
+            this.Dispose();
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        }
+
+        private void Dispose()
+        {
+            this.LANServersDiscoveryService.Dispose();
+            this.tcpServer.Dispose();
+            this.tcpClient.Dispose();
+
+            this.tcpServer = null;
+            this.tcpClient = null;
+            this.LANServersDiscoveryService = null;
+
+            this.CreatedGameInfoReceiverService = null;
+        }
     }
 }

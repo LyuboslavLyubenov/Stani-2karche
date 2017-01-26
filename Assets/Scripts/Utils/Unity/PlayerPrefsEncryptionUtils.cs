@@ -10,7 +10,7 @@
 
     public class PlayerPrefsEncryptionUtils
     {
-        private readonly Type[] SupportedTypes = new [] { typeof(int), typeof(string), typeof(float) };
+        private readonly Type[] supportedTypes = new [] { typeof(int), typeof(string), typeof(float) };
 
         private PlayerPrefsEncryptionUtils()
         {

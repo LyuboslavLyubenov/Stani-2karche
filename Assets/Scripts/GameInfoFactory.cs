@@ -60,7 +60,7 @@
         {
             var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
             var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
-            var gameTypeName = server.GetType().FullName;
+            var gameTypeName = server.GetType().Name.Replace("Server", "");
             var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
             var serverInfo = this.GetServerInfo(serverNetworkManager);
 
@@ -68,7 +68,7 @@
             {
                 CanConnectAsMainPlayer = canConnectAsMainPlayer,
                 CanConnectAsAudience = canConnectAsAudience,
-                GameTypeFullName = gameTypeName,
+                GameType = gameTypeName,
                 HostUsername = hostUsername,
                 ServerInfo = serverInfo
             };

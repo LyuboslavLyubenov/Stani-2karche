@@ -43,7 +43,7 @@
 
             for (int i = 0; i < count; i++)
             {
-                var answerChance = (GameObject)Instantiate(prefab, parentRectTransform.transform, false);
+                var answerChance = Instantiate(prefab, parentRectTransform.transform, false);
                 var rectTransform = answerChance.GetComponent<RectTransform>();
                 var y = (sizeY / 2) + (i * (sizeY + DistanceBetweenElements)); 
 

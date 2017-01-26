@@ -13,9 +13,9 @@
     {
         public const int MarkMin = 2;
 
-        public event EventHandler OnLoaded;
+        public event EventHandler OnLoaded = delegate {};
 
-        public event EventHandler<MarkEventArgs> OnMarkIncrease;
+        public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate {};
 
         /// <summary>
         /// If true questions for given marks are aways with randomized order
@@ -181,7 +181,11 @@
                 this.currentMarkIndex++;
                 this.currentQuestionIndex = 0;
             }
-
+            else
+            {
+                this.currentQuestionIndex++;
+            }
+            
             return this._GetCurrentQuestion();
         }
         

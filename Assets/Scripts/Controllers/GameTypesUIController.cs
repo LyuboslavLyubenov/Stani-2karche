@@ -12,15 +12,15 @@
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
-            this.transform.localScale = new Vector3(1, 0, 1);
+            //TODO: Remove me
+            this.LoadNormalGame();
         }
 
         public void LoadNormalGame()
         {
             PlayerPrefsEncryptionUtils.SetString("MainPlayerHost", "true");
-            PlayerPrefsEncryptionUtils.SetString("ServerIP", "127.0.0.1");
-
-            PlayerPrefsEncryptionUtils.SetString("ServerMaxPlayers", "30");
+            PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
+            PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "127.0.0.1");
 
             SceneManager.LoadScene("BasicExamMainPlayer", LoadSceneMode.Single);    
         }
