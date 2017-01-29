@@ -28,7 +28,7 @@ namespace Assets.Scripts.Network.Servers
 
     using EventArgs = System.EventArgs;
 
-    public class BasicExamServer : ExtendedMonoBehaviour, IGameServer
+    public class BasicExamServer : ExtendedMonoBehaviour, IGameServer, IDisposable
     {
         private const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
 
@@ -150,7 +150,6 @@ namespace Assets.Scripts.Network.Servers
                     this.UpdateRemainingTime();
                 });
             
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
 
         void OnApplicationQuit()
@@ -286,6 +285,12 @@ namespace Assets.Scripts.Network.Servers
             this.paused = false;
         }
 
+        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
+        {
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            this.Dispose();
+        }
+
         private void LoadServerSettings()
         {
             int serverMaxPlayers = DefaultServerMaxPlayers;
@@ -312,14 +317,10 @@ namespace Assets.Scripts.Network.Servers
             this.audiencePollRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
 
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
-        }
 
-        private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
-        {
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
-            this.Dispose();
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
-
+        
         private void InitializeCommands()
         {
             AvailableCategoriesCommandsInitializator.Initialize(ServerNetworkManager.Instance, this.gameDataExtractor, this.leaderboardSerializer);
@@ -343,33 +344,6 @@ namespace Assets.Scripts.Network.Servers
             ServerNetworkManager.Instance.CommandsManager.AddCommand("Surrender", surrenderCommand);
         }
 
-        private void Dispose()
-        {
-            this.OnMainPlayerSelectedAnswer = null;
-            this.OnGameOver = null;
-
-            this.askPlayerQuestionRouter.Dispose();
-            this.audiencePollRouter.Dispose();
-            this.gameInfoSenderService.Dispose();
-
-            this.MainPlayerData = null;
-            this.GameDataSender = null;
-            this.GameDataIterator = null;
-
-            this.lastQuestion = null;
-            this.statisticsCollector = null;
-            this.askPlayerQuestionRouter = null;
-            this.audiencePollRouter = null;
-            this.disableRandomAnswersJokerRouter = null;
-            this.addRandomJokerRouter = null;
-            this.leaderboardSerializer = null;
-            this.mainPlayerJokersDataSynchronizer = null;
-            
-            ServerNetworkManager.Instance.CommandsManager.RemoveCommand("AnswerSelected");
-            ServerNetworkManager.Instance.CommandsManager.RemoveCommand<SelectedAskPlayerQuestionCommand>();
-            ServerNetworkManager.Instance.CommandsManager.RemoveCommand<SelectedAudiencePollCommand>();
-            ServerNetworkManager.Instance.CommandsManager.RemoveCommand("Surrender");
-        }
 
         private void UpdateRemainingTime()
         {
@@ -415,6 +389,32 @@ namespace Assets.Scripts.Network.Servers
 
             this.IsGameOver = true;
             this.OnGameOver(this, EventArgs.Empty);
+        }
+
+        public void Dispose()
+        {
+            this.OnMainPlayerSelectedAnswer = null;
+            this.OnGameOver = null;
+
+            this.askPlayerQuestionRouter.Dispose();
+            this.audiencePollRouter.Dispose();
+            this.gameInfoSenderService.Dispose();
+
+            this.MainPlayerData = null;
+            this.GameDataSender = null;
+            this.GameDataIterator = null;
+
+            this.lastQuestion = null;
+            this.statisticsCollector = null;
+            this.askPlayerQuestionRouter = null;
+            this.audiencePollRouter = null;
+            this.disableRandomAnswersJokerRouter = null;
+            this.addRandomJokerRouter = null;
+            this.leaderboardSerializer = null;
+            this.mainPlayerJokersDataSynchronizer = null;
+
+            ServerNetworkManager.Instance.CommandsManager.RemoveAllCommands();
+            ServerNetworkManager.Instance.Dispose();
         }
     }
 }
