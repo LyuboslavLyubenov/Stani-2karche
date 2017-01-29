@@ -1,5 +1,8 @@
 ﻿namespace Assets.Scripts.Localization
 {
+
+    using Assets.Scripts.EventArgs;
+
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
@@ -11,13 +14,22 @@
         void Awake()
         {
             DontDestroyOnLoad(this);
-            LanguagesManager.Instance.OnLoadedLanguage += (sender, args) => this.TranslateAllTextComponentsInScene();
-            SceneManager.activeSceneChanged += this.OnSceneChanged;
+
+            LanguagesManager.Instance.OnLoadedLanguage += this.OnLoadedLanguage;
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
         }
 
-        private void OnSceneChanged(Scene oldScene, Scene newScene)
+        private void OnLoadedLanguage(object sender, LanguageEventArgs args)
         {
-            this.CoroutineUtils.WaitForFrames(1, this.TranslateAllTextComponentsInScene);
+            this.TranslateAllTextComponentsInScene();
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            if (LanguagesManager.Instance.IsLoadedLanguage)
+            {
+                this.CoroutineUtils.WaitForFrames(1, this.TranslateAllTextComponentsInScene);
+            }
         }
 
         private void TranslateAllTextComponentsInScene()

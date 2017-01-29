@@ -16,7 +16,6 @@
             }
             catch
             {
-            
             }
 
             return false;

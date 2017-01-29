@@ -274,6 +274,22 @@ namespace Assets.Scripts.Network.TcpSockets
             this.connectedIPClientsSocket.Clear();
         }
 
+        private void ClearMessagesRequestQueue()
+        {
+            this.socketsMessageState.ToList().ForEach(socketState =>
+            {
+                try
+                {
+                    socketState.Key.Close();
+                }
+                catch
+                {
+                }
+            });
+
+            this.socketsMessageState.Clear();
+        }
+
         public void Disconnect(string ipAddress, Action onSuccess = null, Action<Exception> onError = null)
         {
             lock (myLock)
@@ -299,25 +315,13 @@ namespace Assets.Scripts.Network.TcpSockets
             catch
             {
             }
-
+            
+            DisconnectAllSockets();
+            ClearMessagesRequestQueue();
+            
             this.removeDisconnectedSocketsTimer.Stop();
             this.removeDisconnectedSocketsTimer.Dispose();
             this.removeDisconnectedSocketsTimer = null;
-
-            DisconnectAllSockets();
-
-            this.socketsMessageState.ToList().ForEach(socketState =>
-                {
-                    try
-                    {
-                        socketState.Key.Close();
-                    }
-                    catch
-                    {
-                    }
-                });
-
-            this.socketsMessageState.Clear();
         }
 
         public bool IsClientConnected(string ipAddress)

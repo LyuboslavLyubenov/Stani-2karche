@@ -1,17 +1,20 @@
 ﻿namespace Assets.Scripts.Localization
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Xml;
 
     using UnityEngine;
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
+    using Extensions;
+    using Utils.Unity;
+
+    using UnityEngine.SceneManagement;
 
     using Debug = UnityEngine.Debug;
 
-    public class LanguagesManager : MonoBehaviour
+    public class LanguagesManager : ExtendedMonoBehaviour
     {
         private const string DefaultLanguage = "Bulgarian";
 
@@ -37,14 +40,11 @@
 
                     if (obj == null)
                     {
-                        obj = new GameObject();
-                        obj.name = "Localization";
+                        obj = new GameObject("Localization");
                     }
-
+                    
                     var _instance = obj.GetComponent<LanguagesManager>() ?? obj.AddComponent<LanguagesManager>();             
                     instance = _instance;
-
-                    DontDestroyOnLoad(obj);
                 }
 
                 return instance;
@@ -67,17 +67,25 @@
         {
             get
             {
-                return this.languageFiles.Select(p => Path.GetFileName(p)).ToArray();
+                return this.languageFiles.Select(Path.GetFileName).ToArray();
             }
         }
 
-        void Awake()
+        void Start()
         {
-            DontDestroyOnLoad(this);
+            if (instance != null &&
+                instance.gameObject.GetInstanceID() != this.gameObject.GetInstanceID())
+            {
+                DestroyImmediate(this.gameObject);
+                return;
+            }
+
+            DontDestroyOnLoad(this.gameObject);
+
             this.languagePath = Environment.CurrentDirectory + "/Languages/";
             this.CollectLanguages();
         }
-
+        
         void OnDestroy()
         {
             this.mainDoc = null;

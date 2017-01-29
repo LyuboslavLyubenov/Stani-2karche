@@ -6,7 +6,7 @@
     {
         private void Start()
         {
-            this.CoroutineUtils.WaitForFrames(0, () =>
+            this.CoroutineUtils.WaitForFrames(1, () =>
                 {
                     var language = "Bulgarian";
 

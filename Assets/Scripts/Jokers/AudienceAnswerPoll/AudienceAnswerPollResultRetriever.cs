@@ -19,7 +19,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
     {
         public const int MinClientsForOnlineVote_Release = 4;
         public const int MinClientsForOnlineVote_Development = 1;
-        
+
         public event EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
             {
             };
@@ -40,7 +40,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
         private Timer timer;
 
         private int receiveSettingsTimeoutInSeconds;
-        
+
         public EventHandler OnActivated
         {
             get;
@@ -78,14 +78,8 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                 return;
             }
 
-            try
-            {
-                DisposeTimer();
-                this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
-            }
-            catch
-            {
-            }
+            DisposeTimer();
+            this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
         }
 
         private void OnReceivedJokerSettings(int timeToAnswerInSeconds)
@@ -107,9 +101,20 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         private void DisposeTimer()
         {
-            this.timer.Stop();
-            this.timer.Dispose();
-            this.timer = null;
+            if (timer == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.timer.Stop();
+            }
+            finally
+            {
+                this.timer.Dispose();
+                this.timer = null;
+            }
         }
 
         private void Timer_OnReceiveAudienceVoteTimeout()
@@ -134,7 +139,6 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         public void Activate()
         {
-
             var selected = NetworkCommandData.From<SelectedAudiencePollCommand>();
             this.networkManager.SendServerCommand(selected);
 
@@ -145,7 +149,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.timer.Start();
 
             ((IExtendedTimer)this.timer).RunOnUnityThread = true;
-            
+
             this.Activated = true;
 
             if (this.OnActivated != null)
@@ -161,13 +165,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.OnReceiveSettingsTimeout = null;
             this.OnReceivedSettings = null;
 
-            try
-            {
-                this.DisposeTimer();
-            }
-            catch
-            {
-            }    
+            this.DisposeTimer();
         }
     }
 }

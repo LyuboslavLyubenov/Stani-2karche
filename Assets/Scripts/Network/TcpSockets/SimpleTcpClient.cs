@@ -271,6 +271,10 @@
 
                 this.connectedToServersIPsSockets.Clear();
             }
+
+            this.updateConnectedSocketsTimer.Stop();
+            this.updateConnectedSocketsTimer.Dispose();
+            this.updateConnectedSocketsTimer = null;
         }
 
         public bool IsConnectedTo(string ipAddress)

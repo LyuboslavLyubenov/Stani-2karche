@@ -235,9 +235,15 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.OnSent = null;
             this.OnError = null;
 
-            this.updateTimeTimer.Stop();
-            this.updateTimeTimer.Dispose();
-            this.updateTimeTimer = null;
+            try
+            {
+                this.updateTimeTimer.Stop();
+            }
+            finally
+            {
+                this.updateTimeTimer.Dispose();
+                this.updateTimeTimer = null;
+            }
         }
     }
 }

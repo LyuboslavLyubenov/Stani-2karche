@@ -19,14 +19,16 @@
     public class LeaderboardReceiver : IDisposable
     {
         public event EventHandler<LeaderboardDataEventArgs> OnReceived = delegate
-            { };
+            {
+            };
 
         public event EventHandler OnError = delegate
-            { };
+            {
+            };
 
         private readonly ClientNetworkManager networkManager;
         private readonly List<PlayerScore> playersScores = new List<PlayerScore>();
-        
+
         private readonly int timeoutInSeconds = 0;
 
         public bool Receiving
@@ -55,21 +57,13 @@
 
         private void Timeout()
         {
-            try
-            {
-                this.networkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
-                this.networkManager.CommandsManager.RemoveCommand("LeaderboardNoMoreEntities");
-            }
-            catch
-            {
-                // ignored
-            }
-
             this.Receiving = false;
-
             this.OnError(this, EventArgs.Empty);
+
+            this.networkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
+            this.networkManager.CommandsManager.RemoveCommand("LeaderboardNoMoreEntities");
         }
-        
+
         private void OnNoMoreEntities(object sender, EventArgs args)
         {
             this.OnReceived(this, new LeaderboardDataEventArgs(this.playersScores));
@@ -80,7 +74,7 @@
             this.networkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
             this.networkManager.CommandsManager.RemoveCommand("LeaderboardNoMoreEntities");
         }
-        
+
         public void StartReceiving()
         {
             if (this.Receiving)
@@ -115,8 +109,17 @@
 
         public void Dispose()
         {
-            this.networkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
-            this.networkManager.CommandsManager.RemoveCommand("LeaderboardNoMoreEntities");
+            this.OnReceived = null;
+            this.OnError = null;
+
+            try
+            {
+                this.networkManager.CommandsManager.RemoveCommand<LeaderboardEntityCommand>();
+                this.networkManager.CommandsManager.RemoveCommand("LeaderboardNoMoreEntities");
+            }
+            catch
+            {
+            }
         }
     }
 }

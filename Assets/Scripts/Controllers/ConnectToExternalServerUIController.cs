@@ -51,19 +51,12 @@
 
             if (this.elapsedTimeTryingToConnect >= ConnectionTimeoutInSeconds)
             {
+                this.connecting = false;
                 this.LoadingUI.SetActive(false);
 
                 NotificationsServiceController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
 
-                try
-                {
-                    this.GameInfoReceiverService.StopReceivingFrom(this.ip);
-                }
-                catch
-                {
-                }
-
-                this.connecting = false;
+                this.GameInfoReceiverService.StopReceivingFrom(this.ip);
             }
         }
 
@@ -71,7 +64,7 @@
         {
             this.LoadingUI.SetActive(false);
             this.connecting = false;
-           
+
             switch (args.GameInfo.GameType)
             {
                 case "BasicExam":

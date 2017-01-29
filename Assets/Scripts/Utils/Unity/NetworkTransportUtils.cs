@@ -193,6 +193,7 @@
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
             instance = null;
         }
     }

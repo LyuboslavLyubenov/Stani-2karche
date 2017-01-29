@@ -10,7 +10,7 @@
 
     using UnityEngine.SceneManagement;
 
-    public class ThreadUtils : MonoBehaviour
+    public class ThreadUtils : MonoBehaviour, IDisposable
     {
         private readonly Queue<Action> methodsQueue = new Queue<Action>();
         private readonly Queue<CoroutineTask> coroutinesQueue = new Queue<CoroutineTask>();
@@ -30,7 +30,7 @@
                     {
                         var gameObject = new GameObject("ThreadUtils");
                         var threadUtilsComponent = gameObject.AddComponent<ThreadUtils>();
-                        
+
                         instance = threadUtilsComponent;
                     }
                 }
@@ -44,20 +44,18 @@
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
 
-        void OnDisable()
-        {
-            this.StopAllThreads();
-        }
-
         void OnApplicationQuit()
         {
-            this.StopAllThreads();
+            this.Dispose();
         }
 
         private void StopAllThreads()
         {
             lock (this.myLock)
             {
+                this.coroutinesQueue.ToList()
+                    .ForEach(c => c.Cancel());
+
                 this.methodsQueue.Clear();
                 this.coroutinesQueue.Clear();
                 this.StopAllCoroutines();
@@ -66,7 +64,7 @@
 
         private void OnActiveSceneChanged(Scene arg0, Scene scene)
         {
-            this.StopAllThreads();
+            this.Dispose();
             SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         }
 
@@ -156,6 +154,19 @@
                 var task = new CoroutineTask(coroutine, false);
                 this.coroutinesQueue.Enqueue(task);
             }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                this.StopAllThreads();
+            }
+            catch
+            {
+            }
+
+            instance = null;
         }
     }
 

@@ -34,7 +34,7 @@
         private const int MaxConnectionAttempts = 3;
         private const int MaxServerReactionTimeInSeconds = 6;
         private const int MaxNetworkErrorsBeforeDisconnect = 5;
-        
+
         public bool ShowDebugMenu = false;
 
         private int connectionId = 0;
@@ -144,7 +144,7 @@
             this.receiveNetworkMessagesTimer =
                 TimerUtils.ExecuteEvery(ReceiveNetworkMessagesDelayInSeconds, this.ReceiveMessages);
 
-            this.validateConnectionTimer = 
+            this.validateConnectionTimer =
                 TimerUtils.ExecuteEvery(1f, this.ValidateConnection);
 
             ((IExtendedTimer)this.keepAliveTimer).RunOnUnityThread = true;
@@ -189,7 +189,7 @@
         private void ConfigureCommands()
         {
             this.commandsManager.AddCommand("ShowNotification", new NotificationFromServerCommand(NotificationsServiceController.Instance));
-            
+
             var allowedToConnect = new DummyCommand();
             allowedToConnect.OnExecuted += (sender, args) =>
                 {
@@ -289,7 +289,7 @@
             }
             catch (Exception ex)
             {
-                Debug.Log(ex.Message);
+                Debug.LogException(ex);
             }
 
             if (commandLine != null)
@@ -336,7 +336,7 @@
 
                 yield return null;
             }
-            
+
             if (!this.IsConnected)
             {
                 this.Disconnect();
@@ -349,7 +349,7 @@
             {
                 throw new ArgumentException("Invalid ipv4 address");
             }
-            
+
             if (this.IsConnected)
             {
                 this.Disconnect();
@@ -379,23 +379,14 @@
         {
             byte error = 0;
 
-            try
-            {
-                NetworkTransport.Disconnect(this.genericHostId, this.connectionId, out error);
-            }
-            catch (NetworkException ex)
-            {
-                Debug.Log(ex.Message);
-            }
-
+            NetworkTransport.Disconnect(this.genericHostId, this.connectionId, out error);
             NetworkTransport.RemoveHost(this.genericHostId);
 
             var networkError = (NetworkError)error;
 
             if (networkError != NetworkError.Ok)
             {
-                var errorMessage = NetworkErrorUtils.GetMessage(networkError);
-                this.ShowNotification(Color.red, errorMessage);
+                throw new NetworkException(error);
             }
 
             this.IsConnected = false;
@@ -428,27 +419,29 @@
 
         public void Dispose()
         {
-            this.keepAliveTimer.Stop();
-            this.connectedClientsCountTimer.Stop();
-            this.receiveNetworkMessagesTimer.Stop();
-            this.validateConnectionTimer.Stop();
+            try
+            {
+                this.Disconnect();
 
-            this.keepAliveTimer.Stop();
-            this.connectedClientsCountTimer.Stop();
-            this.receiveNetworkMessagesTimer.Stop();
-            this.validateConnectionTimer.Stop();
+                this.keepAliveTimer.Stop();
+                this.connectedClientsCountTimer.Stop();
+                this.receiveNetworkMessagesTimer.Stop();
+                this.validateConnectionTimer.Stop();
+            }
+            finally
+            {
+                this.keepAliveTimer.Dispose();
+                this.connectedClientsCountTimer.Dispose();
+                this.receiveNetworkMessagesTimer.Dispose();
+                this.validateConnectionTimer.Dispose();
 
-            this.keepAliveTimer.Dispose();
-            this.connectedClientsCountTimer.Dispose();
-            this.receiveNetworkMessagesTimer.Dispose();
-            this.validateConnectionTimer.Dispose();
+                this.keepAliveTimer = null;
+                this.connectedClientsCountTimer = null;
+                this.receiveNetworkMessagesTimer = null;
+                this.validateConnectionTimer = null;
 
-            this.keepAliveTimer = null;
-            this.connectedClientsCountTimer = null;
-            this.receiveNetworkMessagesTimer = null;
-            this.validateConnectionTimer = null;
-
-            instance = null;
+                instance = null;
+            }
         }
 
         #region DEBUG

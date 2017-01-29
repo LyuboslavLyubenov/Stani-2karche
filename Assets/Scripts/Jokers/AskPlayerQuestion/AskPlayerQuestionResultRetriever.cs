@@ -31,7 +31,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             };
 
         private ClientNetworkManager networkManager;
-        
+
         private int receiveSettingsTimeout;
 
         private Timer_ExecuteMethodAfterTime timer;
@@ -53,7 +53,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             {
                 throw new ArgumentOutOfRangeException("receiveSettingsTimeout");
             }
-            
+
             this.networkManager = networkManager;
             this.receiveSettingsTimeout = receiveSettingsTimeout;
         }
@@ -66,6 +66,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.networkManager.CommandsManager.AddCommand(responseCommand);
 
             this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, Timer_OnReceiveAnswerTimeout);
+            this.timer.AutoDispose = true;
             this.timer.RunOnUnityThread = true;
             this.timer.Start();
 
@@ -76,9 +77,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         {
             this.DisposeTimer();
             this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
-
             this.Active = false;
-
             this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
         }
 
@@ -86,25 +85,34 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
         {
             this.DisposeTimer();
             this.Active = false;
-            
             this.OnReceivedAnswer(this, new AskPlayerResponseEventArgs(username, answer));
         }
 
         private void Timer_OnReceiveAnswerTimeout()
         {
             this.DisposeTimer();
-            this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
-            
-            this.Active = false;
 
+            this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
+            this.Active = false;
             this.OnReceiveAnswerTimeout(this, EventArgs.Empty);
         }
 
         void DisposeTimer()
         {
-            this.timer.Stop();
-            this.timer.Dispose();
-            this.timer = null;
+            if (timer == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.timer.Stop();
+            }
+            finally
+            {
+                this.timer.Dispose();
+                this.timer = null;
+            }
         }
 
         public void Activate(int playerConnectionId)
@@ -131,13 +139,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.OnReceivedSettings = null;
             this.OnReceiveSettingsTimeout = null;
 
-            try
-            {
-                DisposeTimer();
-            }
-            catch
-            {
-            }
+            DisposeTimer();
         }
     }
 }

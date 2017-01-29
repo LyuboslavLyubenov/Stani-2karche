@@ -15,7 +15,7 @@ namespace Assets.Scripts.Network
 
         private Action onTimeout;
 
-        private Timer timeoutTimer = new Timer();
+        private Timer_ExecuteMethodAfterTime timeoutTimer = null;
 
         public bool Receiving
         {
@@ -41,9 +41,9 @@ namespace Assets.Scripts.Network
             {
                 throw new ArgumentOutOfRangeException("timeoutInSeconds");
             }
-   
+
             this.networkManager = networkManager;
-            this.onTimeout = onTimeout; 
+            this.onTimeout = onTimeout;
             this.timeoutInSeconds = timeoutInSeconds;
 
             var threadUtils = ThreadUtils.Instance;
@@ -58,28 +58,36 @@ namespace Assets.Scripts.Network
                         return;
                     }
 
-                    this.StopReceivingAvailableCategories();
-                    this.onTimeout();   
+                    try
+                    {
+                        this.StopReceivingAvailableCategories();
+                    }
+                    finally
+                    {
+                        this.onTimeout();
+                    }
                 });
         }
 
         private void StopReceivingAvailableCategories()
         {
-            try
-            {
-                this.Receiving = false;
-                this.networkManager.CommandsManager.RemoveCommand("AvailableCategories");
-            }
-            catch
-            {
-
-            }
+            this.Receiving = false;
+            this.networkManager.CommandsManager.RemoveCommand("AvailableCategories");        
         }
 
         public void Dispose()
         {
-            this.timeoutTimer.Dispose();
-            this.StopReceivingAvailableCategories();
+            try
+            {
+                this.timeoutTimer.Stop();
+
+            }
+            finally
+            {
+                this.timeoutTimer.Dispose();
+                this.timeoutTimer = null;
+                this.StopReceivingAvailableCategories();
+            }
         }
 
         public void GetAllCategories(Action<string[]> onGetAllCategories)
@@ -102,10 +110,9 @@ namespace Assets.Scripts.Network
 
             this.Receiving = true;
 
-            this.timeoutTimer = new Timer();
-            this.timeoutTimer.AutoReset = false;
-            this.timeoutTimer.Interval = this.timeoutInSeconds * 1000;
-            this.timeoutTimer.Elapsed += (sender, args) => this.OnTimeout();
+            this.timeoutTimer = TimerUtils.ExecuteAfter(this.timeoutInSeconds, this.OnTimeout);
+            this.timeoutTimer.RunOnUnityThread = true;
+            this.timeoutTimer.AutoDispose = false;
         }
     }
 

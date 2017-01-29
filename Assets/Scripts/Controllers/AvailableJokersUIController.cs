@@ -59,17 +59,10 @@
             this.jokerStartPosition = rectTransform.anchoredPosition;
             this.distanceBetweenJokers = this.jokerStartPosition.y - this.jokerButtonSize.y;
         }
-        
+
         private void OnJokerClick(GameObject jokerObj, IJoker joker)
         {
-            try
-            {
-                joker.Activate();  
-            }
-            catch (InvalidOperationException ex)
-            {
-                Debug.LogException(ex);
-            }
+            joker.Activate();
 
             this.OnUsedJoker(this, new JokerEventArgs(joker));
 
@@ -83,7 +76,7 @@
             {
                 throw new ArgumentNullException("joker");
             }
-            
+
             var jokerObj = Instantiate(this.dummyJokerButtonPrefab);
 
             jokerObj.name = joker.GetType().Name.Replace("Joker", "");
@@ -105,7 +98,7 @@
             this.jokerObjs.Add(jokerObj);
             this.jokers.Add(joker);
 
-            var contentHeight = -this.jokerStartPosition.y + (this.jokers.Count * (this.jokerButtonSize.y + 10)); 
+            var contentHeight = -this.jokerStartPosition.y + (this.jokers.Count * (this.jokerButtonSize.y + 10));
             this.containerRectTransform.sizeDelta = new Vector2(this.containerRectTransform.sizeDelta.x, contentHeight);
 
             this.OnAddedJoker(this, new JokerEventArgs(joker));

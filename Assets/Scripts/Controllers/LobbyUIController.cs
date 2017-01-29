@@ -49,8 +49,8 @@ namespace Assets.Scripts.Controllers
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
-            this.Dispose();
             SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            this.Dispose();
         }
 
         private void Dispose()

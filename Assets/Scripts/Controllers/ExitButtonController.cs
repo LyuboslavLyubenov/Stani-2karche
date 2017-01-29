@@ -1,5 +1,8 @@
 ﻿namespace Assets.Scripts.Controllers
 {
+
+    using Assets.Scripts.Utils;
+
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
@@ -14,7 +17,7 @@
 
         private void LoadMainScreen()
         {
-            SceneManager.LoadScene("StartScreen");        
+            SceneManager.LoadScene("StartScreen");     
         }
     }
 }

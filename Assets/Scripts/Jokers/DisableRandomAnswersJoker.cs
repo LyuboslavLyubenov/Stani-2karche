@@ -81,8 +81,20 @@
 
         void DisposeTimer()
         {
-            this.receiveSettingsTimeoutTimer.Dispose();
-            this.receiveSettingsTimeoutTimer = null;
+            if (this.receiveSettingsTimeoutTimer == null)
+            {
+                return;
+            }
+
+            try
+            {
+                this.receiveSettingsTimeoutTimer.Stop();
+            }
+            finally
+            {
+                this.receiveSettingsTimeoutTimer.Dispose();
+                this.receiveSettingsTimeoutTimer = null;
+            }
         }
 
         private void ActivateJoker(int answersToDisableCount)
@@ -140,6 +152,7 @@
             this.receiveSettingsTimeoutTimer =
                 TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, OnReceiveSettingsTimeout);
 
+            this.receiveSettingsTimeoutTimer.AutoDispose = true;
             this.receiveSettingsTimeoutTimer.RunOnUnityThread = true;
             this.receiveSettingsTimeoutTimer.Start();
 
@@ -156,10 +169,7 @@
             this.OnActivated = null;
             this.OnError = null;
             this.OnFinishedExecution = null;
-
-            this.receiveSettingsTimeoutTimer.Stop();
-            this.receiveSettingsTimeoutTimer.Dispose();
-            this.receiveSettingsTimeoutTimer = null;
+            DisposeTimer();
         }
     }
 }

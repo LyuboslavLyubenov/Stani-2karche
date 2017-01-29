@@ -235,7 +235,7 @@
                 }
                 catch (Exception e)
                 {
-                    Debug.LogWarning(e.Message);
+                    Debug.LogException(e);
                 }
 
                 this.connectedClientsNames.Remove(deadClientConnectionId);
@@ -281,14 +281,12 @@
                 this.connectedClientsIds.Remove(connectionId);
                 this.connectedClientsNames.Remove(connectionId);    
             }
-            catch
+            finally 
             {
-            
-            }
-
-            if (this.OnClientDisconnected != null)
-            {
-                this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(connectionId));    
+                if (this.OnClientDisconnected != null)
+                {
+                    this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(connectionId));
+                }
             }
         }
 
@@ -475,7 +473,7 @@
             }
             catch (NetworkException ex)
             {
-                Debug.Log(ex.Message);
+                Debug.LogException(ex);
             }
 
             byte error;
@@ -513,8 +511,6 @@
             this.updateAliveClientsTimer.Stop();
             this.updateAliveClientsTimer.Dispose();
             this.updateAliveClientsTimer = null;
-
-            ThreadUtils.Instance.CancelCoroutine(this.ReceiveMessagesCoroutine());
 
             instance = null;
         }

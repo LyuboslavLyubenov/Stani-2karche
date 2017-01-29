@@ -71,8 +71,8 @@
             var threadUtils = ThreadUtils.Instance;
 
             this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
-            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 5);
-            this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 5);
+            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 10);
+            this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 10);
             this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 10);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
@@ -240,6 +240,16 @@
             }
         }
 
+        private void OnLoadedCategories(object sender, EventArgs args)
+        {
+            this.LoadingUI.SetActive(false);
+        }
+
+        private void OnTryingAgainToConnectToServer(object sender, EventArgs args)
+        {
+            this.LoadingUI.SetActive(true);
+        }
+
         private void ConnectToServer(string ip)
         {
             try
@@ -283,10 +293,10 @@
             this.remoteGameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
             this.remoteGameDataIterator.OnLoaded += this.OnLoadedGameData;
 
-            this.ChooseCategoryUIController.OnLoadedCategories += (sender, args) => this.LoadingUI.SetActive(false);
+            this.ChooseCategoryUIController.OnLoadedCategories += this.OnLoadedCategories;
             this.ChooseCategoryUIController.OnChoosedCategory += this.OnChoosedCategory;
 
-            this.unableToConnectUIController.OnTryingAgainToConnectToServer += (s, a) => this.LoadingUI.SetActive(true);
+            this.unableToConnectUIController.OnTryingAgainToConnectToServer += this.OnTryingAgainToConnectToServer;
 
             this.AvailableJokersUIController.OnAddedJoker += this.OnAddedJoker;
             this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
@@ -344,6 +354,9 @@
             this.audienceAnswerPollResultRetriever = null;
             this.askPlayerQuestionResultRetriever = null;
             this.leaderboardReceiver = null;
+
+            Resources.UnloadUnusedAssets();
+            GC.Collect();
 
             PlayerPrefs.DeleteKey("LoadedGameData");
             PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
