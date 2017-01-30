@@ -28,7 +28,7 @@ namespace Assets.Scripts.Controllers.GameController
         public GameObject UnableToConnectUI;
         public GameObject SecondsRemainingUI;
         public GameObject MainPlayerDialogUI;
-        
+
         public SecondsRemainingUIController SecondsRemainingUIController;
         public DialogController MainPlayerDialogController;
 
@@ -62,7 +62,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             var localIp = PlayerPrefsEncryptionUtils.GetString("ServerLocalIP");
             var externalIp = PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP") ? PlayerPrefsEncryptionUtils.GetString("ServerExternalIP") : localIp;
-            
+
             this.CoroutineUtils.WaitForFrames(1, () =>
                 {
                     NetworkManagerUtils.Instance.IsServerUp(localIp, ClientNetworkManager.Port, (isRunning) =>
@@ -155,30 +155,16 @@ namespace Assets.Scripts.Controllers.GameController
         {
             this.ConnectingUI.SetActive(true);
 
-            try
-            {
-                ClientNetworkManager.Instance.ConnectToHost(ip);
-            }
-            catch (NetworkException e)
-            {
-                var error = (NetworkConnectionError)e.ErrorN;
-                var errorMessage = NetworkErrorUtils.GetMessage(error);
-                NotificationsServiceController.Instance.AddNotification(Color.red, errorMessage);
-            }
+            var status = ClientNetworkManager.Instance.ConnectToHost(ip);
+            var statusMessage = NetworkErrorUtils.GetMessage(status);
+            NotificationsServiceController.Instance.AddNotification(Color.red, statusMessage);
         }
 
         public void Disconnect()
         {
-            try
-            {
-                ClientNetworkManager.Instance.Disconnect();
-            }
-            catch (NetworkException e)
-            {
-                var error = (NetworkConnectionError)e.ErrorN;
-                var errorMessage = NetworkErrorUtils.GetMessage(error);
-                NotificationsServiceController.Instance.AddNotification(Color.red, errorMessage);
-            }
+            var status = ClientNetworkManager.Instance.Disconnect();
+            var statusMessage = NetworkErrorUtils.GetMessage(status);
+            NotificationsServiceController.Instance.AddNotification(Color.red, statusMessage);
         }
     }
 

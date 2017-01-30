@@ -17,48 +17,6 @@
     {
         private NetworkTransportUtils()
         {
-        
-        }
-
-        public static void ReceiveMessageAsync(Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
-        {
-            if (onReceivedMessage == null)
-            {
-                throw new ArgumentNullException("onReceivedMessage");
-            }
-
-            int recHostId; 
-            int connectionId; 
-            int channelId; 
-            int bufferSize = 4096;
-            byte[] recBuffer = new byte[bufferSize]; 
-            int dataSize;
-            byte error;
-
-            NetworkEventType receiveEventType = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
-            
-            try
-            {
-                ValidateNetworkOperation(error);    
-            }
-            catch (NetworkException ex)
-            {
-                if (onError != null)
-                {
-                    onError(ex);
-                    return;
-                }
-
-                throw;
-            }
-
-            var message = ConvertBufferToString(recBuffer);
-
-            DecryptMessageAsync(message, (decryptedMessage) =>
-                {
-                    var networkData = new NetworkData(connectionId, decryptedMessage, receiveEventType);
-                    onReceivedMessage(networkData);
-                });
         }
 
         private static void DecryptMessageAsync(string message, Action<string> onDecrypted)
@@ -88,31 +46,6 @@
 
             yield return Ninja.JumpToUnity;
             onDecrypted(decryptedMessage);
-        }
-
-        public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null)
-        {
-            EncryptMessageAsync(message, (buffer) =>
-                {
-                    byte error;
-
-                    NetworkTransport.Send(hostId, connectionId, channelId, buffer, buffer.Length, out error);
-
-                    try
-                    {
-                        ValidateNetworkOperation(error);    
-                    }
-                    catch (NetworkException ex)
-                    {
-                        if (onError != null)
-                        {
-                            onError(ex);
-                            return;
-                        }
-
-                        throw;
-                    }
-                });
         }
 
         private static void EncryptMessageAsync(string message, Action<byte[]> onEncrypted)
@@ -163,6 +96,72 @@
             }
 
             return result.ToString();
+        }
+
+        public static void ReceiveMessageAsync(Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
+        {
+            if (onReceivedMessage == null)
+            {
+                throw new ArgumentNullException("onReceivedMessage");
+            }
+
+            int recHostId;
+            int connectionId;
+            int channelId;
+            int bufferSize = 4096;
+            byte[] recBuffer = new byte[bufferSize];
+            int dataSize;
+            byte error;
+
+            NetworkEventType receiveEventType = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
+
+            try
+            {
+                ValidateNetworkOperation(error);
+            }
+            catch (NetworkException ex)
+            {
+                if (onError != null)
+                {
+                    onError(ex);
+                    return;
+                }
+
+                throw;
+            }
+
+            var message = ConvertBufferToString(recBuffer);
+
+            DecryptMessageAsync(message, (decryptedMessage) =>
+            {
+                var networkData = new NetworkData(connectionId, decryptedMessage, receiveEventType);
+                onReceivedMessage(networkData);
+            });
+        }
+
+        public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null)
+        {
+            EncryptMessageAsync(message, (buffer) =>
+            {
+                byte error;
+
+                NetworkTransport.Send(hostId, connectionId, channelId, buffer, buffer.Length, out error);
+
+                try
+                {
+                    ValidateNetworkOperation(error);
+                }
+                catch (NetworkException ex)
+                {
+                    if (onError != null)
+                    {
+                        onError(ex);
+                        return;
+                    }
+
+                    throw;
+                }
+            });
         }
     }
 

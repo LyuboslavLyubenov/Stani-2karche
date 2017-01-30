@@ -66,7 +66,7 @@ namespace Assets.Scripts.Network.TcpSockets
             this.acceptConnections.SendTimeout = SendMessageTimeoutInMiliseconds;
             this.acceptConnections.ReceiveTimeout = ReceiveMessageTimeoutInMiliseconds;
             this.acceptConnections.Bind(new IPEndPoint(IPAddress.Any, this.Port));
-            this.acceptConnections.Listen(10);
+            this.acceptConnections.Listen(1);
 
             this.removeDisconnectedSocketsTimer = TimerUtils.ExecuteEvery(CheckDisconnectedSocketsDelayInSeconds, this.RemoveDisconnectedSockets);
             this.removeDisconnectedSocketsTimer.Start();
@@ -152,11 +152,9 @@ namespace Assets.Scripts.Network.TcpSockets
             {
                 Debug.LogWarning(e.Message);
             }
-            finally
-            {
-                Thread.Sleep(AcceptNewConnectionDelayInMiliseconds);
-                this.BeginAcceptConnections();
-            }
+
+            Thread.Sleep(AcceptNewConnectionDelayInMiliseconds);
+            this.BeginAcceptConnections();
         }
 
         private void BeginReceiveMessage(string ipAddress)

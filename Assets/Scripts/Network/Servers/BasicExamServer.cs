@@ -149,7 +149,8 @@ namespace Assets.Scripts.Network.Servers
 
                     this.UpdateRemainingTime();
                 });
-            
+
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
 
         void OnApplicationQuit()
@@ -160,7 +161,7 @@ namespace Assets.Scripts.Network.Servers
         private void OnConnectedClientSelected(int connectionId)
         {
             this.ClientOptionsUIController.gameObject.SetActive(true);
-            this.CoroutineUtils.WaitForFrames(0, () =>
+            this.CoroutineUtils.WaitForFrames(1, () =>
             {
                 var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
                 var clientData = new ConnectedClientData(connectionId, username);
@@ -317,8 +318,6 @@ namespace Assets.Scripts.Network.Servers
             this.audiencePollRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();
 
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
-
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
         }
         
         private void InitializeCommands()

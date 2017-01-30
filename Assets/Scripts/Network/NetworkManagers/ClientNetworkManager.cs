@@ -343,7 +343,7 @@
             }
         }
 
-        public void ConnectToHost(string ip)
+        public NetworkConnectionError ConnectToHost(string ip)
         {
             if (!ip.IsValidIPV4())
             {
@@ -363,34 +363,31 @@
 
             var networkError = (NetworkConnectionError)error;
 
-            if (networkError != NetworkConnectionError.NoError)
-            {
-                this.Disconnect();
-                throw new NetworkException(error);
-            }
-            else
+            if (networkError == NetworkConnectionError.NoError)
             {
                 this.isRunning = true;
                 ThreadUtils.Instance.RunOnMainThread(this.CheckCommandAllowedToConnectReceivedCoroutine());
             }
+            else
+            {
+                this.Disconnect();
+            }
+
+            return networkError;
         }
 
-        public void Disconnect()
+        public NetworkError Disconnect()
         {
             byte error = 0;
 
             NetworkTransport.Disconnect(this.genericHostId, this.connectionId, out error);
             NetworkTransport.RemoveHost(this.genericHostId);
 
-            var networkError = (NetworkError)error;
-
-            if (networkError != NetworkError.Ok)
-            {
-                throw new NetworkException(error);
-            }
-
             this.IsConnected = false;
             this.isRunning = false;
+
+            var networkError = (NetworkError)error;
+            return networkError;
         }
 
         public void SendServerCommand(NetworkCommandData commandData)
