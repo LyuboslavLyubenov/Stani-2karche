@@ -242,7 +242,7 @@
 
         private string GetUsername()
         {
-            var username = "Anonymous";
+            var username = string.Empty;
 
             if (PlayerPrefsEncryptionUtils.HasKey("Username"))
             {

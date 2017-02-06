@@ -5,7 +5,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Timers;
-    
+
+    using Assets.Scripts.Controllers.PlayersConnecting;
+    using Assets.Scripts.Interfaces;
+
     using Broadcast;
 
     using Commands;
@@ -25,7 +28,7 @@
 
     using Debug = UnityEngine.Debug;
 
-    public class ServerNetworkManager : IDisposable
+    public class ServerNetworkManager : IServerNetworkManager, IDisposable
     {
         private const int Port = 7788;
 
@@ -111,7 +114,7 @@
             return this.connectedClientsNames.Select(c => c.Value).ToArray();
         }
 
-        public CommandsManager CommandsManager
+        public ICommandsManager CommandsManager
         {
             get
             {
@@ -237,10 +240,13 @@
                 {
                     Debug.LogException(e);
                 }
-
+                
                 this.connectedClientsNames.Remove(deadClientConnectionId);
 
-                this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(deadClientConnectionId));
+                if (this.OnClientDisconnected != null)
+                {
+                    this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(deadClientConnectionId));
+                }
             }
 
             this.connectedClientsIds.RemoveAll(deadClientsIds.Contains);
@@ -358,7 +364,7 @@
 
             if (username.Equals(new KeyValuePair<int, string>()))
             {
-                return "Клиент номер " + connectionId;
+                return string.Empty;
             }
             else
             {
@@ -567,4 +573,5 @@
 
         #endregion
     }
+    
 }

@@ -6,7 +6,7 @@
 
     using Interfaces;
 
-    public class CommandsManager
+    public class CommandsManager : ICommandsManager
     {
         private Dictionary<string, List<INetworkManagerCommand>> commands = new Dictionary<string, List<INetworkManagerCommand>>();
 

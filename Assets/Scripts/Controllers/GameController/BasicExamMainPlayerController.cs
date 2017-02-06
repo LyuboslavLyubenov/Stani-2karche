@@ -3,7 +3,7 @@
     using System;
     using System.Collections;
 
-    using Assets.Scripts.Utils;
+    using Utils;
 
     using Scripts.Jokers.AskPlayerQuestion;
     using Network.Leaderboard;
