@@ -53,7 +53,7 @@
         {
             return this.Container.childCount; 
         }
-
+        
         private void _AddNotification(Color color, string message, int disableDelayInSeconds)
         {
             var notification = Instantiate(this.notificationElementPrefab);

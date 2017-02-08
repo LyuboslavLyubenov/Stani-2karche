@@ -11,7 +11,7 @@ namespace Assets.Scripts.Interfaces
         event EventHandler<ClientConnectionDataEventArgs> OnClientConnected;
         event EventHandler<DataSentEventArgs> OnReceivedData;
         event EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected;
-        event EventHandler<ConnectedClientDataEventArgs> OnClientSetUsername;
+        event EventHandler<ConnectedClientDataEventArgs> OnClientSetUsername;//TODO Connectedclientdataeventargs is BULLSHIT
 
         ICommandsManager CommandsManager
         {
