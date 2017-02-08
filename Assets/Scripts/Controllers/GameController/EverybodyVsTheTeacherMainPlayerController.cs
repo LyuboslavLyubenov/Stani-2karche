@@ -1,9 +1,10 @@
 ﻿namespace Assets.Scripts.Controllers.GameController
 {
+    using Commands;
+    using Commands.Server;
 
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils.Unity;
+    using Network.NetworkManagers;
+    using Utils.Unity;
 
     using UnityEngine;
 
@@ -13,9 +14,7 @@
     {
         public GameObject LoadingUI;
         public GameObject UnableToConnectUI;
-
-        public ClientNetworkManager NetworkManager;
-        public NotificationsServiceController NotificationController;
+        
         public AvailableJokersUIController JokersUI;
         public SecondsRemainingUIController SecondsRemainingUIController;
         public MarkPanelController MarkUIController;
@@ -24,20 +23,21 @@
         public UnableToConnectUIController UnableToConnectUIController;
         public QuestionUIController QuestionUIController;
 
-        private void Start()
+        void Start()
         {
-            this.LoadControllers();
             this.AttachEventHandlers();
-            this.ConnectToServer();
+            this.GetServerIpAndConnectToServer();
 
             this.LoadingUI.SetActive(true);
-            this.ConnectToServer();
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
         {
             this.LoadingUI.SetActive(false);
             this.UnableToConnectUI.SetActive(false);
+
+            var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
+            ClientNetworkManager.Instance.SendServerCommand(commandData);
         }
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
@@ -48,34 +48,22 @@
         private void OnFoundServerIP(string ip)
         {
             this.UnableToConnectUIController.ServerIP = ip;
-
-            try
-            {
-                this.NetworkManager.ConnectToHost(ip);
-            }
-            catch
-            {
-                this.OnFoundServerIPError();
-            }
+            ClientNetworkManager.Instance.ConnectToHost(ip);
+            this.OnFoundServerIPError();
         }
 
         private void OnFoundServerIPError()
         {
-            this.CoroutineUtils.WaitForSeconds(1f, this.ConnectToServer);
+            this.CoroutineUtils.WaitForSeconds(1f, this.GetServerIpAndConnectToServer);
         }
-
-        private void LoadControllers()
-        {  
         
-        }
-
         private void AttachEventHandlers()
         {
-            this.NetworkManager.OnConnectedEvent += this.OnConnectedToServer;
-            this.NetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+            ClientNetworkManager.Instance.OnConnectedEvent += this.OnConnectedToServer;
+            ClientNetworkManager.Instance.OnDisconnectedEvent += this.OnDisconnectedFromServer;
         }
 
-        private void ConnectToServer()
+        private void GetServerIpAndConnectToServer()
         {
             NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
         }
