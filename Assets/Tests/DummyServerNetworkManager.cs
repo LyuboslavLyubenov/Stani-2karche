@@ -10,6 +10,8 @@ namespace Assets.Tests
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
 
+    using UnityEngine;
+
     public class DummyServerNetworkManager : IServerNetworkManager
     {
         public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
@@ -180,9 +182,34 @@ namespace Assets.Tests
         public void FakeReceiveMessage(int fromConnectionId, string message)
         {
             var clientUsername = this.GetClientUsername(fromConnectionId);
-            this.OnReceivedData(this, new DataSentEventArgs(fromConnectionId, clientUsername, message));
+
+            NetworkCommandData commandData = null;
+
+            try
+            {
+                commandData = NetworkCommandData.Parse(message);
+            }
+            catch
+            {
+            }
+
+            if (commandData != null)
+            {
+                commandData.AddOption("ConnectionId", fromConnectionId.ToString());
+
+                try
+                {
+                    this.CommandsManager.Execute(commandData);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+            else
+            {
+                this.OnReceivedData(this, new DataSentEventArgs(fromConnectionId, clientUsername, message));
+            }
         }
-
     }
-
 }

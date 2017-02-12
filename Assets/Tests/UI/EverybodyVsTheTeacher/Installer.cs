@@ -1,5 +1,6 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
+﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher
 {
+
     using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces;
 

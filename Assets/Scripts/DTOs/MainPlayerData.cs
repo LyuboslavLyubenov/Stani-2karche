@@ -59,16 +59,7 @@ namespace Assets.Scripts.DTOs
 
             networkManager.OnClientDisconnected += this.OnClientDisconnected;
             networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
-
-            //lazy motherf*cker
-            this.OnConnected = delegate
-                {
-                };
-
-            this.OnDisconnected = delegate
-                {
-                };
-
+            
             this.IsConnected = false;
         }
 

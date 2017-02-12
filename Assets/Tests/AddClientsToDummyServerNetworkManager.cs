@@ -12,10 +12,10 @@
     public class AddClientsToDummyServerNetworkManager : ExtendedMonoBehaviour
     {
         public int Count = 1;
-
+        
         [Inject]
         private IServerNetworkManager networkManager;
-
+        
         void Start()
         {
             this.StartCoroutine(this.SimulateConnectedClients());
@@ -37,8 +37,8 @@
 
             for (int i = 0; i < this.Count; i++)
             {
-                yield return new WaitForSeconds(1f);
                 serverNetworkManager.FakeConnectPlayer((i + 1));
+                yield return new WaitForSeconds(1f);
             }
         }
     }
