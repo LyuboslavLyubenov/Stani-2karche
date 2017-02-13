@@ -1,13 +1,15 @@
 ﻿namespace Assets.Scripts
 {
     using System;
+    using System.Linq;
     using System.Reflection;
 
+    using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces;
 
     using Network.NetworkManagers;
     using Network.Servers;
-    
+
     using DTOs;
 
     using Utils.Unity;
@@ -30,7 +32,7 @@
         }
 
         private string externalIp = "";
-        
+
         GameInfoFactory()
         {
             NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
@@ -43,9 +45,9 @@
             var methodName = "Get" + gameName + "GameInfo";
             var methodInfo = this.GetType()
                 .GetMethod(
-                    methodName, 
-                    BindingFlags.NonPublic | 
-                    BindingFlags.Instance | 
+                    methodName,
+                    BindingFlags.NonPublic |
+                    BindingFlags.Instance |
                     BindingFlags.InvokeMethod);
 
             if (methodInfo == null)
@@ -60,8 +62,8 @@
         {
             var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
             var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
-            var gameTypeName = server.GetType().Name.Replace("Server", "");
-            var hostUsername = PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
+            var gameTypeName = this.GetServerTypeName(server);
+            var hostUsername = this. GetHostUsername();
             var serverInfo = this.GetServerInfo(serverNetworkManager);
 
             var gameInfo = new BasicExamGameInfo_DTO()
@@ -74,6 +76,47 @@
             };
 
             return gameInfo;
+        }
+
+        private EverybodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(ServerNetworkManager networkManager, IGameServer gameServer)
+        {
+            var server = (EveryBodyVsTheTeacherServer)gameServer;
+
+            var canConnectAsMainPlayer = 
+                !server.IsGameOver &&
+                !server.StartedGame &&
+                server.MainPlayersConnectionIds.Count() < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame;
+
+            var canConnectAsAudience = 
+                !server.IsGameOver &&
+                !server.StartedGame;
+
+            var gameTypeName = this.GetServerTypeName(server);
+            var hostUsername = this.GetHostUsername();
+            var serverInfo = this.GetServerInfo(networkManager);
+
+            var gameInfo = new EverybodyVsTheTeacherGameInfo_DTO()
+            {
+                GameType = gameTypeName,
+                HostUsername = hostUsername,
+                ServerInfo = serverInfo,
+                CanConnectAsMainPlayer = canConnectAsMainPlayer,
+                CanConnectAsAudience = canConnectAsAudience,
+                IsGameStarted = server.StartedGame
+            };
+
+            return gameInfo;
+        }
+
+        private string GetServerTypeName(IGameServer server)
+        {
+            return server.GetType()
+                .Name.Replace("Server", "");
+        }
+
+        private string GetHostUsername()
+        {
+            return PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
         }
 
         private ServerInfo_DTO GetServerInfo(ServerNetworkManager serverNetworkManager)
@@ -92,4 +135,5 @@
             return serverInfo;
         }
     }
+
 }

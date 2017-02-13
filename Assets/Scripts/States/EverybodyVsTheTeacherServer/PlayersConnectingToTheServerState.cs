@@ -7,6 +7,7 @@ namespace Assets.Scripts.States.EverybodyVsTheTeacherServer
     using System.Linq;
 
     using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.StateMachine;
@@ -14,8 +15,6 @@ namespace Assets.Scripts.States.EverybodyVsTheTeacherServer
 
     public class PlayersConnectingToTheServerState : IState
     {
-        public const int MinMainPlayersNeededToStartGame = 6;
-        public const int MaxMainPlayersNeededToStartGame = 10;
 
         public ReadOnlyCollection<int> MainPlayersConnectionIds
         {
@@ -51,7 +50,7 @@ namespace Assets.Scripts.States.EverybodyVsTheTeacherServer
         private readonly HashSet<int> mainPlayersConnectionsIds = new HashSet<int>();
         
         private readonly IServerNetworkManager networkManager;
-
+        
         public PlayersConnectingToTheServerState(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
@@ -89,10 +88,10 @@ namespace Assets.Scripts.States.EverybodyVsTheTeacherServer
 
         private void OnMainPlayerConnecting(int connectionId)
         {
-            if (this.mainPlayersConnectionsIds.Count < MaxMainPlayersNeededToStartGame)
+            if (this.mainPlayersConnectionsIds.Count < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame)
             {
                 this.mainPlayersConnectionsIds.Add(connectionId);
-                this.OnPlayerConnectedToServer(this, new ClientConnectionDataEventArgs(connectionId));
+                this.OnMainPlayerConnected(this, new ClientConnectionDataEventArgs(connectionId));
             }
             else
             {
@@ -123,17 +122,23 @@ namespace Assets.Scripts.States.EverybodyVsTheTeacherServer
             this.networkManager.OnClientConnected -= this.OnPlayerConnectedToServer;
             this.networkManager.OnClientDisconnected -= this.OnPlayerDisconnectedFromServer;
         }
+        
 
         public void OnStateEnter(SimpleFiniteStateMachine stateMachine)
         {
             this.AttachEventHandlers();
+
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
         }
-
+        
         public void OnStateExit(SimpleFiniteStateMachine stateMachine)
         {
             this.DetachEventHandlers();
+
             this.networkManager.CommandsManager.RemoveCommand<MainPlayerConnectingCommand>();
+
+            this.mainPlayersConnectionsIds.Clear();
+            this.audiencePlayersConnectionIds.Clear();
         }
     }
 }

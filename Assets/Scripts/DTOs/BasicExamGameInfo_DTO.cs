@@ -1,6 +1,5 @@
 ﻿namespace Assets.Scripts.DTOs
 {
-
     using System;
 
     [Serializable]
@@ -9,5 +8,4 @@
         public bool CanConnectAsMainPlayer;
         public bool CanConnectAsAudience;
     }
-
 }
