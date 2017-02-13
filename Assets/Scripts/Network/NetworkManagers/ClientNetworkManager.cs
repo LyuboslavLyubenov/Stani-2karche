@@ -221,12 +221,7 @@
             var commandLine = NetworkCommandData.From<KeepAliveCommand>();
             this.SendServerCommand(commandLine);
         }
-
-        private void ShowNotification(Color color, string message)
-        {
-            NotificationsServiceController.Instance.AddNotification(color, message);
-        }
-
+        
         private void ReceiveMessages()
         {
             if (this.isRunning)

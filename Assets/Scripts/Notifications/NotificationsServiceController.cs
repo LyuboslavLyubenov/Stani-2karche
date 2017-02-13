@@ -20,8 +20,7 @@
                 {
                     instance = existingInstance;
                 }
-
-                if (instance == null)
+                else
                 {
                     var prefab = Resources.Load<GameObject>("Prefabs/Notifications");
                     var canvas = GameObject.FindObjectOfType<Canvas>().transform;
