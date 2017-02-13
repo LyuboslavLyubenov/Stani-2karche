@@ -55,7 +55,7 @@ namespace Assets.Tests
             get; private set;
         }
 
-        public int MaxConnections { get; private set; }
+        public int MaxConnections { get; set; }
 
         public int ConnectedClientsCount
         {

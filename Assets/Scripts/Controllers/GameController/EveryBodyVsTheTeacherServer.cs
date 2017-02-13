@@ -5,6 +5,10 @@ namespace Assets.Scripts.Controllers.GameController
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Network.Broadcast;
+    using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Network.TcpSockets;
     using Assets.Scripts.StateMachine;
     using Assets.Scripts.States.EverybodyVsTheTeacherServer;
     using Assets.Scripts.Utils.Unity;
@@ -45,6 +49,8 @@ namespace Assets.Scripts.Controllers.GameController
         {
             get; private set;
         }
+        
+        private CreatedGameInfoSenderService senderService = null;
 
         [Inject]
         private IServerNetworkManager serverNetworkManager;
@@ -59,6 +65,14 @@ namespace Assets.Scripts.Controllers.GameController
 
         void Start()
         {
+            this.senderService = new CreatedGameInfoSenderService(
+                new SimpleTcpClient(),
+                new SimpleTcpServer(7772),
+                GameInfoFactory.Instance,
+                serverNetworkManager,
+                this);
+            
+
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 

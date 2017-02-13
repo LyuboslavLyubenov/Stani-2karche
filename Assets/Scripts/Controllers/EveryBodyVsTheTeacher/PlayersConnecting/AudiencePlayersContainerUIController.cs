@@ -1,21 +1,18 @@
-﻿namespace Assets.Scripts.Controllers.PlayersConnecting
+﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
+
     using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers.GameController;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.States.EverybodyVsTheTeacherServer;
-
-    using Interfaces;
-
-    using EventArgs;
-
-    using Utils.Unity;
+    using Assets.Scripts.Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.UI;
 
     using Zenject;
-    
+
     public class AudiencePlayersContainerUIController : MonoBehaviour
     {
         private const int AudiencePlayerObjectStartPositionX = -550;
@@ -50,7 +47,7 @@
 
         private void OnAudiencePlayerConnected(object sender, ClientConnectionDataEventArgs args)
         {
-            ShowAudiencePlayerOnScreen(args.ConnectionId);
+            this.ShowAudiencePlayerOnScreen(args.ConnectionId);
         }
 
         private void OnAudiencePlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
@@ -60,7 +57,7 @@
                 return;
             }
 
-            HideAudiencePlayerFromScreen(args.ConnectionId);
+            this.HideAudiencePlayerFromScreen(args.ConnectionId);
         }
 
         private void HideAudiencePlayerFromScreen(int connectionId)
@@ -92,7 +89,7 @@
 
             var newAudienceObject = this.GetAudienceObjectFromPoolWithStartPosition();
 
-            GetUsernameFromServerAndSetItToAudienceObject(connectionId, newAudienceObject);
+            this.GetUsernameFromServerAndSetItToAudienceObject(connectionId, newAudienceObject);
             
             this.connectionIdAudienceObj.Add(connectionId, newAudienceObject);
             this.audiencePlayerObjects.Enqueue(newAudienceObject);
@@ -100,7 +97,7 @@
 
         private GameObject GetAudienceObjectFromPoolWithStartPosition()
         {
-            var audiencePlayerTransform = AudienceObjectsPool.Get();
+            var audiencePlayerTransform = this.AudienceObjectsPool.Get();
 
             var rectTransform = audiencePlayerTransform.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = this.StartPosition;

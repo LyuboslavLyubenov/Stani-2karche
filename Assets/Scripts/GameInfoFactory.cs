@@ -6,8 +6,7 @@
 
     using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces;
-
-    using Network.NetworkManagers;
+    
     using Network.Servers;
 
     using DTOs;

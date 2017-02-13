@@ -26,6 +26,7 @@ namespace Assets.Scripts.Interfaces
         int MaxConnections
         {
             get;
+            set;
         }
 
         int ConnectedClientsCount

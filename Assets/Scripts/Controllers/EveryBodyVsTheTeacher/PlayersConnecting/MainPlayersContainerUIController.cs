@@ -1,9 +1,9 @@
-namespace Assets.Scripts.Controllers.PlayersConnecting
+namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
     using System.Collections.Generic;
     using System.Linq;
-    
+
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.States.EverybodyVsTheTeacherServer;
@@ -33,7 +33,7 @@ namespace Assets.Scripts.Controllers.PlayersConnecting
         
         private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
         {
-            ShowMainPlayerOnScreen(args.ConnectionId);
+            this.ShowMainPlayerOnScreen(args.ConnectionId);
         }
 
         private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
@@ -43,7 +43,7 @@ namespace Assets.Scripts.Controllers.PlayersConnecting
                 return;
             }
 
-            HideMainPlayerFromScreen(args.ConnectionId);
+            this.HideMainPlayerFromScreen(args.ConnectionId);
         }
 
         private void HideMainPlayerFromScreen(int connectionId)
@@ -54,7 +54,7 @@ namespace Assets.Scripts.Controllers.PlayersConnecting
 
         private void ShowMainPlayerOnScreen(int connectionId)
         {
-            var playerUsername = serverNetworkManager.GetClientUsername(connectionId);
+            var playerUsername = this.serverNetworkManager.GetClientUsername(connectionId);
             var controller = this.GetFirstNotUsedMainPlayerObject();
             controller.Username = playerUsername;
 

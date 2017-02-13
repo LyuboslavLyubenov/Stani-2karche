@@ -1,7 +1,6 @@
-﻿namespace Assets.Scripts.Controllers.PlayersConnecting
+﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
-    using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.States.EverybodyVsTheTeacherServer;
@@ -14,12 +13,12 @@
         {
             var serverNetworkManager = ServerNetworkManager.Instance;
 
-            Container.Bind<IServerNetworkManager>()
+            this.Container.Bind<IServerNetworkManager>()
                 .To<ServerNetworkManager>()
                 .FromInstance(serverNetworkManager)
                 .AsSingle();
 
-            Container.Bind<PlayersConnectingToTheServerState>()
+            this.Container.Bind<PlayersConnectingToTheServerState>()
                 .AsSingle();
         }
     }

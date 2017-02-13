@@ -1,6 +1,7 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
-namespace Assets.Scripts.Controllers.PlayersConnecting
+namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
+
     using UnityEngine;
     using UnityEngine.UI;
 

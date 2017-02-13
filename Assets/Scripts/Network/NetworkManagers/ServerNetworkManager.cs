@@ -6,7 +6,6 @@
     using System.Linq;
     using System.Timers;
 
-    using Assets.Scripts.Controllers.PlayersConnecting;
     using Assets.Scripts.Interfaces;
 
     using Broadcast;
@@ -39,7 +38,7 @@
         public int MaxConnections
         {
             get;
-            private set;
+            set;
         }
         
         public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
