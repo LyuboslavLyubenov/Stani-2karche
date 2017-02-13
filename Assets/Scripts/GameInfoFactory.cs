@@ -38,7 +38,7 @@
             NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
         }
 
-        public CreatedGameInfo_DTO Get(ServerNetworkManager serverNetworkManager, IGameServer server)
+        public CreatedGameInfo_DTO Get(IServerNetworkManager serverNetworkManager, IGameServer server)
         {
             var gameName = server.GetType()
                 .Name.Replace("Server", "");

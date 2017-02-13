@@ -23,6 +23,11 @@ namespace Assets.Scripts.Interfaces
             get;
         }
 
+        int MaxConnections
+        {
+            get;
+        }
+
         int ConnectedClientsCount
         {
             get;

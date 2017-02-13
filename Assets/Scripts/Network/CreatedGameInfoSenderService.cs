@@ -21,14 +21,14 @@
 
         private GameInfoFactory gameInfoFactory;
 
-        private readonly ServerNetworkManager serverNetworkManager;
+        private readonly IServerNetworkManager serverNetworkManager;
 
         private readonly IGameServer gameServer;
 
         public CreatedGameInfoSenderService(SimpleTcpClient client,
                                             SimpleTcpServer server,
                                             GameInfoFactory gameInfoFactory,
-                                            ServerNetworkManager serverNetworkManager,
+                                            IServerNetworkManager serverNetworkManager,
                                             IGameServer gameServer)
         {
             if (client == null)

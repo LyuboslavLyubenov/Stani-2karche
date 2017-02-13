@@ -36,7 +36,11 @@
 
         public bool AutoStart = true;
         //how many clients can be connected to the server
-        public int MaxConnections = 30;
+        public int MaxConnections
+        {
+            get;
+            private set;
+        }
         
         public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
             {
@@ -124,6 +128,8 @@
 
         public ServerNetworkManager()
         {
+            this.MaxConnections = 30;
+
             this.ConfigureCommands();
             this.ConfigureServer();
 
