@@ -58,7 +58,7 @@
             return (CreatedGameInfo_DTO)methodInfo.Invoke(this, new object[] { serverNetworkManager, server });
         }
 
-        private BasicExamGameInfo_DTO GetBasicExamGameInfo(ServerNetworkManager serverNetworkManager, IGameServer server)
+        private BasicExamGameInfo_DTO GetBasicExamGameInfo(IServerNetworkManager serverNetworkManager, IGameServer server)
         {
             var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
             var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
@@ -78,7 +78,7 @@
             return gameInfo;
         }
 
-        private EverybodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(ServerNetworkManager networkManager, IGameServer gameServer)
+        private EverybodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(IServerNetworkManager networkManager, IGameServer gameServer)
         {
             var server = (EveryBodyVsTheTeacherServer)gameServer;
 
@@ -119,7 +119,7 @@
             return PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
         }
 
-        private ServerInfo_DTO GetServerInfo(ServerNetworkManager serverNetworkManager)
+        private ServerInfo_DTO GetServerInfo(IServerNetworkManager serverNetworkManager)
         {
             var localIPAddress = NetworkUtils.GetLocalIP();
             var connectedClientsCount = serverNetworkManager.ConnectedClientsCount;
