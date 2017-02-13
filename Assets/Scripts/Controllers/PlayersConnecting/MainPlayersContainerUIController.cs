@@ -6,6 +6,7 @@ namespace Assets.Scripts.Controllers.PlayersConnecting
     
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
 
     using UnityEngine;
 
@@ -20,12 +21,12 @@ namespace Assets.Scripts.Controllers.PlayersConnecting
         private IServerNetworkManager serverNetworkManager;
 
         [Inject]
-        private IEverybodyVsTheTeacherServer server;
+        private PlayersConnectingToTheServerState state;
 
         void Start()
         {
-            this.server.OnMainPlayerConnected += this.OnMainPlayerConnected;
-            this.server.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
+            this.state.OnMainPlayerConnected += this.OnMainPlayerConnected;
+            this.state.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
 
             this.mainPlayerUIControllers = this.GetComponentsInChildren<MainPlayerUIController>();
         }

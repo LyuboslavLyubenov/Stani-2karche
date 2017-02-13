@@ -3,6 +3,7 @@
 
     using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
 
     using Zenject;
 
@@ -16,9 +17,7 @@
                 .FromInstance(dummyNetworkManager)
                 .AsSingle();
 
-            this.Container.Bind<IEverybodyVsTheTeacherServer>()
-                .To<EveryBodyVsTheTeacherServer>()
-                .FromGameObject();
+            this.Container.Bind<PlayersConnectingToTheServerState>().AsSingle(); 
         }
     }
 

@@ -2,6 +2,9 @@
 {
     using System.Collections.Generic;
 
+    using Assets.Scripts.Controllers.GameController;
+    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
+
     using Interfaces;
 
     using EventArgs;
@@ -24,7 +27,7 @@
         public ObjectsPool AudienceObjectsPool;
 
         [Inject]
-        private IEverybodyVsTheTeacherServer server;
+        private PlayersConnectingToTheServerState state;
 
         [Inject]
         private IServerNetworkManager serverNetworkManager;
@@ -39,8 +42,8 @@
 
         void Start()
         {
-            this.server.OnAudiencePlayerConnected += this.OnAudiencePlayerConnected;
-            this.server.OnAudiencePlayerDisconnected += this.OnAudiencePlayerDisconnected;
+            this.state.OnAudiencePlayerConnected += this.OnAudiencePlayerConnected;
+            this.state.OnAudiencePlayerDisconnected += this.OnAudiencePlayerDisconnected;
 
             this.DotsInAudienceContainer.SetActive(false);
         }
