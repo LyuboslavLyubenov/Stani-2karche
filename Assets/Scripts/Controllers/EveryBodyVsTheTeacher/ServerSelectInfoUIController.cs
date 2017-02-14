@@ -1,6 +1,5 @@
 ﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher
 {
-
     using System;
 
     using Assets.Scripts.DTOs;

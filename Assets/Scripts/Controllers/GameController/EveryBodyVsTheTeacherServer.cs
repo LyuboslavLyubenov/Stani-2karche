@@ -60,8 +60,8 @@ namespace Assets.Scripts.Controllers.GameController
         [Inject]
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
 
-        private HashSet<int> mainPlayersConnectionIds;
-        private HashSet<int> audiencePlayersconnectionIds;
+        private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
+        private HashSet<int> audiencePlayersconnectionIds = new HashSet<int>();
 
         void Start()
         {
@@ -72,7 +72,6 @@ namespace Assets.Scripts.Controllers.GameController
                 serverNetworkManager,
                 this);
             
-
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 
