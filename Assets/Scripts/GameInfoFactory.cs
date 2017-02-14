@@ -5,6 +5,7 @@
     using System.Reflection;
 
     using Assets.Scripts.Controllers.GameController;
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
     
     using Network.Servers;
@@ -39,8 +40,7 @@
 
         public CreatedGameInfo_DTO Get(IServerNetworkManager serverNetworkManager, IGameServer server)
         {
-            var gameName = server.GetType()
-                .Name.Replace("Server", "");
+            var gameName = server.GetGameTypeName();
             var methodName = "Get" + gameName + "GameInfo";
             var methodInfo = this.GetType()
                 .GetMethod(
@@ -61,7 +61,7 @@
         {
             var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
             var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
-            var gameTypeName = this.GetServerTypeName(server);
+            var gameTypeName = server.GetGameTypeName();
             var hostUsername = this. GetHostUsername();
             var serverInfo = this.GetServerInfo(serverNetworkManager);
 
@@ -90,7 +90,7 @@
                 !server.IsGameOver &&
                 !server.StartedGame;
 
-            var gameTypeName = this.GetServerTypeName(server);
+            var gameTypeName = server.GetGameTypeName();
             var hostUsername = this.GetHostUsername();
             var serverInfo = this.GetServerInfo(networkManager);
 
@@ -106,13 +106,7 @@
 
             return gameInfo;
         }
-
-        private string GetServerTypeName(IGameServer server)
-        {
-            return server.GetType()
-                .Name.Replace("Server", "");
-        }
-
+        
         private string GetHostUsername()
         {
             return PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
