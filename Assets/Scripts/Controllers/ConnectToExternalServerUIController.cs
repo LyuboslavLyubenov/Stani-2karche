@@ -1,8 +1,5 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-
-    using System;
-    using System.Linq;
     using System.Reflection;
 
     using Assets.Scripts.Utils;
@@ -103,7 +100,9 @@
 
         private void OnConnectingToEveryBodyVsTheTeacher(object gameInfo_DTO)
         {
-
+            var gameInfo = (EverybodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
+            this.EveryBodyVsTheTeacherSelectInfoUIController.gameObject.SetActive(true);
+            this.EveryBodyVsTheTeacherSelectInfoUIController.Initialize(gameInfo);
         }
 
         public void TryToConnect(string ip)
