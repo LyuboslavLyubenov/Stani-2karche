@@ -1,7 +1,8 @@
 ﻿namespace Assets.Scripts.Controllers
 {
     using System.Collections.Generic;
-    using System.Linq;
+
+    using Assets.Scripts.Interfaces;
 
     using DTOs.KinveySerializableObj;
     using Network.Broadcast;
@@ -13,22 +14,28 @@
 
     using EventArgs;
     using Network;
-    using Notifications;
     using Utils.Unity;
+
+    using Zenject;
 
     using Debug = UnityEngine.Debug;
 
     public class ServersAvailableUIController : ExtendedMonoBehaviour
     {
-        public LANServersDiscoveryService LANServersDiscoveryService;
-        public CreatedGameInfoReceiverService GameInfoReceiverService;
-        public BasicExamServerSelectPlayerTypeUIController BasicExamSelectPlayerTypeController;
-        
         public ObjectsPool ServerFoundElementsPool;
-        
         public GameObject Container;
 
-        private KinveyWrapper kinveyWrapper = new KinveyWrapper();
+        [Inject]
+        private ILANServersDiscoveryService LANServersDiscoveryService;
+
+        [Inject]
+        private CreatedGameInfoReceiverService gameInfoReceiverService;
+
+        [Inject]
+        private SelectPlayerTypeRouter selectPlayerTypeRouter;
+
+        [Inject]
+        private IKinveyWrapper kinveyWrapper;
 
         private List<string> foundServers = new List<string>();
 
@@ -80,48 +87,29 @@
                 return;
             }
 
-            this.GameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
+            this.gameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
             this.foundServers.Add(ip);
         }
 
         private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs receivedData)
         {
             var gameInfo = receivedData.GameInfo;
-
-            switch (gameInfo.GameType)
-            {
-                case "BasicExam":
-                    var basicExamGameInfo = JsonUtility.FromJson<BasicExamGameInfo_DTO>(receivedData.JSON);
-                    this.OnFoundBasicExam(basicExamGameInfo);
-                    break;    
-            }
-        }
-
-        private void OnFoundBasicExam(BasicExamGameInfo_DTO gameInfo_DTO)
-        {
             var obj = this.ServerFoundElementsPool.Get();
             var controller = obj.GetComponent<ServerDiscoveredElementController>();
 
             obj.SetParent(this.Container.transform, true);
-            this.CoroutineUtils.WaitForFrames(1, () => controller.SetData(gameInfo_DTO));
+            this.CoroutineUtils.WaitForFrames(1, () => controller.SetData(gameInfo));
 
             var button = obj.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => this.OpenBasicExamSelectMenu(gameInfo_DTO));
+            button.onClick.AddListener(() => OnClickedOnServerElement(gameInfo.GameType, receivedData.JSON));
         }
-
-        private void OpenBasicExamSelectMenu(BasicExamGameInfo_DTO gameInfo_DTO)
+        
+        private void OnClickedOnServerElement(string gameType, string gameInfoJSON)
         {
-            if (gameInfo_DTO.ServerInfo.IsFull)
-            {
-                NotificationsServiceController.Instance.AddNotification(Color.red, "Server is full");
-                return;
-            }
-
-            this.BasicExamSelectPlayerTypeController.gameObject.SetActive(true);
-            this.CoroutineUtils.WaitForFrames(1, () => this.BasicExamSelectPlayerTypeController.Initialize(gameInfo_DTO));
+            this.selectPlayerTypeRouter.Handle(gameType, gameInfoJSON);
         }
-
+        
         private void ClearFoundServerList()
         {
             var serversCount = this.Container.transform.childCount;
@@ -133,7 +121,7 @@
             }
 
             this.foundServers.Clear();
-            this.GameInfoReceiverService.StopReceivingFromAll();
+            this.gameInfoReceiverService.StopReceivingFromAll();
         }
     }
 }

@@ -13,23 +13,27 @@
     using Network;
     using Notifications;
 
+    using Zenject;
+
     public class ConnectToExternalServerUIController : MonoBehaviour
     {
         private const int ConnectionTimeoutInSeconds = 5;
-
-        public CreatedGameInfoReceiverService GameInfoReceiverService;
-
-        public BasicExamServerSelectPlayerTypeUIController SelectPlayerTypeUIController;
-
-        public EveryBodyVsTheTeacher.ServerSelectInfoUIController EveryBodyVsTheTeacherSelectInfoUIController;
-
+        
         public GameObject LoadingUI;
+
         public Text IPText;
 
+        [Inject]
+        private EveryBodyVsTheTeacher.ServerSelectInfoUIController everyBodyVsTheTeacherSelectInfoUIController;
+
+        [Inject]
+        private CreatedGameInfoReceiverService gameInfoReceiverService;
+
+        [Inject]
+        private BasicExamServerSelectPlayerTypeUIController selectPlayerTypeUIController;
+
         private float elapsedTimeTryingToConnect = 0;
-
         private string ip;
-
         private bool connecting = false;
 
         // ReSharper disable once ArrangeTypeMemberModifiers
@@ -55,7 +59,7 @@
 
             NotificationsServiceController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
 
-            this.GameInfoReceiverService.StopReceivingFrom(this.ip);
+            this.gameInfoReceiverService.StopReceivingFrom(this.ip);
         }
 
         private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
@@ -70,8 +74,9 @@
 
         private void RouteReceivedGameInfo(string gameType, string gameTypeJSON)
         {
+            var methodName = "OnConnectingTo " + gameType;
             var method = this.GetType()
-                .GetMethod("OnConnectingTo " + gameType, BindingFlags.Instance | BindingFlags.NonPublic);
+                .GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (method == null)
             {
@@ -94,15 +99,15 @@
         private void OnConnectingToBasicExam(object gameInfo_DTO)
         {
             var gameInfo = (BasicExamGameInfo_DTO)gameInfo_DTO;
-            this.SelectPlayerTypeUIController.gameObject.SetActive(true);
-            this.SelectPlayerTypeUIController.Initialize(gameInfo);
+            this.selectPlayerTypeUIController.gameObject.SetActive(true);
+            this.selectPlayerTypeUIController.Initialize(gameInfo);
         }
 
         private void OnConnectingToEveryBodyVsTheTeacher(object gameInfo_DTO)
         {
             var gameInfo = (EverybodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
-            this.EveryBodyVsTheTeacherSelectInfoUIController.gameObject.SetActive(true);
-            this.EveryBodyVsTheTeacherSelectInfoUIController.Initialize(gameInfo);
+            this.everyBodyVsTheTeacherSelectInfoUIController.gameObject.SetActive(true);
+            this.everyBodyVsTheTeacherSelectInfoUIController.Initialize(gameInfo);
         }
 
         public void TryToConnect(string ip)
@@ -111,7 +116,7 @@
             this.ip = ip;
             this.connecting = true;
 
-            this.GameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
+            this.gameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
             this.LoadingUI.SetActive(true);
         }
 
