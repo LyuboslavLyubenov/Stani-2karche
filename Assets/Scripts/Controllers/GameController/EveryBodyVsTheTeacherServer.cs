@@ -55,6 +55,12 @@ namespace Assets.Scripts.Controllers.GameController
         [Inject]
         private IServerNetworkManager serverNetworkManager;
 
+        [Inject]
+        private ISimpleTcpClient tcpClient;
+
+        [Inject]
+        private ISimpleTcpServer tcpServer;
+
         private readonly SimpleFiniteStateMachine stateMachine = new SimpleFiniteStateMachine();
 
         [Inject]
@@ -66,8 +72,8 @@ namespace Assets.Scripts.Controllers.GameController
         void Start()
         {
             this.senderService = new CreatedGameInfoSenderService(
-                new SimpleTcpClient(),
-                new SimpleTcpServer(7772),
+                this.tcpClient,
+                this.tcpServer,
                 GameInfoFactory.Instance,
                 serverNetworkManager,
                 this);

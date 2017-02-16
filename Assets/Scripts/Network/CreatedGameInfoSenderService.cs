@@ -16,8 +16,8 @@
         public const string GameInfoTag = "[CreatedGameInfo]";
         public const string SendGameInfoCommandTag = "[SendGameInfo]";
 
-        private readonly SimpleTcpClient client;
-        private readonly SimpleTcpServer server;
+        private readonly ISimpleTcpClient client;
+        private readonly ISimpleTcpServer server;
 
         private GameInfoFactory gameInfoFactory;
 
@@ -25,8 +25,8 @@
 
         private readonly IGameServer gameServer;
 
-        public CreatedGameInfoSenderService(SimpleTcpClient client,
-                                            SimpleTcpServer server,
+        public CreatedGameInfoSenderService(ISimpleTcpClient client,
+                                            ISimpleTcpServer server,
                                             GameInfoFactory gameInfoFactory,
                                             IServerNetworkManager serverNetworkManager,
                                             IGameServer gameServer)

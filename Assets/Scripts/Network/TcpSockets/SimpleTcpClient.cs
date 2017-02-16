@@ -10,13 +10,14 @@
     using System.Timers;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces;
 
     using SecuritySettings;
     using Utils;
 
     using Debug = UnityEngine.Debug;
 
-    public class SimpleTcpClient : IDisposable
+    public class SimpleTcpClient : ISimpleTcpClient
     {
         private const int ReceiveMessageTimeoutInMiliseconds = 4000;
         private const int SendMessageTimeoutInMiliseconds = 4000;

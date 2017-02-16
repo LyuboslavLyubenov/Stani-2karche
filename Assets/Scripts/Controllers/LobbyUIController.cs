@@ -1,6 +1,9 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
 namespace Assets.Scripts.Controllers
 {
+
+    using Assets.Scripts.Interfaces;
+
     using Utils;
 
     using Network;
@@ -10,31 +13,31 @@ namespace Assets.Scripts.Controllers
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
+    using Zenject;
+
     public class LobbyUIController : MonoBehaviour
     {
-        public ConnectToExternalServerUIController ConnectToExternalServerUIController;
-        public ServersAvailableUIController ServersAvailableUIController;
+        [Inject]
+        private ConnectToExternalServerUIController connectToExternalServerUIController;
 
+        [Inject]
+        private ServersAvailableUIController serversAvailableUIController;
+
+        [Inject]
         private LANServersDiscoveryService LANServersDiscoveryService;
+        
+        [Inject]
+        private CreatedGameInfoReceiverService createdGameInfoReceiverService;
 
-        private SimpleTcpServer tcpServer;
-        private SimpleTcpClient tcpClient;
+        [Inject]
+        private ISimpleTcpClient tcpClient;
 
-        private CreatedGameInfoReceiverService CreatedGameInfoReceiverService;
-
+        [Inject]
+        private ISimpleTcpServer tcpServer;
+        
         void Awake()
         {
             var threadUtils = ThreadUtils.Instance;
-
-            this.LANServersDiscoveryService = new LANServersDiscoveryService();
-            this.tcpServer = new SimpleTcpServer(7772);
-            this.tcpClient = new SimpleTcpClient();
-
-            this.CreatedGameInfoReceiverService = new CreatedGameInfoReceiverService(this.tcpClient, this.tcpServer);
-            
-            this.ServersAvailableUIController.LANServersDiscoveryService = this.LANServersDiscoveryService;
-            this.ServersAvailableUIController.GameInfoReceiverService = this.CreatedGameInfoReceiverService;
-            this.ConnectToExternalServerUIController.GameInfoReceiverService = this.CreatedGameInfoReceiverService; 
         }
 
         void Start()
@@ -63,7 +66,7 @@ namespace Assets.Scripts.Controllers
             this.tcpClient = null;
             this.LANServersDiscoveryService = null;
 
-            this.CreatedGameInfoReceiverService = null;
+            this.createdGameInfoReceiverService = null;
         }
     }
 }

@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces;
+
     using EventArgs;
     using TcpSockets;
 
@@ -10,10 +12,10 @@
     {
         private readonly Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
 
-        private SimpleTcpClient client;
-        private SimpleTcpServer server;
+        private ISimpleTcpClient client;
+        private ISimpleTcpServer server;
         
-        public CreatedGameInfoReceiverService(SimpleTcpClient client, SimpleTcpServer server)
+        public CreatedGameInfoReceiverService(ISimpleTcpClient client, ISimpleTcpServer server)
         {
             if (client == null)
             {

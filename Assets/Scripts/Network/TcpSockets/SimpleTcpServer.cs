@@ -10,6 +10,7 @@ namespace Assets.Scripts.Network.TcpSockets
     using System.Threading;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces;
 
     using EventArgs;
     using SecuritySettings;
@@ -18,7 +19,7 @@ namespace Assets.Scripts.Network.TcpSockets
     using Debug = UnityEngine.Debug;
     using Timer = System.Timers.Timer;
 
-    public class SimpleTcpServer : IDisposable
+    public class SimpleTcpServer : ISimpleTcpServer
     {
         private const int MessageBuffer = 1024;
 

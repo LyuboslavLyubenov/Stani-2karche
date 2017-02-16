@@ -99,8 +99,8 @@ namespace Assets.Scripts.Network.Servers
         private GameDataExtractor gameDataExtractor = null;
 
         private CreatedGameInfoSenderService gameInfoSenderService = null;
-        private SimpleTcpServer tcpServer;
-        private SimpleTcpClient tcpClient;
+        private ISimpleTcpServer tcpServer;
+        private ISimpleTcpClient tcpClient;
 
         void Awake()
         {
