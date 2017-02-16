@@ -7,11 +7,12 @@ namespace Assets.Scripts.Network
     using Assets.CielaSpike.Thread_Ninja;
     using Assets.Scripts.DTOs.KinveySerializableObj;
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Utils;
 
     using UnityEngine;
 
-    public class KinveyWrapper
+    public class KinveyWrapper : IKinveyWrapper
     {
         public bool IsLoggedIn
         {

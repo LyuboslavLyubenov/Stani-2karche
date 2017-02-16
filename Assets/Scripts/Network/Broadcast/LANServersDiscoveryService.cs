@@ -3,15 +3,16 @@
     using System;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces;
 
     using Utils;
     using EventArgs;
 
-    public class LANServersDiscoveryService : LANBroadcastService
+    public class LANServersDiscoveryService : LANBroadcastService, ILANServersDiscoveryService
     {
         private const int RetrieveMessageDelayInSeconds = 1;
 
-        public EventHandler<IpEventArgs> OnFound = delegate
+        public event EventHandler<IpEventArgs> OnFound = delegate
             {
             };
 

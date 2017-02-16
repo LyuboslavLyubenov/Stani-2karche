@@ -1,6 +1,7 @@
 namespace Assets.Scripts.Controllers
 {
 
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
     using Assets.Scripts.Network.Broadcast;
     using Assets.Scripts.Network.TcpSockets;
@@ -25,15 +26,16 @@ namespace Assets.Scripts.Controllers
             Container.Bind<SelectPlayerTypeRouter>()
                 .AsSingle();
 
-            Container.Bind<SimpleTcpServer>()
+            Container.Bind<ISimpleTcpServer>()
                 .FromInstance(new SimpleTcpServer(7772))
                 .AsSingle();
 
-            Container.Bind<SimpleTcpClient>()
+            Container.Bind<ISimpleTcpClient>()
                 .FromInstance(new SimpleTcpClient())
                 .AsSingle();
 
-            Container.Bind<LANServersDiscoveryService>()
+            Container.Bind<ILANServersDiscoveryService>()
+                .To<LANServersDiscoveryService>()
                 .AsSingle();
 
             Container.Bind<CreatedGameInfoReceiverService>()
