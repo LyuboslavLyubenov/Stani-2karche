@@ -15,27 +15,27 @@ namespace Assets.Scripts.Controllers
     public class SelectPlayerTypeRouter
     {
         private readonly BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController;
-        private readonly EveryBodyVsTheTeacher.ServerSelectInfoUIController everyBodyVsTheTeacherSelectInfoUIController;
+        private readonly EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
 
         [Inject]
         private CreatedGameInfoReceiverService gameInfoReceiverService;
         
         public SelectPlayerTypeRouter(
             BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController,
-            EveryBodyVsTheTeacher.ServerSelectInfoUIController everyBodyVsTheTeacherSelectInfoUIController)
+            EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController)
         {
             if (basicExamServerSelectPlayerTypeUIController == null)
             {
                 throw new ArgumentNullException("basicExamServerSelectPlayerTypeUIController");
             }
 
-            if (everyBodyVsTheTeacherSelectInfoUIController == null)
+            if (everyBodyVsTheTeacherSelectPlayerTypeUiController == null)
             {
-                throw new ArgumentNullException("everyBodyVsTheTeacherSelectInfoUIController");
+                throw new ArgumentNullException("everyBodyVsTheTeacherSelectPlayerTypeUiController");
             }
             
             this.basicExamServerSelectPlayerTypeUIController = basicExamServerSelectPlayerTypeUIController;
-            this.everyBodyVsTheTeacherSelectInfoUIController = everyBodyVsTheTeacherSelectInfoUIController;
+            this.everyBodyVsTheTeacherSelectPlayerTypeUiController = everyBodyVsTheTeacherSelectPlayerTypeUiController;
         }
         
         private void RouteReceivedGameInfo(string gameType, string gameInfoJSON)
@@ -73,8 +73,8 @@ namespace Assets.Scripts.Controllers
         private void OnConnectingToEveryBodyVsTheTeacher(object gameInfo_DTO)
         {
             var gameInfo = (EverybodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
-            this.everyBodyVsTheTeacherSelectInfoUIController.gameObject.SetActive(true);
-            ThreadUtils.Instance.RunOnMainThread(() => this.everyBodyVsTheTeacherSelectInfoUIController.Initialize(gameInfo));
+            this.everyBodyVsTheTeacherSelectPlayerTypeUiController.gameObject.SetActive(true);
+            ThreadUtils.Instance.RunOnMainThread(() => this.everyBodyVsTheTeacherSelectPlayerTypeUiController.Initialize(gameInfo));
         }
 
         public void Handle(string gameType, string gameTypeJSON)

@@ -24,7 +24,7 @@
         public Text IPText;
 
         [Inject]
-        private EveryBodyVsTheTeacher.ServerSelectInfoUIController everyBodyVsTheTeacherSelectInfoUIController;
+        private EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
 
         [Inject]
         private CreatedGameInfoReceiverService gameInfoReceiverService;
@@ -106,8 +106,8 @@
         private void OnConnectingToEveryBodyVsTheTeacher(object gameInfo_DTO)
         {
             var gameInfo = (EverybodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
-            this.everyBodyVsTheTeacherSelectInfoUIController.gameObject.SetActive(true);
-            this.everyBodyVsTheTeacherSelectInfoUIController.Initialize(gameInfo);
+            this.everyBodyVsTheTeacherSelectPlayerTypeUiController.gameObject.SetActive(true);
+            this.everyBodyVsTheTeacherSelectPlayerTypeUiController.Initialize(gameInfo);
         }
 
         public void TryToConnect(string ip)

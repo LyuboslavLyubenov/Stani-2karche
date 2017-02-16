@@ -8,10 +8,12 @@ namespace Assets.Scripts.Controllers
 
     using Zenject;
 
+
+
     public class LobbyInstaller : MonoInstaller
     {
         public BasicExamServerSelectPlayerTypeUIController BasicExamServerSelectPlayerTypeUIController;
-        public EveryBodyVsTheTeacher.ServerSelectInfoUIController EveryBodyVsTheTeacherSelectInfoUIController;
+        public EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController EveryBodyVsTheTeacherSelectPlayerTypeUiController;
         
         public override void InstallBindings()
         {
@@ -19,8 +21,8 @@ namespace Assets.Scripts.Controllers
                 .FromInstance(this.BasicExamServerSelectPlayerTypeUIController)
                 .AsSingle();
 
-            Container.Bind<EveryBodyVsTheTeacher.ServerSelectInfoUIController>()
-                .FromInstance(this.EveryBodyVsTheTeacherSelectInfoUIController)
+            Container.Bind<EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController>()
+                .FromInstance(this.EveryBodyVsTheTeacherSelectPlayerTypeUiController)
                 .AsSingle();
 
             Container.Bind<SelectPlayerTypeRouter>()

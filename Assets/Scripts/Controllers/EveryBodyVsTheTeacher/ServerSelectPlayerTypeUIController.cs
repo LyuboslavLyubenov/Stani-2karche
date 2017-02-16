@@ -9,7 +9,7 @@
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
-    public class ServerSelectInfoUIController : MonoBehaviour
+    public class ServerSelectPlayerTypeUIController : MonoBehaviour
     {
         public Button JoinAsMainPlayerButton;
         public Button JoinAsAudiencePlayerButton;
