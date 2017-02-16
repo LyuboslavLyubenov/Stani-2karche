@@ -19,6 +19,42 @@
             private set;
         }
 
+        public string Category
+        {
+            get
+            {
+                return this.category.text;
+            }
+            private set
+            {
+                this.category.text = value;
+            }
+        }
+
+        public string CreatorName
+        {
+            get
+            {
+                return this.creatorName.text;
+            }
+            private set
+            {
+                this.creatorName.text = value;
+            }
+        }
+
+        public string ConnectedClients
+        {
+            get
+            {
+                return this.connectedClients.text;
+            }
+            private set
+            {
+                this.connectedClients.text = value;
+            }
+        }
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
@@ -31,9 +67,9 @@
         {
             var translatedGameName = LanguagesManager.Instance.GetValue(gameInfo.GameType);
 
-            this.category.text = translatedGameName;
-            this.creatorName.text = gameInfo.HostUsername;
-            this.connectedClients.text = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
+            this.Category = translatedGameName;
+            this.CreatorName = gameInfo.HostUsername;
+            this.ConnectedClients = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
             this.ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
         }
     }
