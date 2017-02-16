@@ -10,9 +10,7 @@ namespace Assets.Scripts.Interfaces
         event EventHandler<IpEventArgs> OnClientConnected;
 
         event EventHandler<MessageEventArgs> OnReceivedMessage;
-
-        event EventHandler<IpEventArgs> OnClientDisconnected;
-
+        
         int Port
         {
             get;

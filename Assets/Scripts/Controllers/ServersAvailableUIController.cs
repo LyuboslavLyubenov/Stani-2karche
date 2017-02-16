@@ -5,7 +5,6 @@
     using Assets.Scripts.Interfaces;
 
     using DTOs.KinveySerializableObj;
-    using Network.Broadcast;
 
     using UnityEngine;
     using UnityEngine.UI;

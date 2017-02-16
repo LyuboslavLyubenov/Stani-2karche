@@ -6,9 +6,6 @@ namespace Assets.Scripts.Controllers.GameController
 
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
-    using Assets.Scripts.Network.Broadcast;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Network.TcpSockets;
     using Assets.Scripts.StateMachine;
     using Assets.Scripts.States.EverybodyVsTheTeacherServer;
     using Assets.Scripts.Utils.Unity;

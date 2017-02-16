@@ -31,7 +31,7 @@ namespace Assets.Scripts.Controllers
                 .AsSingle();
 
             Container.Bind<ISimpleTcpClient>()
-                .FromInstance(new SimpleTcpClient())
+                .To<SimpleTcpClient>()
                 .AsSingle();
 
             Container.Bind<ILANServersDiscoveryService>()

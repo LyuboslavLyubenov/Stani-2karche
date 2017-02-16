@@ -38,11 +38,7 @@ namespace Assets.Scripts.Network.TcpSockets
         public event EventHandler<MessageEventArgs> OnReceivedMessage = delegate
             {
             };
-
-        public event EventHandler<IpEventArgs> OnClientDisconnected = delegate
-            {
-            };
-
+        
         readonly object myLock = new object();
 
         public int Port
@@ -247,14 +243,21 @@ namespace Assets.Scripts.Network.TcpSockets
                 }
 
                 socket.EndDisconnect(result);
-                //socket.Close();
+
+                if (state.OnSuccess != null)
+                {
+                    state.OnSuccess();
+                }
             }
             catch (Exception ex)
             {
-                Debug.Log(ex.Message);
-            }
+                Debug.LogException(ex);
 
-            ThreadUtils.Instance.RunOnMainThread(() => this.OnClientDisconnected(this, new IpEventArgs(state.IPAddress)));
+                if (state.OnError != null)
+                {
+                    state.OnError(ex);
+                }
+            }
         }
 
         private void DisconnectAllSockets()
