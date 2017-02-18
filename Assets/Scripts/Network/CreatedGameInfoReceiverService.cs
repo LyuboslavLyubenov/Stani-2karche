@@ -37,7 +37,7 @@
         {
             var gameInfoTagIndex = args.Message.IndexOf(CreatedGameInfoSenderService.GameInfoTag, StringComparison.Ordinal);
 
-            if (!this.pendingRequests.ContainsKey(args.IPAddress) && gameInfoTagIndex < 0)
+            if (!this.pendingRequests.ContainsKey(args.IPAddress) || gameInfoTagIndex < 0)
             {
                 return;
             }
