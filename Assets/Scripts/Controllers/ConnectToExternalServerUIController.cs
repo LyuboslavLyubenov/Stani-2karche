@@ -1,13 +1,7 @@
 ﻿namespace Assets.Scripts.Controllers
 {
-    using System.Reflection;
-
-    using Assets.Scripts.Utils;
-
     using UnityEngine;
     using UnityEngine.UI;
-
-    using DTOs;
 
     using EventArgs;
     using Network;
@@ -24,13 +18,10 @@
         public Text IPText;
 
         [Inject]
-        private EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
-
-        [Inject]
         private CreatedGameInfoReceiverService gameInfoReceiverService;
 
         [Inject]
-        private BasicExamServerSelectPlayerTypeUIController selectPlayerTypeUIController;
+        private SelectPlayerTypeRouter SelectPlayerTypeRouter;
 
         private float elapsedTimeTryingToConnect = 0;
         private string ip;
@@ -74,42 +65,9 @@
 
         private void RouteReceivedGameInfo(string gameType, string gameTypeJSON)
         {
-            var methodName = "OnConnectingTo " + gameType;
-            var method = this.GetType()
-                .GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (method == null)
-            {
-                NotificationsServiceController.Instance.AddNotification(Color.red, "Неподържан вид игра", 10);
-                return;
-            }
-
-            var dto = this.ParseJSONToSpecificGameTypeDTO(gameType, gameTypeJSON);
-
-            method.Invoke(this, new [] { dto });
-        }
-
-        private object ParseJSONToSpecificGameTypeDTO(string gameType, string gameTypeJSON)
-        {
-            var type = ServerGameTypeUtils.GetGameServerType(gameType);
-            var dto = JsonUtility.FromJson(gameTypeJSON, type);
-            return dto;
+            this.SelectPlayerTypeRouter.Handle(gameType, gameTypeJSON);
         }
         
-        private void OnConnectingToBasicExam(object gameInfo_DTO)
-        {
-            var gameInfo = (BasicExamGameInfo_DTO)gameInfo_DTO;
-            this.selectPlayerTypeUIController.gameObject.SetActive(true);
-            this.selectPlayerTypeUIController.Initialize(gameInfo);
-        }
-
-        private void OnConnectingToEveryBodyVsTheTeacher(object gameInfo_DTO)
-        {
-            var gameInfo = (EverybodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
-            this.everyBodyVsTheTeacherSelectPlayerTypeUiController.gameObject.SetActive(true);
-            this.everyBodyVsTheTeacherSelectPlayerTypeUiController.Initialize(gameInfo);
-        }
-
         public void TryToConnect(string ip)
         {
             this.elapsedTimeTryingToConnect = 0;
