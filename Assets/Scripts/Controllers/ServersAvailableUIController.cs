@@ -1,6 +1,7 @@
 ﻿namespace Assets.Scripts.Controllers
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Assets.Scripts.Interfaces;
 
@@ -21,6 +22,10 @@
 
     public class ServersAvailableUIController : ExtendedMonoBehaviour
     {
+        private const int StartElementPositionY = 130;
+
+        private const int DistanceBetweenElements = 10;
+
         public ObjectsPool ServerFoundElementsPool;
         public GameObject Container;
 
@@ -99,24 +104,29 @@
             obj.SetParent(this.Container.transform, true);
             this.CoroutineUtils.WaitForFrames(1, () => controller.SetData(gameInfo));
 
+            var yPos = this.foundServers.Count * (StartElementPositionY + DistanceBetweenElements);
+            obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -yPos);
+
             var button = obj.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => OnClickedOnServerElement(gameInfo.GameType, receivedData.JSON));
         }
-        
+
         private void OnClickedOnServerElement(string gameType, string gameInfoJSON)
         {
             this.selectPlayerTypeRouter.Handle(gameType, gameInfoJSON);
         }
-        
+
         private void ClearFoundServerList()
         {
-            var serversCount = this.Container.transform.childCount;
+            var serversElements = this.Container.GetComponentsInChildren<ServerDiscoveredElementController>()
+                .Select(c => c.gameObject)
+                .ToList();
 
-            for (int i = 0; i < serversCount; i++)
+            for (int i = 0; i < serversElements.Count; i++)
             {
-                var foundServer = this.Container.transform.GetChild(i);
-                foundServer.gameObject.SetActive(false);
+                var server = serversElements[i];
+                server.gameObject.SetActive(false);
             }
 
             this.foundServers.Clear();

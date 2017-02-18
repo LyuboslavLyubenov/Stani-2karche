@@ -9,7 +9,7 @@
 
     public class ServerDiscoveredElementController : ExtendedMonoBehaviour
     {
-        private Text category;
+        private Text gameType;
         private Text creatorName;
         private Text connectedClients;
 
@@ -19,15 +19,15 @@
             private set;
         }
 
-        public string Category
+        public string GameType
         {
             get
             {
-                return this.category.text;
+                return this.gameType.text;
             }
             private set
             {
-                this.category.text = value;
+                this.gameType.text = value;
             }
         }
 
@@ -58,7 +58,7 @@
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
-            this.category = this.transform.Find("CategoryType").GetComponent<Text>();
+            this.gameType = this.transform.Find("CategoryType").GetComponent<Text>();
             this.creatorName = this.transform.Find("CreatorName").GetComponent<Text>();
             this.connectedClients = this.transform.Find("ConnectedClients").GetComponent<Text>();
         }
@@ -67,7 +67,7 @@
         {
             var translatedGameName = LanguagesManager.Instance.GetValue(gameInfo.GameType);
 
-            this.Category = translatedGameName;
+            this.GameType = translatedGameName;
             this.CreatorName = gameInfo.HostUsername;
             this.ConnectedClients = gameInfo.ServerInfo.ConnectedClientsCount + "/" + gameInfo.ServerInfo.MaxConnectionsAllowed;
             this.ServerIPAddress = gameInfo.ServerInfo.LocalIPAddress;
