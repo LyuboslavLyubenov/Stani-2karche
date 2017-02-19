@@ -1,13 +1,14 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers.Lobby
 {
+
     using System;
+
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
-
-    using DTOs;
-    using Utils.Unity;
 
     public class BasicExamServerSelectPlayerTypeUIController : MonoBehaviour
     {

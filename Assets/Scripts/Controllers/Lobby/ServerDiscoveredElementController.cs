@@ -1,11 +1,11 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers.Lobby
 {
+
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Utils.Unity;
+
     using UnityEngine.UI;
-
-    using DTOs;
-
-    using Localization;
-    using Utils.Unity;
 
     public class ServerDiscoveredElementController : ExtendedMonoBehaviour
     {

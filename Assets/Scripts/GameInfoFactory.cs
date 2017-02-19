@@ -77,7 +77,7 @@
             return gameInfo;
         }
 
-        private EverybodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(IServerNetworkManager networkManager, IGameServer gameServer)
+        private EveryBodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(IServerNetworkManager networkManager, IGameServer gameServer)
         {
             var server = (EveryBodyVsTheTeacherServer)gameServer;
 
@@ -94,7 +94,7 @@
             var hostUsername = this.GetHostUsername();
             var serverInfo = this.GetServerInfo(networkManager);
 
-            var gameInfo = new EverybodyVsTheTeacherGameInfo_DTO()
+            var gameInfo = new EveryBodyVsTheTeacherGameInfo_DTO()
             {
                 GameType = gameTypeName,
                 HostUsername = hostUsername,

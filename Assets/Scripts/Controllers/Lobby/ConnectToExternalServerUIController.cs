@@ -1,11 +1,12 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Assets.Scripts.Controllers.Lobby
 {
+
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Notifications;
+
     using UnityEngine;
     using UnityEngine.UI;
-
-    using EventArgs;
-    using Network;
-    using Notifications;
 
     using Zenject;
 

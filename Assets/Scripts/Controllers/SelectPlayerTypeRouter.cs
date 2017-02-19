@@ -1,10 +1,12 @@
 namespace Assets.Scripts.Controllers
 {
     using System;
+    using System.Linq;
     using System.Reflection;
-    
+
+    using Assets.Scripts.Controllers.Lobby;
     using Assets.Scripts.DTOs;
-    using Assets.Scripts.Network;
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Notifications;
     using Assets.Scripts.Utils;
     
@@ -15,14 +17,11 @@ namespace Assets.Scripts.Controllers
     public class SelectPlayerTypeRouter
     {
         private readonly BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController;
-        private readonly EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
-
-        [Inject]
-        private CreatedGameInfoReceiverService gameInfoReceiverService;
+        private readonly EveryBodyVsTheTeacher.SelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
         
         public SelectPlayerTypeRouter(
             BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController,
-            EveryBodyVsTheTeacher.ServerSelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController)
+            EveryBodyVsTheTeacher.SelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController)
         {
             if (basicExamServerSelectPlayerTypeUIController == null)
             {
@@ -40,7 +39,7 @@ namespace Assets.Scripts.Controllers
         
         private void RouteReceivedGameInfo(string gameType, string gameInfoJSON)
         {
-            var methodName = "OnConnectingTo " + gameType;
+            var methodName = "OnConnectingTo" + gameType;
             var method = this.GetType()
                 .GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
 
@@ -57,7 +56,10 @@ namespace Assets.Scripts.Controllers
 
         private object ParseJSONToSpecificGameTypeDTO(string gameType, string gameTypeJSON)
         {
-            var type = ServerGameTypeUtils.GetGameServerType(gameType);
+            var typeName = gameType + "GameInfo_DTO";
+            var type = Assembly.GetExecutingAssembly()
+                .GetTypes()
+                .FirstOrDefault(t => t.Name == typeName);
             var dto = JsonUtility.FromJson(gameTypeJSON, type);
             return dto;
         }
@@ -72,7 +74,7 @@ namespace Assets.Scripts.Controllers
 
         private void OnConnectingToEveryBodyVsTheTeacher(object gameInfo_DTO)
         {
-            var gameInfo = (EverybodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
+            var gameInfo = (EveryBodyVsTheTeacherGameInfo_DTO)gameInfo_DTO;
             this.everyBodyVsTheTeacherSelectPlayerTypeUiController.gameObject.SetActive(true);
             ThreadUtils.Instance.RunOnMainThread(() => this.everyBodyVsTheTeacherSelectPlayerTypeUiController.Initialize(gameInfo));
         }

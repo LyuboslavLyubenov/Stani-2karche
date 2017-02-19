@@ -9,12 +9,12 @@
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
 
-    public class ServerSelectPlayerTypeUIController : MonoBehaviour
+    public class SelectPlayerTypeUIController : MonoBehaviour
     {
         public Button JoinAsMainPlayerButton;
         public Button JoinAsAudiencePlayerButton;
         
-        public void Initialize(EverybodyVsTheTeacherGameInfo_DTO gameInfo_DTO)
+        public void Initialize(EveryBodyVsTheTeacherGameInfo_DTO gameInfo_DTO)
         {
             if (gameInfo_DTO.ServerInfo.IsFull)
             {

@@ -1,14 +1,11 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
-namespace Assets.Scripts.Controllers
+namespace Assets.Scripts.Controllers.Lobby
 {
 
     using Assets.Scripts.Interfaces;
-
-    using Utils;
-
-    using Network;
-    using Network.Broadcast;
-    using Network.TcpSockets;
+    using Assets.Scripts.Network;
+    using Assets.Scripts.Network.Broadcast;
+    using Assets.Scripts.Utils;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
@@ -24,7 +21,7 @@ namespace Assets.Scripts.Controllers
         private ServersAvailableUIController serversAvailableUIController;
 
         [Inject]
-        private LANServersDiscoveryService LANServersDiscoveryService;
+        private ILANServersDiscoveryService LANServersDiscoveryService;
         
         [Inject]
         private CreatedGameInfoReceiverService createdGameInfoReceiverService;
@@ -42,7 +39,7 @@ namespace Assets.Scripts.Controllers
 
         void Start()
         {
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
     
         void OnApplicationQuit()
@@ -52,7 +49,7 @@ namespace Assets.Scripts.Controllers
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
             this.Dispose();
         }
 
