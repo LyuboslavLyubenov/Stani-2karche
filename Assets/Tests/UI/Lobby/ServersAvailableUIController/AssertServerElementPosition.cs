@@ -2,6 +2,7 @@ namespace Assets.Tests.UI.Lobby.ServersAvailableUIController
 {
 
     using Assets.Scripts.Controllers;
+    using Assets.Scripts.Controllers.Lobby;
     using Assets.Scripts.Utils.Unity;
 
     using UnityEngine;

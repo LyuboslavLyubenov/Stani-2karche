@@ -2,6 +2,7 @@
 {
 
     using Assets.Scripts.Controllers;
+    using Assets.Scripts.Controllers.Lobby;
     using Assets.Scripts.Utils.Unity;
 
     using UnityEngine;
