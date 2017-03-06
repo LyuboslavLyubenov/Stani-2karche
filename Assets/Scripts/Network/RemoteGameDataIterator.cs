@@ -42,17 +42,19 @@
             private set;
         }
 
+        public bool Loaded { get; private set; }
+
         public event EventHandler OnLoaded = delegate {};
         public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate {};
 
-        private ClientNetworkManager networkManager;
+        private IClientNetworkManager networkManager;
 
         private readonly Stack<GetQuestionRequest> currentQuestionRequests = new Stack<GetQuestionRequest>();
         private readonly Stack<GetQuestionRequest> nextQuestionRequests = new Stack<GetQuestionRequest>();
 
         private ISimpleQuestion currentQuestionCache = null;
 
-        public RemoteGameDataIterator(ClientNetworkManager networkManager)
+        public RemoteGameDataIterator(IClientNetworkManager networkManager)
         {
             this.networkManager = networkManager;
             this.InitializeCommands();
@@ -69,6 +71,7 @@
         private void _OnLoadedGameData(string levelCategory)
         {
             this.LevelCategory = levelCategory;
+            this.Loaded = true;
 
             if (this.OnLoaded != null)
             {

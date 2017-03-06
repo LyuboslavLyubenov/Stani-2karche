@@ -11,7 +11,7 @@ namespace Assets.Scripts.Network
 
     public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisposable
     {
-        private ClientNetworkManager networkManager;
+        private IClientNetworkManager networkManager;
 
         private Action onTimeout;
 
@@ -25,7 +25,7 @@ namespace Assets.Scripts.Network
 
         private int timeoutInSeconds;
 
-        public RemoteAvailableCategoriesReader(ClientNetworkManager networkManager, Action onTimeout, int timeoutInSeconds)
+        public RemoteAvailableCategoriesReader(IClientNetworkManager networkManager, Action onTimeout, int timeoutInSeconds)
         {
             if (networkManager == null)
             {

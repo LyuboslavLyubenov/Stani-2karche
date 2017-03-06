@@ -2,6 +2,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
 {
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Jokers.AskPlayerQuestion;
 
     using UnityEngine;
@@ -16,8 +17,8 @@ namespace Assets.Scripts.Commands.Jokers.Add
         private IJoker joker;
 
         public AddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
-                                             ClientNetworkManager networkManager,
-                                             AskPlayerQuestionResultRetriever resultRetriever,
+                                             IClientNetworkManager networkManager,
+                                             IAskPlayerQuestionResultRetriever resultRetriever,
                                              GameObject callAFriendUI, 
                                              GameObject friendAnswerUI, 
                                              GameObject waitingToAnswerUI, 

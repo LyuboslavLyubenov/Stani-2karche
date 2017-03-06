@@ -44,11 +44,11 @@ namespace Assets.Scripts.Controllers.Lobby
                 .To<KinveyWrapper>()
                 .AsSingle();
 
-            Container.Bind<ILANServersDiscoveryService>()
-                .To<LANServersDiscoveryService>()
+            Container.Bind<ILANServersDiscoverer>()
+                .To<LANServersDiscoverer>()
                 .AsSingle();
 
-            Container.Bind<CreatedGameInfoReceiverService>()
+            Container.Bind<CreatedGameInfoReceiver>()
                 .AsSingle();
 
         }

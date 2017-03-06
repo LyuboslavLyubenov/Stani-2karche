@@ -6,6 +6,8 @@
     using System.Linq;
     using System.Xml;
 
+    using Assets.Scripts.Interfaces.Localization;
+
     using UnityEngine;
     using EventArgs;
     using Extensions;
@@ -15,11 +17,11 @@
 
     using Debug = UnityEngine.Debug;
 
-    public class LanguagesManager : ExtendedMonoBehaviour
+    public class LanguagesManager : ExtendedMonoBehaviour, ILanguagesManager
     {
         private const string DefaultLanguage = "Bulgarian";
 
-        public EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
+        public event EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
             {
             };
 
@@ -125,7 +127,7 @@
     
     Dictionary<string, string> mobileLanguages = new Dictionary<string, string>();
 
-    void CollectLanguages()
+    private void CollectLanguages()
     {
         var allLanguages = Resources.LoadAll<TextAsset>("Languages");
         languageFiles = new string[allLanguages.Length];

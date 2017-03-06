@@ -296,84 +296,201 @@ namespace Assets.Scripts.Network
 
         public void RegisterAsync(string username, string password, Action<_UserReceivedData> onRegistered, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(username, "username");
-            ValidationUtils.ValidateStringNotNullOrEmpty(password, "password");
-            ValidationUtils.ValidateObjectNotNull(onRegistered, "onRegistered");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentNullException("username");
+            }
 
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentNullException("username");
+            }
+
+            if (onRegistered == null)
+            {
+                throw new ArgumentNullException("onRegistered");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
+            
             ThreadUtils.Instance.RunOnBackgroundThread(this.RegisterCoroutine(username, password, onRegistered, onError));
         }
 
         public void LoginAsync(string username, string password, Action<_UserReceivedData> onLoggedIn, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(username, "username");
-            ValidationUtils.ValidateStringNotNullOrEmpty(password, "password");
-            ValidationUtils.ValidateObjectNotNull(onLoggedIn, "onLoggedIn");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentNullException("username");
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentNullException("username");
+            }
+
+            if (onLoggedIn == null)
+            {
+                throw new ArgumentNullException("onLoggedIn");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.LoginCoroutine(username, password, onLoggedIn, onError));
         }
 
         public void Logout(Action onLogout, Action<Exception> onError)
         {
-            ValidationUtils.ValidateObjectNotNull(onLogout, "onLogout");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (onLogout == null)
+            {
+                throw new ArgumentNullException("onLoggedIn");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.LogoutCoroutine(onLogout, onError));
         }
 
         public void CreateEntityAsync(string tableName, string json, Action onCreated, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(tableName, "tableName");
-            ValidationUtils.ValidateStringNotNullOrEmpty(json, "json");
-            ValidationUtils.ValidateObjectNotNull(onCreated, "onCreated");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            if (string.IsNullOrEmpty(json))
+            {
+                throw new ArgumentNullException("json");
+            }
+
+            if (onCreated == null)
+            {
+                throw new ArgumentNullException("onCreated");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.CreateEntityCoroutine(tableName, json, onCreated, onError));
         }
 
         public void CreateEntityAsync<T>(string tableName, T entity, Action onCreated, Action<Exception> onError)
         {
-            ValidationUtils.ValidateObjectNotNull(entity, "entity");
-
+            if (entity == null)
+            {
+                throw new ArgumentNullException("tableName");
+            }
+           
             var json = JsonUtility.ToJson(entity);
             this.CreateEntityAsync(tableName, json, onCreated, onError);
         }
 
         public void RetrieveEntityAsync<T>(string tableName, string id, Action<_KinveyEntity<T>[]> onRetrieved, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(tableName, "tableName");
-            ValidationUtils.ValidateObjectNotNull(onRetrieved, "onRetrieved");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentNullException("id");
+            }
+
+            if (onRetrieved == null)
+            {
+                throw new ArgumentNullException("onRetrieved");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.RetrieveEntityCoroutine<T>(tableName, id, onRetrieved, onError));
         }
 
         public void UpdateEntityAsync<T>(string tableName, string id, T entity, Action onSuccessfullyUpdated, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(tableName, "tableName");
-            ValidationUtils.ValidateStringNotNullOrEmpty(id, "id");
-            ValidationUtils.ValidateObjectNotNull(entity, "entity");
-            ValidationUtils.ValidateObjectNotNull(onSuccessfullyUpdated, "onSuccessfullyUpdated");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentNullException("json");
+            }
+
+            if (entity == null)
+            {
+                throw new ArgumentNullException("onCreated");
+            }
+
+            if (onSuccessfullyUpdated == null)
+            {
+                throw new ArgumentNullException("onCreated");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.UpdateEntityCoroutine<T>(tableName, id, entity, onSuccessfullyUpdated, onError));
         }
 
         public void DeleteEntityAsync(string tableName, string id, Action<_DeletedCount> onSuccessfullyDeleted, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(tableName, "tableName");
-            ValidationUtils.ValidateObjectNotNull(onSuccessfullyDeleted, "onSuccessfullyDeleted");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(tableName))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentNullException("id");
+            }
+
+            if (onSuccessfullyDeleted == null)
+            {
+                throw new ArgumentNullException("onSuccessfullyDeleted");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.DeleteEntityCoroutine(tableName, id, onSuccessfullyDeleted, onError));
         }
 
         public void DoesUsernameExistsAsync(string username, Action<_UsersnameExistence> onSuccessfullyChecked, Action<Exception> onError)
         {
-            ValidationUtils.ValidateStringNotNullOrEmpty(username, "username");
-            ValidationUtils.ValidateObjectNotNull(onSuccessfullyChecked, "onSuccessfullyChecked");
-            ValidationUtils.ValidateObjectNotNull(onError, "onError");
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentNullException("tableName");
+            }
+
+            if (onSuccessfullyChecked == null)
+            {
+                throw new ArgumentNullException("onCreated");
+            }
+
+            if (onError == null)
+            {
+                throw new ArgumentNullException("onError");
+            }
 
             ThreadUtils.Instance.RunOnBackgroundThread(this.DoesUsernameExistsCoroutine(username, onSuccessfullyChecked, onError));
         }

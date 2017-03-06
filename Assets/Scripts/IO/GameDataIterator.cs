@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Assets.Scripts.Interfaces.GameData;
+
     using DTOs;
 
     using EventArgs;
@@ -49,8 +51,7 @@
                 return this.extractor.Loading;
             }
         }
-
-
+        
         public int RemainingQuestionsToNextMark
         {
             get
@@ -122,9 +123,9 @@
         private int currentMarkIndex = 0;
 
         private ExtractedQuestion currentQuestion = null;
-        private readonly GameDataExtractor extractor;
+        private readonly IGameDataExtractor extractor;
 
-        public GameDataIterator(GameDataExtractor extractor)
+        public GameDataIterator(IGameDataExtractor extractor)
         {
             if (extractor == null)
             {

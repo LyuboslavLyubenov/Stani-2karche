@@ -3,10 +3,11 @@ namespace Assets.Scripts.Commands.Jokers
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.Jokers;
+
     using DTOs;
     using Interfaces;
     using Scripts.Jokers;
-    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
@@ -20,15 +21,15 @@ namespace Assets.Scripts.Commands.Jokers
 
         private MainPlayerData mainPlayerData;
 
-        private DisableRandomAnswersJokerRouter jokerRouter;
+        private IDisableRandomAnswersRouter jokerRouter;
 
         private int answersToDisableCount;
 
         private Type jokerType;
 
         public SelectedDisableRandomAnswersJokerCommand(
-            MainPlayerData mainPlayerData, 
-            DisableRandomAnswersJokerRouter jokerRouter,
+            MainPlayerData mainPlayerData,
+            IDisableRandomAnswersRouter jokerRouter,
             int answersToDisableCount
             )
         {

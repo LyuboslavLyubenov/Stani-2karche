@@ -1,5 +1,9 @@
 ﻿namespace Assets.Scripts.Network
 {
+
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.GameData;
+
     using Commands.Server;
 
     using IO;
@@ -11,7 +15,7 @@
         {
         }
 
-        public static void Initialize(ServerNetworkManager networkManager, GameDataExtractor extractor, LeaderboardSerializer leaderboard)
+        public static void Initialize(IServerNetworkManager networkManager, IGameDataExtractor extractor, ILeaderboardDataManipulator leaderboard)
         {
             networkManager.CommandsManager.AddCommand(new GetAvailableCategoriesCommand(networkManager));
             networkManager.CommandsManager.AddCommand(new SelectedCategoryCommand(extractor, leaderboard));

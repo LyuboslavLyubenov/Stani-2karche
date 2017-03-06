@@ -19,7 +19,7 @@ namespace Assets.Scripts.Commands.GameData
             {
             };
 
-        protected ServerNetworkManager NetworkManager
+        protected IServerNetworkManager NetworkManager
         {
             get;
             private set;
@@ -31,7 +31,7 @@ namespace Assets.Scripts.Commands.GameData
             private set;
         }
 
-        protected GameDataGetQuestionAbstractCommand(IGameDataIterator gameData, ServerNetworkManager networkManager)
+        protected GameDataGetQuestionAbstractCommand(IGameDataIterator gameData, IServerNetworkManager networkManager)
         {
             if (gameData == null)
             {

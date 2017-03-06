@@ -9,9 +9,9 @@ namespace Assets.Scripts.Commands.Jokers.Add
 
     public class AddDisableRandomAnswersJokerCommand : AddJokerAbstractCommand
     {
-        private IJoker joker;
+        private readonly IJoker joker;
 
-        public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, ClientNetworkManager networkManager, QuestionUIController questionUIController)
+        public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, IClientNetworkManager networkManager, IQuestionUIController questionUIController)
             : base(availableJokersUIController)
         {
             this.joker = new DisableRandomAnswersJoker(networkManager, questionUIController);

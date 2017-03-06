@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Assets.Scripts.Interfaces;
+
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -13,7 +15,6 @@
     public class WaitingToAnswerUIController : MonoBehaviour
     {
         public GameObject RemainingSecondsObject;
-        public ClientNetworkManager NetworkManager;
 
         private Text remainingSecondsText;
 

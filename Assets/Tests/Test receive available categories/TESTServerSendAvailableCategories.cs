@@ -12,7 +12,7 @@ namespace Assets.Tests.Test_receive_available_categories
     {
         public ServerNetworkManager NetworkManager;
         public GameDataExtractor GameData;
-        public LeaderboardSerializer Leaderboard;
+        public LeaderboardDataManipulator Leaderboard;
 
         private void Start()
         {

@@ -3,6 +3,8 @@ namespace Assets.Scripts.Commands.Jokers
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.Jokers;
+
     using DTOs;
     using Interfaces;
     using Scripts.Jokers;
@@ -20,7 +22,7 @@ namespace Assets.Scripts.Commands.Jokers
 
         private MainPlayerData mainPlayerData;
 
-        private AudienceAnswerPollRouter askAudienceJokerRouter;
+        private IAudienceAnswerPollRouter askAudienceJokerRouter;
         
 
         private Type askAudienceJokerType;
@@ -29,7 +31,7 @@ namespace Assets.Scripts.Commands.Jokers
 
         public SelectedAudiencePollCommand(
             MainPlayerData mainPlayerData, 
-            AudienceAnswerPollRouter askAudienceJokerRouter,
+            IAudienceAnswerPollRouter askAudienceJokerRouter,
             int timeToAnswerInSeconds
             )
         {

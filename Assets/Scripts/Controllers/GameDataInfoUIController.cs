@@ -27,7 +27,7 @@
             
             this.Server.GameDataIterator.OnLoaded += this.OnGameDataLoaded;
             this.Server.GameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
-            this.Server.GameDataSender.OnSentQuestion += this.OnSentQuestion;
+            this.Server.GameDataQuestionsSender.OnSentQuestion += this.OnSentQuestion;
         }
 
         private void OnGameDataLoaded(object sender, EventArgs args)

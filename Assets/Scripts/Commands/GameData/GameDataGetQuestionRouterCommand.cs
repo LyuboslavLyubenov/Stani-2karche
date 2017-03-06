@@ -11,9 +11,9 @@
 
     public class GameDataGetQuestionRouterCommand : INetworkManagerCommand
     {
-        private ServerNetworkManager networkManager;
+        private IServerNetworkManager networkManager;
 
-        public GameDataGetQuestionRouterCommand(ServerNetworkManager networkManager)
+        public GameDataGetQuestionRouterCommand(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
             {

@@ -12,7 +12,7 @@ namespace Assets.Scripts.Commands.GameData
 
     public class GetCurrentQuestionCommand : GameDataGetQuestionAbstractCommand
     {
-        public GetCurrentQuestionCommand(IGameDataIterator gameData, ServerNetworkManager networkManager)
+        public GetCurrentQuestionCommand(IGameDataIterator gameData, IServerNetworkManager networkManager)
             : base(gameData, networkManager)
         {       
         }

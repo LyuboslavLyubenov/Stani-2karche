@@ -3,6 +3,9 @@
     using System;
     using System.Collections;
 
+    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.Leaderboard;
+
     using Utils;
 
     using Scripts.Jokers.AskPlayerQuestion;
@@ -55,13 +58,14 @@
         public ClientChooseCategoryUIController ChooseCategoryUIController;
         public SecondsRemainingUIController SecondsRemainingUIController;
         public SelectRandomJokerUIController SelectRandomJokerUIController;
+
         private UnableToConnectUIController unableToConnectUIController;
 
-        private RemoteGameDataIterator remoteGameDataIterator = null;
-        private AudienceAnswerPollResultRetriever audienceAnswerPollResultRetriever = null;
-        private AskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
+        private IGameDataIterator remoteGameDataIterator = null;
+        private IAudienceAnswerPollResultRetriever audienceAnswerPollResultRetriever = null;
+        private IAskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
 
-        private LeaderboardReceiver leaderboardReceiver = null;
+        private ILeaderboardReceiver leaderboardReceiver = null;
 
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
@@ -275,7 +279,7 @@
 
             networkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver));
             networkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, networkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
-            networkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, networkManager, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
+            networkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
             networkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, networkManager, this.QuestionUIController));
             networkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController));
         }
@@ -306,7 +310,7 @@
 
         private void ShowNotification(Color color, string message)
         {
-            NotificationsServiceController.Instance.AddNotification(color, message);
+            NotificationsesController.Instance.AddNotification(color, message);
         }
 
         private void StartLoadingCategories()

@@ -6,6 +6,7 @@
     using System.Reflection;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces.Statistics;
 
     using CSharpJExcel.Jxl;
     using CSharpJExcel.Jxl.Write;
@@ -24,11 +25,11 @@
         private const int SelectedAnswerCountOnQuestionColumn = 6;
         private const int UsedJokersCountOnQuestionColumn = 7;
 
-        private BasicExamStatisticsCollector statisticsCollector;
+        private IBasicExamStatisticsCollector statisticsCollector;
 
         private IGameDataIterator gameDataIterator;
 
-        public BasicExamGameDataStatisticsExporter(BasicExamStatisticsCollector statisticsCollector, IGameDataIterator gameDataIterator)
+        public BasicExamGameDataStatisticsExporter(IBasicExamStatisticsCollector statisticsCollector, IGameDataIterator gameDataIterator)
         {   
             if (statisticsCollector == null)
             {

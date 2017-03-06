@@ -24,7 +24,7 @@ namespace Assets.Scripts.Commands.Client
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var playerScoreJSON = commandsOptionsValues["PlayerScoreJSON"];
-            var playerScoreSer = JsonUtility.FromJson<PlayerScore_Serializable>(playerScoreJSON);
+            var playerScoreSer = JsonUtility.FromJson<PlayerScore_Dto>(playerScoreJSON);
             var playerScore = PlayerScore.CreateFrom(playerScoreSer);
             this.playersScores.Add(playerScore);
         }

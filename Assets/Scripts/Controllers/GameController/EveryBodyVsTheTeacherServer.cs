@@ -47,7 +47,7 @@ namespace Assets.Scripts.Controllers.GameController
             get; private set;
         }
         
-        private CreatedGameInfoSenderService senderService = null;
+        private CreatedGameInfoSender sender = null;
 
         [Inject]
         private IServerNetworkManager serverNetworkManager;
@@ -68,7 +68,7 @@ namespace Assets.Scripts.Controllers.GameController
 
         void Start()
         {
-            this.senderService = new CreatedGameInfoSenderService(
+            this.sender = new CreatedGameInfoSender(
                 this.tcpClient,
                 this.tcpServer,
                 GameInfoFactory.Instance,

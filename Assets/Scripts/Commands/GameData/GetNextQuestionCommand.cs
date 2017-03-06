@@ -3,6 +3,7 @@
 namespace Assets.Scripts.Commands.GameData
 {
 
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.IO;
     using Assets.Scripts.Network;
     using Assets.Scripts.Network.NetworkManagers;
@@ -11,7 +12,7 @@ namespace Assets.Scripts.Commands.GameData
 
     public class GetNextQuestionCommand : GameDataGetQuestionAbstractCommand
     {
-        public GetNextQuestionCommand(GameDataIterator gameData, ServerNetworkManager networkManager)
+        public GetNextQuestionCommand(IGameDataIterator gameData, IServerNetworkManager networkManager)
             : base(gameData, networkManager)
         {     
         }

@@ -29,7 +29,7 @@
 
         public ClientNetworkManager NetworkManager;
         public Transform ContentPanel;
-        public NotificationsServiceController NotificationService;
+        public NotificationsesController Notificationse;
 
         private GameObject categoryElementPrefab;
 

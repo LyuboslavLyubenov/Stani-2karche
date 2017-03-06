@@ -3,6 +3,8 @@ namespace Assets.Scripts.Network
     using System;
     using System.Linq;
 
+    using Assets.Scripts.Interfaces;
+
     using Commands;
     using DTOs;
     using EventArgs;
@@ -10,11 +12,11 @@ namespace Assets.Scripts.Network
 
     public class MainPlayerJokersDataSynchronizer
     {
-        private ServerNetworkManager networkManager;
+        private IServerNetworkManager networkManager;
 
         private MainPlayerData mainPlayerData;
 
-        public MainPlayerJokersDataSynchronizer(ServerNetworkManager networkManager, MainPlayerData mainPlayerData)
+        public MainPlayerJokersDataSynchronizer(IServerNetworkManager networkManager, MainPlayerData mainPlayerData)
         {
             if (networkManager == null)
             {

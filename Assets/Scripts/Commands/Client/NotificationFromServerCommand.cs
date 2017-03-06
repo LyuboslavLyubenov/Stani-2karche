@@ -11,7 +11,7 @@
 
     public class NotificationFromServerCommand : INetworkManagerCommand
     {
-        private readonly static Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+        private static readonly Dictionary<string, Color> Colors = new Dictionary<string, Color>()
                                                            {
                                                                { "black", Color.black },
                                                                { "white", Color.white },
@@ -33,16 +33,16 @@
             }
         }
 
-        private NotificationsServiceController notificationsService;
+        private INotificationsController notifications;
 
-        public NotificationFromServerCommand(NotificationsServiceController notificationsServiceController)
+        public NotificationFromServerCommand(INotificationsController notificationsController)
         {
-            if (notificationsServiceController == null)
+            if (notificationsController == null)
             {
-                throw new ArgumentNullException("notificationsServiceController");
+                throw new ArgumentNullException("notificationsController");
             }
 
-            this.notificationsService = notificationsServiceController;
+            this.notifications = notificationsController;
         }
 
         public void Execute(Dictionary<string, string> commandsParamsValues)
@@ -61,9 +61,9 @@
             Color notificationColor = this.ParseColor(colorName);
             var notificationMessage = commandsParamsValues["Message"];
 
-            if (this.notificationsService != null)
+            if (this.notifications != null)
             {
-                this.notificationsService.AddNotification(notificationColor, notificationMessage);          
+                this.notifications.AddNotification(notificationColor, notificationMessage);          
             }
         }
 

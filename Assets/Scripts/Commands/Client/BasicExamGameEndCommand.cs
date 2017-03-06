@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces.Network.Leaderboard;
 
     using UnityEngine;
 
@@ -20,9 +21,9 @@
         private GameObject endGameUI;
         private GameObject leaderboardUI;
 
-        private readonly LeaderboardReceiver leaderboardReceiver;
+        private readonly ILeaderboardReceiver leaderboardReceiver;
         
-        public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI, LeaderboardReceiver leaderboardReceiver)
+        public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI, ILeaderboardReceiver leaderboardReceiver)
         {
             if (endGameUI == null)
             {

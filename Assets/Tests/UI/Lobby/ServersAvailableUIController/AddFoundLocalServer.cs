@@ -27,7 +27,7 @@
         public string LocalIP;
         
         [Inject]
-        private ILANServersDiscoveryService LANServersDiscoveryService;
+        private ILANServersDiscoverer IlanServersDiscoverer;
 
         [Inject]
         private ISimpleTcpServer tcpServer;
@@ -45,7 +45,7 @@
 
         private void FakeFoundLocalServer()
         {
-            var service = (DummyLANServersDiscoveryService)this.LANServersDiscoveryService;
+            var service = (DummyIlanServersDiscoverer)this.IlanServersDiscoverer;
             service.FakeFoundServer(this.LocalIP);
         }
 
@@ -74,7 +74,7 @@
             var json = this.GenerateGameInfoJson();
 
             dummyTcpServer.FakeConnectClient("127.0.0.1");
-            dummyTcpServer.FakeReceiveMessageFromClient("127.0.0.1", CreatedGameInfoSenderService.GameInfoTag + json);
+            dummyTcpServer.FakeReceiveMessageFromClient("127.0.0.1", CreatedGameInfoSender.GameInfoTag + json);
         }
     }
 }

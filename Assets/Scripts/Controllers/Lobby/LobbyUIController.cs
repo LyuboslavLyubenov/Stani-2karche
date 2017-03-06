@@ -1,10 +1,8 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
 namespace Assets.Scripts.Controllers.Lobby
 {
-
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Network;
-    using Assets.Scripts.Network.Broadcast;
     using Assets.Scripts.Utils;
 
     using UnityEngine;
@@ -21,10 +19,10 @@ namespace Assets.Scripts.Controllers.Lobby
         private ServersAvailableUIController serversAvailableUIController;
 
         [Inject]
-        private ILANServersDiscoveryService LANServersDiscoveryService;
+        private ILANServersDiscoverer IlanServersDiscoverer;
         
         [Inject]
-        private CreatedGameInfoReceiverService createdGameInfoReceiverService;
+        private CreatedGameInfoReceiver createdGameInfoReceiver;
 
         [Inject]
         private ISimpleTcpClient tcpClient;
@@ -55,15 +53,15 @@ namespace Assets.Scripts.Controllers.Lobby
 
         private void Dispose()
         {
-            this.LANServersDiscoveryService.Dispose();
+            this.IlanServersDiscoverer.Dispose();
             this.tcpServer.Dispose();
             this.tcpClient.Dispose();
 
             this.tcpServer = null;
             this.tcpClient = null;
-            this.LANServersDiscoveryService = null;
+            this.IlanServersDiscoverer = null;
 
-            this.createdGameInfoReceiverService = null;
+            this.createdGameInfoReceiver = null;
         }
     }
 }

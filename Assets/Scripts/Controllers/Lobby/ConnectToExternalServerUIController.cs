@@ -19,7 +19,7 @@
         public Text IPText;
 
         [Inject]
-        private CreatedGameInfoReceiverService gameInfoReceiverService;
+        private CreatedGameInfoReceiver gameInfoReceiver;
 
         [Inject]
         private SelectPlayerTypeRouter SelectPlayerTypeRouter;
@@ -49,9 +49,9 @@
             this.connecting = false;
             this.LoadingUI.SetActive(false);
 
-            NotificationsServiceController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
+            NotificationsesController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
 
-            this.gameInfoReceiverService.StopReceivingFrom(this.ip);
+            this.gameInfoReceiver.StopReceivingFrom(this.ip);
         }
 
         private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
@@ -75,7 +75,7 @@
             this.ip = ip;
             this.connecting = true;
 
-            this.gameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
+            this.gameInfoReceiver.ReceiveFrom(ip, this.OnReceivedGameInfo);
             this.LoadingUI.SetActive(true);
         }
 

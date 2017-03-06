@@ -27,17 +27,17 @@
             this.Score = score;
         }
 
-        public static PlayerScore CreateFrom(PlayerScore_Serializable playerScore_Serializable)
+        public static PlayerScore CreateFrom(PlayerScore_Dto playerScoreDto)
         {
-            var username = playerScore_Serializable.PlayerName;
-            var score = playerScore_Serializable.Score;
+            var username = playerScoreDto.PlayerName;
+            var score = playerScoreDto.Score;
 
-            if (string.IsNullOrEmpty(playerScore_Serializable.CreationDate))
+            if (string.IsNullOrEmpty(playerScoreDto.CreationDate))
             {
                 return new PlayerScore(username, score);
             }
 
-            var date = DateTime.Parse(playerScore_Serializable.CreationDate);
+            var date = DateTime.Parse(playerScoreDto.CreationDate);
             return new PlayerScore(username, score, date);
         }
 
@@ -61,13 +61,13 @@
     }
 
     [Serializable]
-    public class PlayerScore_Serializable
+    public class PlayerScore_Dto
     {
         public string PlayerName;
         public int Score;
         public string CreationDate;
 
-        public PlayerScore_Serializable(PlayerScore playerScore)
+        public PlayerScore_Dto(PlayerScore playerScore)
         {
             if (playerScore == null)
             {

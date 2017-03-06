@@ -31,10 +31,10 @@
         public GameObject Container;
 
         [Inject]
-        private ILANServersDiscoveryService LANServersDiscoveryService;
+        private ILANServersDiscoverer IlanServersDiscoverer;
 
         [Inject]
-        private CreatedGameInfoReceiverService gameInfoReceiverService;
+        private ICreatedGameInfoReceiver gameInfoReceiver;
 
         [Inject]
         private SelectPlayerTypeRouter selectPlayerTypeRouter;
@@ -53,7 +53,7 @@
                     this.StartLoadingExternalServersIfConnectedToInternet();
                 });
 
-            this.LANServersDiscoveryService.OnFound += this.OnLocalServerFound;
+            this.IlanServersDiscoverer.OnFound += this.OnLocalServerFound;
         }
 
         private void StartLoadingExternalServersIfConnectedToInternet()
@@ -92,7 +92,7 @@
                 return;
             }
 
-            this.gameInfoReceiverService.ReceiveFrom(ip, this.OnReceivedGameInfo);
+            this.gameInfoReceiver.ReceiveFrom(ip, this.OnReceivedGameInfo);
             this.foundServers.Add(ip);
         }
 
@@ -131,7 +131,7 @@
             }
 
             this.foundServers.Clear();
-            this.gameInfoReceiverService.StopReceivingFromAll();
+            this.gameInfoReceiver.StopReceivingFromAll();
         }
     }
 }

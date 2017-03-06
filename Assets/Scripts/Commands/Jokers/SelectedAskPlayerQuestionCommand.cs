@@ -3,11 +3,11 @@ namespace Assets.Scripts.Commands.Jokers
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.Jokers;
+
     using DTOs;
     using Interfaces;
     using Scripts.Jokers;
-    using Scripts.Jokers.AskPlayerQuestion;
-    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 
@@ -19,17 +19,17 @@ namespace Assets.Scripts.Commands.Jokers
             set;
         }
 
-        private ServerNetworkManager networkManager;
+        private IServerNetworkManager networkManager;
 
         private MainPlayerData mainPlayerData;
 
-        private AskPlayerQuestionRouter jokerServerRouter;
+        private IAskPlayerQuestionRouter jokerServerRouter;
 
         private int timeToAnswerInSeconds;
 
         private Type helpFromFriendJokerType;
 
-        public SelectedAskPlayerQuestionCommand(ServerNetworkManager networkManager, MainPlayerData mainPlayerData, AskPlayerQuestionRouter jokerServerRouter, int timeToAnswerInSeconds)
+        public SelectedAskPlayerQuestionCommand(IServerNetworkManager networkManager, MainPlayerData mainPlayerData, IAskPlayerQuestionRouter jokerServerRouter, int timeToAnswerInSeconds)
         {
             if (networkManager == null)
             {

@@ -26,8 +26,8 @@
             this.EveryBodyVsTheTeacherSelectPlayerTypeUiController =
                 obj2.AddComponent<Scripts.Controllers.EveryBodyVsTheTeacher.SelectPlayerTypeUIController>();
 
-            Container.Bind<ILANServersDiscoveryService>()
-                .To<DummyLANServersDiscoveryService>()
+            Container.Bind<ILANServersDiscoverer>()
+                .To<DummyIlanServersDiscoverer>()
                 .AsSingle();
 
             Container.Bind<ISimpleTcpClient>()
@@ -38,7 +38,8 @@
                 .To<DummySimpleTcpServer>()
                 .AsSingle();
 
-            Container.Bind<CreatedGameInfoReceiverService>()
+            Container.Bind<ICreatedGameInfoReceiver>()
+                .To<CreatedGameInfoReceiver>()
                 .AsSingle();
 
             var selectPlayerTypeRouter = new SelectPlayerTypeRouter(

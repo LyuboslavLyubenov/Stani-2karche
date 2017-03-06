@@ -5,6 +5,8 @@ namespace Assets.Scripts.Statistics
     using System.Linq;
     using System.Reflection;
 
+    using Assets.Scripts.Interfaces.Statistics;
+
     using CSharpJExcel.Jxl;
     using CSharpJExcel.Jxl.Write;
 
@@ -23,9 +25,9 @@ namespace Assets.Scripts.Statistics
         private readonly JExcelCellPosition UsedJokersCountLabelAddress = new JExcelCellPosition(1, 1);
         private readonly JExcelCellPosition SurrenderCountLabelAddress = new JExcelCellPosition(2, 1);
 
-        private BasicExamStatisticsCollector statisticsCollector;
+        private IBasicExamStatisticsCollector statisticsCollector;
 
-        public BasicExamGeneralStatiticsExporter(BasicExamStatisticsCollector statisticsCollector)
+        public BasicExamGeneralStatiticsExporter(IBasicExamStatisticsCollector statisticsCollector)
         {
             if (statisticsCollector == null)
             {

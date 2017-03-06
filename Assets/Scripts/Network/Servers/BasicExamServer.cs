@@ -3,6 +3,12 @@ namespace Assets.Scripts.Network.Servers
 {
     using System;
 
+    using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Network;
+    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Scripts.Interfaces.Statistics;
+
     using Leaderboard;
     using TcpSockets;
 
@@ -65,12 +71,12 @@ namespace Assets.Scripts.Network.Servers
             private set;
         }
 
-        public GameDataIterator GameDataIterator
+        public IGameDataIterator GameDataIterator
         {
             get; private set;
         }
 
-        public GameDataSender GameDataSender
+        public IGameDataQuestionsSender GameDataQuestionsSender
         {
             get; private set;
         }
@@ -87,18 +93,18 @@ namespace Assets.Scripts.Network.Servers
 
         private ISimpleQuestion lastQuestion;
 
-        private BasicExamStatisticsCollector statisticsCollector = null;
+        private IBasicExamStatisticsCollector statisticsCollector = null;
 
-        private LeaderboardSerializer leaderboardSerializer = null;
+        private ILeaderboardDataManipulator leaderboardDataManipulator = null;
 
-        private AskPlayerQuestionRouter askPlayerQuestionRouter = null;
-        private AudienceAnswerPollRouter audiencePollRouter = null;
-        private DisableRandomAnswersJokerRouter disableRandomAnswersJokerRouter = null;
-        private AddRandomJokerRouter addRandomJokerRouter = null;
-        private LeaderboardSender leaderboardSender = null;
-        private GameDataExtractor gameDataExtractor = null;
+        private IAskPlayerQuestionRouter askPlayerQuestionRouter = null;
+        private IAudienceAnswerPollRouter audiencePollRouter = null;
+        private IDisableRandomAnswersRouter disableRandomAnswersJokerRouter = null;
+        private IAddRandomJokerRouter addRandomJokerRouter = null;
+        private ILeaderboardSender leaderboardSender = null;
+        private IGameDataExtractor gameDataExtractor = null;
 
-        private CreatedGameInfoSenderService gameInfoSenderService = null;
+        private ICreatedGameInfoSender gameInfoSender = null;
         private ISimpleTcpServer tcpServer;
         private ISimpleTcpClient tcpClient;
 
@@ -112,22 +118,22 @@ namespace Assets.Scripts.Network.Servers
 
             this.tcpServer = new SimpleTcpServer(7772);
             this.tcpClient = new SimpleTcpClient();
-            this.gameInfoSenderService = new CreatedGameInfoSenderService(this.tcpClient, this.tcpServer, GameInfoFactory.Instance, ServerNetworkManager.Instance, this);
+            this.gameInfoSender = new CreatedGameInfoSender(this.tcpClient, this.tcpServer, GameInfoFactory.Instance, ServerNetworkManager.Instance, this);
             
             this.gameDataExtractor = new GameDataExtractor();
             this.GameDataIterator = new GameDataIterator(this.gameDataExtractor);
-            this.GameDataSender = new GameDataSender(this.GameDataIterator, serverNetworkManager);
+            this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
 
-            this.leaderboardSerializer = new LeaderboardSerializer();
+            this.leaderboardDataManipulator = new LeaderboardDataManipulator();
             this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, MainPlayerData);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, MainPlayerData.JokersData);
            
             this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
             this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.GameDataIterator);
 
-            this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataSender, this.GameDataIterator);
+            this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataQuestionsSender, this.GameDataIterator);
 
-            this.leaderboardSender = new LeaderboardSender(serverNetworkManager, this.leaderboardSerializer);
+            this.leaderboardSender = new LeaderboardSender(serverNetworkManager, this.leaderboardDataManipulator);
             
             this.LoadServerSettings();
             this.InitializeCommands();
@@ -309,8 +315,8 @@ namespace Assets.Scripts.Network.Servers
             this.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
 
             this.GameDataIterator.OnLoaded += this.OnLoadedGameData;
-            this.GameDataSender.OnSentQuestion += this.OnSentQuestion;
-            this.GameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
+            this.GameDataQuestionsSender.OnSentQuestion += this.OnSentQuestion;
+            this.GameDataQuestionsSender.OnBeforeSend += this.OnBeforeSendQuestion;
 
             ServerNetworkManager.Instance.OnClientConnected += this.OnClientConnected;
 
@@ -322,7 +328,7 @@ namespace Assets.Scripts.Network.Servers
         
         private void InitializeCommands()
         {
-            AvailableCategoriesCommandsInitializator.Initialize(ServerNetworkManager.Instance, this.gameDataExtractor, this.leaderboardSerializer);
+            AvailableCategoriesCommandsInitializator.Initialize(ServerNetworkManager.Instance, this.gameDataExtractor, this.leaderboardDataManipulator);
 
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
@@ -371,7 +377,7 @@ namespace Assets.Scripts.Network.Servers
             var mainPlayerName = this.MainPlayerData.Username;
             var playerScore = new PlayerScore(mainPlayerName, this.statisticsCollector.PlayerScore, DateTime.Now);
 
-            this.leaderboardSerializer.SavePlayerScore(playerScore);
+            this.leaderboardDataManipulator.SavePlayerScore(playerScore);
         }
 
         private void ExportStatistics()
@@ -397,10 +403,10 @@ namespace Assets.Scripts.Network.Servers
 
             this.askPlayerQuestionRouter.Dispose();
             this.audiencePollRouter.Dispose();
-            this.gameInfoSenderService.Dispose();
+            this.gameInfoSender.Dispose();
 
             this.MainPlayerData = null;
-            this.GameDataSender = null;
+            this.GameDataQuestionsSender = null;
             this.GameDataIterator = null;
 
             this.lastQuestion = null;
@@ -409,7 +415,7 @@ namespace Assets.Scripts.Network.Servers
             this.audiencePollRouter = null;
             this.disableRandomAnswersJokerRouter = null;
             this.addRandomJokerRouter = null;
-            this.leaderboardSerializer = null;
+            this.leaderboardDataManipulator = null;
             this.mainPlayerJokersDataSynchronizer = null;
 
             ServerNetworkManager.Instance.CommandsManager.RemoveAllCommands();

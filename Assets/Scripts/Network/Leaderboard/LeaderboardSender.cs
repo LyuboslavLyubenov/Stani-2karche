@@ -2,6 +2,9 @@ namespace Assets.Scripts.Network.Leaderboard
 {
     using System;
 
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
+
     using Commands.Client;
 
     using EventArgs;
@@ -14,28 +17,28 @@ namespace Assets.Scripts.Network.Leaderboard
 
     using UnityEngine;
 
-    public class LeaderboardSender
+    public class LeaderboardSender : ILeaderboardSender
     {
         public event EventHandler<LeaderboardDataEventArgs> OnSentLeaderboard = delegate
             { };
 
-        private readonly ServerNetworkManager networkManager;
-        private readonly LeaderboardSerializer leaderboardSerializer;
+        private readonly IServerNetworkManager networkManager;
+        private readonly ILeaderboardDataManipulator leaderboardDataManipulator;
 
-        public LeaderboardSender(ServerNetworkManager networkManager, LeaderboardSerializer leaderboardSerializer)
+        public LeaderboardSender(IServerNetworkManager networkManager, ILeaderboardDataManipulator leaderboardDataManipulator)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
 
-            if (leaderboardSerializer == null)
+            if (leaderboardDataManipulator == null)
             {
-                throw new ArgumentNullException("leaderboardSerializer");
+                throw new ArgumentNullException("leaderboardDataManipulator");
             }
             
             this.networkManager = networkManager;
-            this.leaderboardSerializer = leaderboardSerializer;
+            this.leaderboardDataManipulator = leaderboardDataManipulator;
 
             var sendLeaderboardEntitiesCommand = new DummyCommand();
 
@@ -51,12 +54,12 @@ namespace Assets.Scripts.Network.Leaderboard
 
         private void StartSendingLeaderboardEntities(int connectionId)
         {
-            var allPlayersData = this.leaderboardSerializer.Leaderboard;
+            var allPlayersData = this.leaderboardDataManipulator.Leaderboard;
 
             for (int i = 0; i < allPlayersData.Count; i++)
             {
                 var playerScore = allPlayersData[i];
-                var playerScoreSer = new PlayerScore_Serializable(playerScore);
+                var playerScoreSer = new PlayerScore_Dto(playerScore);
                 var json = JsonUtility.ToJson(playerScoreSer);
                 var sendEntityCommand = NetworkCommandData.From<LeaderboardEntityCommand>();
                 sendEntityCommand.AddOption("PlayerScoreJSON", json);

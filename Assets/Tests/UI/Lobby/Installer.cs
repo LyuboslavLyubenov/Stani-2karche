@@ -36,11 +36,11 @@
                 .To<SimpleTcpClient>()
                 .AsSingle();
 
-            Container.Bind<ILANServersDiscoveryService>()
-                .To<LANServersDiscoveryService>()
+            Container.Bind<ILANServersDiscoverer>()
+                .To<LANServersDiscoverer>()
                 .AsSingle();
 
-            Container.Bind<CreatedGameInfoReceiverService>()
+            Container.Bind<CreatedGameInfoReceiver>()
                 .AsSingle();
         }
     }

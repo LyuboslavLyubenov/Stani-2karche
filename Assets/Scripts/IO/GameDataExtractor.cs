@@ -8,6 +8,8 @@ namespace Assets.Scripts.IO
     using System.Linq;
     using System.Reflection;
 
+    using Assets.Scripts.Interfaces.GameData;
+
     using CielaSpike.Thread_Ninja;
     using DTOs;
     using Exceptions;
@@ -17,7 +19,7 @@ namespace Assets.Scripts.IO
 
     using CSharpJExcel.Jxl;
 
-    public class GameDataExtractor
+    public class GameDataExtractor : IGameDataExtractor
     {
         public const string LevelPath = "LevelData\\теми\\";
         public const int QuestionsStartRow = 5;
@@ -34,11 +36,17 @@ namespace Assets.Scripts.IO
         /// <summary>
         /// If true questions for given marks are aways with random order
         /// </summary>
-        public bool ShuffleQuestions = true;
+        public bool ShuffleQuestions
+        {
+            get; set;
+        }
         /// <summary>
         /// If true answers for every questions will be in random arrangement
         /// </summary>
-        public bool ShuffleAnswers = true;
+        public bool ShuffleAnswers
+        {
+            get; set;
+        }
 
         public string LevelCategory
         {
@@ -57,7 +65,7 @@ namespace Assets.Scripts.IO
             get;
             private set;
         }
-        
+
         public int MaxMarkIndex
         {
             get
@@ -86,7 +94,7 @@ namespace Assets.Scripts.IO
             }
 
             yield return Ninja.JumpToUnity;
-            
+
             this.Loading = false;
 
             if (exception == null)
@@ -98,7 +106,7 @@ namespace Assets.Scripts.IO
                 onError(exception);
             }
         }
-        
+
         /// <summary>
         /// Excel files paths. (all excel files from LevelCategory path)
         /// </summary>
@@ -147,7 +155,7 @@ namespace Assets.Scripts.IO
                 }
 
                 this.secondsForAnswerQuestionPerMark.Add(secondsForAnswerQuestion);
-                
+
                 ISimpleQuestion[] allQuestionsForMark = this.ExtractQuestions(sheet, questionsToTake);
 
                 if (this.ShuffleQuestions)
@@ -209,7 +217,7 @@ namespace Assets.Scripts.IO
                 {
                     break;
                 }
-                
+
                 var isCorrect = sheet.GetCellOrDefault(1, answersRowI)
                     .getContents()
                     .ToUpperInvariant() == ("верен").ToUpperInvariant();

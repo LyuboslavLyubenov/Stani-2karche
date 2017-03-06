@@ -2,10 +2,12 @@
 {
     using System.Collections;
 
+    using Assets.Scripts.Interfaces.Notifications;
+
     using UnityEngine;
     using UnityEngine.EventSystems;
 
-    public class NotificationElementController : MonoBehaviour, IPointerUpHandler
+    public class NotificationElementController : MonoBehaviour, INotificationElementController, IPointerUpHandler
     {
         public int WaitBeforeDisableSeconds = 5;
         
@@ -39,5 +41,4 @@
             this.GetComponent<Animator>().SetTrigger("Dismissed");
         }
     }
-
 }

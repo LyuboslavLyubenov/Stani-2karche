@@ -45,7 +45,7 @@ namespace Assets.Scripts.Controllers
 
             if (method == null)
             {
-                NotificationsServiceController.Instance.AddNotification(Color.red, "Неподържан вид игра", 10);
+                NotificationsesController.Instance.AddNotification(Color.red, "Неподържан вид игра", 10);
                 return;
             }
 
@@ -59,7 +59,7 @@ namespace Assets.Scripts.Controllers
             var typeName = gameType + "GameInfo_DTO";
             var type = Assembly.GetExecutingAssembly()
                 .GetTypes()
-                .FirstOrDefault(t => t.Name == typeName);
+                .First(t => t.Name == typeName);
             var dto = JsonUtility.FromJson(gameTypeJSON, type);
             return dto;
         }

@@ -1,5 +1,9 @@
 ﻿namespace Assets.Scripts.Controllers.GameController
 {
+
+    using Assets.Scripts.Localization;
+    using Assets.Scripts.Notifications;
+
     using Commands;
     using Commands.Server;
 
@@ -38,6 +42,9 @@
 
             var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
             ClientNetworkManager.Instance.SendServerCommand(commandData);
+
+            var connectedMsg = LanguagesManager.Instance.GetValue("EveryBodyVsTheTeacher/ConnectedToServer");
+            NotificationsesController.Instance.AddNotification(Color.blue, connectedMsg);
         }
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)

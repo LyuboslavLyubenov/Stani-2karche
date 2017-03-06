@@ -4,6 +4,8 @@
     using System.Collections;
     using System.Timers;
 
+    using Assets.Scripts.Interfaces;
+
     using Extensions;
 
     using Commands;
@@ -22,7 +24,7 @@
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
 
-    public class ClientNetworkManager : IDisposable
+    public class ClientNetworkManager : IDisposable, IClientNetworkManager
     {
         public const int Port = 7788;
 
@@ -188,7 +190,7 @@
 
         private void ConfigureCommands()
         {
-            this.commandsManager.AddCommand("ShowNotification", new NotificationFromServerCommand(NotificationsServiceController.Instance));
+            this.commandsManager.AddCommand("ShowNotification", new NotificationFromServerCommand(NotificationsesController.Instance));
 
             var allowedToConnect = new DummyCommand();
             allowedToConnect.OnExecuted += (sender, args) =>

@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.Leaderboard;
+
     using EventArgs;
 
     using Utils;
@@ -16,7 +18,7 @@
 
     using EventArgs = System.EventArgs;
 
-    public class LeaderboardReceiver : IDisposable
+    public class LeaderboardReceiver : ILeaderboardReceiver
     {
         public event EventHandler<LeaderboardDataEventArgs> OnReceived = delegate
             {

@@ -2,6 +2,7 @@
 {
     using System;
 
+    using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Notifications;
 
     using UnityEngine;
@@ -27,11 +28,23 @@
             {
             };
 
+        public event EventHandler OnActivated = delegate
+            {
+            };
+
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+            {
+            };
+
+        public event EventHandler OnFinishedExecution = delegate
+            {
+            };
+
         private GameObject waitingToAnswerUI;
         private GameObject loadingUI;
         private GameObject audienceAnswerUI;
 
-        private AudienceAnswerPollResultRetriever pollDataRetriever;
+        private IAudienceAnswerPollResultRetriever pollDataRetriever;
 
         public Sprite Image
         {
@@ -39,9 +52,6 @@
             private set;
         }
 
-        public event EventHandler OnActivated;
-        public event EventHandler<UnhandledExceptionEventArgs> OnError;
-        public event EventHandler OnFinishedExecution;
 
         public bool Activated
         {
@@ -50,17 +60,11 @@
         }
 
         public AskAudienceJoker(
-            ClientNetworkManager networkManager,
-            AudienceAnswerPollResultRetriever pollDataRetriever,
+            IAudienceAnswerPollResultRetriever pollDataRetriever,
             GameObject waitingToAnswerUI,
             GameObject audienceAnswerUI,
             GameObject loadingUI)
         {
-            if (networkManager == null)
-            {
-                throw new ArgumentNullException("networkManager");
-            }
-
             if (waitingToAnswerUI == null)
             {
                 throw new ArgumentNullException("waitingToAnswerUI");
@@ -95,7 +99,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
-            NotificationsServiceController.Instance.AddNotification(Color.red, message);
+            NotificationsesController.Instance.AddNotification(Color.red, message);
 
             if (OnError != null)
             {
@@ -135,7 +139,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
-            NotificationsServiceController.Instance.AddNotification(Color.red, message);
+            NotificationsesController.Instance.AddNotification(Color.red, message);
 
             if (OnError != null)
             {

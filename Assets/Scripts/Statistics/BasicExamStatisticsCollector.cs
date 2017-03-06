@@ -3,7 +3,10 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    
+
+    using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Statistics;
+
     using Commands.Server;
     using EventArgs;
     using Interfaces;
@@ -14,12 +17,12 @@
 
     using EventArgs = System.EventArgs;
 
-    public class BasicExamStatisticsCollector
+    public class BasicExamStatisticsCollector : IBasicExamStatisticsCollector
     {
-        private readonly ServerNetworkManager networkManager;
+        private readonly IServerNetworkManager networkManager;
         private readonly BasicExamServer server;
-        private readonly GameDataSender gameDataSender;
-        private readonly GameDataIterator gameDataIterator;
+        private readonly IGameDataQuestionsSender gameDataQuestionsSender;
+        private readonly IGameDataIterator gameDataIterator;
         
         private Dictionary<ISimpleQuestion, int> questionSpentTime = new Dictionary<ISimpleQuestion, int>();
         private Dictionary<ISimpleQuestion, List<Type>> questionsUsedJokers = new Dictionary<ISimpleQuestion, List<Type>>();
@@ -108,14 +111,14 @@
             }
         }
         public BasicExamStatisticsCollector(
-           ServerNetworkManager networkManager,
+           IServerNetworkManager networkManager,
            BasicExamServer server,
-           GameDataSender gameDataSender,
-           GameDataIterator gameDataIterator)
+           IGameDataQuestionsSender gameDataQuestionsSender,
+           IGameDataIterator gameDataIterator)
         {
             this.networkManager = networkManager;
             this.server = server;
-            this.gameDataSender = gameDataSender;
+            this.gameDataQuestionsSender = gameDataQuestionsSender;
             this.gameDataIterator = gameDataIterator;
 
             this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedAnswer));
@@ -127,8 +130,8 @@
             this.gameDataIterator.OnLoaded += this.OnGameDataLoaded;
             this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
 
-            this.gameDataSender.OnBeforeSend += this.OnBeforeSendQuestion;
-            this.gameDataSender.OnSentQuestion += this.OnSentQuestion;
+            this.gameDataQuestionsSender.OnBeforeSend += this.OnBeforeSendQuestion;
+            this.gameDataQuestionsSender.OnSentQuestion += this.OnSentQuestion;
 
             this.server.OnGameOver += this.OnGameOver;
         }

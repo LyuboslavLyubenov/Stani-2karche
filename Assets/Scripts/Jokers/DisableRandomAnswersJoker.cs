@@ -20,11 +20,19 @@
     {
         private const int SettingsReceiveTimeoutInSeconds = 5;
 
-        public event EventHandler OnActivated;
-        public event EventHandler<UnhandledExceptionEventArgs> OnError;
-        public event EventHandler OnFinishedExecution;
+        public event EventHandler OnActivated = delegate
+            {   
+            };
 
-        private ClientNetworkManager networkManager;
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+            {   
+            };
+
+        public event EventHandler OnFinishedExecution = delegate
+            {
+            };
+
+        private IClientNetworkManager networkManager;
         private IQuestionUIController questionUIController;
         private Timer_ExecuteMethodAfterTime receiveSettingsTimeoutTimer;
 
@@ -44,7 +52,7 @@
             this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
         }
 
-        public DisableRandomAnswersJoker(ClientNetworkManager networkManager, IQuestionUIController questionUIController)
+        public DisableRandomAnswersJoker(IClientNetworkManager networkManager, IQuestionUIController questionUIController)
         {
             if (networkManager == null)
             {

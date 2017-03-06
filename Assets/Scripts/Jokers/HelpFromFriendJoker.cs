@@ -13,7 +13,7 @@
     using AskPlayerQuestion;
 
     using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Utils;
+    using Assets.Scripts.Interfaces.Network.Jokers;
 
     using DTOs;
     using Exceptions;
@@ -43,15 +43,15 @@
             {
             };
 
-        private CallAFriendUIController callAFriendUIController;
-        private ClientNetworkManager networkManager;
+        private readonly CallAFriendUIController callAFriendUIController;
+        private readonly IClientNetworkManager networkManager;
 
-        private readonly AskPlayerQuestionResultRetriever resultRetriever;
+        private readonly IAskPlayerQuestionResultRetriever resultRetriever;
 
-        private GameObject callAFriendUI;
-        private GameObject friendAnswerUI;
-        private GameObject waitingToAnswerUI;
-        private GameObject loadingUI;
+        private readonly GameObject callAFriendUI;
+        private readonly GameObject friendAnswerUI;
+        private readonly GameObject waitingToAnswerUI;
+        private readonly GameObject loadingUI;
 
         public Sprite Image
         {
@@ -65,8 +65,8 @@
             private set;
         }
 
-        public HelpFromFriendJoker(ClientNetworkManager networkManager,
-                                   AskPlayerQuestionResultRetriever resultRetriever,
+        public HelpFromFriendJoker(IClientNetworkManager networkManager,
+                                   IAskPlayerQuestionResultRetriever resultRetriever,
                                    GameObject callAFriendUI,
                                    GameObject friendAnswerUI,
                                    GameObject waitingToAnswerUI,
@@ -147,7 +147,7 @@
             this.loadingUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Errors/NetworkErrors/Timeout");
-            NotificationsServiceController.Instance.AddNotification(Color.red, message);
+            NotificationsesController.Instance.AddNotification(Color.red, message);
 
             this.Activated = false;
 
@@ -179,7 +179,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Errors/NetworkErrors/Timeout");
-            NotificationsServiceController.Instance.AddNotification(Color.red, message);
+            NotificationsesController.Instance.AddNotification(Color.red, message);
 
             this.Activated = false;
 
