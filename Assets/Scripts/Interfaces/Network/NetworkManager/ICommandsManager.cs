@@ -8,6 +8,10 @@
 
         void AddCommand(string commandName, INetworkManagerCommand commandToExecute);
 
+        bool Exists<T>();
+
+        bool Exists(string commandName);
+
         void RemoveCommand<T>();
 
         void RemoveCommand(string commandName);

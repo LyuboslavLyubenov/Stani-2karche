@@ -37,6 +37,17 @@
             this.commands[commandName].Add(commandToExecute);
         }
 
+        public bool Exists<T>()
+        {
+            var commandName = typeof(T).Name.Replace("Command", "");
+            return this.Exists(commandName);
+        }
+
+        public bool Exists(string commandName)
+        {
+            return this.commands.ContainsKey(commandName);
+        }
+
         public void RemoveCommand<T>()
         {
             var commandName = typeof(T).Name.Replace("Command", "");
@@ -82,6 +93,8 @@
                 }
             }
         }
+
+
     }
 
 }
