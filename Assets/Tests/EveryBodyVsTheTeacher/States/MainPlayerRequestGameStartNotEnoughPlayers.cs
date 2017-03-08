@@ -1,0 +1,68 @@
+namespace Assets.Tests.EveryBodyVsTheTeacher.States
+{
+
+    using System.Threading;
+
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Scripts.StateMachine;
+    using Assets.Scripts.Utils;
+    using Assets.Scripts.Utils.Unity;
+    using Assets.Tests.Extensions;
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+    using Assets.Zenject.Source.Usage;
+
+    public class MainPlayerRequestGameStartNotEnoughPlayers : ExtendedMonoBehaviour
+    {
+        private StateMachine stateMachine = new StateMachine();
+
+        [Inject]
+        private PlayersConnectingToTheServerState state;
+
+        [Inject]
+        private IServerNetworkManager networkManager;
+
+        void Start()
+        {
+            var threadUtils = ThreadUtils.Instance;
+
+            this.stateMachine.SetCurrentState(this.state);
+
+            this.CoroutineUtils.WaitForFrames(1, this.SimulateMainPlayerConnection);
+        }
+
+        private void SimulateMainPlayerConnection()
+        {
+            var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
+            dummyServerNetworkManager.SimulateMainPlayerConnected(1, "Ivan");
+
+            this.CoroutineUtils.WaitForFrames(1, this.SimulateGameRequestStart);
+        }
+
+        private void SimulateGameRequestStart()
+        {
+            var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
+            var gameRequestCommand = NetworkCommandData.From<StartGameRequestCommand>();
+            dummyServerNetworkManager.FakeReceiveMessage(1, gameRequestCommand.ToString());
+
+            this.CoroutineUtils.WaitForFrames(1, this.AssertNotChangedState);
+        }
+
+        private void AssertNotChangedState()
+        {
+            if (this.stateMachine.CurrentState == state)
+            {
+                IntegrationTest.Pass();
+            }
+            else
+            {
+                IntegrationTest.Fail();
+            }
+        }
+        
+    }
+
+}
