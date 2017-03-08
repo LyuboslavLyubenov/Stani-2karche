@@ -4,13 +4,17 @@ using System;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using ModestTree;
+
 using UnityEditor.SceneManagement;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Internal;
+
     public static class ZenMenuItems
     {
         [MenuItem("Edit/Zenject/Validate Current Scenes #%v")]

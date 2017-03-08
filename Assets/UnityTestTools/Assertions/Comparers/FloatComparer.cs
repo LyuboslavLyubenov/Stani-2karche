@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
     public class FloatComparer : ComparerBaseGeneric<float>
     {
         public enum CompareTypes
@@ -19,12 +18,12 @@ namespace UnityTest
 
         protected override bool Compare(float a, float b)
         {
-            switch (compareTypes)
+            switch (this.compareTypes)
             {
                 case CompareTypes.Equal:
-                    return Math.Abs(a - b) < floatingPointError;
+                    return Math.Abs(a - b) < this.floatingPointError;
                 case CompareTypes.NotEqual:
-                    return Math.Abs(a - b) > floatingPointError;
+                    return Math.Abs(a - b) > this.floatingPointError;
                 case CompareTypes.Greater:
                     return a > b;
                 case CompareTypes.Less:

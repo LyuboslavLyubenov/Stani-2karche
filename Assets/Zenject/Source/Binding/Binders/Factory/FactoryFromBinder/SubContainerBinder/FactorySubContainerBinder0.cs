@@ -1,7 +1,16 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.Binders.GameObject;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+
     public class FactorySubContainerBinder<TContract>
         : FactorySubContainerBinderBase<TContract>
     {
@@ -14,13 +23,13 @@ namespace Zenject
 
         public ConditionBinder ByMethod(Action<DiContainer> installerMethod)
         {
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
-                    ContractType, SubIdentifier,
+                    this.ContractType, this.SubIdentifier,
                     new SubContainerCreatorByMethod(
                         container, installerMethod)));
 
-            return new ConditionBinder(BindInfo);
+            return new ConditionBinder(this.BindInfo);
         }
 
 #if !NOT_UNITY3D
@@ -31,15 +40,15 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
-                    ContractType, SubIdentifier,
+                    this.ContractType, this.SubIdentifier,
                     new SubContainerCreatorByPrefab(
                         container,
                         new PrefabProvider(prefab),
                         gameObjectInfo)));
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 
         public GameObjectNameGroupNameBinder ByPrefabResource(string resourcePath)
@@ -48,15 +57,15 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
-                    ContractType, SubIdentifier,
+                    this.ContractType, this.SubIdentifier,
                     new SubContainerCreatorByPrefab(
                         container,
                         new PrefabProviderResource(resourcePath),
                         gameObjectInfo)));
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 #endif
     }

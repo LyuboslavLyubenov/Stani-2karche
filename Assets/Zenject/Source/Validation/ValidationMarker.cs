@@ -1,12 +1,13 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Validation
 {
+
+    using System;
+
     public class ValidationMarker
     {
         public ValidationMarker(Type markedType)
         {
-            MarkedType = markedType;
+            this.MarkedType = markedType;
         }
 
         public Type MarkedType

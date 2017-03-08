@@ -1,8 +1,9 @@
-using System;
-using System.Diagnostics;
-
-namespace ModestTree
+namespace Assets.Zenject.Source.Internal
 {
+
+    using System;
+    using System.Diagnostics;
+
     // Simple wrapper around unity's logging system
     public static class Log
     {

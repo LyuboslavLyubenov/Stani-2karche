@@ -1,14 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using UnityEngine;
-using Debug = UnityEngine.Debug;
-using Object = UnityEngine.Object;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions
 {
+
+    using System;
+    using System.Collections;
+    using System.Diagnostics;
+    using System.Linq;
+
+    using Assets.UnityTestTools.Assertions.Comparers;
+
+    using UnityEngine;
+
+    using Debug = UnityEngine.Debug;
+    using Object = UnityEngine.Object;
+
     [Serializable]
     public class AssertionComponent : MonoBehaviour, IAssertionComponentConfigurator
     {
@@ -32,20 +36,20 @@ namespace UnityTest
 
         public ActionBase Action
         {
-            get { return m_ActionBase; }
+            get { return this.m_ActionBase; }
             set
             {
-                m_ActionBase = value;
-                m_ActionBase.go = gameObject;
+                this.m_ActionBase = value;
+                this.m_ActionBase.go = this.gameObject;
             }
         }
 
         public Object GetFailureReferenceObject()
         {
             #if UNITY_EDITOR
-            if (!string.IsNullOrEmpty(m_CreatedInFilePath))
+            if (!string.IsNullOrEmpty(this.m_CreatedInFilePath))
             {
-                return UnityEditor.AssetDatabase.LoadAssetAtPath(m_CreatedInFilePath, typeof(Object));
+                return UnityEditor.AssetDatabase.LoadAssetAtPath(this.m_CreatedInFilePath, typeof(Object));
             }
             #endif
             return this;
@@ -53,10 +57,10 @@ namespace UnityTest
 
         public string GetCreationLocation()
         {
-            if (!string.IsNullOrEmpty(m_CreatedInFilePath))
+            if (!string.IsNullOrEmpty(this.m_CreatedInFilePath))
             {
-                var idx = m_CreatedInFilePath.LastIndexOf("\\") + 1;
-                return string.Format("{0}, line {1} ({2})", m_CreatedInFilePath.Substring(idx), m_CreatedInFileLine, m_CreatedInFilePath);
+                var idx = this.m_CreatedInFilePath.LastIndexOf("\\") + 1;
+                return string.Format("{0}, line {1} ({2})", this.m_CreatedInFilePath.Substring(idx), this.m_CreatedInFileLine, this.m_CreatedInFilePath);
             }
             return "";
         }
@@ -65,19 +69,19 @@ namespace UnityTest
         {
             if (!Debug.isDebugBuild)
                 Destroy(this);
-            OnComponentCopy();
+            this.OnComponentCopy();
         }
 
         public void OnValidate()
         {
             if (Application.isEditor)
-                OnComponentCopy();
+                this.OnComponentCopy();
         }
 
         private void OnComponentCopy()
         {
-            if (m_ActionBase == null) return;
-            var oldActionList = Resources.FindObjectsOfTypeAll(typeof(AssertionComponent)).Where(o => ((AssertionComponent)o).m_ActionBase == m_ActionBase && o != this);
+            if (this.m_ActionBase == null) return;
+            var oldActionList = Resources.FindObjectsOfTypeAll(typeof(AssertionComponent)).Where(o => ((AssertionComponent)o).m_ActionBase == this.m_ActionBase && o != this);
 
             // if it's not a copy but a new component don't do anything
             if (!oldActionList.Any()) return;
@@ -85,42 +89,42 @@ namespace UnityTest
                 Debug.LogWarning("More than one refence to comparer found. This shouldn't happen");
 
             var oldAction = oldActionList.First() as AssertionComponent;
-            m_ActionBase = oldAction.m_ActionBase.CreateCopy(oldAction.gameObject, gameObject);
+            this.m_ActionBase = oldAction.m_ActionBase.CreateCopy(oldAction.gameObject, this.gameObject);
         }
 
         public void Start()
         {
-            CheckAssertionFor(CheckMethod.Start);
+            this.CheckAssertionFor(CheckMethod.Start);
 
-            if (IsCheckMethodSelected(CheckMethod.AfterPeriodOfTime))
+            if (this.IsCheckMethodSelected(CheckMethod.AfterPeriodOfTime))
             {
-                StartCoroutine("CheckPeriodically");
+                this.StartCoroutine("CheckPeriodically");
             }
-            if (IsCheckMethodSelected(CheckMethod.Update))
+            if (this.IsCheckMethodSelected(CheckMethod.Update))
             {
-                m_CheckOnFrame = Time.frameCount + checkAfterFrames;
+                this.m_CheckOnFrame = Time.frameCount + this.checkAfterFrames;
             }
         }
 
         public IEnumerator CheckPeriodically()
         {
-            yield return new WaitForSeconds(checkAfterTime);
-            CheckAssertionFor(CheckMethod.AfterPeriodOfTime);
-            while (repeatCheckTime)
+            yield return new WaitForSeconds(this.checkAfterTime);
+            this.CheckAssertionFor(CheckMethod.AfterPeriodOfTime);
+            while (this.repeatCheckTime)
             {
-                yield return new WaitForSeconds(repeatEveryTime);
-                CheckAssertionFor(CheckMethod.AfterPeriodOfTime);
+                yield return new WaitForSeconds(this.repeatEveryTime);
+                this.CheckAssertionFor(CheckMethod.AfterPeriodOfTime);
             }
         }
 
         public bool ShouldCheckOnFrame()
         {
-            if (Time.frameCount > m_CheckOnFrame)
+            if (Time.frameCount > this.m_CheckOnFrame)
             {
-                if (repeatCheckFrame)
-                    m_CheckOnFrame += repeatEveryFrame;
+                if (this.repeatCheckFrame)
+                    this.m_CheckOnFrame += this.repeatEveryFrame;
                 else
-                    m_CheckOnFrame = Int32.MaxValue;
+                    this.m_CheckOnFrame = Int32.MaxValue;
                 return true;
             }
             return false;
@@ -128,125 +132,125 @@ namespace UnityTest
 
         public void OnDisable()
         {
-            CheckAssertionFor(CheckMethod.OnDisable);
+            this.CheckAssertionFor(CheckMethod.OnDisable);
         }
 
         public void OnEnable()
         {
-            CheckAssertionFor(CheckMethod.OnEnable);
+            this.CheckAssertionFor(CheckMethod.OnEnable);
         }
 
         public void OnDestroy()
         {
-            CheckAssertionFor(CheckMethod.OnDestroy);
+            this.CheckAssertionFor(CheckMethod.OnDestroy);
         }
 
         public void Update()
         {
-            if (IsCheckMethodSelected(CheckMethod.Update) && ShouldCheckOnFrame())
+            if (this.IsCheckMethodSelected(CheckMethod.Update) && this.ShouldCheckOnFrame())
             {
-                CheckAssertionFor(CheckMethod.Update);
+                this.CheckAssertionFor(CheckMethod.Update);
             }
         }
 
         public void FixedUpdate()
         {
-            CheckAssertionFor(CheckMethod.FixedUpdate);
+            this.CheckAssertionFor(CheckMethod.FixedUpdate);
         }
 
         public void LateUpdate()
         {
-            CheckAssertionFor(CheckMethod.LateUpdate);
+            this.CheckAssertionFor(CheckMethod.LateUpdate);
         }
 
         public void OnControllerColliderHit()
         {
-            CheckAssertionFor(CheckMethod.OnControllerColliderHit);
+            this.CheckAssertionFor(CheckMethod.OnControllerColliderHit);
         }
 
         public void OnParticleCollision()
         {
-            CheckAssertionFor(CheckMethod.OnParticleCollision);
+            this.CheckAssertionFor(CheckMethod.OnParticleCollision);
         }
 
         public void OnJointBreak()
         {
-            CheckAssertionFor(CheckMethod.OnJointBreak);
+            this.CheckAssertionFor(CheckMethod.OnJointBreak);
         }
 
         public void OnBecameInvisible()
         {
-            CheckAssertionFor(CheckMethod.OnBecameInvisible);
+            this.CheckAssertionFor(CheckMethod.OnBecameInvisible);
         }
 
         public void OnBecameVisible()
         {
-            CheckAssertionFor(CheckMethod.OnBecameVisible);
+            this.CheckAssertionFor(CheckMethod.OnBecameVisible);
         }
 
         public void OnTriggerEnter()
         {
-            CheckAssertionFor(CheckMethod.OnTriggerEnter);
+            this.CheckAssertionFor(CheckMethod.OnTriggerEnter);
         }
 
         public void OnTriggerExit()
         {
-            CheckAssertionFor(CheckMethod.OnTriggerExit);
+            this.CheckAssertionFor(CheckMethod.OnTriggerExit);
         }
 
         public void OnTriggerStay()
         {
-            CheckAssertionFor(CheckMethod.OnTriggerStay);
+            this.CheckAssertionFor(CheckMethod.OnTriggerStay);
         }
 
         public void OnCollisionEnter()
         {
-            CheckAssertionFor(CheckMethod.OnCollisionEnter);
+            this.CheckAssertionFor(CheckMethod.OnCollisionEnter);
         }
 
         public void OnCollisionExit()
         {
-            CheckAssertionFor(CheckMethod.OnCollisionExit);
+            this.CheckAssertionFor(CheckMethod.OnCollisionExit);
         }
 
         public void OnCollisionStay()
         {
-            CheckAssertionFor(CheckMethod.OnCollisionStay);
+            this.CheckAssertionFor(CheckMethod.OnCollisionStay);
         }
 
         public void OnTriggerEnter2D()
         {
-            CheckAssertionFor(CheckMethod.OnTriggerEnter2D);
+            this.CheckAssertionFor(CheckMethod.OnTriggerEnter2D);
         }
 
         public void OnTriggerExit2D()
         {
-            CheckAssertionFor(CheckMethod.OnTriggerExit2D);
+            this.CheckAssertionFor(CheckMethod.OnTriggerExit2D);
         }
 
         public void OnTriggerStay2D()
         {
-            CheckAssertionFor(CheckMethod.OnTriggerStay2D);
+            this.CheckAssertionFor(CheckMethod.OnTriggerStay2D);
         }
 
         public void OnCollisionEnter2D()
         {
-            CheckAssertionFor(CheckMethod.OnCollisionEnter2D);
+            this.CheckAssertionFor(CheckMethod.OnCollisionEnter2D);
         }
 
         public void OnCollisionExit2D()
         {
-            CheckAssertionFor(CheckMethod.OnCollisionExit2D);
+            this.CheckAssertionFor(CheckMethod.OnCollisionExit2D);
         }
 
         public void OnCollisionStay2D()
         {
-            CheckAssertionFor(CheckMethod.OnCollisionStay2D);
+            this.CheckAssertionFor(CheckMethod.OnCollisionStay2D);
         }
 
         private void CheckAssertionFor(CheckMethod checkMethod)
         {
-            if (IsCheckMethodSelected(checkMethod))
+            if (this.IsCheckMethodSelected(checkMethod))
             {
                 Assertions.CheckAssertions(this);
             }
@@ -254,7 +258,7 @@ namespace UnityTest
 
         public bool IsCheckMethodSelected(CheckMethod method)
         {
-            return method == (checkMethods & method);
+            return method == (this.checkMethods & method);
         }
 
 
@@ -336,12 +340,12 @@ namespace UnityTest
         #endregion
 
         #region AssertionComponentConfigurator
-        public int UpdateCheckStartOnFrame { set { checkAfterFrames = value; } }
-        public int UpdateCheckRepeatFrequency { set { repeatEveryFrame = value; } }
-        public bool UpdateCheckRepeat { set { repeatCheckFrame = value; } }
-        public float TimeCheckStartAfter { set { checkAfterTime = value; } }
-        public float TimeCheckRepeatFrequency { set { repeatEveryTime = value; } }
-        public bool TimeCheckRepeat { set { repeatCheckTime = value; } }
+        public int UpdateCheckStartOnFrame { set { this.checkAfterFrames = value; } }
+        public int UpdateCheckRepeatFrequency { set { this.repeatEveryFrame = value; } }
+        public bool UpdateCheckRepeat { set { this.repeatCheckFrame = value; } }
+        public float TimeCheckStartAfter { set { this.checkAfterTime = value; } }
+        public float TimeCheckRepeatFrequency { set { this.repeatEveryTime = value; } }
+        public bool TimeCheckRepeat { set { this.repeatCheckTime = value; } }
         public AssertionComponent Component { get { return this; } }
         #endregion
     }

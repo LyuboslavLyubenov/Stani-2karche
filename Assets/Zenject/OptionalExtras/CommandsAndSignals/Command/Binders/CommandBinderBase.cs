@@ -1,8 +1,13 @@
-using System;
-using System.Collections.Generic;
-
-namespace Zenject
+namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Main;
+
     public class CommandBinderBase<TCommand, TAction>
         where TCommand : ICommand
         where TAction : class
@@ -13,23 +18,23 @@ namespace Zenject
 
         public CommandBinderBase(string identifier, DiContainer container)
         {
-            _container = container;
+            this._container = container;
 
-            _bindInfo = new BindInfo();
-            _bindInfo.Identifier = identifier;
-            _bindInfo.ContractTypes = new List<Type>()
+            this._bindInfo = new BindInfo();
+            this._bindInfo.Identifier = identifier;
+            this._bindInfo.ContractTypes = new List<Type>()
                 {
                     typeof(TCommand),
                 };
 
-            _finalizerWrapper = container.StartBinding();
+            this._finalizerWrapper = container.StartBinding();
         }
 
         protected BindInfo BindInfo
         {
             get
             {
-                return _bindInfo;
+                return this._bindInfo;
             }
         }
 
@@ -37,7 +42,7 @@ namespace Zenject
         {
             set
             {
-                _finalizerWrapper.SubFinalizer = value;
+                this._finalizerWrapper.SubFinalizer = value;
             }
         }
 
@@ -45,7 +50,7 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
     }

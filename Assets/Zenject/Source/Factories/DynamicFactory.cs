@@ -1,10 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Factories
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Usage;
+    using Assets.Zenject.Source.Util;
+    using Assets.Zenject.Source.Validation;
+
     public interface IDynamicFactory : IValidatable
     {
     }
@@ -21,15 +28,15 @@ namespace Zenject
             Assert.IsNotNull(provider);
             Assert.IsNotNull(injectContext);
 
-            _provider = provider;
-            _injectContext = injectContext;
+            this._provider = provider;
+            this._injectContext = injectContext;
         }
 
         protected TValue CreateInternal(List<TypeValuePair> extraArgs)
         {
             try
             {
-                var result = _provider.GetInstance(_injectContext, extraArgs);
+                var result = this._provider.GetInstance(this._injectContext, extraArgs);
 
                 Assert.That(result == null || result.GetType().DerivesFromOrEqual<TValue>());
 
@@ -46,8 +53,8 @@ namespace Zenject
         {
             try
             {
-                _provider.GetInstance(
-                    _injectContext, ValidationUtil.CreateDefaultArgs(ParamTypes.ToArray()));
+                this._provider.GetInstance(
+                    this._injectContext, ValidationUtil.CreateDefaultArgs(this.ParamTypes.ToArray()));
             }
             catch (Exception e)
             {

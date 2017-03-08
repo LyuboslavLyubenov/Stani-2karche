@@ -1,11 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using ModestTree.Util;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Runtime
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Usage;
+
     public class DisposableManager : IDisposable
     {
         readonly List<DisposableInfo> _disposables = new List<DisposableInfo>();
@@ -24,36 +26,36 @@ namespace Zenject
                 var matches = priorities.Where(x => disposable.GetType().DerivesFromOrEqual(x.First)).Select(x => x.Second).ToList();
                 int priority = matches.IsEmpty() ? 0 : matches.Distinct().Single();
 
-                _disposables.Add(new DisposableInfo(disposable, priority));
+                this._disposables.Add(new DisposableInfo(disposable, priority));
             }
 
-            Log.Debug("Loaded {0} IDisposables to DisposablesHandler", _disposables.Count());
+            Log.Debug("Loaded {0} IDisposables to DisposablesHandler", this._disposables.Count());
         }
 
         public void Add(IDisposable disposable)
         {
-            Add(disposable, 0);
+            this.Add(disposable, 0);
         }
 
         public void Add(IDisposable disposable, int priority)
         {
-            _disposables.Add(
+            this._disposables.Add(
                 new DisposableInfo(disposable, priority));
         }
 
         public void Remove(IDisposable disposable)
         {
-            _disposables.RemoveWithConfirm(
-                _disposables.Where(x => x.Disposable == disposable).Single());
+            this._disposables.RemoveWithConfirm(
+                this._disposables.Where(x => x.Disposable == disposable).Single());
         }
 
         public void Dispose()
         {
-            Assert.That(!_disposed, "Tried to dispose DisposableManager twice!");
-            _disposed = true;
+            Assert.That(!this._disposed, "Tried to dispose DisposableManager twice!");
+            this._disposed = true;
 
             // Dispose in the reverse order that they are initialized in
-            var disposablesOrdered = _disposables.OrderBy(x => x.Priority).Reverse().ToList();
+            var disposablesOrdered = this._disposables.OrderBy(x => x.Priority).Reverse().ToList();
 
             foreach (var disposable in disposablesOrdered.Select(x => x.Disposable).GetDuplicates())
             {
@@ -85,8 +87,8 @@ namespace Zenject
 
             public DisposableInfo(IDisposable disposable, int priority)
             {
-                Disposable = disposable;
-                Priority = priority;
+                this.Disposable = disposable;
+                this.Priority = priority;
             }
         }
     }

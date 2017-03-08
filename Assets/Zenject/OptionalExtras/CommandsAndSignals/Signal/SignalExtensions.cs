@@ -1,7 +1,11 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Signal
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Util;
+
     public static class SignalExtensions
     {
         public static void BindSignal<TSignal>(this DiContainer container)

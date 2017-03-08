@@ -1,8 +1,17 @@
-using System;
-using System.Collections.Generic;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Factories;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+
     public class FactoryFromBinder<TContract> : FactoryFromBinderBase<TContract>
     {
         public FactoryFromBinder(
@@ -15,13 +24,13 @@ namespace Zenject
 
         public ConditionBinder FromResolveGetter<TObj>(Func<TObj, TContract> method)
         {
-            return FromResolveGetter<TObj>(null, method);
+            return this.FromResolveGetter<TObj>(null, method);
         }
 
         public ConditionBinder FromResolveGetter<TObj>(
             object subIdentifier, Func<TObj, TContract> method)
         {
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new GetterProvider<TObj, TContract>(subIdentifier, method, container));
 
             return this;
@@ -29,7 +38,7 @@ namespace Zenject
 
         public ConditionBinder FromMethod(Func<DiContainer, TContract> method)
         {
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new MethodProviderWithContainer<TContract>(method));
 
             return this;
@@ -37,10 +46,10 @@ namespace Zenject
 
         public ConditionBinder FromInstance(object instance)
         {
-            BindingUtil.AssertInstanceDerivesFromOrEqual(instance, AllParentTypes);
+            BindingUtil.AssertInstanceDerivesFromOrEqual(instance, this.AllParentTypes);
 
-            SubFinalizer = CreateFinalizer(
-                (container) => new InstanceProvider(container, ContractType, instance));
+            this.SubFinalizer = this.CreateFinalizer(
+                (container) => new InstanceProvider(container, this.ContractType, instance));
 
             return this;
         }
@@ -48,7 +57,7 @@ namespace Zenject
         public ConditionBinder FromFactory<TSubFactory>()
             where TSubFactory : IFactory<TContract>
         {
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new FactoryProvider<TContract, TSubFactory>(container, new List<TypeValuePair>()));
 
             return this;
@@ -56,23 +65,23 @@ namespace Zenject
 
         public FactorySubContainerBinder<TContract> FromSubContainerResolve()
         {
-            return FromSubContainerResolve(null);
+            return this.FromSubContainerResolve(null);
         }
 
         public FactorySubContainerBinder<TContract> FromSubContainerResolve(object subIdentifier)
         {
             return new FactorySubContainerBinder<TContract>(
-                BindInfo, FactoryType, FinalizerWrapper, subIdentifier);
+                this.BindInfo, this.FactoryType, this.FinalizerWrapper, subIdentifier);
         }
 
 #if !NOT_UNITY3D
 
         public ConditionBinder FromResource(string resourcePath)
         {
-            BindingUtil.AssertDerivesFromUnityObject(ContractType);
+            BindingUtil.AssertDerivesFromUnityObject(this.ContractType);
 
-            SubFinalizer = CreateFinalizer(
-                (container) => new ResourceProvider(resourcePath, ContractType));
+            this.SubFinalizer = this.CreateFinalizer(
+                (container) => new ResourceProvider(resourcePath, this.ContractType));
 
             return this;
         }

@@ -4,6 +4,8 @@ namespace Assets.Scripts.Network.Leaderboard
 
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network;
+    using Assets.Scripts.Interfaces.Network.Leaderboard;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using Commands.Client;
 

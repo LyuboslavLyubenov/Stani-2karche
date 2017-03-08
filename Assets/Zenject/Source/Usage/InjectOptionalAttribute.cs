@@ -1,14 +1,15 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Usage
 {
+
+    using System;
+
     [AttributeUsage(AttributeTargets.Parameter
         | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class InjectOptionalAttribute : InjectAttributeBase
     {
         public InjectOptionalAttribute()
         {
-            Optional = true;
+            this.Optional = true;
         }
     }
 }

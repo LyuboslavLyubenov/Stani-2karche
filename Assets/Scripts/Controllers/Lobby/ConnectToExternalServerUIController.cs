@@ -4,11 +4,10 @@
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Network;
     using Assets.Scripts.Notifications;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
     using UnityEngine.UI;
-
-    using Zenject;
 
     public class ConnectToExternalServerUIController : MonoBehaviour
     {

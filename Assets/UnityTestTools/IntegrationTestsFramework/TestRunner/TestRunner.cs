@@ -1,17 +1,19 @@
 // #define IMITATE_BATCH_MODE //uncomment if you want to imitate batch mode behaviour in non-batch mode mode run
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
-using UnityTest.IntegrationTestRunner;
-using System.IO;
-using UnityEngine.SceneManagement;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
+    using Assets.UnityTestTools.Assertions;
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
     [Serializable]
     public class TestRunner : MonoBehaviour
     {
@@ -58,20 +60,20 @@ namespace UnityTest
 
         public void Awake()
         {
-            m_Configurator = new TestRunnerConfigurator();
-            if (isInitializedByRunner) return;
+            this.m_Configurator = new TestRunnerConfigurator();
+            if (this.isInitializedByRunner) return;
             TestComponent.DisableAllTests();
         }
 
         public void Start()
         {
-            if (isInitializedByRunner) return;
+            if (this.isInitializedByRunner) return;
 
-            if (m_Configurator.sendResultsOverNetwork)
+            if (this.m_Configurator.sendResultsOverNetwork)
             {
-                var nrs = m_Configurator.ResolveNetworkConnection();
+                var nrs = this.m_Configurator.ResolveNetworkConnection();
                 if (nrs != null)
-                    TestRunnerCallback.Add(nrs);
+                    this.TestRunnerCallback.Add(nrs);
             }
 
             TestComponent.DestroyAllDynamicTests();
@@ -81,12 +83,12 @@ namespace UnityTest
 
             var tests = TestComponent.FindAllTestsOnScene();
 
-            InitRunner(tests, dynamicTestTypes.Select(type => type.AssemblyQualifiedName).ToList());
+            this.InitRunner(tests, dynamicTestTypes.Select(type => type.AssemblyQualifiedName).ToList());
         }
 
         public void InitRunner(List<TestComponent> tests, List<string> dynamicTestsToRun)
         {
-            Application.logMessageReceived += LogHandler;
+            Application.logMessageReceived += this.LogHandler;
 
             // Init dynamic tests
             foreach (var typeName in dynamicTestsToRun)
@@ -103,12 +105,12 @@ namespace UnityTest
                 tests.Add(scriptComponents.First().GetComponent<TestComponent>());
             }
             // create test structure
-            m_TestComponents = ParseListForGroups(tests).ToList();
+            this.m_TestComponents = ParseListForGroups(tests).ToList();
             // create results for tests
-            m_ResultList = m_TestComponents.Select(component => new TestResult(component)).ToList();
+            this.m_ResultList = this.m_TestComponents.Select(component => new TestResult(component)).ToList();
             // init test provider
-            m_TestsProvider = new IntegrationTestsProvider(m_ResultList.Select(result => result.TestComponent as ITestComponent));
-            m_ReadyToRun = true;
+            this.m_TestsProvider = new IntegrationTestsProvider(this.m_ResultList.Select(result => result.TestComponent as ITestComponent));
+            this.m_ReadyToRun = true;
         }
 
         private static IEnumerable<TestComponent> ParseListForGroups(IEnumerable<TestComponent> tests)
@@ -136,28 +138,28 @@ namespace UnityTest
 
         public void Update()
         {
-            if (m_ReadyToRun  && Time.frameCount > 1)
+            if (this.m_ReadyToRun  && Time.frameCount > 1)
             {
-                m_ReadyToRun = false;
-                StartCoroutine("StateMachine");
+                this.m_ReadyToRun = false;
+                this.StartCoroutine("StateMachine");
             }
         }
 
         public void OnDestroy()
         {
-            if (currentTest != null)
+            if (this.currentTest != null)
             {
-                var testResult = m_ResultList.Single(result => result.TestComponent == currentTest);
+                var testResult = this.m_ResultList.Single(result => result.TestComponent == this.currentTest);
                 testResult.messages += "Test run interrupted (crash?)";
-                LogMessage(k_InterruptedMessage);
-                FinishTest(TestResult.ResultType.Failed);
+                this.LogMessage(k_InterruptedMessage);
+                this.FinishTest(TestResult.ResultType.Failed);
             }
-            if (currentTest != null || (m_TestsProvider != null && m_TestsProvider.AnyTestsLeft()))
+            if (this.currentTest != null || (this.m_TestsProvider != null && this.m_TestsProvider.AnyTestsLeft()))
             {
-                var remainingTests = m_TestsProvider.GetRemainingTests();
-                TestRunnerCallback.TestRunInterrupted(remainingTests.ToList());
+                var remainingTests = this.m_TestsProvider.GetRemainingTests();
+                this.TestRunnerCallback.TestRunInterrupted(remainingTests.ToList());
             }
-            Application.logMessageReceived -= LogHandler;
+            Application.logMessageReceived -= this.LogHandler;
         }
 
         private void LogHandler(string condition, string stacktrace, LogType type)
@@ -166,42 +168,42 @@ namespace UnityTest
             {
                 var msg = condition;
                 if (msg.StartsWith(k_Prefix)) msg = msg.Substring(k_Prefix.Length + 1);
-                if (currentTest != null && msg.EndsWith("(" + currentTest.name + ')')) msg = msg.Substring(0, msg.LastIndexOf('('));
-                m_TestMessages += msg + "\n";
+                if (this.currentTest != null && msg.EndsWith("(" + this.currentTest.name + ')')) msg = msg.Substring(0, msg.LastIndexOf('('));
+                this.m_TestMessages += msg + "\n";
             }
             switch (type)
             {
                 case LogType.Exception:
                 {
                     var exceptionType = condition.Substring(0, condition.IndexOf(':'));
-                    if (currentTest != null && currentTest.IsExceptionExpected(exceptionType))
+                    if (this.currentTest != null && this.currentTest.IsExceptionExpected(exceptionType))
                     {
-                        m_TestMessages += exceptionType + " was expected\n";
-                        if (currentTest.ShouldSucceedOnException())
+                        this.m_TestMessages += exceptionType + " was expected\n";
+                        if (this.currentTest.ShouldSucceedOnException())
                         {
-                            m_TestState = TestState.Success;
+                            this.m_TestState = TestState.Success;
                         }
                     }
                     else
                     {
-                        m_TestState = TestState.Exception;
-                        m_Stacktrace = stacktrace;
+                        this.m_TestState = TestState.Exception;
+                        this.m_Stacktrace = stacktrace;
                     }
                 }
                     break;
                 case LogType.Assert:
                 case LogType.Error:
-                    m_TestState = TestState.Failure;
-                    m_Stacktrace = stacktrace;
+                    this.m_TestState = TestState.Failure;
+                    this.m_Stacktrace = stacktrace;
                     break;
                 case LogType.Log:
-                    if (m_TestState ==  TestState.Running && condition.StartsWith(IntegrationTest.passMessage))
+                    if (this.m_TestState ==  TestState.Running && condition.StartsWith(IntegrationTest.passMessage))
                     {
-                        m_TestState = TestState.Success;
+                        this.m_TestState = TestState.Success;
                     }
                     if (condition.StartsWith(IntegrationTest.failMessage))
                     {
-                        m_TestState = TestState.Failure;
+                        this.m_TestState = TestState.Failure;
                     }
                     break;
             }
@@ -209,58 +211,58 @@ namespace UnityTest
 
         public IEnumerator StateMachine()
         {
-            TestRunnerCallback.RunStarted(Application.platform.ToString(), m_TestComponents);
+            this.TestRunnerCallback.RunStarted(Application.platform.ToString(), this.m_TestComponents);
             while (true)
             {
-                if (!m_TestsProvider.AnyTestsLeft() && currentTest == null)
+                if (!this.m_TestsProvider.AnyTestsLeft() && this.currentTest == null)
                 {
-                    FinishTestRun();
+                    this.FinishTestRun();
                     yield break;
                 }
-                if (currentTest == null)
+                if (this.currentTest == null)
                 {
-                    StartNewTest();
+                    this.StartNewTest();
                 }
-                if (currentTest != null)
+                if (this.currentTest != null)
                 {
-                    if (m_TestState == TestState.Running)
+                    if (this.m_TestState == TestState.Running)
                     {
-                        if(currentTest.ShouldSucceedOnAssertions())
+                        if(this.currentTest.ShouldSucceedOnAssertions())
                         {
-                            var assertionsToCheck = currentTest.gameObject.GetComponentsInChildren<AssertionComponent>().Where(a => a.enabled).ToArray();
+                            var assertionsToCheck = this.currentTest.gameObject.GetComponentsInChildren<AssertionComponent>().Where(a => a.enabled).ToArray();
                             if (assertionsToCheck.Any () && assertionsToCheck.All(a => a.checksPerformed > 0))
                             {
-                                IntegrationTest.Pass(currentTest.gameObject);
-                                m_TestState = TestState.Success;
+                                IntegrationTest.Pass(this.currentTest.gameObject);
+                                this.m_TestState = TestState.Success;
                             }
                         }
-                        if (currentTest != null && Time.time > m_StartTime + currentTest.GetTimeout())
+                        if (this.currentTest != null && Time.time > this.m_StartTime + this.currentTest.GetTimeout())
                         {
-                            m_TestState = TestState.Timeout;
+                            this.m_TestState = TestState.Timeout;
                         }
                     }
 
-                    switch (m_TestState)
+                    switch (this.m_TestState)
                     {
                         case TestState.Success:
-                            LogMessage(k_FinishedMessage);
-                            FinishTest(TestResult.ResultType.Success);
+                            this.LogMessage(k_FinishedMessage);
+                            this.FinishTest(TestResult.ResultType.Success);
                             break;
                         case TestState.Failure:
-                            LogMessage(k_FailedMessage);
-                            FinishTest(TestResult.ResultType.Failed);
+                            this.LogMessage(k_FailedMessage);
+                            this.FinishTest(TestResult.ResultType.Failed);
                             break;
                         case TestState.Exception:
-                            LogMessage(k_FailedExceptionMessage);
-                            FinishTest(TestResult.ResultType.FailedException);
+                            this.LogMessage(k_FailedExceptionMessage);
+                            this.FinishTest(TestResult.ResultType.FailedException);
                             break;
                         case TestState.Timeout:
-                            LogMessage(k_TimeoutMessage);
-                            FinishTest(TestResult.ResultType.Timeout);
+                            this.LogMessage(k_TimeoutMessage);
+                            this.FinishTest(TestResult.ResultType.Timeout);
                             break;
                         case TestState.Ignored:
-                            LogMessage(k_IgnoredMessage);
-                            FinishTest(TestResult.ResultType.Ignored);
+                            this.LogMessage(k_IgnoredMessage);
+                            this.FinishTest(TestResult.ResultType.Ignored);
                             break;
                     }
                 }
@@ -270,61 +272,61 @@ namespace UnityTest
 
         private void LogMessage(string message)
         {
-            if (currentTest != null)
-                Debug.Log(message + " (" + currentTest.Name + ")", currentTest.gameObject);
+            if (this.currentTest != null)
+                Debug.Log(message + " (" + this.currentTest.Name + ")", this.currentTest.gameObject);
             else
                 Debug.Log(message);
         }
 
         private void FinishTestRun()
         {
-            PrintResultToLog();
-            TestRunnerCallback.RunFinished(m_ResultList);
-            LoadNextLevelOrQuit();
+            this.PrintResultToLog();
+            this.TestRunnerCallback.RunFinished(this.m_ResultList);
+            this.LoadNextLevelOrQuit();
         }
 
         private void PrintResultToLog()
         {
             var resultString = "";
-            resultString += "Passed: " + m_ResultList.Count(t => t.IsSuccess);
-            if (m_ResultList.Any(result => result.IsFailure))
+            resultString += "Passed: " + this.m_ResultList.Count(t => t.IsSuccess);
+            if (this.m_ResultList.Any(result => result.IsFailure))
             {
-                resultString += " Failed: " + m_ResultList.Count(t => t.IsFailure);
-                Debug.Log("Failed tests: " + string.Join(", ", m_ResultList.Where(t => t.IsFailure).Select(result => result.Name).ToArray()));
+                resultString += " Failed: " + this.m_ResultList.Count(t => t.IsFailure);
+                Debug.Log("Failed tests: " + string.Join(", ", this.m_ResultList.Where(t => t.IsFailure).Select(result => result.Name).ToArray()));
             }
-            if (m_ResultList.Any(result => result.IsIgnored))
+            if (this.m_ResultList.Any(result => result.IsIgnored))
             {
-                resultString += " Ignored: " + m_ResultList.Count(t => t.IsIgnored);
+                resultString += " Ignored: " + this.m_ResultList.Count(t => t.IsIgnored);
                 Debug.Log("Ignored tests: " + string.Join(", ",
-                                                          m_ResultList.Where(t => t.IsIgnored).Select(result => result.Name).ToArray()));
+                                                          this.m_ResultList.Where(t => t.IsIgnored).Select(result => result.Name).ToArray()));
             }
             Debug.Log(resultString);
         }
 
         private void LoadNextLevelOrQuit()
         {
-            if (isInitializedByRunner) return;
+            if (this.isInitializedByRunner) return;
 
 
             TestSceneNumber += 1;
-            string testScene = m_Configurator.GetIntegrationTestScenes(TestSceneNumber);
+            string testScene = this.m_Configurator.GetIntegrationTestScenes(TestSceneNumber);
 
             if (testScene != null)
                 SceneManager.LoadScene(Path.GetFileNameWithoutExtension(testScene));
             else
             {
-                TestRunnerCallback.AllScenesFinished();
+                this.TestRunnerCallback.AllScenesFinished();
                 k_ResultRenderer.ShowResults();
 
 #if UNITY_EDITOR
-                var prevScenes = m_Configurator.GetPreviousScenesToRestore();
+                var prevScenes = this.m_Configurator.GetPreviousScenesToRestore();
                 if(prevScenes!=null)
                 {
                     UnityEditor.EditorBuildSettings.scenes = prevScenes;
                 }
 #endif
 
-                if (m_Configurator.isBatchRun && m_Configurator.sendResultsOverNetwork)
+                if (this.m_Configurator.isBatchRun && this.m_Configurator.sendResultsOverNetwork)
                     Application.Quit();
             }
         }
@@ -336,41 +338,41 @@ namespace UnityTest
 
         private void StartNewTest()
         {
-            m_TestMessages = "";
-            m_Stacktrace = "";
-            m_TestState = TestState.Running;
+            this.m_TestMessages = "";
+            this.m_Stacktrace = "";
+            this.m_TestState = TestState.Running;
 
-            m_StartTime = Time.time;
-            currentTest = m_TestsProvider.GetNextTest() as TestComponent;
+            this.m_StartTime = Time.time;
+            this.currentTest = this.m_TestsProvider.GetNextTest() as TestComponent;
 
-            var testResult = m_ResultList.Single(result => result.TestComponent == currentTest);
+            var testResult = this.m_ResultList.Single(result => result.TestComponent == this.currentTest);
 
-            if (currentTest != null && currentTest.IsExludedOnThisPlatform())
+            if (this.currentTest != null && this.currentTest.IsExludedOnThisPlatform())
             {
-                m_TestState = TestState.Ignored;
-                Debug.Log(currentTest.gameObject.name + " is excluded on this platform");
+                this.m_TestState = TestState.Ignored;
+                Debug.Log(this.currentTest.gameObject.name + " is excluded on this platform");
             }
 
             // don't ignore test if user initiated it from the runner and it's the only test that is being run
-            if (currentTest != null
-                && (currentTest.IsIgnored()
-                    && !(isInitializedByRunner && m_ResultList.Count == 1)))
-                m_TestState = TestState.Ignored;
+            if (this.currentTest != null
+                && (this.currentTest.IsIgnored()
+                    && !(this.isInitializedByRunner && this.m_ResultList.Count == 1)))
+                this.m_TestState = TestState.Ignored;
 
-            LogMessage(k_StartedMessage);
-            TestRunnerCallback.TestStarted(testResult);
+            this.LogMessage(k_StartedMessage);
+            this.TestRunnerCallback.TestStarted(testResult);
         }
 
         private void FinishTest(TestResult.ResultType result)
         {
-            m_TestsProvider.FinishTest(currentTest);
-            var testResult = m_ResultList.Single(t => t.GameObject == currentTest.gameObject);
+            this.m_TestsProvider.FinishTest(this.currentTest);
+            var testResult = this.m_ResultList.Single(t => t.GameObject == this.currentTest.gameObject);
             testResult.resultType = result;
-            testResult.duration = Time.time - m_StartTime;
-            testResult.messages = m_TestMessages;
-            testResult.stacktrace = m_Stacktrace;
-            TestRunnerCallback.TestFinished(testResult);
-            currentTest = null;
+            testResult.duration = Time.time - this.m_StartTime;
+            testResult.messages = this.m_TestMessages;
+            testResult.stacktrace = this.m_Stacktrace;
+            this.TestRunnerCallback.TestFinished(testResult);
+            this.currentTest = null;
             if (!testResult.IsSuccess
                 && testResult.Executed
                 && !testResult.IsIgnored) k_ResultRenderer.AddResults(SceneManager.GetActiveScene().name, testResult);

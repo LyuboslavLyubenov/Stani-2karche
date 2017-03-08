@@ -1,18 +1,21 @@
 #if !NOT_UNITY3D
 
-using ModestTree;
-
-using System.Collections.Generic;
-using System.Linq;
-
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Install.Contexts
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Runtime;
+    using Assets.Zenject.Source.Runtime.Kernels;
+
+    using UnityEngine;
+
     public class ProjectContext : Context
     {
         public const string ProjectContextResourcePath = "ProjectContext";
@@ -28,7 +31,7 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
@@ -111,7 +114,7 @@ namespace Zenject
         {
             Log.Debug("Initializing ProjectContext");
 
-            Assert.IsNull(_container);
+            Assert.IsNull(this._container);
 
             if (Application.isPlaying)
             // DontDestroyOnLoad can only be called when in play mode and otherwise produces errors
@@ -119,7 +122,7 @@ namespace Zenject
             // and also when running unit tests
             // In these cases we don't need DontDestroyOnLoad so just skip it
             {
-                DontDestroyOnLoad(gameObject);
+                DontDestroyOnLoad(this.gameObject);
             }
 
             bool isValidating = false;
@@ -131,28 +134,28 @@ namespace Zenject
             ValidateOnNextRun = false;
 #endif
 
-            _container = new DiContainer(
+            this._container = new DiContainer(
                 StaticContext.Container, isValidating);
 
-            _container.LazyInstanceInjector.AddInstances(
-                GetInjectableComponents().Cast<object>());
+            this._container.LazyInstanceInjector.AddInstances(
+                this.GetInjectableComponents().Cast<object>());
 
-            _container.IsInstalling = true;
+            this._container.IsInstalling = true;
 
             try
             {
-                InstallBindings();
+                this.InstallBindings();
             }
             finally
             {
-                _container.IsInstalling = false;
+                this._container.IsInstalling = false;
             }
 
-            _container.LazyInstanceInjector.LazyInjectAll();
+            this._container.LazyInstanceInjector.LazyInjectAll();
 
-            Assert.That(_dependencyRoots.IsEmpty());
+            Assert.That(this._dependencyRoots.IsEmpty());
 
-            _dependencyRoots.AddRange(_container.ResolveDependencyRoots());
+            this._dependencyRoots.AddRange(this._container.ResolveDependencyRoots());
         }
 
         protected override IEnumerable<Component> GetInjectableComponents()
@@ -162,18 +165,18 @@ namespace Zenject
 
         void InstallBindings()
         {
-            _container.DefaultParent = this.transform;
+            this._container.DefaultParent = this.transform;
 
-            _container.Bind(typeof(TickableManager), typeof(InitializableManager), typeof(DisposableManager))
+            this._container.Bind(typeof(TickableManager), typeof(InitializableManager), typeof(DisposableManager))
                 .ToSelf().AsSingle().CopyIntoAllSubContainers();
 
-            _container.Bind<Context>().FromInstance(this);
+            this._container.Bind<Context>().FromInstance(this);
 
-            _container.Bind<ProjectKernel>().FromComponent(this.gameObject).AsSingle().NonLazy();
+            this._container.Bind<ProjectKernel>().FromComponent(this.gameObject).AsSingle().NonLazy();
 
-            InstallSceneBindings();
+            this.InstallSceneBindings();
 
-            InstallInstallers();
+            this.InstallInstallers();
         }
     }
 }

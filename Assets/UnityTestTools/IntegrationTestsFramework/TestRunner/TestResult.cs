@@ -1,9 +1,12 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+
+    using Assets.UnityTestTools.Common;
+
+    using UnityEngine;
+
     [Serializable]
     public class TestResult : ITestResult, IComparable<TestResult>
     {
@@ -20,28 +23,28 @@ namespace UnityTest
 
         public GameObject GameObject
         {
-            get { return m_Go; }
+            get { return this.m_Go; }
         }
 
         public TestResult(TestComponent testComponent)
         {
-            TestComponent = testComponent;
-            m_Go = testComponent.gameObject;
-            id = testComponent.gameObject.GetInstanceID().ToString();
-            dynamicTest = testComponent.dynamic;
+            this.TestComponent = testComponent;
+            this.m_Go = testComponent.gameObject;
+            this.id = testComponent.gameObject.GetInstanceID().ToString();
+            this.dynamicTest = testComponent.dynamic;
 
-            if (m_Go != null) m_Name = m_Go.name;
+            if (this.m_Go != null) this.m_Name = this.m_Go.name;
 
-            if (dynamicTest)
-                id = testComponent.dynamicTypeName;
+            if (this.dynamicTest)
+                this.id = testComponent.dynamicTypeName;
         }
 
         public void Update(TestResult oldResult)
         {
-            resultType = oldResult.resultType;
-            duration = oldResult.duration;
-            messages = oldResult.messages;
-            stacktrace = oldResult.stacktrace;
+            this.resultType = oldResult.resultType;
+            this.duration = oldResult.duration;
+            this.messages = oldResult.messages;
+            this.stacktrace = oldResult.stacktrace;
         }
 
         public enum ResultType
@@ -56,17 +59,17 @@ namespace UnityTest
 
         public void Reset()
         {
-            resultType = ResultType.NotRun;
-            duration = 0f;
-            messages = "";
-            stacktrace = "";
+            this.resultType = ResultType.NotRun;
+            this.duration = 0f;
+            this.messages = "";
+            this.stacktrace = "";
         }
 
         #region ITestResult implementation
         public TestResultState ResultState {
             get
             {
-                switch (resultType)
+                switch (this.resultType)
                 {
                     case ResultType.Success: return TestResultState.Success;
                     case ResultType.Failed: return TestResultState.Failure;
@@ -78,22 +81,22 @@ namespace UnityTest
                 }
             }
         }
-        public string Message { get { return messages; } }
+        public string Message { get { return this.messages; } }
         public string Logs { get { return null; } }
-        public bool Executed { get { return resultType != ResultType.NotRun; } }
-        public string Name { get { if (m_Go != null) m_Name = m_Go.name; return m_Name; } }
-        public string Id { get { return id; } }
-        public bool IsSuccess { get { return resultType == ResultType.Success; } }
-        public bool IsTimeout { get { return resultType == ResultType.Timeout; } }
-        public double Duration { get { return duration; } }
-        public string StackTrace { get { return stacktrace; } }
+        public bool Executed { get { return this.resultType != ResultType.NotRun; } }
+        public string Name { get { if (this.m_Go != null) this.m_Name = this.m_Go.name; return this.m_Name; } }
+        public string Id { get { return this.id; } }
+        public bool IsSuccess { get { return this.resultType == ResultType.Success; } }
+        public bool IsTimeout { get { return this.resultType == ResultType.Timeout; } }
+        public double Duration { get { return this.duration; } }
+        public string StackTrace { get { return this.stacktrace; } }
         public string FullName {
             get
             {
-                var fullName = Name;
-                if (m_Go != null)
+                var fullName = this.Name;
+                if (this.m_Go != null)
                 {
-                    var tempGo = m_Go.transform.parent;
+                    var tempGo = this.m_Go.transform.parent;
                     while (tempGo != null)
                     {
                         fullName = tempGo.name + "." + fullName;
@@ -104,14 +107,14 @@ namespace UnityTest
             }
         }
 
-        public bool IsIgnored { get { return resultType == ResultType.Ignored; } }
+        public bool IsIgnored { get { return this.resultType == ResultType.Ignored; } }
         public bool IsFailure
         {
             get
             {
-                return resultType == ResultType.Failed
-                       || resultType == ResultType.FailedException
-                       || resultType == ResultType.Timeout;
+                return this.resultType == ResultType.Failed
+                       || this.resultType == ResultType.FailedException
+                       || this.resultType == ResultType.Timeout;
             }
         }
         #endregion
@@ -119,21 +122,21 @@ namespace UnityTest
         #region IComparable, GetHashCode and Equals implementation
         public override int GetHashCode()
         {
-            return id.GetHashCode();
+            return this.id.GetHashCode();
         }
 
         public int CompareTo(TestResult other)
         {
-            var result = Name.CompareTo(other.Name);
+            var result = this.Name.CompareTo(other.Name);
             if (result == 0)
-                result = m_Go.GetInstanceID().CompareTo(other.m_Go.GetInstanceID());
+                result = this.m_Go.GetInstanceID().CompareTo(other.m_Go.GetInstanceID());
             return result;
         }
 
         public override bool Equals(object obj)
         {
             if (obj is TestResult)
-                return GetHashCode() == obj.GetHashCode();
+                return this.GetHashCode() == obj.GetHashCode();
             return base.Equals(obj);
         }
         #endregion

@@ -1,8 +1,13 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Finalizers
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+
     public class SingleProviderBindingFinalizer : ProviderBindingFinalizer
     {
         readonly Func<DiContainer, Type, IProvider> _providerFactory;
@@ -11,24 +16,24 @@ namespace Zenject
             BindInfo bindInfo, Func<DiContainer, Type, IProvider> providerFactory)
             : base(bindInfo)
         {
-            _providerFactory = providerFactory;
+            this._providerFactory = providerFactory;
         }
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            if (BindInfo.ToChoice == ToChoices.Self)
+            if (this.BindInfo.ToChoice == ToChoices.Self)
             {
-                Assert.IsEmpty(BindInfo.ToTypes);
+                Assert.IsEmpty(this.BindInfo.ToTypes);
 
-                RegisterProviderPerContract(container, _providerFactory);
+                this.RegisterProviderPerContract(container, this._providerFactory);
             }
             else
             {
                 // Empty sometimes when using convention based bindings
-                if (!BindInfo.ToTypes.IsEmpty())
+                if (!this.BindInfo.ToTypes.IsEmpty())
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
-                        container, BindInfo.ToTypes, _providerFactory);
+                    this.RegisterProvidersForAllContractsPerConcreteType(
+                        container, this.BindInfo.ToTypes, this._providerFactory);
                 }
             }
         }

@@ -1,9 +1,14 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
     // Zero params
 
     public class MethodProviderWithContainer<TValue> : IProvider
@@ -12,7 +17,7 @@ namespace Zenject
 
         public MethodProviderWithContainer(Func<DiContainer, TValue> method)
         {
-            _method = method;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -34,7 +39,7 @@ namespace Zenject
             }
             else
             {
-                yield return new List<object>() { _method(context.Container) };
+                yield return new List<object>() { this._method(context.Container) };
             }
         }
     }
@@ -47,7 +52,7 @@ namespace Zenject
 
         public MethodProviderWithContainer(Func<DiContainer, TParam1, TValue> method)
         {
-            _method = method;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -72,7 +77,7 @@ namespace Zenject
             {
                 yield return new List<object>()
                 {
-                    _method(
+                    this._method(
                         context.Container,
                         (TParam1)args[0].Value)
                 };
@@ -88,7 +93,7 @@ namespace Zenject
 
         public MethodProviderWithContainer(Func<DiContainer, TParam1, TParam2, TValue> method)
         {
-            _method = method;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -114,7 +119,7 @@ namespace Zenject
             {
                 yield return new List<object>()
                 {
-                    _method(
+                    this._method(
                         context.Container,
                         (TParam1)args[0].Value,
                         (TParam2)args[1].Value)
@@ -131,7 +136,7 @@ namespace Zenject
 
         public MethodProviderWithContainer(Func<DiContainer, TParam1, TParam2, TParam3, TValue> method)
         {
-            _method = method;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -158,7 +163,7 @@ namespace Zenject
             {
                 yield return new List<object>()
                 {
-                    _method(
+                    this._method(
                         context.Container,
                         (TParam1)args[0].Value,
                         (TParam2)args[1].Value,
@@ -172,11 +177,11 @@ namespace Zenject
 
     public class MethodProviderWithContainer<TParam1, TParam2, TParam3, TParam4, TValue> : IProvider
     {
-        readonly ModestTree.Util.Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TValue> _method;
+        readonly Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TValue> _method;
 
-        public MethodProviderWithContainer(ModestTree.Util.Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TValue> method)
+        public MethodProviderWithContainer(Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TValue> method)
         {
-            _method = method;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -204,7 +209,7 @@ namespace Zenject
             {
                 yield return new List<object>()
                 {
-                    _method(
+                    this._method(
                         context.Container,
                         (TParam1)args[0].Value,
                         (TParam2)args[1].Value,
@@ -219,11 +224,11 @@ namespace Zenject
 
     public class MethodProviderWithContainer<TParam1, TParam2, TParam3, TParam4, TParam5, TValue> : IProvider
     {
-        readonly ModestTree.Util.Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TValue> _method;
+        readonly Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TValue> _method;
 
-        public MethodProviderWithContainer(ModestTree.Util.Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TValue> method)
+        public MethodProviderWithContainer(Func<DiContainer, TParam1, TParam2, TParam3, TParam4, TParam5, TValue> method)
         {
-            _method = method;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -252,7 +257,7 @@ namespace Zenject
             {
                 yield return new List<object>()
                 {
-                    _method(
+                    this._method(
                         context.Container,
                         (TParam1)args[0].Value,
                         (TParam2)args[1].Value,

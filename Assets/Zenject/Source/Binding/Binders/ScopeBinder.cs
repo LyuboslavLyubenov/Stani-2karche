@@ -1,7 +1,9 @@
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders
 {
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+
     public class ScopeBinder : ConditionBinder
     {
         public ScopeBinder(BindInfo bindInfo)
@@ -11,28 +13,28 @@ namespace Zenject
 
         public ConditionBinder AsSingle()
         {
-            return AsSingle(null);
+            return this.AsSingle(null);
         }
 
         public ConditionBinder AsSingle(object concreteIdentifier)
         {
-            Assert.IsNull(BindInfo.ConcreteIdentifier);
+            Assert.IsNull(this.BindInfo.ConcreteIdentifier);
 
-            BindInfo.Scope = ScopeTypes.Singleton;
-            BindInfo.ConcreteIdentifier = concreteIdentifier;
+            this.BindInfo.Scope = ScopeTypes.Singleton;
+            this.BindInfo.ConcreteIdentifier = concreteIdentifier;
             return this;
         }
 
         public ConditionBinder AsCached()
         {
-            BindInfo.Scope = ScopeTypes.Cached;
+            this.BindInfo.Scope = ScopeTypes.Cached;
             return this;
         }
 
         // Note that this is the default so it's not necessary to call this
         public ConditionBinder AsTransient()
         {
-            BindInfo.Scope = ScopeTypes.Transient;
+            this.BindInfo.Scope = ScopeTypes.Transient;
             return this;
         }
     }

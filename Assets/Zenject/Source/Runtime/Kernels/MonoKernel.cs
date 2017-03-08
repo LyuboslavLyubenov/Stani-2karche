@@ -1,10 +1,13 @@
 #if !NOT_UNITY3D
 
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Runtime.Kernels
 {
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Usage;
+
+    using UnityEngine;
+
     public abstract class MonoKernel : MonoBehaviour
     {
         [InjectLocal]
@@ -21,40 +24,40 @@ namespace Zenject
         public virtual void Start()
         {
             Log.Debug("DependencyRoot ({0}): Start called, Initializing IInitializable's", this.GetType().Name());
-            _initializableManager.Initialize();
+            this._initializableManager.Initialize();
         }
 
         public virtual void Update()
         {
             // Don't spam the log every frame if initialization fails and leaves it as null
-            if (_tickableManager != null)
+            if (this._tickableManager != null)
             {
-                _tickableManager.Update();
+                this._tickableManager.Update();
             }
         }
 
         public virtual void FixedUpdate()
         {
             // Don't spam the log every frame if initialization fails and leaves it as null
-            if (_tickableManager != null)
+            if (this._tickableManager != null)
             {
-                _tickableManager.FixedUpdate();
+                this._tickableManager.FixedUpdate();
             }
         }
 
         public virtual void LateUpdate()
         {
             // Don't spam the log every frame if initialization fails and leaves it as null
-            if (_tickableManager != null)
+            if (this._tickableManager != null)
             {
-                _tickableManager.LateUpdate();
+                this._tickableManager.LateUpdate();
             }
         }
 
         public virtual void OnApplicationQuit()
         {
             // _disposablesManager can be null if we get destroyed before the Start event
-            if (_disposablesManager != null)
+            if (this._disposablesManager != null)
             {
                 Log.Debug("MonoDependencyRoot ({0}): OnApplicationQuit called, disposing IDisposable's", this.GetType().Name());
 
@@ -66,24 +69,24 @@ namespace Zenject
                 // have been marked with Application.DontDestroyOnLoad, and so the destruction order
                 // changes.  So to address this case, dispose before the OnDestroy event below (OnApplicationQuit
                 // is always called before OnDestroy) and then don't call dispose in OnDestroy
-                Assert.That(!_isDisposed);
-                _isDisposed = true; // Do this before in case there's exceptions, so we don't call it again below
-                _disposablesManager.Dispose();
+                Assert.That(!this._isDisposed);
+                this._isDisposed = true; // Do this before in case there's exceptions, so we don't call it again below
+                this._disposablesManager.Dispose();
             }
         }
 
         public virtual void OnDestroy()
         {
             // _disposablesManager can be null if we get destroyed before the Start event
-            if (_disposablesManager != null)
+            if (this._disposablesManager != null)
             {
                 // See comment in OnApplicationQuit
-                if (!_isDisposed)
+                if (!this._isDisposed)
                 {
                     Log.Debug("MonoDependencyRoot ({0}): OnDestroy called, disposing IDisposable's", this.GetType().Name());
 
-                    _isDisposed = true;
-                    _disposablesManager.Dispose();
+                    this._isDisposed = true;
+                    this._disposablesManager.Dispose();
                 }
             }
         }

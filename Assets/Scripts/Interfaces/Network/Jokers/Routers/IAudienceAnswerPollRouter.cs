@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers
+﻿namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
 {
 
     using System;

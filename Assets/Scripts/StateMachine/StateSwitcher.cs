@@ -3,7 +3,7 @@ namespace Assets.Scripts.StateMachine
 
     using Assets.Scripts.Interfaces;
 
-    public class SimpleFiniteStateMachine
+    public class StateMachine
     {
         public IState CurrentState
         {
@@ -15,13 +15,13 @@ namespace Assets.Scripts.StateMachine
             get; private set;
         }
         
-        public SimpleFiniteStateMachine() : this(null)
+        public StateMachine() : this(null)
         {
         }
         
-        public SimpleFiniteStateMachine(IState startState)
+        public StateMachine(IState startState)
         {
-            this.CurrentState = startState;
+            this.SetCurrentState(startState);
         }
         
         private void ChangeState(IState newState)

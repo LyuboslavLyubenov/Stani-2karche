@@ -1,4 +1,4 @@
-namespace Assets.Scripts.DTOs.KinveySerializableObj
+namespace Assets.Scripts.DTOs.KinveyDtoObjs
 {
 
     public class _KinveyEntity<T>

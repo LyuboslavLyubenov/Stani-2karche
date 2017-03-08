@@ -1,8 +1,17 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.Binders.GameObject;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Install;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+
     public class FactorySubContainerBinderWithParams<TContract> : FactorySubContainerBinderBase<TContract>
     {
         public FactorySubContainerBinderWithParams(
@@ -17,7 +26,7 @@ namespace Zenject
         public GameObjectNameGroupNameBinder ByPrefab<TInstaller>(UnityEngine.Object prefab)
             where TInstaller : IInstaller
         {
-            return ByPrefab(typeof(TInstaller), prefab);
+            return this.ByPrefab(typeof(TInstaller), prefab);
         }
 
         public GameObjectNameGroupNameBinder ByPrefab(Type installerType, UnityEngine.Object prefab)
@@ -29,22 +38,22 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
-                    ContractType, SubIdentifier,
+                    this.ContractType, this.SubIdentifier,
                     new SubContainerCreatorByPrefabWithParams(
                         installerType,
                         container,
                         new PrefabProvider(prefab),
                         gameObjectInfo)));
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 
         public GameObjectNameGroupNameBinder ByPrefabResource<TInstaller>(string resourcePath)
             where TInstaller : IInstaller
         {
-            return ByPrefabResource(typeof(TInstaller), resourcePath);
+            return this.ByPrefabResource(typeof(TInstaller), resourcePath);
         }
 
         public GameObjectNameGroupNameBinder ByPrefabResource(
@@ -54,16 +63,16 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new SubContainerDependencyProvider(
-                    ContractType, SubIdentifier,
+                    this.ContractType, this.SubIdentifier,
                     new SubContainerCreatorByPrefabWithParams(
                         installerType,
                         container,
                         new PrefabProviderResource(resourcePath),
                         gameObjectInfo)));
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 #endif
     }

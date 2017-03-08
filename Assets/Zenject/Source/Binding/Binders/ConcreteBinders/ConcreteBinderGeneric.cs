@@ -1,10 +1,18 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using System.Linq;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.ConcreteBinders
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.Binders.Conventions;
+    using Assets.Zenject.Source.Binding.Binders.FromBinders;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.Singleton;
+
     public class ConcreteBinderGeneric<TContract> : FromBinderGeneric<TContract>
     {
         public ConcreteBinderGeneric(
@@ -12,18 +20,18 @@ namespace Zenject
             BindFinalizerWrapper finalizerWrapper)
             : base(bindInfo, finalizerWrapper)
         {
-            ToSelf();
+            this.ToSelf();
         }
 
         // Note that this is the default, so not necessary to call
         public FromBinderGeneric<TContract> ToSelf()
         {
-            Assert.IsEqual(BindInfo.ToChoice, ToChoices.Self);
+            Assert.IsEqual(this.BindInfo.ToChoice, ToChoices.Self);
 
-            SubFinalizer = new ScopableBindingFinalizer(
-                BindInfo, SingletonTypes.To, null,
+            this.SubFinalizer = new ScopableBindingFinalizer(
+                this.BindInfo, SingletonTypes.To, null,
                 (container, type) => new TransientProvider(
-                    type, container, BindInfo.Arguments, BindInfo.ConcreteIdentifier));
+                    type, container, this.BindInfo.Arguments, this.BindInfo.ConcreteIdentifier));
 
             return this;
         }
@@ -31,31 +39,31 @@ namespace Zenject
         public FromBinderGeneric<TConcrete> To<TConcrete>()
             where TConcrete : TContract
         {
-            BindInfo.ToChoice = ToChoices.Concrete;
-            BindInfo.ToTypes = new List<Type>()
+            this.BindInfo.ToChoice = ToChoices.Concrete;
+            this.BindInfo.ToTypes = new List<Type>()
             {
                 typeof(TConcrete)
             };
 
             return new FromBinderGeneric<TConcrete>(
-                BindInfo, FinalizerWrapper);
+                this.BindInfo, this.FinalizerWrapper);
         }
 
         public FromBinderNonGeneric To(params Type[] concreteTypes)
         {
-            return To((IEnumerable<Type>)concreteTypes);
+            return this.To((IEnumerable<Type>)concreteTypes);
         }
 
         public FromBinderNonGeneric To(IEnumerable<Type> concreteTypes)
         {
             BindingUtil.AssertIsDerivedFromTypes(
-                concreteTypes, BindInfo.ContractTypes, BindInfo.InvalidBindResponse);
+                concreteTypes, this.BindInfo.ContractTypes, this.BindInfo.InvalidBindResponse);
 
-            BindInfo.ToChoice = ToChoices.Concrete;
-            BindInfo.ToTypes = concreteTypes.ToList();
+            this.BindInfo.ToChoice = ToChoices.Concrete;
+            this.BindInfo.ToTypes = concreteTypes.ToList();
 
             return new FromBinderNonGeneric(
-                BindInfo, FinalizerWrapper);
+                this.BindInfo, this.FinalizerWrapper);
         }
 
 #if !(UNITY_WSA && ENABLE_DOTNET)
@@ -66,10 +74,10 @@ namespace Zenject
 
             // Automatically filter by the given contract types
             bindInfo.AddTypeFilter(
-                concreteType => BindInfo.ContractTypes.All(contractType => concreteType.DerivesFromOrEqual(contractType)));
+                concreteType => this.BindInfo.ContractTypes.All(contractType => concreteType.DerivesFromOrEqual(contractType)));
 
             generator(new ConventionSelectTypesBinder(bindInfo));
-            return To(bindInfo.ResolveTypes());
+            return this.To(bindInfo.ResolveTypes());
         }
 #endif
     }

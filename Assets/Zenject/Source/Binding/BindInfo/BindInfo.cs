@@ -1,8 +1,12 @@
-using System;
-using System.Collections.Generic;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.BindInfo
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Main;
+
     public enum ScopeTypes
     {
         Transient,
@@ -26,15 +30,15 @@ namespace Zenject
     {
         public BindInfo(List<Type> contractTypes)
         {
-            Identifier = null;
-            ContractTypes = contractTypes;
-            ToTypes = new List<Type>();
-            Arguments = new List<TypeValuePair>();
-            ToChoice = ToChoices.Self;
-            CopyIntoAllSubContainers = false;
-            NonLazy = false;
-            Scope = ScopeTypes.Transient;
-            InvalidBindResponse = InvalidBindResponses.Assert;
+            this.Identifier = null;
+            this.ContractTypes = contractTypes;
+            this.ToTypes = new List<Type>();
+            this.Arguments = new List<TypeValuePair>();
+            this.ToChoice = ToChoices.Self;
+            this.CopyIntoAllSubContainers = false;
+            this.NonLazy = false;
+            this.Scope = ScopeTypes.Transient;
+            this.InvalidBindResponse = InvalidBindResponses.Assert;
         }
 
         public BindInfo(Type contractType)

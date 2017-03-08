@@ -1,20 +1,17 @@
 
-namespace Assets.Scripts.Jokers
+namespace Assets.Scripts.Jokers.Routers
 {
+
     using System;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
-
-    using Commands;
-    using Commands.Jokers.Add;
-    using DTOs;
-    using Interfaces;
-
-    using JetBrains.Annotations;
-
-    using Network.NetworkManagers;
-    using Utils;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Jokers.Add;
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Utils;
 
     using EventArgs = System.EventArgs;
 
@@ -54,7 +51,7 @@ namespace Assets.Scripts.Jokers
 
             if (!areAllJokers)
             {
-                OnError(this, new UnhandledExceptionEventArgs(new ArgumentException("Not all are jokers"), true));
+                this.OnError(this, new UnhandledExceptionEventArgs(new ArgumentException("Not all are jokers"), true));
                 return;
             }
 
@@ -63,7 +60,7 @@ namespace Assets.Scripts.Jokers
             var selectedJokerIndex = UnityEngine.Random.Range(0, jokersTypeNames.Length);
             var selectedJoker = jokersToSelectFrom[selectedJokerIndex];
 
-            var timer = TimerUtils.ExecuteAfter(1f, () => jokersData.AddJoker(selectedJoker));
+            var timer = TimerUtils.ExecuteAfter(1f, () => this.jokersData.AddJoker(selectedJoker));
             timer.RunOnUnityThread = true;
             timer.AutoDispose = true;
             timer.Start();

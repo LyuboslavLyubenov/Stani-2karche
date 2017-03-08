@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
-namespace ModestTree.Util
+namespace Assets.Zenject.Source.Internal
 {
+
+    using System;
+
     public class ValuePair<T1, T2>
     {
         public readonly T1 First;
@@ -10,14 +10,14 @@ namespace ModestTree.Util
 
         public ValuePair()
         {
-            First = default(T1);
-            Second = default(T2);
+            this.First = default(T1);
+            this.Second = default(T2);
         }
 
         public ValuePair(T1 first, T2 second)
         {
-            First = first;
-            Second = second;
+            this.First = first;
+            this.Second = second;
         }
 
         public override bool Equals(Object obj)
@@ -29,7 +29,7 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return Equals(that);
+            return this.Equals(that);
         }
 
         public bool Equals(ValuePair<T1, T2> that)
@@ -39,7 +39,7 @@ namespace ModestTree.Util
                 return false;
             }
 
-            return object.Equals(First, that.First) && object.Equals(Second, that.Second);
+            return object.Equals(this.First, that.First) && object.Equals(this.Second, that.Second);
         }
 
         public override int GetHashCode()
@@ -47,8 +47,8 @@ namespace ModestTree.Util
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 17;
-                hash = hash * 29 + (First == null ? 0 : First.GetHashCode());
-                hash = hash * 29 + (Second == null ? 0 : Second.GetHashCode());
+                hash = hash * 29 + (this.First == null ? 0 : this.First.GetHashCode());
+                hash = hash * 29 + (this.Second == null ? 0 : this.Second.GetHashCode());
                 return hash;
             }
         }

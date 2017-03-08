@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
+    using UnityEngine;
+
     public class TransformComparer : ComparerBaseGeneric<Transform>
     {
         public enum CompareType { Equals, NotEquals }
@@ -12,11 +13,11 @@ namespace UnityTest
 
         protected override bool Compare(Transform a, Transform b)
         {
-            if (compareType == CompareType.Equals)
+            if (this.compareType == CompareType.Equals)
             {
                 return a.position == b.position;
             }
-            if (compareType == CompareType.NotEquals)
+            if (this.compareType == CompareType.NotEquals)
             {
                 return a.position != b.position;
             }

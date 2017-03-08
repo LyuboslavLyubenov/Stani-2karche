@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest.IntegrationTestRunner
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System.Collections.Generic;
+
     public interface ITestRunnerCallback
     {
         void RunStarted(string platform, List<TestComponent> testsToRun);

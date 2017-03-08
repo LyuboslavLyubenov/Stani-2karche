@@ -10,10 +10,10 @@
     using Controllers;
     using EventArgs;
     using Interfaces;
-    using AskPlayerQuestion;
 
     using Assets.Scripts.Commands.Server;
     using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using DTOs;
     using Exceptions;

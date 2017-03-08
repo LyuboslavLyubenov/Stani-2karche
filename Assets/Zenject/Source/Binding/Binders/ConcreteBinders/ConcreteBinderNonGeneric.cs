@@ -1,10 +1,18 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using System.Linq;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.ConcreteBinders
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.Binders.Conventions;
+    using Assets.Zenject.Source.Binding.Binders.FromBinders;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.Singleton;
+
     public class ConcreteBinderNonGeneric : FromBinderNonGeneric
     {
         public ConcreteBinderNonGeneric(
@@ -12,38 +20,38 @@ namespace Zenject
             BindFinalizerWrapper finalizerWrapper)
             : base(bindInfo, finalizerWrapper)
         {
-            ToSelf();
+            this.ToSelf();
         }
 
         // Note that this is the default, so not necessary to call
         public FromBinderNonGeneric ToSelf()
         {
-            Assert.IsEqual(BindInfo.ToChoice, ToChoices.Self);
+            Assert.IsEqual(this.BindInfo.ToChoice, ToChoices.Self);
 
-            SubFinalizer = new ScopableBindingFinalizer(
-                BindInfo, SingletonTypes.To, null,
+            this.SubFinalizer = new ScopableBindingFinalizer(
+                this.BindInfo, SingletonTypes.To, null,
                 (container, type) => new TransientProvider(
-                    type, container, BindInfo.Arguments, BindInfo.ConcreteIdentifier));
+                    type, container, this.BindInfo.Arguments, this.BindInfo.ConcreteIdentifier));
 
             return this;
         }
 
         public FromBinderNonGeneric To<TConcrete>()
         {
-            return To(typeof(TConcrete));
+            return this.To(typeof(TConcrete));
         }
 
         public FromBinderNonGeneric To(params Type[] concreteTypes)
         {
-            return To((IEnumerable<Type>)concreteTypes);
+            return this.To((IEnumerable<Type>)concreteTypes);
         }
 
         public FromBinderNonGeneric To(IEnumerable<Type> concreteTypes)
         {
-            BindingUtil.AssertIsDerivedFromTypes(concreteTypes, BindInfo.ContractTypes, BindInfo.InvalidBindResponse);
+            BindingUtil.AssertIsDerivedFromTypes(concreteTypes, this.BindInfo.ContractTypes, this.BindInfo.InvalidBindResponse);
 
-            BindInfo.ToChoice = ToChoices.Concrete;
-            BindInfo.ToTypes = concreteTypes.ToList();
+            this.BindInfo.ToChoice = ToChoices.Concrete;
+            this.BindInfo.ToTypes = concreteTypes.ToList();
 
             return this;
         }
@@ -56,12 +64,12 @@ namespace Zenject
 
             // This is nice because it allows us to do things like Bind(all interfaces).To(specific types)
             // instead of having to do Bind(all interfaces).To(specific types that inherit from one of these interfaces)
-            BindInfo.InvalidBindResponse = InvalidBindResponses.Skip;
+            this.BindInfo.InvalidBindResponse = InvalidBindResponses.Skip;
 
             generator(new ConventionSelectTypesBinder(bindInfo));
 
-            BindInfo.ToChoice = ToChoices.Concrete;
-            BindInfo.ToTypes = bindInfo.ResolveTypes();
+            this.BindInfo.ToChoice = ToChoices.Concrete;
+            this.BindInfo.ToTypes = bindInfo.ResolveTypes();
 
             return this;
         }

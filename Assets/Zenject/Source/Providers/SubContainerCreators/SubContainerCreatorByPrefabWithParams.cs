@@ -1,11 +1,18 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.SubContainerCreators
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+
     public class SubContainerCreatorByPrefabWithParams : ISubContainerCreator
     {
         readonly DiContainer _container;
@@ -17,28 +24,28 @@ namespace Zenject
             Type installerType, DiContainer container, IPrefabProvider prefabProvider,
             GameObjectCreationParameters gameObjectBindInfo)
         {
-            _gameObjectBindInfo = gameObjectBindInfo;
-            _prefabProvider = prefabProvider;
-            _container = container;
-            _installerType = installerType;
+            this._gameObjectBindInfo = gameObjectBindInfo;
+            this._prefabProvider = prefabProvider;
+            this._container = container;
+            this._installerType = installerType;
         }
 
         protected DiContainer Container
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
         DiContainer CreateTempContainer(List<TypeValuePair> args)
         {
-            var tempSubContainer = Container.CreateSubContainer();
+            var tempSubContainer = this.Container.CreateSubContainer();
 
             foreach (var argPair in args)
             {
                 tempSubContainer.Bind(argPair.Type)
-                    .FromInstance(argPair.Value, true).WhenInjectedInto(_installerType);
+                    .FromInstance(argPair.Value, true).WhenInjectedInto(this._installerType);
             }
 
             return tempSubContainer;
@@ -48,9 +55,9 @@ namespace Zenject
         {
             Assert.That(!args.IsEmpty());
 
-            var prefab = _prefabProvider.GetPrefab();
-            var gameObject = CreateTempContainer(args).InstantiatePrefab(
-                prefab, new object[0], _gameObjectBindInfo);
+            var prefab = this._prefabProvider.GetPrefab();
+            var gameObject = this.CreateTempContainer(args).InstantiatePrefab(
+                prefab, new object[0], this._gameObjectBindInfo);
 
             var context = gameObject.GetComponent<GameObjectContext>();
 

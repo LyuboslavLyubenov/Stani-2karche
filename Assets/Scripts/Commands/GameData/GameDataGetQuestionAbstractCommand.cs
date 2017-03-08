@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace Assets.Scripts.Commands.GameData
 {
+
+    using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using EventArgs;
     using Interfaces;
     using Network;

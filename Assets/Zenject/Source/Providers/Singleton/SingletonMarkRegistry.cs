@@ -1,33 +1,35 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Internal;
+
     public class SingletonMarkRegistry
     {
         readonly Dictionary<SingletonId, SingletonTypes> _singletonTypes = new Dictionary<SingletonId, SingletonTypes>();
 
         public SingletonTypes? TryGetSingletonType<T>()
         {
-            return TryGetSingletonType(typeof(T));
+            return this.TryGetSingletonType(typeof(T));
         }
 
         public SingletonTypes? TryGetSingletonType(Type type)
         {
-            return TryGetSingletonType(type, null);
+            return this.TryGetSingletonType(type, null);
         }
 
         public SingletonTypes? TryGetSingletonType(Type type, object concreteIdentifier)
         {
-            return TryGetSingletonType(new SingletonId(type, concreteIdentifier));
+            return this.TryGetSingletonType(new SingletonId(type, concreteIdentifier));
         }
 
         public SingletonTypes? TryGetSingletonType(SingletonId id)
         {
             SingletonTypes type;
 
-            if (_singletonTypes.TryGetValue(id, out type))
+            if (this._singletonTypes.TryGetValue(id, out type))
             {
                 return type;
             }
@@ -38,14 +40,14 @@ namespace Zenject
         public void MarkSingleton(
             Type type, object concreteIdentifier, SingletonTypes singletonType)
         {
-            MarkSingleton(new SingletonId(type, concreteIdentifier), singletonType);
+            this.MarkSingleton(new SingletonId(type, concreteIdentifier), singletonType);
         }
 
         public void MarkSingleton(SingletonId id, SingletonTypes type)
         {
             SingletonTypes existingType;
 
-            if (_singletonTypes.TryGetValue(id, out existingType))
+            if (this._singletonTypes.TryGetValue(id, out existingType))
             {
                 if (existingType != type)
                 {
@@ -55,7 +57,7 @@ namespace Zenject
             }
             else
             {
-                _singletonTypes.Add(id, type);
+                this._singletonTypes.Add(id, type);
             }
         }
     }

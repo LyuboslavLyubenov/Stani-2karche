@@ -1,12 +1,9 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
+﻿namespace Assets.Tests
 {
 
-    using System.Collections.Generic;
-
-    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
-
-    using Zenject;
+    using Assets.Zenject.Source.Usage;
 
     public class SetUsernameOfClientDummyServerNetworkManager : ExtendedMonoBehaviour
     {
@@ -21,7 +18,7 @@
 
         void Start()
         {
-            CoroutineUtils.WaitForSeconds(this.SetAfterTimeInSeconds, this.SetUsername);
+            this.CoroutineUtils.WaitForSeconds(this.SetAfterTimeInSeconds, this.SetUsername);
         }
 
         private void SetUsername()

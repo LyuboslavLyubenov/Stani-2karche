@@ -1,7 +1,8 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton
 {
+
+    using System;
+
     [System.Diagnostics.DebuggerStepThrough]
     public class SingletonId : IEquatable<SingletonId>
     {
@@ -10,8 +11,8 @@ namespace Zenject
 
         public SingletonId(Type concreteType, object concreteIdentifier)
         {
-            ConcreteType = concreteType;
-            ConcreteIdentifier = concreteIdentifier;
+            this.ConcreteType = concreteType;
+            this.ConcreteIdentifier = concreteIdentifier;
         }
 
         public override int GetHashCode()

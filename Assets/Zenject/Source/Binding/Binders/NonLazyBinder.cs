@@ -1,10 +1,13 @@
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders
 {
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+
     public class NonLazyBinder
     {
         public NonLazyBinder(BindInfo bindInfo)
         {
-            BindInfo = bindInfo;
+            this.BindInfo = bindInfo;
         }
 
         protected BindInfo BindInfo
@@ -15,7 +18,7 @@ namespace Zenject
 
         public void NonLazy()
         {
-            BindInfo.NonLazy = true;
+            this.BindInfo.NonLazy = true;
         }
     }
 }

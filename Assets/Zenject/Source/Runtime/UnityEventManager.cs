@@ -1,10 +1,14 @@
 #if !NOT_UNITY3D
 
-using System;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Runtime
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Usage;
+
+    using UnityEngine;
+
     // Note: this corresponds to the values expected in
     // Input.GetMouseButtonDown() and similar methods
     public enum MouseButtons
@@ -50,50 +54,50 @@ namespace Zenject
 
         void Start()
         {
-            _lastWidth = Screen.width;
-            _lastHeight = Screen.height;
-            Started();
+            this._lastWidth = Screen.width;
+            this._lastHeight = Screen.height;
+            this.Started();
         }
 
         public void Tick()
         {
             if (Input.GetMouseButtonDown((int)MouseButtons.Left))
             {
-                LeftMouseButtonDown();
-                MouseButtonDown(MouseButtons.Left);
+                this.LeftMouseButtonDown();
+                this.MouseButtonDown(MouseButtons.Left);
             }
             else if (Input.GetMouseButtonUp((int)MouseButtons.Left))
             {
-                LeftMouseButtonUp();
-                MouseButtonUp(MouseButtons.Left);
+                this.LeftMouseButtonUp();
+                this.MouseButtonUp(MouseButtons.Left);
             }
 
             if (Input.GetMouseButtonDown((int)MouseButtons.Right))
             {
-                RightMouseButtonDown();
-                MouseButtonDown(MouseButtons.Right);
+                this.RightMouseButtonDown();
+                this.MouseButtonDown(MouseButtons.Right);
             }
             else if (Input.GetMouseButtonUp((int)MouseButtons.Right))
             {
-                RightMouseButtonUp();
-                MouseButtonUp(MouseButtons.Right);
+                this.RightMouseButtonUp();
+                this.MouseButtonUp(MouseButtons.Right);
             }
 
             if (Input.GetMouseButtonDown((int)MouseButtons.Middle))
             {
-                MiddleMouseButtonDown();
-                MouseButtonDown(MouseButtons.Middle);
+                this.MiddleMouseButtonDown();
+                this.MouseButtonDown(MouseButtons.Middle);
             }
             else if (Input.GetMouseButtonUp((int)MouseButtons.Middle))
             {
-                MiddleMouseButtonUp();
-                MouseButtonUp(MouseButtons.Middle);
+                this.MiddleMouseButtonUp();
+                this.MouseButtonUp(MouseButtons.Middle);
             }
 
-            if (_lastMousePosition != Input.mousePosition)
+            if (this._lastMousePosition != Input.mousePosition)
             {
-                _lastMousePosition = Input.mousePosition;
-                MouseMoved();
+                this._lastMousePosition = Input.mousePosition;
+                this.MouseMoved();
             }
 
             // By default this event returns 1/10 for each discrete rotation
@@ -102,46 +106,46 @@ namespace Zenject
 
             if (!Mathf.Approximately(mouseWheelDelta, 0))
             {
-                MouseWheelMoved(mouseWheelDelta);
+                this.MouseWheelMoved(mouseWheelDelta);
             }
 
-            if (_lastWidth != Screen.width || _lastHeight != Screen.height)
+            if (this._lastWidth != Screen.width || this._lastHeight != Screen.height)
             {
-                _lastWidth = Screen.width;
-                _lastHeight = Screen.height;
-                ScreenSizeChanged();
+                this._lastWidth = Screen.width;
+                this._lastHeight = Screen.height;
+                this.ScreenSizeChanged();
             }
         }
 
         void OnDestroy()
         {
-            ChangingScenes();
+            this.ChangingScenes();
         }
 
         void OnApplicationQuit()
         {
-            ApplicationQuit();
+            this.ApplicationQuit();
         }
 
         void OnDrawGizmos()
         {
-            DrawGizmos();
+            this.DrawGizmos();
         }
 
         void OnApplicationFocus(bool newIsFocused)
         {
-            if (newIsFocused && !IsFocused)
+            if (newIsFocused && !this.IsFocused)
             {
-                IsFocused = true;
-                ApplicationGainedFocus();
-                ApplicationFocusChanged(true);
+                this.IsFocused = true;
+                this.ApplicationGainedFocus();
+                this.ApplicationFocusChanged(true);
             }
 
-            if (!newIsFocused && IsFocused)
+            if (!newIsFocused && this.IsFocused)
             {
-                IsFocused = false;
-                ApplicationLostFocus();
-                ApplicationFocusChanged(false);
+                this.IsFocused = false;
+                this.ApplicationLostFocus();
+                this.ApplicationFocusChanged(false);
             }
         }
     }

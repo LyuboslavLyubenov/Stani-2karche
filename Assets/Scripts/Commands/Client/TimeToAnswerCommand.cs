@@ -4,6 +4,7 @@
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     public class TimeToAnswerCommand : INetworkManagerCommand
     {

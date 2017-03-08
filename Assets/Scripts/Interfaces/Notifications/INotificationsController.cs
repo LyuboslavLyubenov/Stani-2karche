@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Interfaces
+﻿namespace Assets.Scripts.Interfaces.Notifications
 {
+
+    using UnityEngine;
 
     public interface INotificationsController
     {

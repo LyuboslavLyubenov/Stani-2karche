@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions
 {
+
+    using System;
+
     [Flags]
     public enum CheckMethod
     {

@@ -1,10 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Util
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+
     public static class ValidationUtil
     {
         // This method can be used during validation for cases where we need to pass arguments

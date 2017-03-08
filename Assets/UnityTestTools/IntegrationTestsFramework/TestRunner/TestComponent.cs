@@ -1,16 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
 #if UNITY_EDITOR
-using UnityEditor;
+
 #endif
 
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using UnityEditor;
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
     public interface ITestComponent : IComparable<ITestComponent>
     {
         void EnableTest(bool enable);
@@ -44,7 +48,7 @@ namespace UnityTest
 
         public bool IsExludedOnThisPlatform()
         {
-            return platformsToIgnore != null && platformsToIgnore.Any(platform => platform == Application.platform.ToString());
+            return this.platformsToIgnore != null && this.platformsToIgnore.Any(platform => platform == Application.platform.ToString());
         }
 
         static bool IsAssignableFrom(Type a, Type b)
@@ -59,11 +63,11 @@ namespace UnityTest
         public bool IsExceptionExpected(string exception)
         {
             exception = exception.Trim();
-            if (!expectException) 
+            if (!this.expectException) 
                 return false;
-            if(string.IsNullOrEmpty(expectedExceptionList.Trim())) 
+            if(string.IsNullOrEmpty(this.expectedExceptionList.Trim())) 
                 return true;
-            foreach (var expectedException in expectedExceptionList.Split(',').Select(e => e.Trim()))
+            foreach (var expectedException in this.expectedExceptionList.Split(',').Select(e => e.Trim()))
             {
                 if (exception == expectedException) 
                     return true;
@@ -77,22 +81,22 @@ namespace UnityTest
 
         public bool ShouldSucceedOnException()
         {
-            return succeedWhenExceptionIsThrown;
+            return this.succeedWhenExceptionIsThrown;
         }
 
         public double GetTimeout()
         {
-            return timeout;
+            return this.timeout;
         }
 
         public bool IsIgnored()
         {
-            return ignored;
+            return this.ignored;
         }
 
         public bool ShouldSucceedOnAssertions()
         {
-            return succeedAfterAllAssertionsAreExecuted;
+            return this.succeedAfterAllAssertionsAreExecuted;
         }
 
         private static Type GetTypeByName(string className)
@@ -106,7 +110,7 @@ namespace UnityTest
 
         public void OnValidate()
         {
-            if (timeout < 0.01f) timeout = 0.01f;
+            if (this.timeout < 0.01f) this.timeout = 0.01f;
         }
 
         // Legacy
@@ -143,45 +147,45 @@ namespace UnityTest
 
         public void EnableTest(bool enable)
         {
-            if (enable && dynamic)
+            if (enable && this.dynamic)
             {
-                Type t = Type.GetType(dynamicTypeName);
-                var s = gameObject.GetComponent(t) as MonoBehaviour;
+                Type t = Type.GetType(this.dynamicTypeName);
+                var s = this.gameObject.GetComponent(t) as MonoBehaviour;
                 if (s != null)
                     DestroyImmediate(s);
 
-                gameObject.AddComponent(t);
+                this.gameObject.AddComponent(t);
             }
 
-            if (gameObject.activeSelf != enable) gameObject.SetActive(enable);
+            if (this.gameObject.activeSelf != enable) this.gameObject.SetActive(enable);
         }
 
         public int CompareTo(ITestComponent obj)
         {
             if (obj == NullTestComponent)
                 return 1;
-            var result = gameObject.name.CompareTo(obj.gameObject.name);
+            var result = this.gameObject.name.CompareTo(obj.gameObject.name);
             if (result == 0)
-                result = gameObject.GetInstanceID().CompareTo(obj.gameObject.GetInstanceID());
+                result = this.gameObject.GetInstanceID().CompareTo(obj.gameObject.GetInstanceID());
             return result;
         }
 
         public bool IsTestGroup()
         {
-            for (int i = 0; i < gameObject.transform.childCount; i++)
+            for (int i = 0; i < this.gameObject.transform.childCount; i++)
             {
-                var childTc = gameObject.transform.GetChild(i).GetComponent(typeof(TestComponent));
+                var childTc = this.gameObject.transform.GetChild(i).GetComponent(typeof(TestComponent));
                 if (childTc != null)
                     return true;
             }
             return false;
         }
 
-        public string Name { get { return gameObject == null ? "" : gameObject.name; } }
+        public string Name { get { return this.gameObject == null ? "" : this.gameObject.name; } }
 
         public ITestComponent GetTestGroup()
         {
-            var parent = gameObject.transform.parent;
+            var parent = this.gameObject.transform.parent;
             if (parent == null)
                 return NullTestComponent;
             return parent.GetComponent<TestComponent>();

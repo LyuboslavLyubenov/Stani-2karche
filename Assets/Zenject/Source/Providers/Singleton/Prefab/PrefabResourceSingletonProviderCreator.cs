@@ -1,12 +1,22 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton.Prefab
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.ComponentProviders;
+    using Assets.Zenject.Source.Providers.GameObjectProviders;
+    using Assets.Zenject.Source.Providers.PrefabCreators;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+
+    using UnityEngine;
+
     public class PrefabResourceSingletonProviderCreator
     {
         readonly SingletonMarkRegistry _markRegistry;
@@ -18,8 +28,8 @@ namespace Zenject
             DiContainer container,
             SingletonMarkRegistry markRegistry)
         {
-            _markRegistry = markRegistry;
-            _container = container;
+            this._markRegistry = markRegistry;
+            this._container = container;
         }
 
         public IProvider CreateProvider(
@@ -28,12 +38,12 @@ namespace Zenject
         {
             IPrefabInstantiator creator;
 
-            _markRegistry.MarkSingleton(
+            this._markRegistry.MarkSingleton(
                 resultType, concreteIdentifier, SingletonTypes.ToPrefabResource);
 
             var prefabId = new PrefabId(concreteIdentifier, resourcePath);
 
-            if (_prefabCreators.TryGetValue(prefabId, out creator))
+            if (this._prefabCreators.TryGetValue(prefabId, out creator))
             {
                 // TODO: Check the arguments are the same?
                 Assert.That(creator.ExtraArguments.IsEmpty() && extraArguments.IsEmpty(),
@@ -46,11 +56,11 @@ namespace Zenject
             {
                 creator = new PrefabInstantiatorCached(
                     new PrefabInstantiator(
-                        _container, gameObjectBindInfo,
+                        this._container, gameObjectBindInfo,
                         extraArguments,
                         new PrefabProviderResource(resourcePath)));
 
-                _prefabCreators.Add(prefabId, creator);
+                this._prefabCreators.Add(prefabId, creator);
             }
 
             if (resultType == typeof(GameObject))
@@ -70,8 +80,8 @@ namespace Zenject
             {
                 Assert.IsNotNull(resourcePath);
 
-                ConcreteIdentifier = concreteIdentifier;
-                ResourcePath = resourcePath;
+                this.ConcreteIdentifier = concreteIdentifier;
+                this.ResourcePath = resourcePath;
             }
 
             public override int GetHashCode()

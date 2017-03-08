@@ -1,11 +1,11 @@
 ﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher
 {
 
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
     using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
-
-    using Zenject;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Zenject.Source.Install;
 
     public class Installer : MonoInstaller {
     

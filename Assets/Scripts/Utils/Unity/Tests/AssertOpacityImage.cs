@@ -1,8 +1,10 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
+﻿namespace Assets.Scripts.Utils.Unity.Tests
 {
+
     using System.Linq;
 
     using Assets.Scripts.Utils.Unity;
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using UnityEngine.UI;
 
@@ -17,7 +19,7 @@
 
         void Start()
         {
-            CoroutineUtils.WaitForSeconds(this.SecondsToWaitBeforeCheck,
+            this.CoroutineUtils.WaitForSeconds(this.SecondsToWaitBeforeCheck,
                 () =>
                     {
                         var areAllWithMaximumOpacity = this.Images.All(i => i.color.a >= this.MinOpacity && i.color.a <= this.MaxOpacity);

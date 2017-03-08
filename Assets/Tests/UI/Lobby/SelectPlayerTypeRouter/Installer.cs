@@ -3,8 +3,7 @@
 
     using Assets.Scripts.Controllers;
     using Assets.Scripts.Controllers.Lobby;
-
-    using Zenject;
+    using Assets.Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {

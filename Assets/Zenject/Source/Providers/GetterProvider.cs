@@ -1,9 +1,14 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
     public class GetterProvider<TObj, TResult> : IProvider
     {
         readonly DiContainer _container;
@@ -14,9 +19,9 @@ namespace Zenject
             object identifier, Func<TObj, TResult> method,
             DiContainer container)
         {
-            _container = container;
-            _identifier = identifier;
-            _method = method;
+            this._container = container;
+            this._identifier = identifier;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -27,7 +32,7 @@ namespace Zenject
         InjectContext GetSubContext(InjectContext parent)
         {
             var subContext = parent.CreateSubContext(
-                typeof(TObj), _identifier);
+                typeof(TObj), this._identifier);
 
             subContext.Optional = false;
 
@@ -42,17 +47,17 @@ namespace Zenject
 
             Assert.That(typeof(TResult).DerivesFromOrEqual(context.MemberType));
 
-            if (_container.IsValidating)
+            if (this._container.IsValidating)
             {
                 // All we can do is validate that the getter object can be resolved
-                _container.Resolve(typeof(TObj));
+                this._container.Resolve(typeof(TObj));
 
                 yield return new List<object>() { new ValidationMarker(typeof(TResult)) };
             }
             else
             {
-                yield return new List<object>() { _method(
-                    _container.Resolve<TObj>(GetSubContext(context))) };
+                yield return new List<object>() { this._method(
+                    this._container.Resolve<TObj>(this.GetSubContext(context))) };
             }
         }
     }

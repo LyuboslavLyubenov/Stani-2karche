@@ -1,10 +1,17 @@
 #if !NOT_UNITY3D
 
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.SubContainerCreators
 {
+
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+
     public class SubContainerCreatorByPrefab : ISubContainerCreator
     {
         readonly GameObjectCreationParameters _gameObjectBindInfo;
@@ -15,18 +22,18 @@ namespace Zenject
             DiContainer container, IPrefabProvider prefabProvider,
             GameObjectCreationParameters gameObjectBindInfo)
         {
-            _gameObjectBindInfo = gameObjectBindInfo;
-            _prefabProvider = prefabProvider;
-            _container = container;
+            this._gameObjectBindInfo = gameObjectBindInfo;
+            this._prefabProvider = prefabProvider;
+            this._container = container;
         }
 
         public DiContainer CreateSubContainer(List<TypeValuePair> args)
         {
             Assert.That(args.IsEmpty());
 
-            var prefab = _prefabProvider.GetPrefab();
-            var gameObject = _container.InstantiatePrefab(
-                prefab, new object[0], _gameObjectBindInfo);
+            var prefab = this._prefabProvider.GetPrefab();
+            var gameObject = this._container.InstantiatePrefab(
+                prefab, new object[0], this._gameObjectBindInfo);
 
             var context = gameObject.GetComponent<GameObjectContext>();
 

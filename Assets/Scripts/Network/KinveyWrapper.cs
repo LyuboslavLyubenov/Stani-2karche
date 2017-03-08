@@ -5,9 +5,10 @@ namespace Assets.Scripts.Network
     using System.Collections;
 
     using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.DTOs.KinveySerializableObj;
+    using Assets.Scripts.DTOs.KinveyDtoObjs;
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.Kinvey;
     using Assets.Scripts.Utils;
 
     using UnityEngine;

@@ -1,14 +1,15 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Usage
 {
+
+    using System;
+
     [AttributeUsage(AttributeTargets.Parameter
         | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public class InjectLocalAttribute : InjectAttributeBase
     {
         public InjectLocalAttribute()
         {
-            Source = InjectSources.Local;
+            this.Source = InjectSources.Local;
         }
     }
 }

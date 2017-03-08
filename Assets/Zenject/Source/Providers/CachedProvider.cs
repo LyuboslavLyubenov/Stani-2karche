@@ -1,9 +1,12 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+
     public class CachedProvider : IProvider
     {
         readonly IProvider _creator;
@@ -13,42 +16,42 @@ namespace Zenject
 
         public CachedProvider(IProvider creator)
         {
-            _creator = creator;
+            this._creator = creator;
         }
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _creator.GetInstanceType(context);
+            return this._creator.GetInstanceType(context);
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(InjectContext context, List<TypeValuePair> args)
         {
             Assert.IsNotNull(context);
 
-            if (_instances != null)
+            if (this._instances != null)
             {
-                yield return _instances;
+                yield return this._instances;
                 yield break;
             }
 
             // This should only happen with constructor injection
             // Field or property injection should allow circular dependencies
-            Assert.That(!_isCreatingInstance,
+            Assert.That(!this._isCreatingInstance,
             "Found circular dependency when creating type '{0}'",
-            _creator.GetInstanceType(context));
+            this._creator.GetInstanceType(context));
 
-            _isCreatingInstance = true;
+            this._isCreatingInstance = true;
 
-            var runner = _creator.GetAllInstancesWithInjectSplit(context, args);
+            var runner = this._creator.GetAllInstancesWithInjectSplit(context, args);
 
             // First get instance
             bool hasMore = runner.MoveNext();
 
-            _instances = runner.Current;
-            Assert.IsNotNull(_instances);
-            _isCreatingInstance = false;
+            this._instances = runner.Current;
+            Assert.IsNotNull(this._instances);
+            this._isCreatingInstance = false;
 
-            yield return _instances;
+            yield return this._instances;
 
             // Now do injection
             while (hasMore)

@@ -1,10 +1,11 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.UnityTestTools.Common;
+
     [Serializable]
     public class ResultDTO
     {
@@ -19,9 +20,9 @@ namespace UnityTest
         private ResultDTO(MessageType messageType)
         {
             this.messageType = messageType;
-            levelCount = UnityEngine.SceneManagement.SceneManager.sceneCount;
-            loadedLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            loadedLevelName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            this.levelCount = UnityEngine.SceneManagement.SceneManager.sceneCount;
+            this.loadedLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+            this.loadedLevelName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         }
 
         public enum MessageType : byte
@@ -111,12 +112,12 @@ namespace UnityTest
 
         public TestResultState ResultState
         {
-            get { return resultState; }
+            get { return this.resultState; }
         }
 
         public string Message
         {
-            get { return message; }
+            get { return this.message; }
         }
 
         public string Logs
@@ -126,42 +127,42 @@ namespace UnityTest
 
         public bool Executed
         {
-            get { return executed; }
+            get { return this.executed; }
         }
 
         public string Name
         {
-            get { return name; }
+            get { return this.name; }
         }
 
         public string FullName
         {
-            get { return fullName; }
+            get { return this.fullName; }
         }
 
         public string Id
         {
-            get { return id; }
+            get { return this.id; }
         }
 
         public bool IsSuccess
         {
-            get { return isSuccess; }
+            get { return this.isSuccess; }
         }
 
         public double Duration
         {
-            get { return duration; }
+            get { return this.duration; }
         }
 
         public string StackTrace
         {
-            get { return stackTrace; }
+            get { return this.stackTrace; }
         }
         
         public bool IsIgnored 
         {
-            get { return isIgnored; }
+            get { return this.isIgnored; }
         }
     }
     #endregion

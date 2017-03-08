@@ -1,9 +1,15 @@
 #if !NOT_UNITY3D
 
-using System;
-using UnityEngine;
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.GameObject
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Main;
+
+    using UnityEngine;
+
     public class GameObjectGroupNameScopeBinder : ScopeBinder
     {
         public GameObjectGroupNameScopeBinder(
@@ -11,7 +17,7 @@ namespace Zenject
             GameObjectCreationParameters gameObjectInfo)
             : base(bindInfo)
         {
-            GameObjectInfo = gameObjectInfo;
+            this.GameObjectInfo = gameObjectInfo;
         }
 
         protected GameObjectCreationParameters GameObjectInfo
@@ -22,19 +28,19 @@ namespace Zenject
 
         public ScopeBinder UnderTransform(Transform parent)
         {
-            GameObjectInfo.ParentTransform = parent;
+            this.GameObjectInfo.ParentTransform = parent;
             return this;
         }
 
         public ScopeBinder UnderTransform(Func<DiContainer, Transform> parentGetter)
         {
-            GameObjectInfo.ParentTransformGetter = parentGetter;
+            this.GameObjectInfo.ParentTransformGetter = parentGetter;
             return this;
         }
 
         public ScopeBinder UnderTransformGroup(string transformGroupname)
         {
-            GameObjectInfo.GroupName = transformGroupname;
+            this.GameObjectInfo.GroupName = transformGroupname;
             return this;
         }
     }

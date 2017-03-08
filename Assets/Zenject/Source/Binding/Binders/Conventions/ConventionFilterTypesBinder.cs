@@ -1,13 +1,15 @@
 #if !(UNITY_WSA && ENABLE_DOTNET)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Conventions
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text.RegularExpressions;
+
+    using Assets.Zenject.Source.Internal;
+
     public class ConventionFilterTypesBinder : ConventionAssemblySelectionBinder
     {
         public ConventionFilterTypesBinder(ConventionBindInfo bindInfo)
@@ -17,106 +19,106 @@ namespace Zenject
 
         public ConventionFilterTypesBinder DerivingFromOrEqual<T>()
         {
-            return DerivingFromOrEqual(typeof(T));
+            return this.DerivingFromOrEqual(typeof(T));
         }
 
         public ConventionFilterTypesBinder DerivingFromOrEqual(Type parentType)
         {
-            BindInfo.AddTypeFilter((type) => type.DerivesFromOrEqual(parentType));
+            this.BindInfo.AddTypeFilter((type) => type.DerivesFromOrEqual(parentType));
             return this;
         }
 
         public ConventionFilterTypesBinder DerivingFrom<T>()
         {
-            return DerivingFrom(typeof(T));
+            return this.DerivingFrom(typeof(T));
         }
 
         public ConventionFilterTypesBinder DerivingFrom(Type parentType)
         {
-            BindInfo.AddTypeFilter((type) => type.DerivesFrom(parentType));
+            this.BindInfo.AddTypeFilter((type) => type.DerivesFrom(parentType));
             return this;
         }
 
         public ConventionFilterTypesBinder WithAttribute<T>()
             where T : Attribute
         {
-            return WithAttribute(typeof(T));
+            return this.WithAttribute(typeof(T));
         }
 
         public ConventionFilterTypesBinder WithAttribute(Type attribute)
         {
             Assert.That(attribute.DerivesFrom<Attribute>());
-            BindInfo.AddTypeFilter(t => t.HasAttribute(attribute));
+            this.BindInfo.AddTypeFilter(t => t.HasAttribute(attribute));
             return this;
         }
 
         public ConventionFilterTypesBinder WithoutAttribute<T>()
             where T : Attribute
         {
-            return WithoutAttribute(typeof(T));
+            return this.WithoutAttribute(typeof(T));
         }
 
         public ConventionFilterTypesBinder WithoutAttribute(Type attribute)
         {
             Assert.That(attribute.DerivesFrom<Attribute>());
-            BindInfo.AddTypeFilter(t => !t.HasAttribute(attribute));
+            this.BindInfo.AddTypeFilter(t => !t.HasAttribute(attribute));
             return this;
         }
 
         public ConventionFilterTypesBinder WithAttributeWhere<T>(Func<T, bool> predicate)
             where T : Attribute
         {
-            BindInfo.AddTypeFilter(t => t.HasAttribute<T>() && t.AllAttributes<T>().All(predicate));
+            this.BindInfo.AddTypeFilter(t => t.HasAttribute<T>() && t.AllAttributes<T>().All(predicate));
             return this;
         }
 
         public ConventionFilterTypesBinder Where(Func<Type, bool> predicate)
         {
-            BindInfo.AddTypeFilter(predicate);
+            this.BindInfo.AddTypeFilter(predicate);
             return this;
         }
 
         public ConventionFilterTypesBinder InNamespace(string ns)
         {
-            return InNamespaces(ns);
+            return this.InNamespaces(ns);
         }
 
         public ConventionFilterTypesBinder InNamespaces(params string[] namespaces)
         {
-            return InNamespaces((IEnumerable<string>)namespaces);
+            return this.InNamespaces((IEnumerable<string>)namespaces);
         }
 
         public ConventionFilterTypesBinder InNamespaces(IEnumerable<string> namespaces)
         {
-            BindInfo.AddTypeFilter(t => namespaces.Any(n => IsInNamespace(t, n)));
+            this.BindInfo.AddTypeFilter(t => namespaces.Any(n => IsInNamespace(t, n)));
             return this;
         }
 
         public ConventionFilterTypesBinder WithSuffix(string suffix)
         {
-            BindInfo.AddTypeFilter(t => t.Name.EndsWith(suffix));
+            this.BindInfo.AddTypeFilter(t => t.Name.EndsWith(suffix));
             return this;
         }
 
         public ConventionFilterTypesBinder WithPrefix(string prefix)
         {
-            BindInfo.AddTypeFilter(t => t.Name.StartsWith(prefix));
+            this.BindInfo.AddTypeFilter(t => t.Name.StartsWith(prefix));
             return this;
         }
 
         public ConventionFilterTypesBinder MatchingRegex(string pattern)
         {
-            return MatchingRegex(pattern, RegexOptions.None);
+            return this.MatchingRegex(pattern, RegexOptions.None);
         }
 
         public ConventionFilterTypesBinder MatchingRegex(string pattern, RegexOptions options)
         {
-            return MatchingRegex(new Regex(pattern, options));
+            return this.MatchingRegex(new Regex(pattern, options));
         }
 
         public ConventionFilterTypesBinder MatchingRegex(Regex regex)
         {
-            BindInfo.AddTypeFilter(t => regex.IsMatch(t.Name));
+            this.BindInfo.AddTypeFilter(t => regex.IsMatch(t.Name));
             return this;
         }
 

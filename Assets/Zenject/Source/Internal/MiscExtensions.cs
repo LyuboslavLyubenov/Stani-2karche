@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ModestTree
+namespace Assets.Zenject.Source.Internal
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class MiscExtensions
     {
         // We'd prefer to use the name Format here but that conflicts with

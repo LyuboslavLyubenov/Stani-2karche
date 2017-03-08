@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
+    using UnityEngine;
+
     public class IsRenderedByCamera : ComparerBaseGeneric<Renderer, Camera>
     {
         public enum CompareType
@@ -18,7 +19,7 @@ namespace UnityTest
         {
             var planes = GeometryUtility.CalculateFrustumPlanes(camera);
             var isVisible = GeometryUtility.TestPlanesAABB(planes, renderer.bounds);
-            switch (compareType)
+            switch (this.compareType)
             {
                 case CompareType.IsVisible:
                     return isVisible;

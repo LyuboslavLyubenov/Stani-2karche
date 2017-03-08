@@ -1,12 +1,16 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.ComponentProviders
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Providers.PrefabCreators;
+
     public class GetFromPrefabComponentProvider : IProvider
     {
         readonly IPrefabInstantiator _prefabInstantiator;
@@ -17,13 +21,13 @@ namespace Zenject
             Type componentType,
             IPrefabInstantiator prefabInstantiator)
         {
-            _prefabInstantiator = prefabInstantiator;
-            _componentType = componentType;
+            this._prefabInstantiator = prefabInstantiator;
+            this._componentType = componentType;
         }
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _componentType;
+            return this._componentType;
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(
@@ -31,18 +35,18 @@ namespace Zenject
         {
             Assert.IsNotNull(context);
 
-            var gameObjectRunner = _prefabInstantiator.Instantiate(args);
+            var gameObjectRunner = this._prefabInstantiator.Instantiate(args);
 
             // First get instance
             bool hasMore = gameObjectRunner.MoveNext();
 
             var gameObject = gameObjectRunner.Current;
 
-            var allComponents = gameObject.GetComponentsInChildren(_componentType);
+            var allComponents = gameObject.GetComponentsInChildren(this._componentType);
 
             Assert.That(allComponents.Length >= 1,
                 "Expected to find at least one component with type '{0}' on prefab '{1}'",
-                _componentType, _prefabInstantiator.GetPrefab().name);
+                this._componentType, this._prefabInstantiator.GetPrefab().name);
 
             yield return allComponents.Cast<object>().ToList();
 

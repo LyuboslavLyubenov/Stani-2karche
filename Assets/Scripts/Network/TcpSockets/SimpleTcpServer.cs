@@ -11,6 +11,7 @@ namespace Assets.Scripts.Network.TcpSockets
 
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
 
     using EventArgs;
     using SecuritySettings;

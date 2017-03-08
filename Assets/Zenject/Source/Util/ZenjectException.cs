@@ -1,8 +1,8 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Util
 {
+
+    using System;
+
     [System.Diagnostics.DebuggerStepThrough]
     public class ZenjectException : Exception
     {

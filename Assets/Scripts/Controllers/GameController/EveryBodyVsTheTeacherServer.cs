@@ -1,16 +1,14 @@
 namespace Assets.Scripts.Controllers.GameController
 {
-
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.StateMachine;
-    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
     using Assets.Scripts.Utils.Unity;
-
-    using Zenject;
+    using Assets.Zenject.Source.Usage;
 
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IGameServer
     {
@@ -47,18 +45,13 @@ namespace Assets.Scripts.Controllers.GameController
             get; private set;
         }
         
-        private CreatedGameInfoSender sender = null;
+        [Inject]
+        private ICreatedGameInfoSender sender;
 
         [Inject]
         private IServerNetworkManager serverNetworkManager;
-
-        [Inject]
-        private ISimpleTcpClient tcpClient;
-
-        [Inject]
-        private ISimpleTcpServer tcpServer;
-
-        private readonly SimpleFiniteStateMachine stateMachine = new SimpleFiniteStateMachine();
+        
+        private readonly StateMachine StateMachine = new StateMachine();
 
         [Inject]
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
@@ -68,25 +61,11 @@ namespace Assets.Scripts.Controllers.GameController
 
         void Start()
         {
-            this.sender = new CreatedGameInfoSender(
-                this.tcpClient,
-                this.tcpServer,
-                GameInfoFactory.Instance,
-                serverNetworkManager,
-                this);
-            
-            this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 
         public void StartGame()
         {
-            //TODO
-
-            this.mainPlayersConnectionIds = new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
-            this.audiencePlayersconnectionIds = new HashSet<int>(this.playersConnectingToTheServerState.AudiencePlayersConnectionIds);
-
-            //this.stateMachine.SetCurrentState();
-            this.StartedGame = true;
+            throw new NotImplementedException();
         }
 
         public void EndGame()

@@ -1,9 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Runtime
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Usage;
+
     // Update tasks once per frame based on a priority
     [System.Diagnostics.DebuggerStepThrough]
     public abstract class TaskUpdater<TTask>
@@ -15,7 +18,7 @@ namespace Zenject
         {
             get
             {
-                return ActiveTasks.Concat(_queuedTasks);
+                return this.ActiveTasks.Concat(this._queuedTasks);
             }
         }
 
@@ -23,29 +26,29 @@ namespace Zenject
         {
             get
             {
-                return _tasks;
+                return this._tasks;
             }
         }
 
         public void AddTask(TTask task, int priority)
         {
-            AddTaskInternal(task, priority);
+            this.AddTaskInternal(task, priority);
         }
 
         void AddTaskInternal(TTask task, int priority)
         {
-            Assert.That(!AllTasks.Select(x => x.Task).ContainsItem(task),
+            Assert.That(!this.AllTasks.Select(x => x.Task).ContainsItem(task),
                 "Duplicate task added to DependencyRoot with name '" + task.GetType().FullName + "'");
 
             // Wait until next frame to add the task, otherwise whether it gets updated
             // on the current frame depends on where in the update order it was added
             // from, so you might get off by one frame issues
-            _queuedTasks.Add(new TaskInfo(task, priority));
+            this._queuedTasks.Add(new TaskInfo(task, priority));
         }
 
         public void RemoveTask(TTask task)
         {
-            var info = AllTasks.Where(x => ReferenceEquals(x.Task, task)).Single();
+            var info = this.AllTasks.Where(x => ReferenceEquals(x.Task, task)).Single();
 
             Assert.That(!info.IsRemoved, "Tried to remove task twice, task = " + task.GetType().Name);
             info.IsRemoved = true;
@@ -54,17 +57,17 @@ namespace Zenject
         public void OnFrameStart()
         {
             // See above comment
-            AddQueuedTasks();
+            this.AddQueuedTasks();
         }
 
         public void UpdateAll()
         {
-            UpdateRange(int.MinValue, int.MaxValue);
+            this.UpdateRange(int.MinValue, int.MaxValue);
         }
 
         public void UpdateRange(int minPriority, int maxPriority)
         {
-            var node = _tasks.First;
+            var node = this._tasks.First;
 
             while (node != null)
             {
@@ -75,13 +78,13 @@ namespace Zenject
                 if (!taskInfo.IsRemoved && taskInfo.Priority >= minPriority
                     && (maxPriority == int.MaxValue || taskInfo.Priority < maxPriority))
                 {
-                    UpdateItem(taskInfo.Task);
+                    this.UpdateItem(taskInfo.Task);
                 }
 
                 node = next;
             }
 
-            ClearRemovedTasks(_tasks);
+            this.ClearRemovedTasks(this._tasks);
         }
 
         void ClearRemovedTasks(LinkedList<TaskInfo> tasks)
@@ -105,30 +108,30 @@ namespace Zenject
 
         void AddQueuedTasks()
         {
-            for (int i = 0; i < _queuedTasks.Count; i++)
+            for (int i = 0; i < this._queuedTasks.Count; i++)
             {
-                var task = _queuedTasks[i];
+                var task = this._queuedTasks[i];
 
                 if (!task.IsRemoved)
                 {
-                    InsertTaskSorted(task);
+                    this.InsertTaskSorted(task);
                 }
             }
-            _queuedTasks.Clear();
+            this._queuedTasks.Clear();
         }
 
         void InsertTaskSorted(TaskInfo task)
         {
-            for (var current = _tasks.First; current != null; current = current.Next)
+            for (var current = this._tasks.First; current != null; current = current.Next)
             {
                 if (current.Value.Priority > task.Priority)
                 {
-                    _tasks.AddBefore(current, task);
+                    this._tasks.AddBefore(current, task);
                     return;
                 }
             }
 
-            _tasks.AddLast(task);
+            this._tasks.AddLast(task);
         }
 
         protected abstract void UpdateItem(TTask task);
@@ -141,8 +144,8 @@ namespace Zenject
 
             public TaskInfo(TTask task, int priority)
             {
-                Task = task;
-                Priority = priority;
+                this.Task = task;
+                this.Priority = priority;
             }
         }
     }

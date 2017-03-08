@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+
     public class GroupByExecutionMethodRenderer : AssertionListRenderer<CheckMethod>
     {
         protected override IEnumerable<IGrouping<CheckMethod, AssertionComponent>> GroupResult(IEnumerable<AssertionComponent> assertionComponents)

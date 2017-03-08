@@ -1,9 +1,14 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
     public class MethodProviderUntyped : IProvider
     {
         readonly DiContainer _container;
@@ -13,8 +18,8 @@ namespace Zenject
             Func<InjectContext, object> method,
             DiContainer container)
         {
-            _container = container;
-            _method = method;
+            this._container = container;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -27,13 +32,13 @@ namespace Zenject
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
 
-            if (_container.IsValidating)
+            if (this._container.IsValidating)
             {
                 yield return new List<object>() { new ValidationMarker(context.MemberType) };
             }
             else
             {
-                var result = _method(context);
+                var result = this._method(context);
 
                 if (result == null)
                 {

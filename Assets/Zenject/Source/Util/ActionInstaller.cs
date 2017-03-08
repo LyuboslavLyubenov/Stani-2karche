@@ -1,19 +1,23 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Util
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Install;
+    using Assets.Zenject.Source.Main;
+
     public class ActionInstaller : Installer<ActionInstaller>
     {
         readonly Action<DiContainer> _installMethod;
 
         public ActionInstaller(Action<DiContainer> installMethod)
         {
-            _installMethod = installMethod;
+            this._installMethod = installMethod;
         }
 
         public override void InstallBindings()
         {
-            _installMethod(Container);
+            this._installMethod(this.Container);
         }
     }
 }

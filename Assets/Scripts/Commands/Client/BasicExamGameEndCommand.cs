@@ -6,6 +6,7 @@
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.Network.Leaderboard;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using UnityEngine;
 

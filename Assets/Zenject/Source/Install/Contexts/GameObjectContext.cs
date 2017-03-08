@@ -1,17 +1,25 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using ModestTree.Util;
-using UnityEngine;
-using UnityEngine.Serialization;
 
 #pragma warning disable 649
 
-namespace Zenject
+namespace Assets.Zenject.Source.Install.Contexts
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Runtime.Kernels;
+    using Assets.Zenject.Source.Usage;
+    using Assets.Zenject.Source.Util;
+
+    using UnityEngine;
+    using UnityEngine.Serialization;
+
     public class GameObjectContext : Context
     {
         readonly List<object> _dependencyRoots = new List<object>();
@@ -27,7 +35,7 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
@@ -37,39 +45,39 @@ namespace Zenject
             [InjectOptional]
             InstallerExtraArgs installerExtraArgs)
         {
-            Assert.IsNull(_container);
+            Assert.IsNull(this._container);
 
-            _container = parentContainer.CreateSubContainer();
+            this._container = parentContainer.CreateSubContainer();
 
-            _container.LazyInstanceInjector
-                .AddInstances(GetInjectableComponents().Cast<object>());
+            this._container.LazyInstanceInjector
+                .AddInstances(this.GetInjectableComponents().Cast<object>());
 
-            foreach (var instance in _container.LazyInstanceInjector.Instances)
+            foreach (var instance in this._container.LazyInstanceInjector.Instances)
             {
                 if (instance is MonoKernel)
                 {
-                    Assert.That(ReferenceEquals(instance, _kernel),
+                    Assert.That(ReferenceEquals(instance, this._kernel),
                         "Found MonoKernel derived class that is not hooked up to GameObjectContext.  If you use MonoKernel, you must indicate this to GameObjectContext by dragging and dropping it to the Kernel field in the inspector");
                 }
             }
 
-            _container.IsInstalling = true;
+            this._container.IsInstalling = true;
 
             try
             {
-                InstallBindings(installerExtraArgs);
+                this.InstallBindings(installerExtraArgs);
             }
             finally
             {
-                _container.IsInstalling = false;
+                this._container.IsInstalling = false;
             }
 
             Log.Debug("GameObjectContext: Injecting into child components...");
 
-            _container.LazyInstanceInjector.LazyInjectAll();
+            this._container.LazyInstanceInjector.LazyInjectAll();
 
-            Assert.That(_dependencyRoots.IsEmpty());
-            _dependencyRoots.AddRange(_container.ResolveDependencyRoots());
+            Assert.That(this._dependencyRoots.IsEmpty());
+            this._dependencyRoots.AddRange(this._container.ResolveDependencyRoots());
 
             Log.Debug("GameObjectContext: Initialized successfully");
         }
@@ -77,11 +85,11 @@ namespace Zenject
         protected override IEnumerable<Component> GetInjectableComponents()
         {
             // We inject on all components on the root except ourself
-            foreach (var component in GetComponents<Component>())
+            foreach (var component in this.GetComponents<Component>())
             {
                 if (component == null)
                 {
-                    Log.Warn("Zenject: Found null component on game object '{0}'.  Possible missing script.", gameObject.name);
+                    Log.Warn("Zenject: Found null component on game object '{0}'.  Possible missing script.", this.gameObject.name);
                     continue;
                 }
 
@@ -111,21 +119,21 @@ namespace Zenject
         void InstallBindings(
             InstallerExtraArgs installerExtraArgs)
         {
-            _container.DefaultParent = this.transform;
+            this._container.DefaultParent = this.transform;
 
-            _container.Bind<Context>().FromInstance(this);
+            this._container.Bind<Context>().FromInstance(this);
 
-            if (_kernel == null)
+            if (this._kernel == null)
             {
-                _container.Bind<MonoKernel>()
+                this._container.Bind<MonoKernel>()
                     .To<DefaultGameObjectKernel>().FromComponent(this.gameObject).AsSingle().NonLazy();
             }
             else
             {
-                _container.Bind<MonoKernel>().FromInstance(_kernel).AsSingle().NonLazy();
+                this._container.Bind<MonoKernel>().FromInstance(this._kernel).AsSingle().NonLazy();
             }
 
-            InstallSceneBindings();
+            this.InstallSceneBindings();
 
             var extraArgsMap = new Dictionary<Type, List<TypeValuePair>>();
 
@@ -135,7 +143,7 @@ namespace Zenject
                     installerExtraArgs.InstallerType, installerExtraArgs.ExtraArgs);
             }
 
-            InstallInstallers();
+            this.InstallInstallers();
         }
 
         public class InstallerExtraArgs

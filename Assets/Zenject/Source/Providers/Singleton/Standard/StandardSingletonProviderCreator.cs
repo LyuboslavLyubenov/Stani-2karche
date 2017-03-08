@@ -1,9 +1,13 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton.Standard
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class StandardSingletonProviderCreator
     {
         readonly SingletonMarkRegistry _markRegistry;
@@ -14,8 +18,8 @@ namespace Zenject
             DiContainer container,
             SingletonMarkRegistry markRegistry)
         {
-            _markRegistry = markRegistry;
-            _container = container;
+            this._markRegistry = markRegistry;
+            this._container = container;
         }
 
         public IProvider GetOrCreateProvider(
@@ -30,11 +34,11 @@ namespace Zenject
             Assert.IsNotEqual(dec.Type, SingletonTypes.ToSubContainerPrefab);
             Assert.IsNotEqual(dec.Type, SingletonTypes.ToSubContainerPrefabResource);
 
-            _markRegistry.MarkSingleton(dec.Id, dec.Type);
+            this._markRegistry.MarkSingleton(dec.Id, dec.Type);
 
             ProviderInfo providerInfo;
 
-            if (_providerMap.TryGetValue(dec.Id, out providerInfo))
+            if (this._providerMap.TryGetValue(dec.Id, out providerInfo))
             {
                 Assert.That(providerInfo.Type == dec.Type,
                     "Cannot use both '{0}' and '{1}' for the same dec.Type/ConcreteIdentifier!", providerInfo.Type, dec.Type);
@@ -59,11 +63,11 @@ namespace Zenject
                 providerInfo = new ProviderInfo(
                     dec.Type,
                     new CachedProvider(
-                        providerCreator(_container, dec.Id.ConcreteType)),
+                        providerCreator(this._container, dec.Id.ConcreteType)),
                     dec.SpecificId,
                     dec.Arguments);
 
-                _providerMap.Add(dec.Id, providerInfo);
+                this._providerMap.Add(dec.Id, providerInfo);
             }
 
             return providerInfo.Provider;
@@ -77,10 +81,10 @@ namespace Zenject
                 object singletonSpecificId,
                 List<TypeValuePair> arguments)
             {
-                Type = type;
-                Provider = provider;
-                SingletonSpecificId = singletonSpecificId;
-                Arguments = arguments;
+                this.Type = type;
+                this.Provider = provider;
+                this.SingletonSpecificId = singletonSpecificId;
+                this.Arguments = arguments;
             }
 
             public List<TypeValuePair> Arguments

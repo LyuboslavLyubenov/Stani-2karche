@@ -1,10 +1,12 @@
 ﻿namespace Assets.Scripts.Controllers
 {
+
+    using Assets.Scripts.DTOs.KinveyDtoObjs;
+
     using Network;
 
     using UnityEngine;
     using UnityEngine.UI;
-    using DTOs.KinveySerializableObj;
 
     using Debug = UnityEngine.Debug;
 

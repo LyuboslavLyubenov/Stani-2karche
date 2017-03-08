@@ -1,11 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using Assets.Zenject.Source.Factories;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
     public class UntypedFactoryProvider : IProvider
     {
         readonly List<TypeValuePair> _factoryArgs;
@@ -19,15 +25,15 @@ namespace Zenject
         {
             Assert.That(factoryType.DerivesFrom<IFactory>());
 
-            _concreteType = LookupConcreteType(factoryType);
-            _factoryType = factoryType;
-            _container = container;
-            _factoryArgs = factoryArgs;
+            this._concreteType = this.LookupConcreteType(factoryType);
+            this._factoryType = factoryType;
+            this._container = container;
+            this._factoryArgs = factoryArgs;
 
-            _createMethod = factoryType
+            this._createMethod = factoryType
                 .DeclaredInstanceMethods().Where(x => x.Name == "Create").Single();
 
-            Assert.That(_createMethod.ReturnType == _concreteType);
+            Assert.That(this._createMethod.ReturnType == this._concreteType);
         }
 
         Type LookupConcreteType(Type factoryType)
@@ -39,16 +45,16 @@ namespace Zenject
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _concreteType;
+            return this._concreteType;
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(
             InjectContext context, List<TypeValuePair> args)
         {
             // Do this even when validating in case it has its own dependencies
-            var factory = _container.InstantiateExplicit(_factoryType, _factoryArgs);
+            var factory = this._container.InstantiateExplicit(this._factoryType, this._factoryArgs);
 
-            if (_container.IsValidating)
+            if (this._container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)
@@ -58,11 +64,11 @@ namespace Zenject
 
                 // We assume here that we are creating a user-defined factory so there's
                 // nothing else we can validate here
-                yield return new List<object>() { new ValidationMarker(_concreteType) };
+                yield return new List<object>() { new ValidationMarker(this._concreteType) };
             }
             else
             {
-                var result = _createMethod.Invoke(factory, args.Select(x => x.Value).ToArray());
+                var result = this._createMethod.Invoke(factory, args.Select(x => x.Value).ToArray());
 
                 yield return new List<object>() { result };
             }

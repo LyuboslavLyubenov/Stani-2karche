@@ -1,9 +1,13 @@
-using System;
-using ModestTree;
-using ModestTree.Util;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Util
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Runtime;
+    using Assets.Zenject.Source.Usage;
+
     public static class ExecutionOrderExtensions
     {
         public static void BindExecutionOrder<T>(

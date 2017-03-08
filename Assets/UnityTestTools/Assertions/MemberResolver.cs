@@ -1,11 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
+
+    using UnityEngine;
+
     public class MemberResolver
     {
         private object m_CallingObjectRef;
@@ -16,31 +18,31 @@ namespace UnityTest
         public MemberResolver(GameObject gameObject, string path)
         {
             path = path.Trim();
-            ValidatePath(path);
+            this.ValidatePath(path);
 
-            m_GameObject = gameObject;
-            m_Path = path.Trim();
+            this.m_GameObject = gameObject;
+            this.m_Path = path.Trim();
         }
 
         public object GetValue(bool useCache)
         {
-            if (useCache && m_CallingObjectRef != null)
+            if (useCache && this.m_CallingObjectRef != null)
             {
-                object val = m_CallingObjectRef;
-                for (int i = 0; i < m_Callstack.Length; i++)
-                    val = GetValueFromMember(val, m_Callstack[i]);
+                object val = this.m_CallingObjectRef;
+                for (int i = 0; i < this.m_Callstack.Length; i++)
+                    val = this.GetValueFromMember(val, this.m_Callstack[i]);
                 return val;
             }
 
-            object result = GetBaseObject();
-            var fullCallStack = GetCallstack();
+            object result = this.GetBaseObject();
+            var fullCallStack = this.GetCallstack();
 
-            m_CallingObjectRef = result;
+            this.m_CallingObjectRef = result;
             var tempCallstack = new List<MemberInfo>();
             for (int i = 0; i < fullCallStack.Length; i++)
             {
                 var member = fullCallStack[i];
-                result = GetValueFromMember(result, member);
+                result = this.GetValueFromMember(result, member);
                 tempCallstack.Add(member);
                 if (result == null) return null;
                 var type = result.GetType();
@@ -49,17 +51,17 @@ namespace UnityTest
                 if (!IsValueType(type) && type != typeof(System.String))
                 {
                     tempCallstack.Clear();
-                    m_CallingObjectRef = result;
+                    this.m_CallingObjectRef = result;
                 }
             }
-            m_Callstack = tempCallstack.ToArray();
+            this.m_Callstack = tempCallstack.ToArray();
             return result;
         }
 
         public Type GetMemberType()
         {
-            var callstack = GetCallstack();
-            if (callstack.Length == 0) return GetBaseObject().GetType();
+            var callstack = this.GetCallstack();
+            if (callstack.Length == 0) return this.GetBaseObject().GetType();
 
             var member = callstack[callstack.Length - 1];
             if (member is FieldInfo)
@@ -112,20 +114,20 @@ namespace UnityTest
 
         private object GetBaseObject()
         {
-            if (string.IsNullOrEmpty(m_Path)) return m_GameObject;
-            var firstElement = m_Path.Split('.')[0];
-            var comp = m_GameObject.GetComponent(firstElement);
+            if (string.IsNullOrEmpty(this.m_Path)) return this.m_GameObject;
+            var firstElement = this.m_Path.Split('.')[0];
+            var comp = this.m_GameObject.GetComponent(firstElement);
             if (comp != null)
                 return comp;
-            return m_GameObject;
+            return this.m_GameObject;
         }
 
         private MemberInfo[] GetCallstack()
         {
-            if (m_Path == "") return new MemberInfo[0];
-            var propsQueue = new Queue<string>(m_Path.Split('.'));
+            if (this.m_Path == "") return new MemberInfo[0];
+            var propsQueue = new Queue<string>(this.m_Path.Split('.'));
 
-            Type type = GetBaseObject().GetType();
+            Type type = this.GetBaseObject().GetType();
             if (type != typeof(GameObject))
                 propsQueue.Dequeue();
 

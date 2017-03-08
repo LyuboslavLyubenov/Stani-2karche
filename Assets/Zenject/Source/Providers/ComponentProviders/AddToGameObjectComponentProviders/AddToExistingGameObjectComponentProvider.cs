@@ -1,11 +1,16 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Main;
+
+    using UnityEngine;
+
     public class AddToExistingGameObjectComponentProvider : AddToGameObjectComponentProviderBase
     {
         readonly GameObject _gameObject;
@@ -15,12 +20,12 @@ namespace Zenject
             object concreteIdentifier, List<TypeValuePair> extraArguments)
             : base(container, componentType, concreteIdentifier, extraArguments)
         {
-            _gameObject = gameObject;
+            this._gameObject = gameObject;
         }
 
         protected override GameObject GetGameObject(InjectContext context)
         {
-            return _gameObject;
+            return this._gameObject;
         }
     }
 }

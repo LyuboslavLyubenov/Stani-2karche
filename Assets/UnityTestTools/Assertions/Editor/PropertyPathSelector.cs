@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+    using Assets.UnityTestTools.Assertions.Comparers;
+
     public class PropertyPathSelector
     {
         private readonly DropDownControl<string> m_ThisDropDown = new DropDownControl<string>();

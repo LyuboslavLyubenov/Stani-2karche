@@ -3,10 +3,12 @@ using System.Linq;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using ModestTree;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Internal;
+
     public abstract class UnityInspectorListEditor : UnityEditor.Editor
     {
         List<ReorderableList> _installersLists;

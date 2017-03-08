@@ -1,15 +1,21 @@
 #if !NOT_UNITY3D
 
-using System;
-using UnityEngine;
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.GameObject
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Main;
+
+    using UnityEngine;
+
     public class GameObjectGroupNameBinder : ConditionBinder
     {
         public GameObjectGroupNameBinder(BindInfo bindInfo, GameObjectCreationParameters gameObjInfo)
             : base(bindInfo)
         {
-            GameObjectInfo = gameObjInfo;
+            this.GameObjectInfo = gameObjInfo;
         }
 
         protected GameObjectCreationParameters GameObjectInfo
@@ -20,19 +26,19 @@ namespace Zenject
 
         public ConditionBinder UnderTransform(Transform parent)
         {
-            GameObjectInfo.ParentTransform = parent;
+            this.GameObjectInfo.ParentTransform = parent;
             return this;
         }
 
         public ConditionBinder UnderTransform(Func<DiContainer, Transform> parentGetter)
         {
-            GameObjectInfo.ParentTransformGetter = parentGetter;
+            this.GameObjectInfo.ParentTransformGetter = parentGetter;
             return this;
         }
 
         public ConditionBinder UnderTransformGroup(string transformGroupname)
         {
-            GameObjectInfo.GroupName = transformGroupname;
+            this.GameObjectInfo.GroupName = transformGroupname;
             return this;
         }
     }

@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
     public abstract class VectorComparerBase<T> : ComparerBaseGeneric<T>
     {
         protected bool AreVectorMagnitudeEqual(float a, float b, double floatingPointError)

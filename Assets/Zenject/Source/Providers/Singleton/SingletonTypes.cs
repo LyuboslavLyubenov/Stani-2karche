@@ -1,4 +1,4 @@
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton
 {
     public enum SingletonTypes
     {

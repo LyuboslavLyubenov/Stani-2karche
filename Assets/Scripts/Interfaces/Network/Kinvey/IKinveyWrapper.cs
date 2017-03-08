@@ -1,9 +1,9 @@
-namespace Assets.Scripts.Interfaces
+namespace Assets.Scripts.Interfaces.Network.Kinvey
 {
 
     using System;
 
-    using Assets.Scripts.DTOs.KinveySerializableObj;
+    using Assets.Scripts.DTOs.KinveyDtoObjs;
 
     public interface IKinveyWrapper
     {

@@ -1,7 +1,9 @@
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Finalizers
 {
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class BindFinalizerWrapper : IBindingFinalizer
     {
         IBindingFinalizer _subFinalizer;
@@ -10,7 +12,7 @@ namespace Zenject
         {
             set
             {
-                _subFinalizer = value;
+                this._subFinalizer = value;
             }
         }
 
@@ -18,16 +20,16 @@ namespace Zenject
         {
             get
             {
-                return _subFinalizer.CopyIntoAllSubContainers;
+                return this._subFinalizer.CopyIntoAllSubContainers;
             }
         }
 
         public void FinalizeBinding(DiContainer container)
         {
-            Assert.IsNotNull(_subFinalizer,
+            Assert.IsNotNull(this._subFinalizer,
                 "Unfinished binding! Finalizer was not given.");
 
-            _subFinalizer.FinalizeBinding(container);
+            this._subFinalizer.FinalizeBinding(container);
         }
     }
 }

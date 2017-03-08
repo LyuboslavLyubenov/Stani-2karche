@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
+    using UnityEngine;
+
     public class ColliderComparer : ComparerBaseGeneric<Bounds>
     {
         public enum CompareType
@@ -16,7 +17,7 @@ namespace UnityTest
 
         protected override bool Compare(Bounds a, Bounds b)
         {
-            switch (compareType)
+            switch (this.compareType)
             {
                 case CompareType.Intersects:
                     return a.Intersects(b);

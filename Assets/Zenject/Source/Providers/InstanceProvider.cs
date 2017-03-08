@@ -1,9 +1,13 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class InstanceProvider : IProvider
     {
         readonly object _instance;
@@ -13,14 +17,14 @@ namespace Zenject
         public InstanceProvider(
             DiContainer container, Type instanceType, object instance)
         {
-            _instanceType = instanceType;
-            _instance = instance;
-            _lazyInjector = container.LazyInstanceInjector;
+            this._instanceType = instanceType;
+            this._instance = instance;
+            this._lazyInjector = container.LazyInstanceInjector;
         }
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _instanceType;
+            return this._instanceType;
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(InjectContext context, List<TypeValuePair> args)
@@ -28,11 +32,11 @@ namespace Zenject
             Assert.IsEmpty(args);
             Assert.IsNotNull(context);
 
-            Assert.That(_instanceType.DerivesFromOrEqual(context.MemberType));
+            Assert.That(this._instanceType.DerivesFromOrEqual(context.MemberType));
 
-            _lazyInjector.OnInstanceResolved(_instance);
+            this._lazyInjector.OnInstanceResolved(this._instance);
 
-            yield return new List<object>() { _instance };
+            yield return new List<object>() { this._instance };
         }
     }
 }

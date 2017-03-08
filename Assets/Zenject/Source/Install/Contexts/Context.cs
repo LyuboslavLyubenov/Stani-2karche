@@ -1,19 +1,23 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using UnityEngine;
-using UnityEngine.Serialization;
-using Zenject.Internal;
-
 #if UNITY_EDITOR
-using UnityEditor;
+
 #endif
 
-namespace Zenject
+namespace Assets.Zenject.Source.Install.Contexts
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
+    using UnityEditor;
+
+    using UnityEngine;
+    using UnityEngine.Serialization;
+
     public abstract class Context : MonoBehaviour
     {
         [FormerlySerializedAs("Installers")]
@@ -32,12 +36,12 @@ namespace Zenject
         {
             get
             {
-                return _installers;
+                return this._installers;
             }
             set
             {
-                _installers.Clear();
-                _installers.AddRange(value);
+                this._installers.Clear();
+                this._installers.AddRange(value);
             }
         }
 
@@ -45,12 +49,12 @@ namespace Zenject
         {
             get
             {
-                return _installerPrefabs;
+                return this._installerPrefabs;
             }
             set
             {
-                _installerPrefabs.Clear();
-                _installerPrefabs.AddRange(value);
+                this._installerPrefabs.Clear();
+                this._installerPrefabs.AddRange(value);
             }
         }
 
@@ -58,12 +62,12 @@ namespace Zenject
         {
             get
             {
-                return _scriptableObjectInstallers;
+                return this._scriptableObjectInstallers;
             }
             set
             {
-                _scriptableObjectInstallers.Clear();
-                _scriptableObjectInstallers.AddRange(value);
+                this._scriptableObjectInstallers.Clear();
+                this._scriptableObjectInstallers.AddRange(value);
             }
         }
 
@@ -72,12 +76,12 @@ namespace Zenject
         {
             get
             {
-                return _normalInstallers;
+                return this._normalInstallers;
             }
             set
             {
-                _normalInstallers.Clear();
-                _normalInstallers.AddRange(value);
+                this._normalInstallers.Clear();
+                this._normalInstallers.AddRange(value);
             }
         }
 
@@ -88,12 +92,12 @@ namespace Zenject
 
         public void AddNormalInstaller(InstallerBase installer)
         {
-            _normalInstallers.Add(installer);
+            this._normalInstallers.Add(installer);
         }
 
         void CheckInstallerPrefabTypes()
         {
-            foreach (var installer in _installers)
+            foreach (var installer in this._installers)
             {
                 Assert.IsNotNull(installer, "Found null installer in Context '{0}'", this.name);
 
@@ -103,7 +107,7 @@ namespace Zenject
 #endif
             }
 
-            foreach (var installerPrefab in _installerPrefabs)
+            foreach (var installerPrefab in this._installerPrefabs)
             {
                 Assert.IsNotNull(installerPrefab, "Found null prefab in Context");
 
@@ -119,7 +123,7 @@ namespace Zenject
 
         protected void InstallInstallers()
         {
-            CheckInstallerPrefabTypes();
+            this.CheckInstallerPrefabTypes();
 
             // Ideally we would just have one flat list of all the installers
             // since that way the user has complete control over the order, but
@@ -139,10 +143,10 @@ namespace Zenject
             // ScriptableObjectInstallers are often used for settings (including settings
             // that are injected into other installers like MonoInstallers)
 
-            var allInstallers = _normalInstallers.Cast<IInstaller>()
-                .Concat(_scriptableObjectInstallers.Cast<IInstaller>()).Concat(_installers.Cast<IInstaller>()).ToList();
+            var allInstallers = this._normalInstallers.Cast<IInstaller>()
+                .Concat(this._scriptableObjectInstallers.Cast<IInstaller>()).Concat(this._installers.Cast<IInstaller>()).ToList();
 
-            foreach (var installerPrefab in _installerPrefabs)
+            foreach (var installerPrefab in this._installerPrefabs)
             {
                 Assert.IsNotNull(installerPrefab, "Found null installer prefab in '{0}'", this.GetType().Name());
 
@@ -160,14 +164,14 @@ namespace Zenject
                 Assert.IsNotNull(installer,
                     "Found null installer in '{0}'", this.GetType().Name());
 
-                Container.Inject(installer);
+                this.Container.Inject(installer);
                 installer.InstallBindings();
             }
         }
 
         protected void InstallSceneBindings()
         {
-            foreach (var binding in GetInjectableComponents().OfType<ZenjectBinding>())
+            foreach (var binding in this.GetInjectableComponents().OfType<ZenjectBinding>())
             {
                 if (binding == null)
                 {
@@ -176,7 +180,7 @@ namespace Zenject
 
                 if (binding.Context == null)
                 {
-                    InstallZenjectBinding(binding);
+                    this.InstallZenjectBinding(binding);
                 }
             }
 
@@ -191,7 +195,7 @@ namespace Zenject
 
                 if (binding.Context == this)
                 {
-                    InstallZenjectBinding(binding);
+                    this.InstallZenjectBinding(binding);
                 }
             }
         }
@@ -232,22 +236,22 @@ namespace Zenject
                 {
                     case ZenjectBinding.BindTypes.Self:
                     {
-                        Container.Bind(componentType).WithId(identifier).FromInstance(component, true);
+                        this.Container.Bind(componentType).WithId(identifier).FromInstance(component, true);
                         break;
                     }
                     case ZenjectBinding.BindTypes.BaseType:
                     {
-                        Container.Bind(componentType.BaseType()).WithId(identifier).FromInstance(component, true);
+                        this.Container.Bind(componentType.BaseType()).WithId(identifier).FromInstance(component, true);
                         break;
                     }
                     case ZenjectBinding.BindTypes.AllInterfaces:
                     {
-                        Container.BindAllInterfaces(componentType).WithId(identifier).FromInstance(component, true);
+                        this.Container.BindAllInterfaces(componentType).WithId(identifier).FromInstance(component, true);
                         break;
                     }
                     case ZenjectBinding.BindTypes.AllInterfacesAndSelf:
                     {
-                        Container.BindAllInterfacesAndSelf(componentType).WithId(identifier).FromInstance(component, true);
+                        this.Container.BindAllInterfacesAndSelf(componentType).WithId(identifier).FromInstance(component, true);
                         break;
                     }
                     default:

@@ -1,10 +1,13 @@
 #if !NOT_UNITY3D
 
-using UnityEngine;
-using UnityEngine.Serialization;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Install
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+
+    using UnityEngine;
+    using UnityEngine.Serialization;
+
     public class ZenjectBinding : MonoBehaviour
     {
         [Tooltip("The component to add to the Zenject container")]
@@ -28,7 +31,7 @@ namespace Zenject
         {
             get
             {
-                return _context;
+                return this._context;
             }
         }
 
@@ -36,7 +39,7 @@ namespace Zenject
         {
             get
             {
-                return _components;
+                return this._components;
             }
         }
 
@@ -44,7 +47,7 @@ namespace Zenject
         {
             get
             {
-                return _identifier;
+                return this._identifier;
             }
         }
 
@@ -52,7 +55,7 @@ namespace Zenject
         {
             get
             {
-                return _bindType;
+                return this._bindType;
             }
         }
 

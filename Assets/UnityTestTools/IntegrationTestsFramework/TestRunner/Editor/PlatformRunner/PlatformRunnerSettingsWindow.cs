@@ -10,6 +10,9 @@ using UnityEngine.SceneManagement;
 
 namespace UnityTest.IntegrationTests
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     [Serializable]
     public class PlatformRunnerSettingsWindow : EditorWindow
     {

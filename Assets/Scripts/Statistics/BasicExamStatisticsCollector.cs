@@ -5,6 +5,7 @@
     using System.Linq;
 
     using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Interfaces.Statistics;
 
     using Commands.Server;

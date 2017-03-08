@@ -1,11 +1,16 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.GameObjectProviders
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Providers.PrefabCreators;
+
+    using UnityEngine;
+
     public class PrefabGameObjectProvider : IProvider
     {
         readonly IPrefabInstantiator _prefabCreator;
@@ -13,7 +18,7 @@ namespace Zenject
         public PrefabGameObjectProvider(
             IPrefabInstantiator prefabCreator)
         {
-            _prefabCreator = prefabCreator;
+            this._prefabCreator = prefabCreator;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -24,7 +29,7 @@ namespace Zenject
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(
             InjectContext context, List<TypeValuePair> args)
         {
-            var runner = _prefabCreator.Instantiate(args);
+            var runner = this._prefabCreator.Instantiate(args);
 
             // First get instance
             bool hasMore = runner.MoveNext();

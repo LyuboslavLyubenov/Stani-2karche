@@ -5,6 +5,7 @@ namespace Assets.Tests
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
 
     public class DummySimpleTcpClient : ISimpleTcpClient
     {

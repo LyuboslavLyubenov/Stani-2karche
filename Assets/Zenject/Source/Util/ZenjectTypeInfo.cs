@@ -1,10 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Util
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using Assets.Zenject.Source.Injection;
+
     public class PostInjectableInfo
     {
         readonly MethodInfo _methodInfo;
@@ -13,15 +16,15 @@ namespace Zenject
         public PostInjectableInfo(
             MethodInfo methodInfo, List<InjectableInfo> injectableInfo)
         {
-            _methodInfo = methodInfo;
-            _injectableInfo = injectableInfo;
+            this._methodInfo = methodInfo;
+            this._injectableInfo = injectableInfo;
         }
 
         public MethodInfo MethodInfo
         {
             get
             {
-                return _methodInfo;
+                return this._methodInfo;
             }
         }
 
@@ -29,7 +32,7 @@ namespace Zenject
         {
             get
             {
-                return _injectableInfo;
+                return this._injectableInfo;
             }
         }
     }
@@ -51,19 +54,19 @@ namespace Zenject
             List<InjectableInfo> propertyInjectables,
             List<InjectableInfo> constructorInjectables)
         {
-            _postInjectMethods = postInjectMethods;
-            _fieldInjectables = fieldInjectables;
-            _propertyInjectables = propertyInjectables;
-            _constructorInjectables = constructorInjectables;
-            _injectConstructor = injectConstructor;
-            _typeAnalyzed = typeAnalyzed;
+            this._postInjectMethods = postInjectMethods;
+            this._fieldInjectables = fieldInjectables;
+            this._propertyInjectables = propertyInjectables;
+            this._constructorInjectables = constructorInjectables;
+            this._injectConstructor = injectConstructor;
+            this._typeAnalyzed = typeAnalyzed;
         }
 
         public Type Type
         {
             get
             {
-                return _typeAnalyzed;
+                return this._typeAnalyzed;
             }
         }
 
@@ -71,7 +74,7 @@ namespace Zenject
         {
             get
             {
-                return _postInjectMethods;
+                return this._postInjectMethods;
             }
         }
 
@@ -79,7 +82,7 @@ namespace Zenject
         {
             get
             {
-                return _constructorInjectables.Concat(_fieldInjectables).Concat(_propertyInjectables).Concat(_postInjectMethods.SelectMany(x => x.InjectableInfo));
+                return this._constructorInjectables.Concat(this._fieldInjectables).Concat(this._propertyInjectables).Concat(this._postInjectMethods.SelectMany(x => x.InjectableInfo));
             }
         }
 
@@ -87,7 +90,7 @@ namespace Zenject
         {
             get
             {
-                return _fieldInjectables;
+                return this._fieldInjectables;
             }
         }
 
@@ -95,7 +98,7 @@ namespace Zenject
         {
             get
             {
-                return _propertyInjectables;
+                return this._propertyInjectables;
             }
         }
 
@@ -103,7 +106,7 @@ namespace Zenject
         {
             get
             {
-                return _constructorInjectables;
+                return this._constructorInjectables;
             }
         }
 
@@ -112,7 +115,7 @@ namespace Zenject
         {
             get
             {
-                return _injectConstructor;
+                return this._injectConstructor;
             }
         }
     }

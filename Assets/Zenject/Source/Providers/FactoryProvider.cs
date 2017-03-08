@@ -1,9 +1,15 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Factories;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
     public abstract class FactoryProviderBase<TValue, TFactory> : IProvider
         where TFactory : IFactory
     {
@@ -11,8 +17,8 @@ namespace Zenject
 
         public FactoryProviderBase(DiContainer container, List<TypeValuePair> factoryArgs)
         {
-            Container = container;
-            _factoryArgs = factoryArgs;
+            this.Container = container;
+            this._factoryArgs = factoryArgs;
         }
 
         protected DiContainer Container
@@ -31,7 +37,7 @@ namespace Zenject
 
         protected object CreateFactory()
         {
-            return Container.InstantiateExplicit(typeof(TFactory), _factoryArgs);
+            return this.Container.InstantiateExplicit(typeof(TFactory), this._factoryArgs);
         }
     }
 
@@ -54,9 +60,9 @@ namespace Zenject
             Assert.That(typeof(TValue).DerivesFromOrEqual(context.MemberType));
 
             // Do this even when validating in case it has its own dependencies
-            var factory = CreateFactory();
+            var factory = this.CreateFactory();
 
-            if (Container.IsValidating)
+            if (this.Container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)
@@ -95,9 +101,9 @@ namespace Zenject
             Assert.That(args[0].Type.DerivesFromOrEqual<TParam1>());
 
             // Do this even when validating in case it has its own dependencies
-            var factory = CreateFactory();
+            var factory = this.CreateFactory();
 
-            if (Container.IsValidating)
+            if (this.Container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)
@@ -140,9 +146,9 @@ namespace Zenject
             Assert.That(args[1].Type.DerivesFromOrEqual<TParam2>());
 
             // Do this even when validating in case it has its own dependencies
-            var factory = CreateFactory();
+            var factory = this.CreateFactory();
 
-            if (Container.IsValidating)
+            if (this.Container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)
@@ -188,9 +194,9 @@ namespace Zenject
             Assert.That(args[2].Type.DerivesFromOrEqual<TParam3>());
 
             // Do this even when validating in case it has its own dependencies
-            var factory = CreateFactory();
+            var factory = this.CreateFactory();
 
-            if (Container.IsValidating)
+            if (this.Container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)
@@ -238,9 +244,9 @@ namespace Zenject
             Assert.That(args[3].Type.DerivesFromOrEqual<TParam4>());
 
             // Do this even when validating in case it has its own dependencies
-            var factory = CreateFactory();
+            var factory = this.CreateFactory();
 
-            if (Container.IsValidating)
+            if (this.Container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)
@@ -290,9 +296,9 @@ namespace Zenject
             Assert.That(args[4].Type.DerivesFromOrEqual<TParam5>());
 
             // Do this even when validating in case it has its own dependencies
-            var factory = CreateFactory();
+            var factory = this.CreateFactory();
 
-            if (Container.IsValidating)
+            if (this.Container.IsValidating)
             {
                 // In case users define a custom IFactory that needs to be validated
                 if (factory is IValidatable)

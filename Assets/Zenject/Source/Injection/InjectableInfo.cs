@@ -1,7 +1,11 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Injection
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Usage;
+
     // An injectable is a field or property with [Inject] attribute
     // Or a constructor parameter
     public class InjectableInfo
@@ -27,14 +31,14 @@ namespace Zenject
             bool optional, object identifier, string memberName,
             Type memberType, Type objectType, Action<object, object> setter, object defaultValue, InjectSources sourceType)
         {
-            Optional = optional;
-            Setter = setter;
-            ObjectType = objectType;
-            MemberType = memberType;
-            MemberName = memberName;
-            Identifier = identifier;
-            DefaultValue = defaultValue;
-            SourceType = sourceType;
+            this.Optional = optional;
+            this.Setter = setter;
+            this.ObjectType = objectType;
+            this.MemberType = memberType;
+            this.MemberName = memberName;
+            this.Identifier = identifier;
+            this.DefaultValue = defaultValue;
+            this.SourceType = sourceType;
         }
 
         public InjectContext CreateInjectContext(
@@ -42,17 +46,17 @@ namespace Zenject
         {
             var context = new InjectContext();
 
-            context.MemberType = MemberType;
+            context.MemberType = this.MemberType;
             context.Container = container;
-            context.ObjectType = ObjectType;
+            context.ObjectType = this.ObjectType;
             context.ParentContext = currentContext;
             context.ObjectInstance = targetInstance;
-            context.Identifier = Identifier;
+            context.Identifier = this.Identifier;
             context.ConcreteIdentifier = concreteIdentifier;
-            context.MemberName = MemberName;
-            context.Optional = Optional;
-            context.SourceType = SourceType;
-            context.FallBackValue = DefaultValue;
+            context.MemberName = this.MemberName;
+            context.Optional = this.Optional;
+            context.SourceType = this.SourceType;
+            context.FallBackValue = this.DefaultValue;
 
             return context;
         }

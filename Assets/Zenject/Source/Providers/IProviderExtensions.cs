@@ -1,8 +1,11 @@
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+
     public static class IProviderExtensions
     {
         public static IEnumerator<List<object>> GetAllInstancesWithInjectSplit(

@@ -1,7 +1,8 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Main
 {
+
+    using System;
+
     [System.Diagnostics.DebuggerStepThrough]
     public class BindingId : IEquatable<BindingId>
     {
@@ -10,8 +11,8 @@ namespace Zenject
 
         public BindingId(Type type, object identifier)
         {
-            Type = type;
-            Identifier = identifier;
+            this.Type = type;
+            this.Identifier = identifier;
         }
 
         public override int GetHashCode()

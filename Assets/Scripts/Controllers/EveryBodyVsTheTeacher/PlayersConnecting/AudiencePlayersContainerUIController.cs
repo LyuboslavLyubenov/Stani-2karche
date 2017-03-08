@@ -3,15 +3,15 @@
 
     using System.Collections.Generic;
 
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
     using UnityEngine.UI;
-
-    using Zenject;
 
     public class AudiencePlayersContainerUIController : MonoBehaviour
     {

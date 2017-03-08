@@ -1,36 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Injection
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Usage;
+
     public class InjectContext
     {
         public InjectContext()
         {
-            SourceType = InjectSources.Any;
-            MemberName = "";
+            this.SourceType = InjectSources.Any;
+            this.MemberName = "";
         }
 
         public InjectContext(DiContainer container, Type memberType)
             : this()
         {
-            Container = container;
-            MemberType = memberType;
+            this.Container = container;
+            this.MemberType = memberType;
         }
 
         public InjectContext(DiContainer container, Type memberType, object identifier)
             : this(container, memberType)
         {
-            Identifier = identifier;
+            this.Identifier = identifier;
         }
 
         public InjectContext(DiContainer container, Type memberType, object identifier, bool optional)
             : this(container, memberType, identifier)
         {
-            Optional = optional;
+            this.Optional = optional;
         }
 
         // The type of the object which is having its members injected
@@ -134,14 +138,14 @@ namespace Zenject
         {
             get
             {
-                if (ParentContext == null)
+                if (this.ParentContext == null)
                 {
                     yield break;
                 }
 
-                yield return ParentContext;
+                yield return this.ParentContext;
 
-                foreach (var context in ParentContext.ParentContexts)
+                foreach (var context in this.ParentContext.ParentContexts)
                 {
                     yield return context;
                 }
@@ -154,7 +158,7 @@ namespace Zenject
             {
                 yield return this;
 
-                foreach (var context in ParentContexts)
+                foreach (var context in this.ParentContexts)
                 {
                     yield return context;
                 }
@@ -168,7 +172,7 @@ namespace Zenject
         {
             get
             {
-                foreach (var context in ParentContextsAndSelf)
+                foreach (var context in this.ParentContextsAndSelf)
                 {
                     if (context.ObjectType != null)
                     {
@@ -180,12 +184,12 @@ namespace Zenject
 
         public BindingId GetBindingId()
         {
-            return new BindingId(MemberType, Identifier);
+            return new BindingId(this.MemberType, this.Identifier);
         }
 
         public InjectContext CreateSubContext(Type memberType)
         {
-            return CreateSubContext(memberType, null);
+            return this.CreateSubContext(memberType, null);
         }
 
         public InjectContext CreateSubContext(Type memberType, object identifier)
@@ -235,7 +239,7 @@ namespace Zenject
         {
             var result = new StringBuilder();
 
-            foreach (var context in ParentContextsAndSelf.Reverse())
+            foreach (var context in this.ParentContextsAndSelf.Reverse())
             {
                 if (context.ObjectType == null)
                 {

@@ -3,7 +3,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Jokers.AskPlayerQuestion;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using UnityEngine;
 

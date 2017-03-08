@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     class IntegrationTestLine : IntegrationTestRendererBase
     {
         public static List<TestResult> Results;

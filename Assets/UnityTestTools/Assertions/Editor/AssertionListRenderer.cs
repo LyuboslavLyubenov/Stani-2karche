@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+    using Assets.UnityTestTools.Assertions.Comparers;
+
     public interface IListRenderer
     {
         void Render(IEnumerable<AssertionComponent> allAssertions, List<string> foldMarkers);

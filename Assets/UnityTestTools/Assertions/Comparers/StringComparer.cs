@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
     public class StringComparer : ComparerBaseGeneric<string>
     {
         public enum CompareType
@@ -20,21 +19,21 @@ namespace UnityTest
 
         protected override bool Compare(string a, string b)
         {
-            if (ignoreCase)
+            if (this.ignoreCase)
             {
                 a = a.ToLower();
                 b = b.ToLower();
             }
-            switch (compareType)
+            switch (this.compareType)
             {
                 case CompareType.Equal:
-                    return String.Compare(a, b, comparisonType) == 0;
+                    return String.Compare(a, b, this.comparisonType) == 0;
                 case CompareType.NotEqual:
-                    return String.Compare(a, b, comparisonType) != 0;
+                    return String.Compare(a, b, this.comparisonType) != 0;
                 case CompareType.Longer:
-                    return String.Compare(a, b, comparisonType) > 0;
+                    return String.Compare(a, b, this.comparisonType) > 0;
                 case CompareType.Shorter:
-                    return String.Compare(a, b, comparisonType) < 0;
+                    return String.Compare(a, b, this.comparisonType) < 0;
             }
             throw new Exception();
         }

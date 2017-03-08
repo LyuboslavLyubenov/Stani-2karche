@@ -3,6 +3,8 @@ namespace Assets.Scripts.Network
     using System;
     using System.Timers;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Commands;
     using Commands.Client;
     using Interfaces;

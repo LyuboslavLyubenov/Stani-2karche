@@ -12,8 +12,6 @@ namespace Assets.Scripts.Controllers
     
     using UnityEngine;
 
-    using Zenject;
-
     public class SelectPlayerTypeRouter
     {
         private readonly BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController;

@@ -5,6 +5,7 @@
     using UnityEngine;
     using UnityEngine.UI;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Notifications;
 
     public class NotificationsesController : MonoBehaviour, INotificationsController
     {

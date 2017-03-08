@@ -3,21 +3,20 @@
 
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.StateMachine;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
-
-    using Zenject;
 
     public class StateActivator : MonoBehaviour
     {
         [Inject]
         private IState state;
 
-        private SimpleFiniteStateMachine stateMachine = new SimpleFiniteStateMachine();
+        private StateMachine StateMachine = new StateMachine();
 
         void Start()
         {
-            this.stateMachine.SetCurrentState(this.state);
+            this.StateMachine.SetCurrentState(this.state);
         }
     }
 

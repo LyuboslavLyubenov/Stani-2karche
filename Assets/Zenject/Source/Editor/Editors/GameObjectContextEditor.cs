@@ -2,6 +2,9 @@ using UnityEditor;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+
     [CustomEditor(typeof(GameObjectContext))]
     public class GameObjectContextEditor : ContextEditor
     {

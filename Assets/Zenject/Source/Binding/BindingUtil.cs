@@ -1,20 +1,25 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using Zenject.Internal;
-using System.Linq;
-
 #if !NOT_UNITY3D
-using UnityEngine;
-
 #if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 #endif
 
-namespace Zenject
+#endif
+
+namespace Assets.Zenject.Source.Binding
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Util;
+
+    using UnityEditor;
+
+    using UnityEngine;
+
     internal static class BindingUtil
     {
 #if !NOT_UNITY3D

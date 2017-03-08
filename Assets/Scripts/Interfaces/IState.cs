@@ -5,9 +5,9 @@ namespace Assets.Scripts.Interfaces
 
     public interface IState
     {    
-        void OnStateEnter(SimpleFiniteStateMachine stateMachine);
+        void OnStateEnter(StateMachine stateMachine);
 
-        void OnStateExit(SimpleFiniteStateMachine stateMachine);
+        void OnStateExit(StateMachine stateMachine);
     }
 
 }

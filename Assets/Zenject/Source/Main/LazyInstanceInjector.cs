@@ -1,10 +1,11 @@
-
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Main
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+
     // When the app starts up, typically there is a list of instances that need to be injected
     // The question is, what is the order that they should be injected?  Originally we would
     // just iterate over the list and inject in whatever order they were in
@@ -22,37 +23,37 @@ namespace Zenject
 
         public LazyInstanceInjector(DiContainer container)
         {
-            _container = container;
+            this._container = container;
         }
 
         public IEnumerable<object> Instances
         {
             get
             {
-                return _instancesToInject;
+                return this._instancesToInject;
             }
         }
 
         public void AddInstances(IEnumerable<object> instances)
         {
-            _instancesToInject.UnionWith(instances);
+            this._instancesToInject.UnionWith(instances);
         }
 
         public void OnInstanceResolved(object instance)
         {
-            if (_instancesToInject.Remove(instance))
+            if (this._instancesToInject.Remove(instance))
             {
-                _container.Inject(instance);
+                this._container.Inject(instance);
             }
         }
 
         public void LazyInjectAll()
         {
-            while (!_instancesToInject.IsEmpty())
+            while (!this._instancesToInject.IsEmpty())
             {
-                var instance = _instancesToInject.First();
-                _instancesToInject.Remove(instance);
-                _container.Inject(instance);
+                var instance = this._instancesToInject.First();
+                this._instancesToInject.Remove(instance);
+                this._container.Inject(instance);
             }
         }
     }

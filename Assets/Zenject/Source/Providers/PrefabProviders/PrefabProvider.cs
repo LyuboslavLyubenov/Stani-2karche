@@ -1,9 +1,10 @@
 #if !NOT_UNITY3D
 
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.PrefabProviders
 {
+
+    using Assets.Zenject.Source.Internal;
+
     public class PrefabProvider : IPrefabProvider
     {
         readonly UnityEngine.Object _prefab;
@@ -11,12 +12,12 @@ namespace Zenject
         public PrefabProvider(UnityEngine.Object prefab)
         {
             Assert.IsNotNull(prefab);
-            _prefab = prefab;
+            this._prefab = prefab;
         }
 
         public UnityEngine.Object GetPrefab()
         {
-            return _prefab;
+            return this._prefab;
         }
     }
 }

@@ -9,6 +9,9 @@ using System.Linq;
 
 namespace UnityTest.IntegrationTests
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     public class PlatformRunner
     {
         public static BuildTarget defaultBuildTarget

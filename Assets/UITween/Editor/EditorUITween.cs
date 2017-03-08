@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEditor;
-using UITween;
+
 using System.Collections;
+
+using Assets.UITween.Scripts;
 
 [CustomEditor(typeof(ReferencedFrom))] 
 public class ReferencedProxy : Editor

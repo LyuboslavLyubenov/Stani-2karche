@@ -1,14 +1,17 @@
 #if !NOT_UNITY3D
 
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using Zenject.Internal;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Install.Contexts
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Util;
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
     public static class ContextUtil
     {
         public static IEnumerable<Component> GetInjectableComponents(Scene scene)

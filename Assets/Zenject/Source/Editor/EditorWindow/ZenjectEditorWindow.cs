@@ -3,6 +3,12 @@ using UnityEditor;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Runtime;
+    using Assets.Zenject.Source.Usage;
+
     public abstract class ZenjectEditorWindow : EditorWindow
     {
         [Inject]

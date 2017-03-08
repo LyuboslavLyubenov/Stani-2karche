@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UITween;
 
-public class ReferencedFrom : MonoBehaviour { }
+namespace Assets.UITween.Scripts
+{
+
+    public class ReferencedFrom : MonoBehaviour { }
+
+}

@@ -4,6 +4,8 @@ namespace Assets.Scripts.Commands.Client
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Interfaces;
 
     using EventArgs = System.EventArgs;

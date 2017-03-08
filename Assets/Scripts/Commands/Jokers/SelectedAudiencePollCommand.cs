@@ -4,11 +4,12 @@ namespace Assets.Scripts.Commands.Jokers
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using DTOs;
     using Interfaces;
     using Scripts.Jokers;
-    using Scripts.Jokers.AudienceAnswerPoll;
 
     using EventArgs = System.EventArgs;
 

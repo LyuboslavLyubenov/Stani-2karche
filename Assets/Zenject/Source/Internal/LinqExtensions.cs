@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Collections;
-using ModestTree.Util;
-
-namespace ModestTree
+namespace Assets.Zenject.Source.Internal
 {
+
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public static class LinqExtensions
     {
         public static void ForEach<T>(this IEnumerable<T> first, Action<T> action)

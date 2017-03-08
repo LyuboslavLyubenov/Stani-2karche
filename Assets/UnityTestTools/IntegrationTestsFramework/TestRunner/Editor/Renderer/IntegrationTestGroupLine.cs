@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     class IntegrationTestGroupLine : IntegrationTestRendererBase
     {
         public static List<GameObject> FoldMarkers;

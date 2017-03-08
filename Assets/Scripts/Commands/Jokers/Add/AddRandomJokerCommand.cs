@@ -2,6 +2,8 @@ namespace Assets.Scripts.Commands.Jokers.Add
 {
     using System;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Controllers.Jokers;
     using DTOs;
     using Interfaces;

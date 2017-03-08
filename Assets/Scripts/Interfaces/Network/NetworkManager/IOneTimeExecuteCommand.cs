@@ -1,7 +1,7 @@
-using System;
-
-namespace Assets.Scripts.Interfaces
+namespace Assets.Scripts.Interfaces.Network.NetworkManager
 {
+
+    using System;
 
     /// <summary>
     /// When executed is destroyed from commandsmanager class

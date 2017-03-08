@@ -1,13 +1,21 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 
-public class ActivateOnEnable : MonoBehaviour {
+using UnityEngine;
 
-	public EasyTween EasyTweenStart;
+namespace Assets.UITween.ScenesExamplesScripts
+{
 
-	private IEnumerator Start () 
-	{
-		yield return new WaitForEndOfFrame();
-		EasyTweenStart.OpenCloseObjectAnimation();
-	}
+    using Assets.UITween.Scripts;
+
+    public class ActivateOnEnable : MonoBehaviour {
+
+        public EasyTween EasyTweenStart;
+
+        private IEnumerator Start () 
+        {
+            yield return new WaitForEndOfFrame();
+            this.EasyTweenStart.OpenCloseObjectAnimation();
+        }
+    }
+
 }

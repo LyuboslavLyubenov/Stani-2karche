@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
     public class IntComparer : ComparerBaseGeneric<int>
     {
         public enum CompareType
@@ -20,7 +19,7 @@ namespace UnityTest
 
         protected override bool Compare(int a, int b)
         {
-            switch (compareType)
+            switch (this.compareType)
             {
                 case CompareType.Equal:
                     return a == b;

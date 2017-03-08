@@ -1,11 +1,17 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton.SubContainer
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+
     public class SubContainerSingletonProviderCreatorByPrefabResource
     {
         readonly SingletonMarkRegistry _markRegistry;
@@ -17,14 +23,14 @@ namespace Zenject
             DiContainer container,
             SingletonMarkRegistry markRegistry)
         {
-            _markRegistry = markRegistry;
-            _container = container;
+            this._markRegistry = markRegistry;
+            this._container = container;
         }
 
         public IProvider CreateProvider(
             Type resultType, object concreteIdentifier, string resourcePath, object identifier, GameObjectCreationParameters gameObjectBindInfo)
         {
-            _markRegistry.MarkSingleton(
+            this._markRegistry.MarkSingleton(
                 resultType, concreteIdentifier,
                 SingletonTypes.ToSubContainerPrefabResource);
 
@@ -33,7 +39,7 @@ namespace Zenject
 
             CreatorInfo creatorInfo;
 
-            if (_subContainerCreators.TryGetValue(customSingletonId, out creatorInfo))
+            if (this._subContainerCreators.TryGetValue(customSingletonId, out creatorInfo))
             {
                 Assert.IsEqual(creatorInfo.GameObjectCreationParameters, gameObjectBindInfo,
                     "Ambiguous creation parameters (game object name / parent info) when using ToSubContainerPrefab with AsSingle");
@@ -42,12 +48,12 @@ namespace Zenject
             {
                 var creator = new SubContainerCreatorCached(
                     new SubContainerCreatorByPrefab(
-                        _container, new PrefabProviderResource(resourcePath), gameObjectBindInfo));
+                        this._container, new PrefabProviderResource(resourcePath), gameObjectBindInfo));
 
                 creatorInfo = new CreatorInfo(
                     gameObjectBindInfo, creator);
 
-                _subContainerCreators.Add(customSingletonId, creatorInfo);
+                this._subContainerCreators.Add(customSingletonId, creatorInfo);
             }
 
             return new SubContainerDependencyProvider(
@@ -63,8 +69,8 @@ namespace Zenject
             {
                 Assert.IsNotNull(resourcePath);
 
-                ConcreteIdentifier = concreteIdentifier;
-                ResourcePath = resourcePath;
+                this.ConcreteIdentifier = concreteIdentifier;
+                this.ResourcePath = resourcePath;
             }
 
             public override int GetHashCode()
@@ -113,8 +119,8 @@ namespace Zenject
             public CreatorInfo(
                 GameObjectCreationParameters creationParameters, ISubContainerCreator creator)
             {
-                GameObjectCreationParameters = creationParameters;
-                Creator = creator;
+                this.GameObjectCreationParameters = creationParameters;
+                this.Creator = creator;
             }
 
             public GameObjectCreationParameters GameObjectCreationParameters

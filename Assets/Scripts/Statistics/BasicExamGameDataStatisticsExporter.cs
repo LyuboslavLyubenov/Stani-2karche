@@ -6,6 +6,7 @@
     using System.Reflection;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces.GameData;
     using Assets.Scripts.Interfaces.Statistics;
 
     using CSharpJExcel.Jxl;

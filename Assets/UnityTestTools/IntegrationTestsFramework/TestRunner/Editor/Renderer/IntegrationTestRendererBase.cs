@@ -7,6 +7,9 @@ using Object = UnityEngine.Object;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     public abstract class IntegrationTestRendererBase : IComparable<IntegrationTestRendererBase>
     {
         public static Action<IList<ITestComponent>> RunTest;

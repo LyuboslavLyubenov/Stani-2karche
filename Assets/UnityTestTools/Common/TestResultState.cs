@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common
 {
+
     public enum TestResultState : byte
     {
         Inconclusive = 0,

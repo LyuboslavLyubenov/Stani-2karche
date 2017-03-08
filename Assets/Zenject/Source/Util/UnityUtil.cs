@@ -1,11 +1,13 @@
 #if !NOT_UNITY3D
 
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-
-namespace ModestTree.Util
+namespace Assets.Zenject.Source.Util
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using UnityEngine;
+
     public static class UnityUtil
     {
         public static bool IsAltKeyDown

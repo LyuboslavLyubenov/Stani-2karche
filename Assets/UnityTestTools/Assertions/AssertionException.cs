@@ -1,23 +1,22 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions
 {
+
+    using System;
+
     public class AssertionException : Exception
     {
         private readonly AssertionComponent m_Assertion;
 
         public AssertionException(AssertionComponent assertion) : base(assertion.Action.GetFailureMessage())
         {
-            m_Assertion = assertion;
+            this.m_Assertion = assertion;
         }
 
         public override string StackTrace
         {
             get
             {
-                return "Created in " + m_Assertion.GetCreationLocation();
+                return "Created in " + this.m_Assertion.GetCreationLocation();
             }
         }
     }

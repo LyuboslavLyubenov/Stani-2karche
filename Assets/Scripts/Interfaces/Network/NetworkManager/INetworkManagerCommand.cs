@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Assets.Scripts.Interfaces
+﻿namespace Assets.Scripts.Interfaces.Network.NetworkManager
 {
+
+    using System.Collections.Generic;
 
     public interface INetworkManagerCommand
     {

@@ -1,5 +1,9 @@
-namespace Zenject
+namespace Assets.Zenject.Source.Install
 {
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Main;
+
     //
     // I'd recommmend using Installer<> instead, and then always use the approach
     // of calling `MyInstaller.Install(Container)`

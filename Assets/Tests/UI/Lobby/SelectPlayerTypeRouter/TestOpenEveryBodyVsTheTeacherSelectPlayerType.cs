@@ -2,10 +2,9 @@
 {
 
     using Assets.Scripts.Controllers;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
-
-    using Zenject;
 
     public class TestOpenEveryBodyVsTheTeacherSelectPlayerType : MonoBehaviour
     {

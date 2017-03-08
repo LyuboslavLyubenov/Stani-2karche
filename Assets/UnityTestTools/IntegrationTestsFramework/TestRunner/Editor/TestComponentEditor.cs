@@ -8,6 +8,9 @@ using UnityEditor.SceneManagement;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     [CanEditMultipleObjects]
     [CustomEditor(typeof(TestComponent))]
     public class TestComponentEditor : Editor

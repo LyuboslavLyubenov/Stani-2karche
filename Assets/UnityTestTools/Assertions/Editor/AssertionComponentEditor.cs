@@ -8,6 +8,10 @@ using UnityEditor.SceneManagement;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+    using Assets.UnityTestTools.Assertions.Comparers;
+
     [CustomEditor(typeof(AssertionComponent))]
     public class AssertionComponentEditor : Editor
     {

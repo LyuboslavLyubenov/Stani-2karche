@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ModestTree;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Runtime;
+
     // Responsibilities:
     // - Output a file specifying the full object graph for a given root dependency
     // - This file uses the DOT language with can be fed into GraphViz to generate an image

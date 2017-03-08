@@ -1,7 +1,7 @@
-using System;
-
-namespace Assets.Scripts.Interfaces
+namespace Assets.Scripts.Interfaces.Network.NetworkManager
 {
+
+    using System;
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.EventArgs;

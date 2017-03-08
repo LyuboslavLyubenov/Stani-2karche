@@ -2,6 +2,8 @@ namespace Assets.Scripts.Commands.Client
 {
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using UnityEngine;
 
     using DTOs;

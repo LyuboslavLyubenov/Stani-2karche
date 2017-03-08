@@ -1,9 +1,15 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Finalizers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+
     public class SubContainerMethodBindingFinalizer : ProviderBindingFinalizer
     {
         readonly object _subIdentifier;
@@ -13,62 +19,62 @@ namespace Zenject
             BindInfo bindInfo, Action<DiContainer> installMethod, object subIdentifier)
             : base(bindInfo)
         {
-            _subIdentifier = subIdentifier;
-            _installMethod = installMethod;
+            this._subIdentifier = subIdentifier;
+            this._installMethod = installMethod;
         }
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            if (BindInfo.ToChoice == ToChoices.Self)
+            if (this.BindInfo.ToChoice == ToChoices.Self)
             {
-                Assert.IsEmpty(BindInfo.ToTypes);
-                FinalizeBindingSelf(container);
+                Assert.IsEmpty(this.BindInfo.ToTypes);
+                this.FinalizeBindingSelf(container);
             }
             else
             {
-                FinalizeBindingConcrete(container, BindInfo.ToTypes);
+                this.FinalizeBindingConcrete(container, this.BindInfo.ToTypes);
             }
         }
 
         void FinalizeBindingConcrete(DiContainer container, List<Type> concreteTypes)
         {
-            switch (BindInfo.Scope)
+            switch (this.BindInfo.Scope)
             {
                 case ScopeTypes.Singleton:
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) =>
                             container.SingletonProviderCreator.CreateProviderForSubContainerMethod(
                                 concreteType,
-                                BindInfo.ConcreteIdentifier,
-                                _installMethod,
-                                _subIdentifier));
+                                this.BindInfo.ConcreteIdentifier,
+                                this._installMethod,
+                                this._subIdentifier));
                     break;
                 }
                 case ScopeTypes.Transient:
                 {
                     // Note: each contract/concrete pair gets its own container here
-                    RegisterProvidersPerContractAndConcreteType(
+                    this.RegisterProvidersPerContractAndConcreteType(
                         container,
                         concreteTypes,
                         (contractType, concreteType) => new SubContainerDependencyProvider(
-                            concreteType, _subIdentifier,
-                            new SubContainerCreatorByMethod(container, _installMethod)));
+                            concreteType, this._subIdentifier,
+                            new SubContainerCreatorByMethod(container, this._installMethod)));
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
                     var creator = new SubContainerCreatorCached(
-                        new SubContainerCreatorByMethod(container, _installMethod));
+                        new SubContainerCreatorByMethod(container, this._installMethod));
 
                     // Note: each contract/concrete pair gets its own container
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) => new SubContainerDependencyProvider(
-                            concreteType, _subIdentifier, creator));
+                            concreteType, this._subIdentifier, creator));
                     break;
                 }
                 default:
@@ -80,39 +86,39 @@ namespace Zenject
 
         void FinalizeBindingSelf(DiContainer container)
         {
-            switch (BindInfo.Scope)
+            switch (this.BindInfo.Scope)
             {
                 case ScopeTypes.Singleton:
                 {
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) => container.SingletonProviderCreator.CreateProviderForSubContainerMethod(
                             contractType,
-                            BindInfo.ConcreteIdentifier,
-                            _installMethod,
-                            _subIdentifier));
+                            this.BindInfo.ConcreteIdentifier,
+                            this._installMethod,
+                            this._subIdentifier));
                     break;
                 }
                 case ScopeTypes.Transient:
                 {
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) => new SubContainerDependencyProvider(
-                            contractType, _subIdentifier,
+                            contractType, this._subIdentifier,
                             new SubContainerCreatorByMethod(
-                                container, _installMethod)));
+                                container, this._installMethod)));
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
                     var containerCreator = new SubContainerCreatorCached(
-                        new SubContainerCreatorByMethod(container, _installMethod));
+                        new SubContainerCreatorByMethod(container, this._installMethod));
 
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
                             new SubContainerDependencyProvider(
-                                contractType, _subIdentifier, containerCreator));
+                                contractType, this._subIdentifier, containerCreator));
                     break;
                 }
                 default:

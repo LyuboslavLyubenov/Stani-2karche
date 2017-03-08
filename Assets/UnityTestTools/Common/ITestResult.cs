@@ -1,29 +1,29 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityTest;
-
-public interface ITestResult
+namespace Assets.UnityTestTools.Common
 {
-    TestResultState ResultState { get; }
 
-    string Message { get; }
+    public interface ITestResult
+    {
+        TestResultState ResultState { get; }
 
-    string Logs { get; }
+        string Message { get; }
 
-    bool Executed { get; }
+        string Logs { get; }
 
-    string Name { get; }
+        bool Executed { get; }
 
-    string FullName { get; }
+        string Name { get; }
 
-    string Id { get; }
+        string FullName { get; }
 
-    bool IsSuccess { get; }
+        string Id { get; }
 
-    double Duration { get; }
+        bool IsSuccess { get; }
 
-    string StackTrace { get; }
+        double Duration { get; }
+
+        string StackTrace { get; }
     
-    bool IsIgnored { get; }
+        bool IsIgnored { get; }
+    }
+
 }

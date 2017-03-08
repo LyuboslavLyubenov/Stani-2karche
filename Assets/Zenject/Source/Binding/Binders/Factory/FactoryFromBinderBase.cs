@@ -1,13 +1,29 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
 #if !NOT_UNITY3D
-using UnityEngine;
+
 #endif
 
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Factory
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.Binders.GameObject;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Factories;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.ComponentProviders;
+    using Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders;
+    using Assets.Zenject.Source.Providers.GameObjectProviders;
+    using Assets.Zenject.Source.Providers.PrefabCreators;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+
+    using UnityEngine;
+
     public class FactoryFromBinderBase<TContract> : ConditionBinder
     {
         public FactoryFromBinderBase(
@@ -20,12 +36,12 @@ namespace Zenject
             // when used with To<>, so we can only check IDynamicFactory
             Assert.That(factoryType.DerivesFrom<IDynamicFactory>());
 
-            FactoryType = factoryType;
-            FinalizerWrapper = finalizerWrapper;
+            this.FactoryType = factoryType;
+            this.FinalizerWrapper = finalizerWrapper;
 
             // Default to just creating it using new
-            finalizerWrapper.SubFinalizer = CreateFinalizer(
-                (container) => new TransientProvider(ContractType, container));
+            finalizerWrapper.SubFinalizer = this.CreateFinalizer(
+                (container) => new TransientProvider(this.ContractType, container));
         }
 
         protected Type FactoryType
@@ -52,7 +68,7 @@ namespace Zenject
         {
             set
             {
-                FinalizerWrapper.SubFinalizer = value;
+                this.FinalizerWrapper.SubFinalizer = value;
             }
         }
 
@@ -60,9 +76,9 @@ namespace Zenject
         {
             get
             {
-                yield return ContractType;
+                yield return this.ContractType;
 
-                foreach (var type in BindInfo.ToTypes)
+                foreach (var type in this.BindInfo.ToTypes)
                 {
                     yield return type;
                 }
@@ -72,28 +88,28 @@ namespace Zenject
         protected IBindingFinalizer CreateFinalizer(Func<DiContainer, IProvider> providerFunc)
         {
             return new DynamicFactoryBindingFinalizer<TContract>(
-                BindInfo, FactoryType, providerFunc);
+                this.BindInfo, this.FactoryType, providerFunc);
         }
 
         // Note that this isn't necessary to call since it's the default
         public ConditionBinder FromNew()
         {
-            BindingUtil.AssertIsNotComponent(ContractType);
-            BindingUtil.AssertIsNotAbstract(ContractType);
+            BindingUtil.AssertIsNotComponent(this.ContractType);
+            BindingUtil.AssertIsNotAbstract(this.ContractType);
 
             return this;
         }
 
         public ConditionBinder FromResolve()
         {
-            return FromResolve(null);
+            return this.FromResolve(null);
         }
 
         public ConditionBinder FromResolve(object subIdentifier)
         {
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new ResolveProvider(
-                    ContractType, container, subIdentifier, false));
+                    this.ContractType, container, subIdentifier, false));
 
             return this;
         }
@@ -104,35 +120,35 @@ namespace Zenject
         {
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            if (ContractType == typeof(GameObject))
+            if (this.ContractType == typeof(GameObject))
             {
-                SubFinalizer = CreateFinalizer(
+                this.SubFinalizer = this.CreateFinalizer(
                     (container) => new EmptyGameObjectProvider(
                         container, gameObjectInfo));
             }
             else
             {
-                BindingUtil.AssertIsComponent(ContractType);
-                BindingUtil.AssertIsNotAbstract(ContractType);
+                BindingUtil.AssertIsComponent(this.ContractType);
+                BindingUtil.AssertIsNotAbstract(this.ContractType);
 
-                SubFinalizer = CreateFinalizer(
+                this.SubFinalizer = this.CreateFinalizer(
                     (container) => new AddToNewGameObjectComponentProvider(
-                        container, ContractType, null,
+                        container, this.ContractType, null,
                         new List<TypeValuePair>(), gameObjectInfo));
             }
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 
         public ConditionBinder FromComponent(GameObject gameObject)
         {
             BindingUtil.AssertIsValidGameObject(gameObject);
-            BindingUtil.AssertIsComponent(ContractType);
-            BindingUtil.AssertIsNotAbstract(ContractType);
+            BindingUtil.AssertIsComponent(this.ContractType);
+            BindingUtil.AssertIsNotAbstract(this.ContractType);
 
-            SubFinalizer = CreateFinalizer(
+            this.SubFinalizer = this.CreateFinalizer(
                 (container) => new AddToExistingGameObjectComponentProvider(
-                    gameObject, container, ContractType,
+                    gameObject, container, this.ContractType,
                     null, new List<TypeValuePair>()));
 
             return this;
@@ -144,9 +160,9 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            if (ContractType == typeof(GameObject))
+            if (this.ContractType == typeof(GameObject))
             {
-                SubFinalizer = CreateFinalizer(
+                this.SubFinalizer = this.CreateFinalizer(
                     (container) => new PrefabGameObjectProvider(
                         new PrefabInstantiator(
                             container, gameObjectInfo, 
@@ -154,17 +170,17 @@ namespace Zenject
             }
             else
             {
-                BindingUtil.AssertIsAbstractOrComponent(ContractType);
+                BindingUtil.AssertIsAbstractOrComponent(this.ContractType);
 
-                SubFinalizer = CreateFinalizer(
+                this.SubFinalizer = this.CreateFinalizer(
                     (container) => new GetFromPrefabComponentProvider(
-                        ContractType,
+                        this.ContractType,
                         new PrefabInstantiator(
                             container, gameObjectInfo, 
                             new List<TypeValuePair>(), new PrefabProvider(prefab))));
             }
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 
         public GameObjectNameGroupNameBinder FromPrefabResource(string resourcePath)
@@ -173,9 +189,9 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            if (ContractType == typeof(GameObject))
+            if (this.ContractType == typeof(GameObject))
             {
-                SubFinalizer = CreateFinalizer(
+                this.SubFinalizer = this.CreateFinalizer(
                     (container) => new PrefabGameObjectProvider(
                         new PrefabInstantiator(
                             container, gameObjectInfo, 
@@ -183,17 +199,17 @@ namespace Zenject
             }
             else
             {
-                BindingUtil.AssertIsAbstractOrComponent(ContractType);
+                BindingUtil.AssertIsAbstractOrComponent(this.ContractType);
 
-                SubFinalizer = CreateFinalizer(
+                this.SubFinalizer = this.CreateFinalizer(
                     (container) => new GetFromPrefabComponentProvider(
-                        ContractType,
+                        this.ContractType,
                         new PrefabInstantiator(
                             container, gameObjectInfo, 
                             new List<TypeValuePair>(), new PrefabProviderResource(resourcePath))));
             }
 
-            return new GameObjectNameGroupNameBinder(BindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameBinder(this.BindInfo, gameObjectInfo);
         }
 #endif
     }

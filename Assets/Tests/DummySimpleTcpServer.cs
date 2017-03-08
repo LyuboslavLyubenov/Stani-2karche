@@ -6,6 +6,7 @@
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
 
     public class DummySimpleTcpServer : ISimpleTcpServer
     {        

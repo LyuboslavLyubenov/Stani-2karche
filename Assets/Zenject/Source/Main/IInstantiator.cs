@@ -1,12 +1,17 @@
-using System;
-using System.Collections.Generic;
-
 #if !NOT_UNITY3D
-using UnityEngine;
+
 #endif
 
-namespace Zenject
+namespace Assets.Zenject.Source.Main
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+
+    using UnityEngine;
+
     // You can optionally inject this interface into your classes/factories
     // rather than using DiContainer which contains many methods you might not need
     public interface IInstantiator

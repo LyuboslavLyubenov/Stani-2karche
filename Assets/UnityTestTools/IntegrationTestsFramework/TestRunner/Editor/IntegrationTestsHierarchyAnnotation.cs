@@ -5,6 +5,8 @@ using UnityEditor;
 namespace UnityTest
 {
 
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     [InitializeOnLoad]
     public class IntegrationTestsHierarchyAnnotation {
     

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using ModestTree;
-using ModestTree.Util;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Usage;
+
     // This class is only used inside EditorWindowDependencyRoot, since in most cases
     // people aren't going to want it
     // However, you can include it yourself if you want to use it

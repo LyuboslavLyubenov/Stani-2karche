@@ -1,9 +1,14 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
     public class MethodProvider<TReturn> : IProvider
     {
         readonly DiContainer _container;
@@ -13,8 +18,8 @@ namespace Zenject
             Func<InjectContext, TReturn> method,
             DiContainer container)
         {
-            _container = container;
-            _method = method;
+            this._container = container;
+            this._method = method;
         }
 
         public Type GetInstanceType(InjectContext context)
@@ -29,13 +34,13 @@ namespace Zenject
 
             Assert.That(typeof(TReturn).DerivesFromOrEqual(context.MemberType));
 
-            if (_container.IsValidating)
+            if (this._container.IsValidating)
             {
                 yield return new List<object>() { new ValidationMarker(typeof(TReturn)) };
             }
             else
             {
-                yield return new List<object>() { _method(context) };
+                yield return new List<object>() { this._method(context) };
             }
         }
     }

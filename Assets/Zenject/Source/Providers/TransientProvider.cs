@@ -1,10 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class TransientProvider : IProvider
     {
         readonly DiContainer _container;
@@ -16,10 +20,10 @@ namespace Zenject
             Type concreteType, DiContainer container,
             List<TypeValuePair> extraArguments, object concreteIdentifier)
         {
-            _container = container;
-            _concreteType = concreteType;
-            _concreteIdentifier = concreteIdentifier;
-            _extraArguments = extraArguments;
+            this._container = container;
+            this._concreteType = concreteType;
+            this._concreteIdentifier = concreteIdentifier;
+            this._extraArguments = extraArguments;
         }
 
         public TransientProvider(
@@ -37,7 +41,7 @@ namespace Zenject
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _concreteType;
+            return this._concreteType;
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(InjectContext context, List<TypeValuePair> args)
@@ -46,17 +50,17 @@ namespace Zenject
 
             bool autoInject = false;
 
-            var instanceType = GetTypeToCreate(context.MemberType);
+            var instanceType = this.GetTypeToCreate(context.MemberType);
 
             var injectArgs = new InjectArgs()
             {
-                ExtraArgs = _extraArguments.Concat(args).ToList(),
+                ExtraArgs = this._extraArguments.Concat(args).ToList(),
                 Context = context,
-                ConcreteIdentifier = _concreteIdentifier,
+                ConcreteIdentifier = this._concreteIdentifier,
                 UseAllArgs = false,
             };
 
-            var instance = _container.InstantiateExplicit(
+            var instance = this._container.InstantiateExplicit(
                 instanceType, autoInject, injectArgs);
 
             // Return before property/field/method injection to allow circular dependencies
@@ -64,12 +68,12 @@ namespace Zenject
 
             injectArgs.UseAllArgs = true;
 
-            _container.InjectExplicit(instance, instanceType, injectArgs);
+            this._container.InjectExplicit(instance, instanceType, injectArgs);
         }
 
         Type GetTypeToCreate(Type contractType)
         {
-            return ProviderUtil.GetTypeToInstantiate(contractType, _concreteType);
+            return ProviderUtil.GetTypeToInstantiate(contractType, this._concreteType);
         }
     }
 }

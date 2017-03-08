@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
+    using UnityEngine;
+
     public class Vector2Comparer : VectorComparerBase<Vector2>
     {
         public enum CompareType
@@ -17,14 +18,14 @@ namespace UnityTest
 
         protected override bool Compare(Vector2 a, Vector2 b)
         {
-            switch (compareType)
+            switch (this.compareType)
             {
                 case CompareType.MagnitudeEquals:
-                    return AreVectorMagnitudeEqual(a.magnitude,
-                                                   b.magnitude, floatingPointError);
+                    return this.AreVectorMagnitudeEqual(a.magnitude,
+                                                   b.magnitude, this.floatingPointError);
                 case CompareType.MagnitudeNotEquals:
-                    return !AreVectorMagnitudeEqual(a.magnitude,
-                                                    b.magnitude, floatingPointError);
+                    return !this.AreVectorMagnitudeEqual(a.magnitude,
+                                                    b.magnitude, this.floatingPointError);
             }
             throw new Exception();
         }

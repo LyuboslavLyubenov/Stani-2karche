@@ -1,9 +1,10 @@
 //#define PROFILING_ENABLED
 
-using System;
-
-namespace ModestTree.Util.Debugging
+namespace Assets.Zenject.Source.Internal
 {
+
+    using System;
+
     public class ProfileBlock : IDisposable
     {
 #if PROFILING_ENABLED && !NOT_UNITY3D

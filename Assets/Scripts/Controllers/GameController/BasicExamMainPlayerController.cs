@@ -3,12 +3,12 @@
     using System;
     using System.Collections;
 
+    using Assets.Scripts.Interfaces.GameData;
     using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Interfaces.Network.Leaderboard;
 
     using Utils;
 
-    using Scripts.Jokers.AskPlayerQuestion;
     using Network.Leaderboard;
 
     using Commands;
@@ -21,7 +21,7 @@
     using EventArgs;
     using Interfaces;
     using Scripts.Jokers;
-    using Scripts.Jokers.AudienceAnswerPoll;
+
     using Localization;
     using Network;
     using Network.NetworkManagers;

@@ -1,8 +1,11 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Runtime.Kernels
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Usage;
+
     [System.Diagnostics.DebuggerStepThrough]
     public class Kernel : IInitializable, IDisposable, ITickable, ILateTickable, IFixedTickable
     {
@@ -19,29 +22,29 @@ namespace Zenject
         {
             Log.Debug("Zenject: Initializing IInitializable's");
 
-            _initializableManager.Initialize();
+            this._initializableManager.Initialize();
         }
 
         public virtual void Dispose()
         {
             Log.Debug("Zenject: Disposing IDisposable's");
 
-            _disposablesManager.Dispose();
+            this._disposablesManager.Dispose();
         }
 
         public virtual void Tick()
         {
-            _tickableManager.Update();
+            this._tickableManager.Update();
         }
 
         public virtual void LateTick()
         {
-            _tickableManager.LateUpdate();
+            this._tickableManager.LateUpdate();
         }
 
         public virtual void FixedTick()
         {
-            _tickableManager.FixedUpdate();
+            this._tickableManager.FixedUpdate();
         }
     }
 }

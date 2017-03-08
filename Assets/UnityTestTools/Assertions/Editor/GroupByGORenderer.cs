@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+
     public class GroupByGoRenderer : AssertionListRenderer<GameObject>
     {
         protected override IEnumerable<IGrouping<GameObject, AssertionComponent>> GroupResult(IEnumerable<AssertionComponent> assertionComponents)

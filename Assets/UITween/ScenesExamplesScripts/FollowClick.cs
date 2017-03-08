@@ -1,42 +1,48 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class FollowClick : MonoBehaviour {
+namespace Assets.UITween.ScenesExamplesScripts
+{
 
-	public AnimationCurve LeftClick;
-	public AnimationCurve RightClick;
+    using Assets.UITween.Scripts;
 
-	public EasyTween TweenToControl;
-	public Transform RootCanvas;
+    public class FollowClick : MonoBehaviour {
 
-	void Update ()
-	{
-		if (Input.GetMouseButtonDown(0))
-		{
-			MoveToMouseClick(LeftClick);
-		}
-		else if (Input.GetMouseButtonDown(1))
-		{
-			MoveToMouseClick(RightClick);
-		}
-	}
+        public AnimationCurve LeftClick;
+        public AnimationCurve RightClick;
 
-	void MoveToMouseClick(AnimationCurve animationCurve)
-	{
-		Vector3 mouseAnchor = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        public EasyTween TweenToControl;
+        public Transform RootCanvas;
 
-		mouseAnchor = new Vector3(mouseAnchor.x * Screen.width / RootCanvas.localScale.x ,
-		                          mouseAnchor.y * Screen.height / RootCanvas.localScale.y, 0f);
+        void Update ()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                this.MoveToMouseClick(this.LeftClick);
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                this.MoveToMouseClick(this.RightClick);
+            }
+        }
 
-		if (!TweenToControl.IsObjectOpened())
-		{
-			TweenToControl.SetAnimationPosition(TweenToControl.rectTransform.anchoredPosition, (Vector2)mouseAnchor, animationCurve, animationCurve);
-		}
-		else
-		{
-			TweenToControl.SetAnimationPosition((Vector2)mouseAnchor, TweenToControl.rectTransform.anchoredPosition, animationCurve, animationCurve);
-		}
+        void MoveToMouseClick(AnimationCurve animationCurve)
+        {
+            Vector3 mouseAnchor = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
-		TweenToControl.OpenCloseObjectAnimation();
-	}
+            mouseAnchor = new Vector3(mouseAnchor.x * Screen.width / this.RootCanvas.localScale.x ,
+                mouseAnchor.y * Screen.height / this.RootCanvas.localScale.y, 0f);
+
+            if (!this.TweenToControl.IsObjectOpened())
+            {
+                this.TweenToControl.SetAnimationPosition(this.TweenToControl.rectTransform.anchoredPosition, (Vector2)mouseAnchor, animationCurve, animationCurve);
+            }
+            else
+            {
+                this.TweenToControl.SetAnimationPosition((Vector2)mouseAnchor, this.TweenToControl.rectTransform.anchoredPosition, animationCurve, animationCurve);
+            }
+
+            this.TweenToControl.OpenCloseObjectAnimation();
+        }
+    }
+
 }

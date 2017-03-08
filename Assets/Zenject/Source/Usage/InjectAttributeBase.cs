@@ -1,7 +1,8 @@
-using ModestTree.Util;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Usage
 {
+
+    using Assets.Zenject.Source.Internal;
+
     public abstract class InjectAttributeBase : PreserveAttribute
     {
         public bool Optional

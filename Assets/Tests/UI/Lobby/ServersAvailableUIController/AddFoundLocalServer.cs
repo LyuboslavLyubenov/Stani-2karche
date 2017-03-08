@@ -4,12 +4,13 @@
     using Assets.Scripts.Controllers;
     using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
+    using Assets.Scripts.Interfaces.Services;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils.Unity;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
-
-    using Zenject;
 
     public class AddFoundLocalServer : ExtendedMonoBehaviour
     {

@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestingAssets
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using UnityEngine;
+
     public class CallTesting : MonoBehaviour
     {
         public enum Functions
@@ -52,153 +53,153 @@ namespace UnityTest
 
         private void TryToCallTesting(Functions invokingMethod)
         {
-            if (invokingMethod == callOnMethod)
+            if (invokingMethod == this.callOnMethod)
             {
-                if (methodToCall == Method.Pass)
-                    IntegrationTest.Pass(gameObject);
+                if (this.methodToCall == Method.Pass)
+                    IntegrationTest.Pass(this.gameObject);
                 else
-                    IntegrationTest.Fail(gameObject);
+                    IntegrationTest.Fail(this.gameObject);
 
-                afterFrames = 0;
-                afterSeconds = 0.0f;
-                m_StartTime = float.PositiveInfinity;
-                m_StartFrame = int.MinValue;
+                this.afterFrames = 0;
+                this.afterSeconds = 0.0f;
+                this.m_StartTime = float.PositiveInfinity;
+                this.m_StartFrame = int.MinValue;
             }
         }
 
         public void Start()
         {
-            m_StartTime = Time.time;
-            m_StartFrame = afterFrames;
-            TryToCallTesting(Functions.Start);
+            this.m_StartTime = Time.time;
+            this.m_StartFrame = this.afterFrames;
+            this.TryToCallTesting(Functions.Start);
         }
 
         public void Update()
         {
-            TryToCallTesting(Functions.Update);
-            CallAfterSeconds();
-            CallAfterFrames();
+            this.TryToCallTesting(Functions.Update);
+            this.CallAfterSeconds();
+            this.CallAfterFrames();
         }
 
         private void CallAfterFrames()
         {
-            if (afterFrames > 0 && (m_StartFrame + afterFrames) <= Time.frameCount)
-                TryToCallTesting(Functions.CallAfterFrames);
+            if (this.afterFrames > 0 && (this.m_StartFrame + this.afterFrames) <= Time.frameCount)
+                this.TryToCallTesting(Functions.CallAfterFrames);
         }
 
         private void CallAfterSeconds()
         {
-            if ((m_StartTime + afterSeconds) <= Time.time)
-                TryToCallTesting(Functions.CallAfterSeconds);
+            if ((this.m_StartTime + this.afterSeconds) <= Time.time)
+                this.TryToCallTesting(Functions.CallAfterSeconds);
         }
 
         public void OnDisable()
         {
-            TryToCallTesting(Functions.OnDisable);
+            this.TryToCallTesting(Functions.OnDisable);
         }
 
         public void OnEnable()
         {
-            TryToCallTesting(Functions.OnEnable);
+            this.TryToCallTesting(Functions.OnEnable);
         }
 
         public void OnDestroy()
         {
-            TryToCallTesting(Functions.OnDestroy);
+            this.TryToCallTesting(Functions.OnDestroy);
         }
 
         public void FixedUpdate()
         {
-            TryToCallTesting(Functions.FixedUpdate);
+            this.TryToCallTesting(Functions.FixedUpdate);
         }
 
         public void LateUpdate()
         {
-            TryToCallTesting(Functions.LateUpdate);
+            this.TryToCallTesting(Functions.LateUpdate);
         }
 
         public void OnControllerColliderHit()
         {
-            TryToCallTesting(Functions.OnControllerColliderHit);
+            this.TryToCallTesting(Functions.OnControllerColliderHit);
         }
 
         public void OnParticleCollision()
         {
-            TryToCallTesting(Functions.OnParticleCollision);
+            this.TryToCallTesting(Functions.OnParticleCollision);
         }
 
         public void OnJointBreak()
         {
-            TryToCallTesting(Functions.OnJointBreak);
+            this.TryToCallTesting(Functions.OnJointBreak);
         }
 
         public void OnBecameInvisible()
         {
-            TryToCallTesting(Functions.OnBecameInvisible);
+            this.TryToCallTesting(Functions.OnBecameInvisible);
         }
 
         public void OnBecameVisible()
         {
-            TryToCallTesting(Functions.OnBecameVisible);
+            this.TryToCallTesting(Functions.OnBecameVisible);
         }
 
         public void OnTriggerEnter()
         {
-            TryToCallTesting(Functions.OnTriggerEnter);
+            this.TryToCallTesting(Functions.OnTriggerEnter);
         }
 
         public void OnTriggerExit()
         {
-            TryToCallTesting(Functions.OnTriggerExit);
+            this.TryToCallTesting(Functions.OnTriggerExit);
         }
 
         public void OnTriggerStay()
         {
-            TryToCallTesting(Functions.OnTriggerStay);
+            this.TryToCallTesting(Functions.OnTriggerStay);
         }
         public void OnCollisionEnter()
         {
-            TryToCallTesting(Functions.OnCollisionEnter);
+            this.TryToCallTesting(Functions.OnCollisionEnter);
         }
 
         public void OnCollisionExit()
         {
-            TryToCallTesting(Functions.OnCollisionExit);
+            this.TryToCallTesting(Functions.OnCollisionExit);
         }
 
         public void OnCollisionStay()
         {
-            TryToCallTesting(Functions.OnCollisionStay);
+            this.TryToCallTesting(Functions.OnCollisionStay);
         }
 
         public void OnTriggerEnter2D()
         {
-            TryToCallTesting(Functions.OnTriggerEnter2D);
+            this.TryToCallTesting(Functions.OnTriggerEnter2D);
         }
 
         public void OnTriggerExit2D()
         {
-            TryToCallTesting(Functions.OnTriggerExit2D);
+            this.TryToCallTesting(Functions.OnTriggerExit2D);
         }
 
         public void OnTriggerStay2D()
         {
-            TryToCallTesting(Functions.OnTriggerStay2D);
+            this.TryToCallTesting(Functions.OnTriggerStay2D);
         }
 
         public void OnCollisionEnter2D()
         {
-            TryToCallTesting(Functions.OnCollisionEnter2D);
+            this.TryToCallTesting(Functions.OnCollisionEnter2D);
         }
 
         public void OnCollisionExit2D()
         {
-            TryToCallTesting(Functions.OnCollisionExit2D);
+            this.TryToCallTesting(Functions.OnCollisionExit2D);
         }
 
         public void OnCollisionStay2D()
         {
-            TryToCallTesting(Functions.OnCollisionStay2D);
+            this.TryToCallTesting(Functions.OnCollisionStay2D);
         }
     }
 }

@@ -1,17 +1,20 @@
-using System;
-using System.Collections.Generic;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton.Standard
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+
     public class StandardSingletonDeclaration
     {
         public StandardSingletonDeclaration(
             SingletonId id, List<TypeValuePair> args, SingletonTypes type, object singletonSpecificId)
         {
-            Id = id;
-            Type = type;
-            SpecificId = singletonSpecificId;
-            Arguments = args;
+            this.Id = id;
+            this.Type = type;
+            this.SpecificId = singletonSpecificId;
+            this.Arguments = args;
         }
 
         public StandardSingletonDeclaration(

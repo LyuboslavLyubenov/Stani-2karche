@@ -1,11 +1,18 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using System.Linq;
-using ModestTree.Util;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Factories
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.Binders;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Usage;
+    using Assets.Zenject.Source.Util;
+    using Assets.Zenject.Source.Validation;
+
     public abstract class KeyedFactoryBase<TBase, TKey> : IValidatable
     {
         [Inject]
@@ -23,7 +30,7 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
@@ -34,21 +41,21 @@ namespace Zenject
 
         public ICollection<TKey> Keys
         {
-            get { return _typeMap.Keys; }
+            get { return this._typeMap.Keys; }
         }
 
         protected Dictionary<TKey, Type> TypeMap
         {
-            get { return _typeMap; }
+            get { return this._typeMap; }
         }
 
         [Inject]
         public void Initialize()
         {
-            Assert.That(_fallbackType == null || _fallbackType.DerivesFromOrEqual<TBase>(),
-                "Expected fallback type '{0}' to derive from '{1}'", _fallbackType, typeof(TBase));
+            Assert.That(this._fallbackType == null || this._fallbackType.DerivesFromOrEqual<TBase>(),
+                "Expected fallback type '{0}' to derive from '{1}'", this._fallbackType, typeof(TBase));
 
-            var duplicates = _typePairs.Select(x => x.First).GetDuplicates();
+            var duplicates = this._typePairs.Select(x => x.First).GetDuplicates();
 
             if (!duplicates.IsEmpty())
             {
@@ -56,23 +63,23 @@ namespace Zenject
                     "Found duplicate values in KeyedFactory: {0}", duplicates.Select(x => x.ToString()).Join(", "));
             }
 
-            _typeMap = _typePairs.ToDictionary(x => x.First, x => x.Second);
-            _typePairs.Clear();
+            this._typeMap = this._typePairs.ToDictionary(x => x.First, x => x.Second);
+            this._typePairs.Clear();
         }
 
         public bool HasKey(TKey key)
         {
-            return _typeMap.ContainsKey(key);
+            return this._typeMap.ContainsKey(key);
         }
 
         protected Type GetTypeForKey(TKey key)
         {
             Type keyedType;
 
-            if (!_typeMap.TryGetValue(key, out keyedType))
+            if (!this._typeMap.TryGetValue(key, out keyedType))
             {
-                Assert.IsNotNull(_fallbackType, "Could not find instance for key '{0}'", key);
-                return _fallbackType;
+                Assert.IsNotNull(this._fallbackType, "Could not find instance for key '{0}'", key);
+                return this._fallbackType;
             }
 
             return keyedType;
@@ -80,10 +87,10 @@ namespace Zenject
 
         public virtual void Validate()
         {
-            foreach (var constructType in _typeMap.Values)
+            foreach (var constructType in this._typeMap.Values)
             {
-                Container.InstantiateExplicit(
-                    constructType, ValidationUtil.CreateDefaultArgs(ProvidedTypes.ToArray()));
+                this.Container.InstantiateExplicit(
+                    constructType, ValidationUtil.CreateDefaultArgs(this.ProvidedTypes.ToArray()));
             }
         }
 
@@ -108,8 +115,8 @@ namespace Zenject
 
         public virtual TBase Create(TKey key)
         {
-            var type = GetTypeForKey(key);
-            return (TBase)Container.Instantiate(type);
+            var type = this.GetTypeForKey(key);
+            return (TBase)this.Container.Instantiate(type);
         }
     }
 
@@ -126,8 +133,8 @@ namespace Zenject
 
         public virtual TBase Create(TKey key, TParam1 param1)
         {
-            return (TBase)Container.InstantiateExplicit(
-                GetTypeForKey(key),
+            return (TBase)this.Container.InstantiateExplicit(
+                this.GetTypeForKey(key),
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),
@@ -148,8 +155,8 @@ namespace Zenject
 
         public virtual TBase Create(TKey key, TParam1 param1, TParam2 param2)
         {
-            return (TBase)Container.InstantiateExplicit(
-                GetTypeForKey(key),
+            return (TBase)this.Container.InstantiateExplicit(
+                this.GetTypeForKey(key),
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),
@@ -171,8 +178,8 @@ namespace Zenject
 
         public virtual TBase Create(TKey key, TParam1 param1, TParam2 param2, TParam3 param3)
         {
-            return (TBase)Container.InstantiateExplicit(
-                GetTypeForKey(key),
+            return (TBase)this.Container.InstantiateExplicit(
+                this.GetTypeForKey(key),
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),
@@ -195,8 +202,8 @@ namespace Zenject
 
         public virtual TBase Create(TKey key, TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4)
         {
-            return (TBase)Container.InstantiateExplicit(
-                GetTypeForKey(key),
+            return (TBase)this.Container.InstantiateExplicit(
+                this.GetTypeForKey(key),
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),

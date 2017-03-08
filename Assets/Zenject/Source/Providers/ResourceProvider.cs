@@ -1,12 +1,16 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+
+    using UnityEngine;
+
     public class ResourceProvider : IProvider
     {
         readonly Type _resourceType;
@@ -15,13 +19,13 @@ namespace Zenject
         public ResourceProvider(
             string resourcePath, Type resourceType)
         {
-            _resourceType = resourceType;
-            _resourcePath = resourcePath;
+            this._resourceType = resourceType;
+            this._resourcePath = resourcePath;
         }
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _resourceType;
+            return this._resourceType;
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(InjectContext context, List<TypeValuePair> args)
@@ -30,10 +34,10 @@ namespace Zenject
 
             Assert.IsNotNull(context);
 
-            var obj = Resources.Load(_resourcePath, _resourceType);
+            var obj = Resources.Load(this._resourcePath, this._resourceType);
 
             Assert.IsNotNull(obj,
-                "Could not find resource at path '{0}' with type '{1}'", _resourcePath, _resourceType);
+                "Could not find resource at path '{0}' with type '{1}'", this._resourcePath, this._resourceType);
 
             yield return new List<object>() { obj };
 

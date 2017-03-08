@@ -1,10 +1,12 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Object = System.Object;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+
+    using UnityEngine;
+
+    using Object = System.Object;
+
     public abstract class ComparerBase : ActionBase
     {
         public enum CompareToType
@@ -25,26 +27,26 @@ namespace UnityTest
 
         protected override bool Compare(object objValue)
         {
-            if (compareToType == CompareToType.CompareToConstantValue)
+            if (this.compareToType == CompareToType.CompareToConstantValue)
             {
-                m_ObjOtherVal = ConstValue;
+                this.m_ObjOtherVal = this.ConstValue;
             }
-            else if (compareToType == CompareToType.CompareToNull)
+            else if (this.compareToType == CompareToType.CompareToNull)
             {
-                m_ObjOtherVal = null;
+                this.m_ObjOtherVal = null;
             }
             else
             {
-                if (other == null)
-                    m_ObjOtherVal = null;
+                if (this.other == null)
+                    this.m_ObjOtherVal = null;
                 else
                 {
-                    if (m_MemberResolverB == null)
-                        m_MemberResolverB = new MemberResolver(other, otherPropertyPath);
-                    m_ObjOtherVal = m_MemberResolverB.GetValue(UseCache);
+                    if (this.m_MemberResolverB == null)
+                        this.m_MemberResolverB = new MemberResolver(this.other, this.otherPropertyPath);
+                    this.m_ObjOtherVal = this.m_MemberResolverB.GetValue(this.UseCache);
                 }
             }
-            return Compare(objValue, m_ObjOtherVal);
+            return this.Compare(objValue, this.m_ObjOtherVal);
         }
 
         public virtual Type[] GetAccepatbleTypesForB()
@@ -64,20 +66,20 @@ namespace UnityTest
 
         public override string GetFailureMessage()
         {
-            var message = GetType().Name + " assertion failed.\n" + go.name + "." + thisPropertyPath + " " + compareToType;
-            switch (compareToType)
+            var message = this.GetType().Name + " assertion failed.\n" + this.go.name + "." + this.thisPropertyPath + " " + this.compareToType;
+            switch (this.compareToType)
             {
                 case CompareToType.CompareToObject:
-                    message += " (" + other + ")." + otherPropertyPath + " failed.";
+                    message += " (" + this.other + ")." + this.otherPropertyPath + " failed.";
                     break;
                 case CompareToType.CompareToConstantValue:
-                    message += " " + ConstValue + " failed.";
+                    message += " " + this.ConstValue + " failed.";
                     break;
                 case CompareToType.CompareToNull:
                     message += " failed.";
                     break;
             }
-            message += " Expected: " + m_ObjOtherVal + " Actual: " + m_ObjVal;
+            message += " Expected: " + this.m_ObjOtherVal + " Actual: " + this.m_ObjVal;
             return message;
         }
     }
@@ -96,11 +98,11 @@ namespace UnityTest
         {
             get
             {
-                return constantValueGeneric;
+                return this.constantValueGeneric;
             }
             set
             {
-                constantValueGeneric = (T2)value;
+                this.constantValueGeneric = (T2)value;
             }
         }
 
@@ -125,7 +127,7 @@ namespace UnityTest
             {
                 throw new ArgumentException("Null was passed to a value-type argument");
             }
-            return Compare((T1)a, (T2)b);
+            return this.Compare((T1)a, (T2)b);
         }
 
         protected abstract bool Compare(T1 a, T2 b);

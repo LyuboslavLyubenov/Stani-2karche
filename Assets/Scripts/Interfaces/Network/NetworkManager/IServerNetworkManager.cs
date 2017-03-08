@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Interfaces
+namespace Assets.Scripts.Interfaces.Network.NetworkManager
 {
 
     using System;

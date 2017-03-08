@@ -1,10 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Injection
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+
     [System.Diagnostics.DebuggerStepThrough]
     public class TypeValuePair
     {
@@ -13,8 +15,8 @@ namespace Zenject
 
         public TypeValuePair(Type type, object value)
         {
-            Type = type;
-            Value = value;
+            this.Type = type;
+            this.Value = value;
         }
     }
 

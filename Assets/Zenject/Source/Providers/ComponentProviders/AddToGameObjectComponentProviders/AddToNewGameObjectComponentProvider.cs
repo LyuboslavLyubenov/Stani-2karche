@@ -1,12 +1,18 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
+    using UnityEngine;
+
     public class AddToNewGameObjectComponentProvider : AddToGameObjectComponentProviderBase
     {
         readonly GameObjectCreationParameters _gameObjectBindInfo;
@@ -16,17 +22,17 @@ namespace Zenject
             object concreteIdentifier, List<TypeValuePair> extraArguments, GameObjectCreationParameters gameObjectBindInfo)
             : base(container, componentType, concreteIdentifier, extraArguments)
         {
-            _gameObjectBindInfo = gameObjectBindInfo;
+            this._gameObjectBindInfo = gameObjectBindInfo;
         }
 
         protected override GameObject GetGameObject(InjectContext context)
         {
-            if (_gameObjectBindInfo.Name == null)
+            if (this._gameObjectBindInfo.Name == null)
             {
-                _gameObjectBindInfo.Name = ConcreteIdentifier as string ?? ComponentType.Name();
+                this._gameObjectBindInfo.Name = this.ConcreteIdentifier as string ?? this.ComponentType.Name();
             }
 
-            return Container.CreateEmptyGameObject(_gameObjectBindInfo);
+            return this.Container.CreateEmptyGameObject(this._gameObjectBindInfo);
         }
     }
 }

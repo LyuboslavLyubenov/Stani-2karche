@@ -1,16 +1,15 @@
-namespace Assets.Scripts.Jokers.AskPlayerQuestion
+namespace Assets.Scripts.Jokers
 {
+
     using System;
 
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.Network.Jokers;
-
-    using Commands;
-    using Commands.Client;
-    using Commands.Jokers;
-    using EventArgs;
-
-    using Network.NetworkManagers;
-    using Utils;
+    using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Utils;
 
     using EventArgs = System.EventArgs;
 
@@ -67,7 +66,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             var responseCommand = new AskPlayerResponseCommand(this._OnReceivedAnswer);
             this.networkManager.CommandsManager.AddCommand(responseCommand);
 
-            this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, Timer_OnReceiveAnswerTimeout);
+            this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, this.Timer_OnReceiveAnswerTimeout);
             this.timer.AutoDispose = true;
             this.timer.RunOnUnityThread = true;
             this.timer.Start();
@@ -101,7 +100,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
 
         void DisposeTimer()
         {
-            if (timer == null)
+            if (this.timer == null)
             {
                 return;
             }
@@ -127,7 +126,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             var receivedSettingsCommand = new HelpFromFriendJokerSettingsCommand(this._OnReceivedSettings);
             this.networkManager.CommandsManager.AddCommand(receivedSettingsCommand);
 
-            this.timer = TimerUtils.ExecuteAfter(this.receiveSettingsTimeout, Timer_OnReceiveSettingsTimeout);
+            this.timer = TimerUtils.ExecuteAfter(this.receiveSettingsTimeout, this.Timer_OnReceiveSettingsTimeout);
             this.timer.RunOnUnityThread = true;
             this.timer.Start();
 
@@ -141,7 +140,7 @@ namespace Assets.Scripts.Jokers.AskPlayerQuestion
             this.OnReceivedSettings = null;
             this.OnReceiveSettingsTimeout = null;
 
-            DisposeTimer();
+            this.DisposeTimer();
         }
     }
 }

@@ -1,13 +1,6 @@
 #if !UNITY_METRO && !UNITY_WEBPLAYER && (UNITY_PRO_LICENSE || !(UNITY_ANDROID || UNITY_IPHONE))
 #define UTT_SOCKETS_SUPPORTED
 #endif
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using UnityEngine;
-using UnityTest.IntegrationTestRunner;
 #if UTT_SOCKETS_SUPPORTED
 using System.Net;
 using System.Net.Sockets;
@@ -15,11 +8,21 @@ using System.Net.NetworkInformation;
 #endif
 
 #if UNITY_EDITOR
-using UnityEditorInternal;
+
 #endif
 
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
+    using UnityEditorInternal;
+
+    using UnityEngine;
+
     public class TestRunnerConfigurator
     {
         public static string integrationTestsNetwork = "networkconfig.txt";
@@ -37,8 +40,8 @@ namespace UnityTest
 
         public TestRunnerConfigurator()
         {
-            CheckForBatchMode();
-            CheckForSendingResultsOverNetwork();
+            this.CheckForBatchMode();
+            this.CheckForSendingResultsOverNetwork();
         }
 
 #if UNITY_EDITOR
@@ -145,7 +148,7 @@ namespace UnityTest
             isBatchRun = true;
 #elif UNITY_EDITOR
             if (Application.isEditor && InternalEditorUtility.inBatchMode)
-                isBatchRun = true;
+                this.isBatchRun = true;
 #else
             if (GetTextFromTextAsset(batchRunFileMarker) != null) isBatchRun = true;
 #endif

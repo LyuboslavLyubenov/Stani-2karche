@@ -1,11 +1,16 @@
 #if !NOT_UNITY3D
 
-using System.Collections.Generic;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.PrefabCreators
 {
+
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+
+    using UnityEngine;
+
     public class PrefabInstantiatorCached : IPrefabInstantiator
     {
         readonly IPrefabInstantiator _subInstantiator;
@@ -14,14 +19,14 @@ namespace Zenject
 
         public PrefabInstantiatorCached(IPrefabInstantiator subInstantiator)
         {
-            _subInstantiator = subInstantiator;
+            this._subInstantiator = subInstantiator;
         }
 
         public List<TypeValuePair> ExtraArguments
         {
             get
             {
-                return _subInstantiator.ExtraArguments;
+                return this._subInstantiator.ExtraArguments;
             }
         }
 
@@ -29,13 +34,13 @@ namespace Zenject
         {
             get
             {
-                return _subInstantiator.GameObjectCreationParameters;
+                return this._subInstantiator.GameObjectCreationParameters;
             }
         }
 
         public UnityEngine.Object GetPrefab()
         {
-            return _subInstantiator.GetPrefab();
+            return this._subInstantiator.GetPrefab();
         }
 
         public IEnumerator<GameObject> Instantiate(List<TypeValuePair> args)
@@ -44,20 +49,20 @@ namespace Zenject
             // the arguments might change when called after the first time
             Assert.IsEmpty(args);
 
-            if (_gameObject != null)
+            if (this._gameObject != null)
             {
-                yield return _gameObject;
+                yield return this._gameObject;
                 yield break;
             }
 
-            var runner = _subInstantiator.Instantiate(new List<TypeValuePair>());
+            var runner = this._subInstantiator.Instantiate(new List<TypeValuePair>());
 
             // First get instance
             bool hasMore = runner.MoveNext();
 
-            _gameObject = runner.Current;
+            this._gameObject = runner.Current;
 
-            yield return _gameObject;
+            yield return this._gameObject;
 
             // Now do injection
             while (hasMore)

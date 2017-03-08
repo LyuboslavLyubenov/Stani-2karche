@@ -1,21 +1,19 @@
-namespace Assets.Scripts.Jokers.AskPlayerQuestion
+namespace Assets.Scripts.Jokers.Routers
 {
+
     using System;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Scripts.Utils;
 
     using UnityEngine;
-
-    using Commands;
-    using Commands.Client;
-    using Commands.Jokers;
-    using Commands.Server;
-    using IO;
-
-    using Network.NetworkManagers;
-    using Utils;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;

@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Common;
+
     public class TestFilterSettings
     {
         public bool ShowSucceeded;

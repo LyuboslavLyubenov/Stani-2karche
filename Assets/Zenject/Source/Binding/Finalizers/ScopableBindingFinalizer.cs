@@ -1,9 +1,16 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Finalizers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.Singleton;
+    using Assets.Zenject.Source.Providers.Singleton.Standard;
+
     public class ScopableBindingFinalizer : ProviderBindingFinalizer
     {
         readonly SingletonTypes _singletonType;
@@ -16,21 +23,21 @@ namespace Zenject
             Func<DiContainer, Type, IProvider> providerFactory)
             : base(bindInfo)
         {
-            _singletonType = singletonType;
-            _providerFactory = providerFactory;
-            _singletonSpecificId = singletonSpecificId;
+            this._singletonType = singletonType;
+            this._providerFactory = providerFactory;
+            this._singletonSpecificId = singletonSpecificId;
         }
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            if (BindInfo.ToChoice == ToChoices.Self)
+            if (this.BindInfo.ToChoice == ToChoices.Self)
             {
-                Assert.IsEmpty(BindInfo.ToTypes);
-                FinalizeBindingSelf(container);
+                Assert.IsEmpty(this.BindInfo.ToTypes);
+                this.FinalizeBindingSelf(container);
             }
             else
             {
-                FinalizeBindingConcrete(container, BindInfo.ToTypes);
+                this.FinalizeBindingConcrete(container, this.BindInfo.ToTypes);
             }
         }
 
@@ -42,37 +49,37 @@ namespace Zenject
                 return;
             }
 
-            switch (BindInfo.Scope)
+            switch (this.BindInfo.Scope)
             {
                 case ScopeTypes.Singleton:
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) => container.SingletonProviderCreator.CreateProviderStandard(
                             new StandardSingletonDeclaration(
                                 concreteType,
-                                BindInfo.ConcreteIdentifier,
-                                BindInfo.Arguments,
-                                _singletonType,
-                                _singletonSpecificId),
-                            _providerFactory));
+                                this.BindInfo.ConcreteIdentifier,
+                                this.BindInfo.Arguments,
+                                this._singletonType,
+                                this._singletonSpecificId),
+                            this._providerFactory));
                     break;
                 }
                 case ScopeTypes.Transient:
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
-                        container, concreteTypes, _providerFactory);
+                    this.RegisterProvidersForAllContractsPerConcreteType(
+                        container, concreteTypes, this._providerFactory);
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) =>
                             new CachedProvider(
-                                _providerFactory(container, concreteType)));
+                                this._providerFactory(container, concreteType)));
                     break;
                 }
                 default:
@@ -84,34 +91,34 @@ namespace Zenject
 
         void FinalizeBindingSelf(DiContainer container)
         {
-            switch (BindInfo.Scope)
+            switch (this.BindInfo.Scope)
             {
                 case ScopeTypes.Singleton:
                 {
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) => container.SingletonProviderCreator.CreateProviderStandard(
                             new StandardSingletonDeclaration(
                                 contractType,
-                                BindInfo.ConcreteIdentifier,
-                                BindInfo.Arguments,
-                                _singletonType,
-                                _singletonSpecificId),
-                            _providerFactory));
+                                this.BindInfo.ConcreteIdentifier,
+                                this.BindInfo.Arguments,
+                                this._singletonType,
+                                this._singletonSpecificId),
+                            this._providerFactory));
                     break;
                 }
                 case ScopeTypes.Transient:
                 {
-                    RegisterProviderPerContract(container, _providerFactory);
+                    this.RegisterProviderPerContract(container, this._providerFactory);
                     break;
                 }
                 case ScopeTypes.Cached:
                 {
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
                             new CachedProvider(
-                                _providerFactory(container, contractType)));
+                                this._providerFactory(container, contractType)));
                     break;
                 }
                 default:

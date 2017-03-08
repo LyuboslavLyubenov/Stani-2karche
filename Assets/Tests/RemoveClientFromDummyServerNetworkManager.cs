@@ -2,9 +2,9 @@
 {
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
-
-    using Zenject;
+    using Assets.Zenject.Source.Usage;
 
     public class RemoveClientFromDummyServerNetworkManager : ExtendedMonoBehaviour
     {

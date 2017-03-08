@@ -1,9 +1,13 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton.SubContainer
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+
     public class SubContainerSingletonProviderCreatorByMethod
     {
         readonly SingletonMarkRegistry _markRegistry;
@@ -15,15 +19,15 @@ namespace Zenject
             DiContainer container,
             SingletonMarkRegistry markRegistry)
         {
-            _markRegistry = markRegistry;
-            _container = container;
+            this._markRegistry = markRegistry;
+            this._container = container;
         }
 
         public IProvider CreateProvider(
             Type resultType, object concreteIdentifier,
             Action<DiContainer> installMethod, object identifier)
         {
-            _markRegistry.MarkSingleton(
+            this._markRegistry.MarkSingleton(
                 new SingletonId(resultType, concreteIdentifier),
                 SingletonTypes.ToSubContainerMethod);
 
@@ -32,13 +36,13 @@ namespace Zenject
             var subContainerSingletonId = new MethodSingletonId(
                 concreteIdentifier, installMethod);
 
-            if (!_subContainerCreators.TryGetValue(subContainerSingletonId, out subContainerCreator))
+            if (!this._subContainerCreators.TryGetValue(subContainerSingletonId, out subContainerCreator))
             {
                 subContainerCreator = new SubContainerCreatorCached(
                     new SubContainerCreatorByMethod(
-                        _container, installMethod));
+                        this._container, installMethod));
 
-                _subContainerCreators.Add(subContainerSingletonId, subContainerCreator);
+                this._subContainerCreators.Add(subContainerSingletonId, subContainerCreator);
             }
 
             return new SubContainerDependencyProvider(
@@ -52,8 +56,8 @@ namespace Zenject
 
             public MethodSingletonId(object concreteIdentifier, Delegate installerMethod)
             {
-                ConcreteIdentifier = concreteIdentifier;
-                InstallerDelegate = installerMethod;
+                this.ConcreteIdentifier = concreteIdentifier;
+                this.InstallerDelegate = installerMethod;
             }
 
             public override int GetHashCode()

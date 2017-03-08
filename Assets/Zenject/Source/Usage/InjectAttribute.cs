@@ -1,7 +1,8 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Usage
 {
+
+    using System;
+
     [AttributeUsage(AttributeTargets.Constructor
         | AttributeTargets.Method | AttributeTargets.Parameter
         | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]

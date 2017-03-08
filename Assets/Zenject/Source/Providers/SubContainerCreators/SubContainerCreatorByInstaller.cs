@@ -1,9 +1,14 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.SubContainerCreators
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Install;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class SubContainerCreatorByInstaller : ISubContainerCreator
     {
         readonly Type _installerType;
@@ -12,8 +17,8 @@ namespace Zenject
         public SubContainerCreatorByInstaller(
             DiContainer container, Type installerType)
         {
-            _installerType = installerType;
-            _container = container;
+            this._installerType = installerType;
+            this._container = container;
 
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType.Name());
@@ -21,10 +26,10 @@ namespace Zenject
 
         public DiContainer CreateSubContainer(List<TypeValuePair> args)
         {
-            var subContainer = _container.CreateSubContainer();
+            var subContainer = this._container.CreateSubContainer();
 
             var installer = (InstallerBase)subContainer.InstantiateExplicit(
-                _installerType, args);
+                this._installerType, args);
             installer.InstallBindings();
 
             subContainer.ResolveDependencyRoots();

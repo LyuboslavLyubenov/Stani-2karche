@@ -5,11 +5,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
-using UnityTest.IntegrationTestRunner;
 using UnityEngine.SceneManagement;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Common;
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     [Serializable]
     public class IntegrationTestsRunnerWindow : EditorWindow, IHasCustomMenu
     {

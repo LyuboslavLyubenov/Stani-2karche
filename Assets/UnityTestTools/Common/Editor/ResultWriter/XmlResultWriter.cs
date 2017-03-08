@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Common;
+
     public class XmlResultWriter
     {
         private readonly StringBuilder m_ResultWriter = new StringBuilder();

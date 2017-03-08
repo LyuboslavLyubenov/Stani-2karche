@@ -10,6 +10,10 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+    using Assets.UnityTestTools.Assertions.Comparers;
+
     [Serializable]
     public class AssertionExplorerWindow : EditorWindow
     {

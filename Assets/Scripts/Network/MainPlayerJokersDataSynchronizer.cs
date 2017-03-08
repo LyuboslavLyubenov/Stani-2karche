@@ -4,6 +4,7 @@ namespace Assets.Scripts.Network
     using System.Linq;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using Commands;
     using DTOs;

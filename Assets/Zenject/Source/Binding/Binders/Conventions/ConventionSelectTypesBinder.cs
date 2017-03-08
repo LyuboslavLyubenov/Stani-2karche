@@ -1,6 +1,6 @@
 #if !(UNITY_WSA && ENABLE_DOTNET)
 
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Conventions
 {
     public class ConventionSelectTypesBinder
     {
@@ -8,42 +8,42 @@ namespace Zenject
 
         public ConventionSelectTypesBinder(ConventionBindInfo bindInfo)
         {
-            _bindInfo = bindInfo;
+            this._bindInfo = bindInfo;
         }
 
         ConventionFilterTypesBinder CreateNextBinder()
         {
-            return new ConventionFilterTypesBinder(_bindInfo);
+            return new ConventionFilterTypesBinder(this._bindInfo);
         }
 
         public ConventionFilterTypesBinder AllTypes()
         {
             // Do nothing (this is the default)
-            return CreateNextBinder();
+            return this.CreateNextBinder();
         }
 
         public ConventionFilterTypesBinder AllClasses()
         {
-            _bindInfo.AddTypeFilter(t => t.IsClass);
-            return CreateNextBinder();
+            this._bindInfo.AddTypeFilter(t => t.IsClass);
+            return this.CreateNextBinder();
         }
 
         public ConventionFilterTypesBinder AllNonAbstractClasses()
         {
-            _bindInfo.AddTypeFilter(t => t.IsClass && !t.IsAbstract);
-            return CreateNextBinder();
+            this._bindInfo.AddTypeFilter(t => t.IsClass && !t.IsAbstract);
+            return this.CreateNextBinder();
         }
 
         public ConventionFilterTypesBinder AllAbstractClasses()
         {
-            _bindInfo.AddTypeFilter(t => t.IsClass && t.IsAbstract);
-            return CreateNextBinder();
+            this._bindInfo.AddTypeFilter(t => t.IsClass && t.IsAbstract);
+            return this.CreateNextBinder();
         }
 
         public ConventionFilterTypesBinder AllInterfaces()
         {
-            _bindInfo.AddTypeFilter(t => t.IsInterface);
-            return CreateNextBinder();
+            this._bindInfo.AddTypeFilter(t => t.IsInterface);
+            return this.CreateNextBinder();
         }
     }
 }

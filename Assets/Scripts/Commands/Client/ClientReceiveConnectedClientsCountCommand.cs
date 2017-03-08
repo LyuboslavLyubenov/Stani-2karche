@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Interfaces;
     using Utils;
 

@@ -5,6 +5,7 @@ namespace Assets.Tests
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Services;
 
     public class DummyIlanServersDiscoverer : ILANServersDiscoverer
     {

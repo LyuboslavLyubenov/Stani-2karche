@@ -1,15 +1,18 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
 #if !NOT_UNITY3D
-using UnityEngine;
+
 #endif
 
-namespace ModestTree.Util
+namespace Assets.Zenject.Source.Internal
 {
+
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using UnityEngine;
+
     public static class ReflectionUtil
     {
         public static bool IsGenericList(Type type)
@@ -118,14 +121,14 @@ namespace ModestTree.Util
 
             public PropertyMemberInfo(PropertyInfo propInfo)
             {
-                _propInfo = propInfo;
+                this._propInfo = propInfo;
             }
 
             public Type MemberType
             {
                 get
                 {
-                    return _propInfo.PropertyType;
+                    return this._propInfo.PropertyType;
                 }
             }
 
@@ -133,7 +136,7 @@ namespace ModestTree.Util
             {
                 get
                 {
-                    return _propInfo.Name;
+                    return this._propInfo.Name;
                 }
             }
 
@@ -148,23 +151,23 @@ namespace ModestTree.Util
                     {
                         // GetValue() doesn't work on webgl for some reason
                         // This is a bit slower though so only do this on webgl
-                        return _propInfo.GetGetMethod().Invoke(instance, null);
+                        return this._propInfo.GetGetMethod().Invoke(instance, null);
                     }
                     else
                     {
-                        return _propInfo.GetValue(instance, null);
+                        return this._propInfo.GetValue(instance, null);
                     }
 #endif
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Error occurred while accessing property '{0}'".Fmt(_propInfo.Name), e);
+                    throw new Exception("Error occurred while accessing property '{0}'".Fmt(this._propInfo.Name), e);
                 }
             }
 
             public void SetValue(object instance, object value)
             {
-                _propInfo.SetValue(instance, value, null);
+                this._propInfo.SetValue(instance, value, null);
             }
         }
 
@@ -174,14 +177,14 @@ namespace ModestTree.Util
 
             public FieldMemberInfo(FieldInfo fieldInfo)
             {
-                _fieldInfo = fieldInfo;
+                this._fieldInfo = fieldInfo;
             }
 
             public Type MemberType
             {
                 get
                 {
-                    return _fieldInfo.FieldType;
+                    return this._fieldInfo.FieldType;
                 }
             }
 
@@ -189,18 +192,18 @@ namespace ModestTree.Util
             {
                 get
                 {
-                    return _fieldInfo.Name;
+                    return this._fieldInfo.Name;
                 }
             }
 
             public object GetValue(object instance)
             {
-                return _fieldInfo.GetValue(instance);
+                return this._fieldInfo.GetValue(instance);
             }
 
             public void SetValue(object instance, object value)
             {
-                _fieldInfo.SetValue(instance, value);
+                this._fieldInfo.SetValue(instance, value);
             }
         }
     }

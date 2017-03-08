@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Install
 {
+
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Usage;
+
     public abstract class InstallerBase : IInstaller
     {
         [Inject]
@@ -14,7 +13,7 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 

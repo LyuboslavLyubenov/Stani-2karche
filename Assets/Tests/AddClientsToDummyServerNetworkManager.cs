@@ -1,13 +1,13 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
+﻿namespace Assets.Tests
 {
+
     using System.Collections;
 
-    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
-
-    using Zenject;
 
     public class AddClientsToDummyServerNetworkManager : ExtendedMonoBehaviour
     {

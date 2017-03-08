@@ -1,7 +1,15 @@
-using System;
-
-namespace Zenject
+namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders.Finalizers
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Validation;
+
     // Zero parameter
 
     public class CommandBindingFinalizer<TCommand, THandler>
@@ -15,7 +23,7 @@ namespace Zenject
             Func<THandler, Action> methodGetter, Func<DiContainer, IProvider> handlerProviderFactory)
             : base(bindInfo, handlerProviderFactory)
         {
-            _methodGetter = methodGetter;
+            this._methodGetter = methodGetter;
         }
 
         // The returned delegate is executed every time the command is executed
@@ -32,7 +40,7 @@ namespace Zenject
                 // Null check is necessary when using ToOptionalResolve
                 if (handler != null && !(handler is ValidationMarker))
                 {
-                    _methodGetter((THandler)handler)();
+                    this._methodGetter((THandler)handler)();
                 }
             };
         }
@@ -52,7 +60,7 @@ namespace Zenject
             Func<DiContainer, IProvider> handlerProviderFactory)
             : base(bindInfo, handlerProviderFactory)
         {
-            _methodGetter = methodGetter;
+            this._methodGetter = methodGetter;
         }
 
         // The returned delegate is executed every time the command is executed
@@ -69,7 +77,7 @@ namespace Zenject
                 // Null check is necessary when using ToOptionalResolve
                 if (handler != null && !(handler is ValidationMarker))
                 {
-                    _methodGetter((THandler)handler)(p1);
+                    this._methodGetter((THandler)handler)(p1);
                 }
             };
         }
@@ -89,7 +97,7 @@ namespace Zenject
             Func<DiContainer, IProvider> handlerProviderFactory)
             : base(bindInfo, handlerProviderFactory)
         {
-            _methodGetter = methodGetter;
+            this._methodGetter = methodGetter;
         }
 
         // The returned delegate is executed every time the command is executed
@@ -106,7 +114,7 @@ namespace Zenject
                 // Null check is necessary when using ToOptionalResolve
                 if (handler != null && !(handler is ValidationMarker))
                 {
-                    _methodGetter((THandler)handler)(p1, p2);
+                    this._methodGetter((THandler)handler)(p1, p2);
                 }
             };
         }
@@ -126,7 +134,7 @@ namespace Zenject
             Func<DiContainer, IProvider> handlerProviderFactory)
             : base(bindInfo, handlerProviderFactory)
         {
-            _methodGetter = methodGetter;
+            this._methodGetter = methodGetter;
         }
 
         // The returned delegate is executed every time the command is executed
@@ -143,7 +151,7 @@ namespace Zenject
                 // Null check is necessary when using ToOptionalResolve
                 if (handler != null && !(handler is ValidationMarker))
                 {
-                    _methodGetter((THandler)handler)(p1, p2, p3);
+                    this._methodGetter((THandler)handler)(p1, p2, p3);
                 }
             };
         }
@@ -163,7 +171,7 @@ namespace Zenject
             Func<DiContainer, IProvider> handlerProviderFactory)
             : base(bindInfo, handlerProviderFactory)
         {
-            _methodGetter = methodGetter;
+            this._methodGetter = methodGetter;
         }
 
         // The returned delegate is executed every time the command is executed
@@ -180,7 +188,7 @@ namespace Zenject
                 // Null check is necessary when using ToOptionalResolve
                 if (handler != null && !(handler is ValidationMarker))
                 {
-                    _methodGetter((THandler)handler)(p1, p2, p3, p4);
+                    this._methodGetter((THandler)handler)(p1, p2, p3, p4);
                 }
             };
         }
@@ -189,22 +197,22 @@ namespace Zenject
     // Five parameters
 
     public class CommandBindingFinalizer<TCommand, THandler, TParam1, TParam2, TParam3, TParam4, TParam5>
-        : CommandBindingFinalizerBase<TCommand, THandler, ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5>>
+        : CommandBindingFinalizerBase<TCommand, THandler, Action<TParam1, TParam2, TParam3, TParam4, TParam5>>
         where TCommand : Command<TParam1, TParam2, TParam3, TParam4, TParam5>
     {
-        readonly Func<THandler, ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5>> _methodGetter;
+        readonly Func<THandler, Action<TParam1, TParam2, TParam3, TParam4, TParam5>> _methodGetter;
 
         public CommandBindingFinalizer(
             BindInfo bindInfo,
-            Func<THandler, ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5>> methodGetter,
+            Func<THandler, Action<TParam1, TParam2, TParam3, TParam4, TParam5>> methodGetter,
             Func<DiContainer, IProvider> handlerProviderFactory)
             : base(bindInfo, handlerProviderFactory)
         {
-            _methodGetter = methodGetter;
+            this._methodGetter = methodGetter;
         }
 
         // The returned delegate is executed every time the command is executed
-        protected override ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5> GetCommandAction(
+        protected override Action<TParam1, TParam2, TParam3, TParam4, TParam5> GetCommandAction(
             IProvider handlerProvider, InjectContext handlerInjectContext)
         {
             // Here we lazily create/get the handler instance when the command is called
@@ -217,7 +225,7 @@ namespace Zenject
                 // Null check is necessary when using ToOptionalResolve
                 if (handler != null && !(handler is ValidationMarker))
                 {
-                    _methodGetter((THandler)handler)(p1, p2, p3, p4, p5);
+                    this._methodGetter((THandler)handler)(p1, p2, p3, p4, p5);
                 }
             };
         }

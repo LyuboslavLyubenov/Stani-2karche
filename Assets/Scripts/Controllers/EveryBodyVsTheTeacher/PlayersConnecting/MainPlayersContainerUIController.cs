@@ -4,13 +4,13 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
-
-    using Zenject;
 
     public class MainPlayersContainerUIController : MonoBehaviour
     {   

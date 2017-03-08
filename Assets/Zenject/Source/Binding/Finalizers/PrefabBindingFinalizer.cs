@@ -1,12 +1,22 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Finalizers
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+    using Assets.Zenject.Source.Providers.ComponentProviders;
+    using Assets.Zenject.Source.Providers.GameObjectProviders;
+    using Assets.Zenject.Source.Providers.PrefabCreators;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+
+    using UnityEngine;
+
     public class PrefabBindingFinalizer : ProviderBindingFinalizer
     {
         readonly GameObjectCreationParameters _gameObjectBindInfo;
@@ -18,20 +28,20 @@ namespace Zenject
             UnityEngine.Object prefab)
             : base(bindInfo)
         {
-            _gameObjectBindInfo = gameObjectBindInfo;
-            _prefab = prefab;
+            this._gameObjectBindInfo = gameObjectBindInfo;
+            this._prefab = prefab;
         }
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            if (BindInfo.ToChoice == ToChoices.Self)
+            if (this.BindInfo.ToChoice == ToChoices.Self)
             {
-                Assert.IsEmpty(BindInfo.ToTypes);
-                FinalizeBindingSelf(container);
+                Assert.IsEmpty(this.BindInfo.ToTypes);
+                this.FinalizeBindingSelf(container);
             }
             else
             {
-                FinalizeBindingConcrete(container, BindInfo.ToTypes);
+                this.FinalizeBindingConcrete(container, this.BindInfo.ToTypes);
             }
         }
 
@@ -51,34 +61,34 @@ namespace Zenject
 
         void FinalizeBindingConcrete(DiContainer container, List<Type> concreteTypes)
         {
-            switch (BindInfo.Scope)
+            switch (this.BindInfo.Scope)
             {
                 case ScopeTypes.Singleton:
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) => container.SingletonProviderCreator.CreateProviderForPrefab(
-                            _prefab,
+                            this._prefab,
                             concreteType,
-                            _gameObjectBindInfo,
-                            BindInfo.Arguments,
-                            BindInfo.ConcreteIdentifier));
+                            this._gameObjectBindInfo,
+                            this.BindInfo.Arguments,
+                            this.BindInfo.ConcreteIdentifier));
                     break;
                 }
                 case ScopeTypes.Transient:
                 {
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) =>
-                            CreateProviderForType(
+                            this.CreateProviderForType(
                                 concreteType,
                                 new PrefabInstantiator(
                                     container,
-                                    _gameObjectBindInfo,
-                                    BindInfo.Arguments,
-                                    new PrefabProvider(_prefab))));
+                                    this._gameObjectBindInfo,
+                                    this.BindInfo.Arguments,
+                                    new PrefabProvider(this._prefab))));
                     break;
                 }
                 case ScopeTypes.Cached:
@@ -86,15 +96,15 @@ namespace Zenject
                     var prefabCreator = new PrefabInstantiatorCached(
                         new PrefabInstantiator(
                             container,
-                            _gameObjectBindInfo,
-                            BindInfo.Arguments,
-                            new PrefabProvider(_prefab)));
+                            this._gameObjectBindInfo,
+                            this.BindInfo.Arguments,
+                            new PrefabProvider(this._prefab)));
 
-                    RegisterProvidersForAllContractsPerConcreteType(
+                    this.RegisterProvidersForAllContractsPerConcreteType(
                         container,
                         concreteTypes,
                         (_, concreteType) => new CachedProvider(
-                            CreateProviderForType(concreteType, prefabCreator)));
+                            this.CreateProviderForType(concreteType, prefabCreator)));
                     break;
                 }
                 default:
@@ -106,32 +116,32 @@ namespace Zenject
 
         void FinalizeBindingSelf(DiContainer container)
         {
-            switch (BindInfo.Scope)
+            switch (this.BindInfo.Scope)
             {
                 case ScopeTypes.Singleton:
                 {
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) => container.SingletonProviderCreator.CreateProviderForPrefab(
-                            _prefab,
+                            this._prefab,
                             contractType,
-                            _gameObjectBindInfo,
-                            BindInfo.Arguments,
-                            BindInfo.ConcreteIdentifier));
+                            this._gameObjectBindInfo,
+                            this.BindInfo.Arguments,
+                            this.BindInfo.ConcreteIdentifier));
                     break;
                 }
                 case ScopeTypes.Transient:
                 {
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
-                            CreateProviderForType(
+                            this.CreateProviderForType(
                                 contractType,
                                 new PrefabInstantiator(
                                     container,
-                                    _gameObjectBindInfo,
-                                    BindInfo.Arguments,
-                                    new PrefabProvider(_prefab))));
+                                    this._gameObjectBindInfo,
+                                    this.BindInfo.Arguments,
+                                    new PrefabProvider(this._prefab))));
                     break;
                 }
                 case ScopeTypes.Cached:
@@ -139,15 +149,15 @@ namespace Zenject
                     var prefabCreator = new PrefabInstantiatorCached(
                         new PrefabInstantiator(
                             container,
-                            _gameObjectBindInfo,
-                            BindInfo.Arguments,
-                            new PrefabProvider(_prefab)));
+                            this._gameObjectBindInfo,
+                            this.BindInfo.Arguments,
+                            new PrefabProvider(this._prefab)));
 
-                    RegisterProviderPerContract(
+                    this.RegisterProviderPerContract(
                         container,
                         (_, contractType) =>
                             new CachedProvider(
-                                CreateProviderForType(contractType, prefabCreator)));
+                                this.CreateProviderForType(contractType, prefabCreator)));
                     break;
                 }
                 default:

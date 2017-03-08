@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Interfaces;
 
     using EventArgs = System.EventArgs;

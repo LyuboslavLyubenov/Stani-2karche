@@ -6,6 +6,7 @@
     using UnityEngine;
 
     using Assets.Scripts.Exceptions;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Network.NetworkManagers;
 
     using Commands;

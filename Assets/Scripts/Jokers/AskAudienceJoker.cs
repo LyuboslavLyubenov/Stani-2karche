@@ -14,7 +14,7 @@
     using Controllers;
     using EventArgs;
     using Interfaces;
-    using AudienceAnswerPoll;
+
     using Localization;
 
     using EventArgs = System.EventArgs;

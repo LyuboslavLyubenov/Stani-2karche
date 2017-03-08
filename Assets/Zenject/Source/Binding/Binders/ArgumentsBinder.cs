@@ -1,8 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+
     public class ArgumentsBinder : ConditionBinder
     {
         public ArgumentsBinder(BindInfo bindInfo)
@@ -12,13 +16,13 @@ namespace Zenject
 
         public ConditionBinder WithArguments(params object[] args)
         {
-            BindInfo.Arguments = InjectUtil.CreateArgList(args);
+            this.BindInfo.Arguments = InjectUtil.CreateArgList(args);
             return this;
         }
 
         public ConditionBinder WithArgumentsExplicit(IEnumerable<TypeValuePair> extraArgs)
         {
-            BindInfo.Arguments = extraArgs.ToList();
+            this.BindInfo.Arguments = extraArgs.ToList();
             return this;
         }
     }

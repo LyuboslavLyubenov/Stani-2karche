@@ -1,18 +1,17 @@
 #if !UNITY_METRO && (UNITY_PRO_LICENSE || !(UNITY_ANDROID || UNITY_IPHONE))
 #define UTT_SOCKETS_SUPPORTED
 #endif
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityTest.IntegrationTestRunner;
 
 #if UTT_SOCKETS_SUPPORTED
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 #endif
 
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System.Collections.Generic;
+
     public class NetworkResultSender : ITestRunnerCallback
     {
 #if UTT_SOCKETS_SUPPORTED
@@ -33,7 +32,7 @@ namespace UnityTest
 
         private bool SendDTO(ResultDTO dto)
         {
-            if (m_LostConnection) return false;
+            if (this.m_LostConnection) return false;
 #if UTT_SOCKETS_SUPPORTED 
             try
             {
@@ -74,39 +73,39 @@ namespace UnityTest
 
         public bool Ping()
         {
-            var result = SendDTO(ResultDTO.CreatePing());
-            m_LostConnection = false;
+            var result = this.SendDTO(ResultDTO.CreatePing());
+            this.m_LostConnection = false;
             return result;
         }
 
         public void RunStarted(string platform, List<TestComponent> testsToRun)
         {
-            SendDTO(ResultDTO.CreateRunStarted());
+            this.SendDTO(ResultDTO.CreateRunStarted());
         }
 
         public void RunFinished(List<TestResult> testResults)
         {
-            SendDTO(ResultDTO.CreateRunFinished(testResults));
+            this.SendDTO(ResultDTO.CreateRunFinished(testResults));
         }
 
         public void TestStarted(TestResult test)
         {
-            SendDTO(ResultDTO.CreateTestStarted(test));
+            this.SendDTO(ResultDTO.CreateTestStarted(test));
         }
 
         public void TestFinished(TestResult test)
         {
-            SendDTO(ResultDTO.CreateTestFinished(test));
+            this.SendDTO(ResultDTO.CreateTestFinished(test));
         }
 
         public void AllScenesFinished()
         {
-            SendDTO (ResultDTO.CreateAllScenesFinished ());
+            this.SendDTO (ResultDTO.CreateAllScenesFinished ());
         }
 
         public void TestRunInterrupted(List<ITestComponent> testsNotRun)
         {
-            RunFinished(new List<TestResult>());
+            this.RunFinished(new List<TestResult>());
         }
     }
 }

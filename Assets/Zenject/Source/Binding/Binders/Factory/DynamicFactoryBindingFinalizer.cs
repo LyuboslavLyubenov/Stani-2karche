@@ -1,8 +1,16 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Factory
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Factories;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+
     public class DynamicFactoryBindingFinalizer<TContract> : ProviderBindingFinalizer
     {
         readonly Func<DiContainer, IProvider> _providerFunc;
@@ -16,19 +24,19 @@ namespace Zenject
             // when used with To<>, so we can only check IDynamicFactory
             Assert.That(factoryType.DerivesFrom<IDynamicFactory>());
 
-            _factoryType = factoryType;
-            _providerFunc = providerFunc;
+            this._factoryType = factoryType;
+            this._providerFunc = providerFunc;
         }
 
         protected override void OnFinalizeBinding(DiContainer container)
         {
-            var provider = _providerFunc(container);
+            var provider = this._providerFunc(container);
 
-            RegisterProviderForAllContracts(
+            this.RegisterProviderForAllContracts(
                 container,
                 new CachedProvider(
                     new TransientProvider(
-                        _factoryType,
+                        this._factoryType,
                         container,
                         InjectUtil.CreateArgListExplicit(
                             provider,

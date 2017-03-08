@@ -3,6 +3,9 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Extensions;
 
     using DTOs;

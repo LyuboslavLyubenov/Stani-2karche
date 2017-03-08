@@ -1,14 +1,17 @@
 #if !NOT_UNITY3D
 
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Install.Contexts
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
+    using UnityEngine;
+    using UnityEngine.Serialization;
+
     public class SceneDecoratorContext : Context
     {
         [FormerlySerializedAs("SceneName")]
@@ -21,7 +24,7 @@ namespace Zenject
         {
             get
             {
-                return _decoratedContractName;
+                return this._decoratedContractName;
             }
         }
 
@@ -29,29 +32,29 @@ namespace Zenject
         {
             get
             {
-                Assert.IsNotNull(_container);
-                return _container;
+                Assert.IsNotNull(this._container);
+                return this._container;
             }
         }
 
         public void Initialize(DiContainer container)
         {
-            Assert.IsNull(_container);
-            _container = container;
+            Assert.IsNull(this._container);
+            this._container = container;
 
             container.LazyInstanceInjector
-                .AddInstances(GetInjectableComponents().Cast<object>());
+                .AddInstances(this.GetInjectableComponents().Cast<object>());
         }
 
         public void InstallDecoratorSceneBindings()
         {
-            _container.Bind<SceneDecoratorContext>().FromInstance(this);
-            InstallSceneBindings();
+            this._container.Bind<SceneDecoratorContext>().FromInstance(this);
+            this.InstallSceneBindings();
         }
 
         public void InstallDecoratorInstallers()
         {
-            InstallInstallers();
+            this.InstallInstallers();
         }
 
         protected override IEnumerable<Component> GetInjectableComponents()

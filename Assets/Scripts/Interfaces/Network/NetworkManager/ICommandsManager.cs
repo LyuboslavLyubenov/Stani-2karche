@@ -1,6 +1,7 @@
-﻿namespace Assets.Scripts.Interfaces
+﻿namespace Assets.Scripts.Interfaces.Network.NetworkManager
 {
-    using Commands;
+
+    using Assets.Scripts.Commands;
 
     public interface ICommandsManager
     {

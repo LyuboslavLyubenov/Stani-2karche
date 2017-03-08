@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Assertions;
+
     [Serializable]
     public class PropertyResolver
     {

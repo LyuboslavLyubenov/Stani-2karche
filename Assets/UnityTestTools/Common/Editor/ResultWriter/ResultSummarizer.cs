@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Common;
+
     /// <summary>
     /// Summary description for ResultSummarizer.
     /// </summary>

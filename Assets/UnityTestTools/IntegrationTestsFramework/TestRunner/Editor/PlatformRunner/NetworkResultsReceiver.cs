@@ -10,6 +10,10 @@ using UnityEngine;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.Common;
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     [Serializable]
     public class NetworkResultsReceiver : EditorWindow
     {

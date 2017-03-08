@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Object = UnityEngine.Object;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions
 {
+
+    using UnityEngine;
+
+    using Object = UnityEngine.Object;
+
     public static class Assertions
     {
         public static void CheckAssertions()

@@ -10,6 +10,9 @@ using UnityEditor.SceneManagement;
 
 namespace UnityTest
 {
+
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     public static partial class Batch
     {
         const string k_ResultFilePathParam = "-resultFilePath=";

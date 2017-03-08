@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
-using ModestTree;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+
     [CustomEditor(typeof(SceneDecoratorContext))]
     public class SceneDecoratorContextEditor : ContextEditor
     {

@@ -1,8 +1,12 @@
-using System;
-using System.Collections.Generic;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton.SubContainer
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+
     public class SubContainerSingletonProviderCreatorByInstaller
     {
         readonly SingletonMarkRegistry _markRegistry;
@@ -14,14 +18,14 @@ namespace Zenject
             DiContainer container,
             SingletonMarkRegistry markRegistry)
         {
-            _markRegistry = markRegistry;
-            _container = container;
+            this._markRegistry = markRegistry;
+            this._container = container;
         }
 
         public IProvider CreateProvider(
             Type resultType, object concreteIdentifier, Type installerType, object identifier)
         {
-            _markRegistry.MarkSingleton(
+            this._markRegistry.MarkSingleton(
                 resultType, concreteIdentifier,
                 SingletonTypes.ToSubContainerInstaller);
 
@@ -30,13 +34,13 @@ namespace Zenject
 
             ISubContainerCreator subContainerCreator;
 
-            if (!_subContainerCreators.TryGetValue(subContainerSingletonId, out subContainerCreator))
+            if (!this._subContainerCreators.TryGetValue(subContainerSingletonId, out subContainerCreator))
             {
                 subContainerCreator = new SubContainerCreatorCached(
                     new SubContainerCreatorByInstaller(
-                        _container, installerType));
+                        this._container, installerType));
 
-                _subContainerCreators.Add(subContainerSingletonId, subContainerCreator);
+                this._subContainerCreators.Add(subContainerSingletonId, subContainerCreator);
             }
 
             return new SubContainerDependencyProvider(
@@ -50,8 +54,8 @@ namespace Zenject
 
             public InstallerSingletonId(object concreteIdentifier, Type installerType)
             {
-                ConcreteIdentifier = concreteIdentifier;
-                InstallerType = installerType;
+                this.ConcreteIdentifier = concreteIdentifier;
+                this.InstallerType = installerType;
             }
 
             public override int GetHashCode()

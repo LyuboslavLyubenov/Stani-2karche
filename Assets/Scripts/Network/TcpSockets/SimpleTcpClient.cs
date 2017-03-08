@@ -11,6 +11,7 @@
 
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
 
     using SecuritySettings;
     using Utils;

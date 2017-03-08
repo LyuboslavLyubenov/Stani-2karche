@@ -7,11 +7,15 @@ using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using ModestTree;
 using UnityEngine.SceneManagement;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Util;
+
     public static class ZenUnityEditorUtil
     {
         // Don't use this

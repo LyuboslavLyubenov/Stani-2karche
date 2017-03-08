@@ -3,6 +3,7 @@
 
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.GameData;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using Commands.Server;
 

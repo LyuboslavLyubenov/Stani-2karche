@@ -1,12 +1,19 @@
 #if !NOT_UNITY3D
 
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.PrefabCreators
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.PrefabProviders;
+
+    using UnityEngine;
+
     public class PrefabInstantiator : IPrefabInstantiator
     {
         readonly IPrefabProvider _prefabProvider;
@@ -20,17 +27,17 @@ namespace Zenject
             List<TypeValuePair> extraArguments,
             IPrefabProvider prefabProvider)
         {
-            _prefabProvider = prefabProvider;
-            _extraArguments = extraArguments;
-            _container = container;
-            _gameObjectBindInfo = gameObjectBindInfo;
+            this._prefabProvider = prefabProvider;
+            this._extraArguments = extraArguments;
+            this._container = container;
+            this._gameObjectBindInfo = gameObjectBindInfo;
         }
 
         public GameObjectCreationParameters GameObjectCreationParameters
         {
             get
             {
-                return _gameObjectBindInfo;
+                return this._gameObjectBindInfo;
             }
         }
 
@@ -38,25 +45,25 @@ namespace Zenject
         {
             get
             {
-                return _extraArguments;
+                return this._extraArguments;
             }
         }
 
         public UnityEngine.Object GetPrefab()
         {
-            return _prefabProvider.GetPrefab();
+            return this._prefabProvider.GetPrefab();
         }
 
         public IEnumerator<GameObject> Instantiate(List<TypeValuePair> args)
         {
-            var gameObject = _container.CreateAndParentPrefab(GetPrefab(), _gameObjectBindInfo);
+            var gameObject = this._container.CreateAndParentPrefab(this.GetPrefab(), this._gameObjectBindInfo);
             Assert.IsNotNull(gameObject);
 
             // Return it before inject so we can do circular dependencies
             yield return gameObject;
 
-            _container.InjectGameObjectExplicit(
-                gameObject, true, _extraArguments.Concat(args).ToList());
+            this._container.InjectGameObjectExplicit(
+                gameObject, true, this._extraArguments.Concat(args).ToList());
         }
     }
 }

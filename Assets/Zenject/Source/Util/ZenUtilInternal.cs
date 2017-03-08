@@ -1,13 +1,18 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
 #if !NOT_UNITY3D
-using UnityEngine;
+
 #endif
 
-namespace Zenject.Internal
+namespace Assets.Zenject.Source.Util
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Internal;
+
+    using UnityEngine;
+
     public class ZenUtilInternal
     {
         // Due to the way that Unity overrides the Equals operator,

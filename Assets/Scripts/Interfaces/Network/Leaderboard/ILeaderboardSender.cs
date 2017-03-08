@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Network
+﻿namespace Assets.Scripts.Interfaces.Network.Leaderboard
 {
 
     using System;

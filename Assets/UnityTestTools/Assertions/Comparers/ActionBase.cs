@@ -1,11 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Comparers
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+
+    using UnityEngine;
+
     public abstract class ActionBase : ScriptableObject
     {
         public GameObject go;
@@ -27,10 +29,10 @@ namespace UnityTest
 
         public bool Compare()
         {
-            if (m_MemberResolver == null)
-                m_MemberResolver = new MemberResolver(go, thisPropertyPath);
-            m_ObjVal = m_MemberResolver.GetValue(UseCache);
-            var result = Compare(m_ObjVal);
+            if (this.m_MemberResolver == null)
+                this.m_MemberResolver = new MemberResolver(this.go, this.thisPropertyPath);
+            this.m_ObjVal = this.m_MemberResolver.GetValue(this.UseCache);
+            var result = this.Compare(this.m_ObjVal);
             return result;
         }
 
@@ -44,7 +46,7 @@ namespace UnityTest
         {
             string result = "";
 #if !UNITY_METRO
-            foreach (var prop in GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+            foreach (var prop in this.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                      .Where(info => info.FieldType.IsSerializable))
             {
                 var value = prop.GetValue(this);
@@ -70,11 +72,11 @@ namespace UnityTest
         public ActionBase CreateCopy(GameObject oldGameObject, GameObject newGameObject)
         {
 #if !UNITY_METRO
-            var newObj = CreateInstance(GetType()) as ActionBase;
+            var newObj = CreateInstance(this.GetType()) as ActionBase;
 #else
             var newObj = (ActionBase) this.MemberwiseClone();
 #endif
-            var fields = GetFields(GetType());
+            var fields = this.GetFields(this.GetType());
             foreach (var field in fields)
             {
                 var value = field.GetValue(this);
@@ -95,7 +97,7 @@ namespace UnityTest
 
         public virtual string GetFailureMessage()
         {
-            return GetType().Name + " assertion failed.\n(" + go + ")." + thisPropertyPath + " failed. Value: " + m_ObjVal;
+            return this.GetType().Name + " assertion failed.\n(" + this.go + ")." + this.thisPropertyPath + " failed. Value: " + this.m_ObjVal;
         }
     }
 
@@ -103,7 +105,7 @@ namespace UnityTest
     {
         protected override bool Compare(object objVal)
         {
-            return Compare((T)objVal);
+            return this.Compare((T)objVal);
         }
         protected abstract bool Compare(T objVal);
 

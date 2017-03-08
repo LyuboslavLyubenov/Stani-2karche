@@ -1,10 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
-namespace UnityTest.IntegrationTestRunner
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using UnityEngine;
+
     class IntegrationTestsProvider
     {
         internal Dictionary<ITestComponent, HashSet<ITestComponent>> testCollection = new Dictionary<ITestComponent, HashSet<ITestComponent>>();
@@ -13,35 +15,35 @@ namespace UnityTest.IntegrationTestRunner
 
         public IntegrationTestsProvider(IEnumerable<ITestComponent> tests)
         {
-            testToRun = tests;
+            this.testToRun = tests;
             foreach (var test in tests.OrderBy(component => component))
             {
                 if (test.IsTestGroup())
                 {
                     throw new Exception(test.Name + " is test a group");
                 }
-                AddTestToList(test);
+                this.AddTestToList(test);
             }
-            if (currentTestGroup == null)
+            if (this.currentTestGroup == null)
             {
-                currentTestGroup = FindInnerTestGroup(TestComponent.NullTestComponent);
+                this.currentTestGroup = this.FindInnerTestGroup(TestComponent.NullTestComponent);
             }
         }
 
         private void AddTestToList(ITestComponent test)
         {
             var group = test.GetTestGroup();
-            if (!testCollection.ContainsKey(group))
-                testCollection.Add(group, new HashSet<ITestComponent>());
-            testCollection[group].Add(test);
+            if (!this.testCollection.ContainsKey(group))
+                this.testCollection.Add(group, new HashSet<ITestComponent>());
+            this.testCollection[group].Add(test);
             if (group == TestComponent.NullTestComponent) return;
-            AddTestToList(group);
+            this.AddTestToList(group);
         }
 
         public ITestComponent GetNextTest()
         {
-            var test = testCollection[currentTestGroup].First();
-            testCollection[currentTestGroup].Remove(test);
+            var test = this.testCollection[this.currentTestGroup].First();
+            this.testCollection[this.currentTestGroup].Remove(test);
             test.EnableTest(true);
             return test;
         }
@@ -51,7 +53,7 @@ namespace UnityTest.IntegrationTestRunner
             try
             {
                 test.EnableTest(false);
-                currentTestGroup = FindNextTestGroup(currentTestGroup);
+                this.currentTestGroup = this.FindNextTestGroup(this.currentTestGroup);
             }
             catch (MissingReferenceException e)
             {
@@ -64,42 +66,42 @@ namespace UnityTest.IntegrationTestRunner
             if (testGroup == null) 
                 throw new Exception ("No test left");
 
-            if (testCollection[testGroup].Any())
+            if (this.testCollection[testGroup].Any())
             {
                 testGroup.EnableTest(true);
-                return FindInnerTestGroup(testGroup);
+                return this.FindInnerTestGroup(testGroup);
             }
-            testCollection.Remove(testGroup);
+            this.testCollection.Remove(testGroup);
             testGroup.EnableTest(false);
 
             var parentTestGroup = testGroup.GetTestGroup();
             if (parentTestGroup == null) return null;
 
-            testCollection[parentTestGroup].Remove(testGroup);
-            return FindNextTestGroup(parentTestGroup);
+            this.testCollection[parentTestGroup].Remove(testGroup);
+            return this.FindNextTestGroup(parentTestGroup);
         }
 
         private ITestComponent FindInnerTestGroup(ITestComponent group)
         {
-            var innerGroups = testCollection[group];
+            var innerGroups = this.testCollection[group];
             foreach (var innerGroup in innerGroups)
             {
                 if (!innerGroup.IsTestGroup()) continue;
                 innerGroup.EnableTest(true);
-                return FindInnerTestGroup(innerGroup);
+                return this.FindInnerTestGroup(innerGroup);
             }
             return group;
         }
 
         public bool AnyTestsLeft()
         {
-            return testCollection.Count != 0;
+            return this.testCollection.Count != 0;
         }
 
         public List<ITestComponent> GetRemainingTests()
         {
             var remainingTests = new List<ITestComponent>();
-            foreach (var test in testCollection)
+            foreach (var test in this.testCollection)
             {
                 remainingTests.AddRange(test.Value);
             }

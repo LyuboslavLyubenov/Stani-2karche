@@ -1,14 +1,18 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Usage;
+
     public interface ICommand
     {
     }
 
     // Zero params
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command : ICommand
     {
         Action _handler;
@@ -16,7 +20,7 @@ namespace Zenject
         [Inject]
         public void Construct(Action handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -27,12 +31,12 @@ namespace Zenject
 
         public void Execute()
         {
-            _handler();
+            this._handler();
         }
     }
 
     // One param
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command<TParam1> : ICommand
     {
         Action<TParam1> _handler;
@@ -40,7 +44,7 @@ namespace Zenject
         [Inject]
         public void Construct(Action<TParam1> handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -51,12 +55,12 @@ namespace Zenject
 
         public void Execute(TParam1 param1)
         {
-            _handler(param1);
+            this._handler(param1);
         }
     }
 
     // Two params
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command<TParam1, TParam2> : ICommand
     {
         Action<TParam1, TParam2> _handler;
@@ -64,7 +68,7 @@ namespace Zenject
         [Inject]
         public void Construct(Action<TParam1, TParam2> handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -75,12 +79,12 @@ namespace Zenject
 
         public void Execute(TParam1 param1, TParam2 param2)
         {
-            _handler(param1, param2);
+            this._handler(param1, param2);
         }
     }
 
     // Three params
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command<TParam1, TParam2, TParam3> : ICommand
     {
         Action<TParam1, TParam2, TParam3> _handler;
@@ -88,7 +92,7 @@ namespace Zenject
         [Inject]
         public void Construct(Action<TParam1, TParam2, TParam3> handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -99,12 +103,12 @@ namespace Zenject
 
         public void Execute(TParam1 param1, TParam2 param2, TParam3 param3)
         {
-            _handler(param1, param2, param3);
+            this._handler(param1, param2, param3);
         }
     }
 
     // Four params
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command<TParam1, TParam2, TParam3, TParam4> : ICommand
     {
         Action<TParam1, TParam2, TParam3, TParam4> _handler;
@@ -112,7 +116,7 @@ namespace Zenject
         [Inject]
         public void Construct(Action<TParam1, TParam2, TParam3, TParam4> handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -123,20 +127,20 @@ namespace Zenject
 
         public void Execute(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4)
         {
-            _handler(param1, param2, param3, param4);
+            this._handler(param1, param2, param3, param4);
         }
     }
 
     // Five params
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command<TParam1, TParam2, TParam3, TParam4, TParam5> : ICommand
     {
-        ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5> _handler;
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5> _handler;
 
         [Inject]
-        public void Construct(ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5> handler, DiContainer container)
+        public void Construct(Action<TParam1, TParam2, TParam3, TParam4, TParam5> handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -147,20 +151,20 @@ namespace Zenject
 
         public void Execute(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5)
         {
-            _handler(param1, param2, param3, param4, param5);
+            this._handler(param1, param2, param3, param4, param5);
         }
     }
 
     // Six params
-    [ZenjectAllowDuringValidationAttribute]
+    [ZenjectAllowDuringValidation]
     public abstract class Command<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> : ICommand
     {
-        ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> _handler;
+        Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> _handler;
 
         [Inject]
-        public void Construct(ModestTree.Util.Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> handler, DiContainer container)
+        public void Construct(Action<TParam1, TParam2, TParam3, TParam4, TParam5, TParam6> handler, DiContainer container)
         {
-            _handler = handler;
+            this._handler = handler;
 
             if (container.IsValidating)
             // During validation, we want to instantiate whatever class we're calling immediately
@@ -171,7 +175,7 @@ namespace Zenject
 
         public void Execute(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5, TParam6 param6)
         {
-            _handler(param1, param2, param3, param4, param5, param6);
+            this._handler(param1, param2, param3, param4, param5, param6);
         }
     }
 }

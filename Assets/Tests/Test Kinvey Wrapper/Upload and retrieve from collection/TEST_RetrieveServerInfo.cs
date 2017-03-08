@@ -6,7 +6,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
 {
 
     using Assets.Scripts.DTOs;
-    using Assets.Scripts.DTOs.KinveySerializableObj;
+    using Assets.Scripts.DTOs.KinveyDtoObjs;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils.Unity;
 

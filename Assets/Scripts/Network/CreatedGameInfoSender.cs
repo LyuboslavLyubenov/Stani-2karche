@@ -2,6 +2,7 @@
 {
     using System;
 
+    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using Interfaces;

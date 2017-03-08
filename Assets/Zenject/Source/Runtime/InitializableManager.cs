@@ -1,11 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using ModestTree.Util;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Runtime
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Usage;
+
     // Responsibilities:
     // - Run Initialize() on all Iinitializable's, in the order specified by InitPriority
     public class InitializableManager
@@ -18,7 +20,7 @@ namespace Zenject
             [Inject(Optional = true, Source = InjectSources.Local)]
             List<ValuePair<Type, int>> priorities)
         {
-            _initializables = new List<InitializableInfo>();
+            this._initializables = new List<InitializableInfo>();
 
             foreach (var initializable in initializables)
             {
@@ -27,20 +29,20 @@ namespace Zenject
                 var matches = priorities.Where(x => initializable.GetType().DerivesFromOrEqual(x.First)).Select(x => x.Second).ToList();
                 int priority = matches.IsEmpty() ? 0 : matches.Distinct().Single();
 
-                _initializables.Add(new InitializableInfo(initializable, priority));
+                this._initializables.Add(new InitializableInfo(initializable, priority));
             }
         }
 
         public void Initialize()
         {
-            _initializables = _initializables.OrderBy(x => x.Priority).ToList();
+            this._initializables = this._initializables.OrderBy(x => x.Priority).ToList();
 
-            foreach (var initializable in _initializables.Select(x => x.Initializable).GetDuplicates())
+            foreach (var initializable in this._initializables.Select(x => x.Initializable).GetDuplicates())
             {
                 Assert.That(false, "Found duplicate IInitializable with type '{0}'".Fmt(initializable.GetType()));
             }
 
-            foreach (var initializable in _initializables)
+            foreach (var initializable in this._initializables)
             {
                 Log.Debug("Initializing '" + initializable.Initializable.GetType() + "'");
 
@@ -68,8 +70,8 @@ namespace Zenject
 
             public InitializableInfo(IInitializable initializable, int priority)
             {
-                Initializable = initializable;
-                Priority = priority;
+                this.Initializable = initializable;
+                this.Priority = priority;
             }
         }
     }

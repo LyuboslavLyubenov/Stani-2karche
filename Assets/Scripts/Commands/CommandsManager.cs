@@ -4,6 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Interfaces;
 
     public class CommandsManager : ICommandsManager

@@ -1,5 +1,8 @@
-namespace Zenject
+namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders
 {
+
+    using Assets.Zenject.Source.Main;
+
     public static class CommandExtensions
     {
         // Zero parameters

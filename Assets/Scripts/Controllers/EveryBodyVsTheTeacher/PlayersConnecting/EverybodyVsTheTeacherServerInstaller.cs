@@ -1,11 +1,11 @@
 ﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.States.EverybodyVsTheTeacherServer;
-
-    using Zenject;
+    using Assets.Zenject.Source.Install;
 
     public class EverybodyVsTheTeacherServerInstaller : MonoInstaller
     {

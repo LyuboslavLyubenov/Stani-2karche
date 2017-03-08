@@ -1,12 +1,13 @@
-namespace Assets.Scripts.Jokers
+namespace Assets.Scripts.Jokers.Routers
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
-    using Commands;
-    using Interfaces;
-    
     using EventArgs = System.EventArgs;
 
     public class DisableRandomAnswersJokerRouter : IDisableRandomAnswersRouter
@@ -48,7 +49,7 @@ namespace Assets.Scripts.Jokers
 
             var settingsCommand = new NetworkCommandData("DisableRandomAnswersJokerSettings");
             settingsCommand.AddOption("AnswersToDisableCount", answersToDisableCount.ToString());
-            networkManager.SendClientCommand(playerData.ConnectionId, settingsCommand);
+            this.networkManager.SendClientCommand(this.playerData.ConnectionId, settingsCommand);
 
             this.OnActivated(this, EventArgs.Empty);
         }

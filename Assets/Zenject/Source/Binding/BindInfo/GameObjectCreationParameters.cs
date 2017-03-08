@@ -1,10 +1,14 @@
 #if !NOT_UNITY3D
 
-using System;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.BindInfo
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Main;
+
+    using UnityEngine;
+
     public class GameObjectCreationParameters
     {
         public string Name

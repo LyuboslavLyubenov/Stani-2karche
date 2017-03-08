@@ -1,13 +1,19 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Validation;
+
+    using UnityEngine;
+
     public abstract class AddToGameObjectComponentProviderBase : IProvider
     {
         readonly object _concreteIdentifier;
@@ -21,17 +27,17 @@ namespace Zenject
         {
             Assert.That(componentType.DerivesFrom<Component>());
 
-            _concreteIdentifier = concreteIdentifier;
-            _extraArguments = extraArguments;
-            _componentType = componentType;
-            _container = container;
+            this._concreteIdentifier = concreteIdentifier;
+            this._extraArguments = extraArguments;
+            this._componentType = componentType;
+            this._container = container;
         }
 
         protected DiContainer Container
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
@@ -39,7 +45,7 @@ namespace Zenject
         {
             get
             {
-                return _componentType;
+                return this._componentType;
             }
         }
 
@@ -47,13 +53,13 @@ namespace Zenject
         {
             get
             {
-                return _concreteIdentifier;
+                return this._concreteIdentifier;
             }
         }
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _componentType;
+            return this._componentType;
         }
 
         public IEnumerator<List<object>> GetAllInstancesWithInjectSplit(InjectContext context, List<TypeValuePair> args)
@@ -63,15 +69,15 @@ namespace Zenject
             object instance;
 
             // We still want to make sure we can get the game object during validation
-            var gameObj = GetGameObject(context);
+            var gameObj = this.GetGameObject(context);
 
-            if (!_container.IsValidating || DiContainer.CanCreateOrInjectDuringValidation(_componentType))
+            if (!this._container.IsValidating || DiContainer.CanCreateOrInjectDuringValidation(this._componentType))
             {
-                instance = gameObj.AddComponent(_componentType);
+                instance = gameObj.AddComponent(this._componentType);
             }
             else
             {
-                instance = new ValidationMarker(_componentType);
+                instance = new ValidationMarker(this._componentType);
             }
 
             // Note that we don't just use InstantiateComponentOnNewGameObjectExplicit here
@@ -80,13 +86,13 @@ namespace Zenject
 
             var injectArgs = new InjectArgs()
             {
-                ExtraArgs = _extraArguments.Concat(args).ToList(),
+                ExtraArgs = this._extraArguments.Concat(args).ToList(),
                 UseAllArgs = true,
                 Context = context,
-                ConcreteIdentifier = _concreteIdentifier,
+                ConcreteIdentifier = this._concreteIdentifier,
             };
 
-            _container.InjectExplicit(instance, _componentType, injectArgs);
+            this._container.InjectExplicit(instance, this._componentType, injectArgs);
 
             Assert.That(injectArgs.ExtraArgs.IsEmpty());
         }

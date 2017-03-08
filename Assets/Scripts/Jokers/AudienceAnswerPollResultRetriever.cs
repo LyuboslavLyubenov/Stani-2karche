@@ -1,19 +1,16 @@
-namespace Assets.Scripts.Jokers.AudienceAnswerPoll
+namespace Assets.Scripts.Jokers
 {
+
     using System;
     using System.Timers;
 
+    using Assets.Scripts.Commands;
+    using Assets.Scripts.Commands.Client;
+    using Assets.Scripts.Commands.Jokers;
+    using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.Network.Jokers;
-
-    using UnityEngine;
-
-    using Commands;
-    using Commands.Client;
-    using Commands.Jokers;
-    using EventArgs;
-
-    using Network.NetworkManagers;
-    using Utils;
+    using Assets.Scripts.Network.NetworkManagers;
+    using Assets.Scripts.Utils;
 
     using EventArgs = System.EventArgs;
 
@@ -78,7 +75,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
                 return;
             }
 
-            DisposeTimer();
+            this.DisposeTimer();
             this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
         }
 
@@ -91,7 +88,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
             this.networkManager.CommandsManager.AddCommand(receivedAskAudienceVoteResultCommand);
 
             this.timer.Dispose();
-            this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, Timer_OnReceiveAudienceVoteTimeout);
+            this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, this.Timer_OnReceiveAudienceVoteTimeout);
             this.timer.Start();
 
             ((IExtendedTimer)this.timer).RunOnUnityThread = true;
@@ -101,7 +98,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         private void DisposeTimer()
         {
-            if (timer == null)
+            if (this.timer == null)
             {
                 return;
             }
@@ -119,7 +116,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         private void Timer_OnReceiveAudienceVoteTimeout()
         {
-            DisposeTimer();
+            this.DisposeTimer();
 
             this.Activated = false;
             this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();
@@ -129,7 +126,7 @@ namespace Assets.Scripts.Jokers.AudienceAnswerPoll
 
         private void Timer_OnReceiveSettingsTimeout()
         {
-            DisposeTimer();
+            this.DisposeTimer();
 
             this.Activated = false;
             this.networkManager.CommandsManager.RemoveCommand<AudiencePollSettingsCommand>();

@@ -1,15 +1,18 @@
-using System;
-using System.Collections.Generic;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Factories
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+
     // Zero parameters
     public class Factory<TValue> : DynamicFactory<TValue>, IFactory<TValue>
     {
         // If you were hoping to override this method, use BindFactory<>.ToFactory instead
         public TValue Create()
         {
-            return CreateInternal(new List<TypeValuePair>());
+            return this.CreateInternal(new List<TypeValuePair>());
         }
 
         protected sealed override IEnumerable<Type> ParamTypes
@@ -28,7 +31,7 @@ namespace Zenject
         // If you were hoping to override this method, use BindFactory<>.ToFactory instead
         public TValue Create(TParam1 param)
         {
-            return CreateInternal(
+            return this.CreateInternal(
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param),
@@ -51,7 +54,7 @@ namespace Zenject
         // If you were hoping to override this method, use BindFactory<>.ToFactory instead
         public TValue Create(TParam1 param1, TParam2 param2)
         {
-            return CreateInternal(
+            return this.CreateInternal(
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),
@@ -76,7 +79,7 @@ namespace Zenject
         // If you were hoping to override this method, use BindFactory<>.ToFactory instead
         public TValue Create(TParam1 param1, TParam2 param2, TParam3 param3)
         {
-            return CreateInternal(
+            return this.CreateInternal(
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),
@@ -103,7 +106,7 @@ namespace Zenject
         // If you were hoping to override this method, use BindFactory<>.ToFactory instead
         public TValue Create(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4)
         {
-            return CreateInternal(
+            return this.CreateInternal(
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),
@@ -132,7 +135,7 @@ namespace Zenject
         // If you were hoping to override this method, use BindFactory<>.ToFactory instead
         public TValue Create(TParam1 param1, TParam2 param2, TParam3 param3, TParam4 param4, TParam5 param5)
         {
-            return CreateInternal(
+            return this.CreateInternal(
                 new List<TypeValuePair>()
                 {
                     InjectUtil.CreateTypePair(param1),

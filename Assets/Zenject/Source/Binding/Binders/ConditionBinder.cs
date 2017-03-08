@@ -1,9 +1,13 @@
-using System;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders
 {
+
+    using System;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class ConditionBinder : CopyIntoSubContainersBinder
     {
         public ConditionBinder(BindInfo bindInfo)
@@ -13,31 +17,31 @@ namespace Zenject
 
         public CopyIntoSubContainersBinder When(BindingCondition condition)
         {
-            BindInfo.Condition = condition;
+            this.BindInfo.Condition = condition;
             return this;
         }
 
         public CopyIntoSubContainersBinder WhenInjectedIntoInstance(object instance)
         {
-            BindInfo.Condition = r => ReferenceEquals(r.ObjectInstance, instance);
+            this.BindInfo.Condition = r => ReferenceEquals(r.ObjectInstance, instance);
             return this;
         }
 
         public CopyIntoSubContainersBinder WhenInjectedInto(params Type[] targets)
         {
-            BindInfo.Condition = r => targets.Where(x => r.ObjectType != null && r.ObjectType.DerivesFromOrEqual(x)).Any();
+            this.BindInfo.Condition = r => targets.Where(x => r.ObjectType != null && r.ObjectType.DerivesFromOrEqual(x)).Any();
             return this;
         }
 
         public CopyIntoSubContainersBinder WhenInjectedInto<T>()
         {
-            BindInfo.Condition = r => r.ObjectType != null && r.ObjectType.DerivesFromOrEqual(typeof(T));
+            this.BindInfo.Condition = r => r.ObjectType != null && r.ObjectType.DerivesFromOrEqual(typeof(T));
             return this;
         }
 
         public CopyIntoSubContainersBinder WhenNotInjectedInto<T>()
         {
-            BindInfo.Condition = r => r.ObjectType == null || !r.ObjectType.DerivesFromOrEqual(typeof(T));
+            this.BindInfo.Condition = r => r.ObjectType == null || !r.ObjectType.DerivesFromOrEqual(typeof(T));
             return this;
         }
     }

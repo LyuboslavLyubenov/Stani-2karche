@@ -4,9 +4,12 @@
     using System.Linq;
 
     using Assets.Scripts.Controllers.Lobby;
+    using Assets.Scripts.DTOs.KinveyDtoObjs;
     using Assets.Scripts.Interfaces;
-
-    using DTOs.KinveySerializableObj;
+    using Assets.Scripts.Interfaces.Network.Kinvey;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Scripts.Interfaces.Services;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
     using UnityEngine.UI;
@@ -16,8 +19,6 @@
     using EventArgs;
     using Network;
     using Utils.Unity;
-
-    using Zenject;
 
     using Debug = UnityEngine.Debug;
 

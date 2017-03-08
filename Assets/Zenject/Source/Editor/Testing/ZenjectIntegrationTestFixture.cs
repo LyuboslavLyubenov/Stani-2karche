@@ -5,11 +5,16 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using ModestTree;
-using Assert = ModestTree.Assert;
+
+using Assert = Assets.Zenject.Source.Internal.Assert;
 
 namespace Zenject
 {
+
+    using Assets.Zenject.Source.Install.Contexts;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Runtime.Kernels;
+
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ValidateOnlyAttribute : Attribute
     {

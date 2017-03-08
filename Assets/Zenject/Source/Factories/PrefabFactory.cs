@@ -1,10 +1,15 @@
 ﻿#if !NOT_UNITY3D
 
-using ModestTree;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Factories
 {
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Usage;
+
+    using UnityEngine;
+
     // This factory type can be useful if you want to control where the prefab comes from at runtime
     // rather than from within the installers
 
@@ -20,7 +25,7 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponent<T>(prefab);
+            return this._container.InstantiatePrefabForComponent<T>(prefab);
         }
 
         public virtual T Create(string prefabResourceName)
@@ -28,7 +33,7 @@ namespace Zenject
             Assert.That(!string.IsNullOrEmpty(prefabResourceName),
               "Null or empty prefab resource name given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return Create((GameObject)Resources.Load(prefabResourceName));
+            return this.Create((GameObject)Resources.Load(prefabResourceName));
         }
 
         // Note: We can't really validate here without access to the prefab
@@ -48,7 +53,7 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
+            return this._container.InstantiatePrefabForComponentExplicit<T>(
                 prefab, InjectUtil.CreateArgListExplicit(param));
         }
 
@@ -57,7 +62,7 @@ namespace Zenject
             Assert.That(!string.IsNullOrEmpty(prefabResourceName),
               "Null or empty prefab resource name given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return Create((GameObject)Resources.Load(prefabResourceName), param);
+            return this.Create((GameObject)Resources.Load(prefabResourceName), param);
         }
     }
 
@@ -73,7 +78,7 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
+            return this._container.InstantiatePrefabForComponentExplicit<T>(
                 prefab, InjectUtil.CreateArgListExplicit(param, param2));
         }
 
@@ -82,7 +87,7 @@ namespace Zenject
             Assert.That(!string.IsNullOrEmpty(prefabResourceName),
               "Null or empty prefab resource name given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return Create((GameObject)Resources.Load(prefabResourceName), param, param2);
+            return this.Create((GameObject)Resources.Load(prefabResourceName), param, param2);
         }
     }
 
@@ -98,7 +103,7 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
+            return this._container.InstantiatePrefabForComponentExplicit<T>(
                 prefab, InjectUtil.CreateArgListExplicit(param, param2, param3));
         }
 
@@ -107,7 +112,7 @@ namespace Zenject
             Assert.That(!string.IsNullOrEmpty(prefabResourceName),
               "Null or empty prefab resource name given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return Create((GameObject)Resources.Load(prefabResourceName), param, param2, param3);
+            return this.Create((GameObject)Resources.Load(prefabResourceName), param, param2, param3);
         }
     }
 
@@ -123,7 +128,7 @@ namespace Zenject
             Assert.That(prefab != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return _container.InstantiatePrefabForComponentExplicit<T>(
+            return this._container.InstantiatePrefabForComponentExplicit<T>(
                 prefab, InjectUtil.CreateArgListExplicit(param, param2, param3, param4));
         }
 
@@ -132,7 +137,7 @@ namespace Zenject
             Assert.That(!string.IsNullOrEmpty(prefabResourceName),
               "Null or empty prefab resource name given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
-            return Create((GameObject)Resources.Load(prefabResourceName), param, param2, param3, param4);
+            return this.Create((GameObject)Resources.Load(prefabResourceName), param, param2, param3, param4);
         }
     }
 }

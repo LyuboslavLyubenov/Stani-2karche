@@ -1,9 +1,14 @@
-using System;
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryToChoiceBinder
 {
+
+    using System;
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Internal;
+
     public class FactoryToChoiceBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract> : FactoryFromBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract>
     {
         public FactoryToChoiceBinder(
@@ -16,21 +21,21 @@ namespace Zenject
         // Note that this is the default, so not necessary to call
         public FactoryFromBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract> ToSelf()
         {
-            Assert.IsEqual(BindInfo.ToChoice, ToChoices.Self);
+            Assert.IsEqual(this.BindInfo.ToChoice, ToChoices.Self);
             return this;
         }
 
         public FactoryFromBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TConcrete> To<TConcrete>()
             where TConcrete : TContract
         {
-            BindInfo.ToChoice = ToChoices.Concrete;
-            BindInfo.ToTypes = new List<Type>()
+            this.BindInfo.ToChoice = ToChoices.Concrete;
+            this.BindInfo.ToTypes = new List<Type>()
             {
                 typeof(TConcrete)
             };
 
             return new FactoryFromBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TConcrete>(
-                BindInfo, FactoryType, FinalizerWrapper);
+                this.BindInfo, this.FactoryType, this.FinalizerWrapper);
         }
     }
 
@@ -45,7 +50,7 @@ namespace Zenject
 
         public FactoryToChoiceBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract> WithId(object identifier)
         {
-            BindInfo.Identifier = identifier;
+            this.BindInfo.Identifier = identifier;
             return this;
         }
     }

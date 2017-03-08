@@ -1,8 +1,10 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.Singleton
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Internal;
+
     public static class SingletonImplIds
     {
         public class ToMethod
@@ -11,7 +13,7 @@ namespace Zenject
 
             public ToMethod(Delegate method)
             {
-                _method = method;
+                this._method = method;
             }
 
             public override int GetHashCode()
@@ -19,7 +21,7 @@ namespace Zenject
                 unchecked // Overflow is fine, just wrap
                 {
                     int hash = 17;
-                    hash = hash * 29 + _method.GetHashCode();
+                    hash = hash * 29 + this._method.GetHashCode();
                     return hash;
                 }
             }
@@ -33,7 +35,7 @@ namespace Zenject
                     return false;
                 }
 
-                return _method.Target == other._method.Target && _method.Method() == other._method.Method();
+                return this._method.Target == other._method.Target && this._method.Method() == other._method.Method();
             }
         }
 
@@ -44,8 +46,8 @@ namespace Zenject
 
             public ToGetter(object identifier, Delegate method)
             {
-                _method = method;
-                _identifier = identifier;
+                this._method = method;
+                this._identifier = identifier;
             }
 
             public override int GetHashCode()
@@ -53,8 +55,8 @@ namespace Zenject
                 unchecked // Overflow is fine, just wrap
                 {
                     int hash = 17;
-                    hash = hash * 29 + _method.GetHashCode();
-                    hash = hash * 29 + (_identifier == null ? 0 : _identifier.GetHashCode());
+                    hash = hash * 29 + this._method.GetHashCode();
+                    hash = hash * 29 + (this._identifier == null ? 0 : this._identifier.GetHashCode());
                     return hash;
                 }
             }
@@ -68,9 +70,9 @@ namespace Zenject
                     return false;
                 }
 
-                return object.Equals(_identifier, other._identifier)
-                    && _method.Target == other._method.Target 
-                    && _method.Method() == other._method.Method();
+                return object.Equals(this._identifier, other._identifier)
+                    && this._method.Target == other._method.Target 
+                    && this._method.Method() == other._method.Method();
             }
         }
     }

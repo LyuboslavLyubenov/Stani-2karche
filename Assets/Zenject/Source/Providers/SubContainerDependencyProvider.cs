@@ -1,10 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers.SubContainerCreators;
+    using Assets.Zenject.Source.Usage;
+
     public class SubContainerDependencyProvider : IProvider
     {
         readonly ISubContainerCreator _subContainerCreator;
@@ -17,20 +23,20 @@ namespace Zenject
             object identifier,
             ISubContainerCreator subContainerCreator)
         {
-            _subContainerCreator = subContainerCreator;
-            _dependencyType = dependencyType;
-            _identifier = identifier;
+            this._subContainerCreator = subContainerCreator;
+            this._dependencyType = dependencyType;
+            this._identifier = identifier;
         }
 
         public Type GetInstanceType(InjectContext context)
         {
-            return _dependencyType;
+            return this._dependencyType;
         }
 
         InjectContext CreateSubContext(
             InjectContext parent, DiContainer subContainer)
         {
-            var subContext = parent.CreateSubContext(_dependencyType, _identifier);
+            var subContext = parent.CreateSubContext(this._dependencyType, this._identifier);
 
             subContext.Container = subContainer;
 
@@ -44,9 +50,9 @@ namespace Zenject
         {
             Assert.IsNotNull(context);
 
-            var subContainer = _subContainerCreator.CreateSubContainer(args);
+            var subContainer = this._subContainerCreator.CreateSubContainer(args);
 
-            var subContext = CreateSubContext(context, subContainer);
+            var subContext = this.CreateSubContext(context, subContainer);
 
             yield return subContainer.ResolveAll(subContext).Cast<object>().ToList();
         }

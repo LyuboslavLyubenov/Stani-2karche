@@ -2,13 +2,14 @@
 namespace Assets.Scripts.Controllers.Lobby
 {
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network;
+    using Assets.Scripts.Interfaces.Services;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils;
+    using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
-
-    using Zenject;
 
     public class LobbyUIController : MonoBehaviour
     {

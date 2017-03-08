@@ -1,22 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Finalizers
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+    using Assets.Zenject.Source.Providers;
+
     public abstract class ProviderBindingFinalizer : IBindingFinalizer
     {
         public ProviderBindingFinalizer(BindInfo bindInfo)
         {
-            BindInfo = bindInfo;
+            this.BindInfo = bindInfo;
         }
 
         public bool CopyIntoAllSubContainers
         {
             get
             {
-                return BindInfo.CopyIntoAllSubContainers;
+                return this.BindInfo.CopyIntoAllSubContainers;
             }
         }
 
@@ -28,7 +33,7 @@ namespace Zenject
 
         public void FinalizeBinding(DiContainer container)
         {
-            if (BindInfo.ContractTypes.IsEmpty())
+            if (this.BindInfo.ContractTypes.IsEmpty())
             {
                 // We could assert her instead but it is nice when used with things like
                 // BindAllInterfaces() (and there aren't any interfaces) to allow
@@ -36,12 +41,12 @@ namespace Zenject
                 return;
             }
 
-            OnFinalizeBinding(container);
+            this.OnFinalizeBinding(container);
 
-            if (BindInfo.NonLazy)
+            if (this.BindInfo.NonLazy)
             {
                 container.BindRootResolve(
-                    BindInfo.Identifier, BindInfo.ContractTypes.ToArray());
+                    this.BindInfo.Identifier, this.BindInfo.ContractTypes.ToArray());
             }
         }
 
@@ -50,15 +55,15 @@ namespace Zenject
         protected void RegisterProvider<TContract>(
             DiContainer container, IProvider provider)
         {
-            RegisterProvider(container, typeof(TContract), provider);
+            this.RegisterProvider(container, typeof(TContract), provider);
         }
 
         protected void RegisterProvider(
             DiContainer container, Type contractType, IProvider provider)
         {
             container.RegisterProvider(
-                new BindingId(contractType, BindInfo.Identifier),
-                BindInfo.Condition,
+                new BindingId(contractType, this.BindInfo.Identifier),
+                this.BindInfo.Condition,
                 provider);
 
             if (contractType.IsValueType())
@@ -68,8 +73,8 @@ namespace Zenject
                 // Also bind to nullable primitives
                 // this is useful so that we can have optional primitive dependencies
                 container.RegisterProvider(
-                    new BindingId(nullableType, BindInfo.Identifier),
-                    BindInfo.Condition,
+                    new BindingId(nullableType, this.BindInfo.Identifier),
+                    this.BindInfo.Condition,
                     provider);
             }
         }
@@ -77,18 +82,18 @@ namespace Zenject
         protected void RegisterProviderPerContract(
             DiContainer container, Func<DiContainer, Type, IProvider> providerFunc)
         {
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (var contractType in this.BindInfo.ContractTypes)
             {
-                RegisterProvider(container, contractType, providerFunc(container, contractType));
+                this.RegisterProvider(container, contractType, providerFunc(container, contractType));
             }
         }
 
         protected void RegisterProviderForAllContracts(
             DiContainer container, IProvider provider)
         {
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (var contractType in this.BindInfo.ContractTypes)
             {
-                RegisterProvider(container, contractType, provider);
+                this.RegisterProvider(container, contractType, provider);
             }
         }
 
@@ -97,16 +102,16 @@ namespace Zenject
             List<Type> concreteTypes,
             Func<Type, Type, IProvider> providerFunc)
         {
-            Assert.That(!BindInfo.ContractTypes.IsEmpty());
+            Assert.That(!this.BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());
 
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (var contractType in this.BindInfo.ContractTypes)
             {
                 foreach (var concreteType in concreteTypes)
                 {
-                    if (ValidateBindTypes(concreteType, contractType))
+                    if (this.ValidateBindTypes(concreteType, contractType))
                     {
-                        RegisterProvider(
+                        this.RegisterProvider(
                             container, contractType, providerFunc(contractType, concreteType));
                     }
                 }
@@ -121,13 +126,13 @@ namespace Zenject
                 return true;
             }
 
-            if (BindInfo.InvalidBindResponse == InvalidBindResponses.Assert)
+            if (this.BindInfo.InvalidBindResponse == InvalidBindResponses.Assert)
             {
                 throw Assert.CreateException(
                     "Expected type '{0}' to derive from or be equal to '{1}'", concreteType, contractType);
             }
 
-            Assert.IsEqual(BindInfo.InvalidBindResponse, InvalidBindResponses.Skip);
+            Assert.IsEqual(this.BindInfo.InvalidBindResponse, InvalidBindResponses.Skip);
             return false;
         }
 
@@ -139,18 +144,18 @@ namespace Zenject
             List<Type> concreteTypes,
             Func<DiContainer, Type, IProvider> providerFunc)
         {
-            Assert.That(!BindInfo.ContractTypes.IsEmpty());
+            Assert.That(!this.BindInfo.ContractTypes.IsEmpty());
             Assert.That(!concreteTypes.IsEmpty());
 
             var providerMap = concreteTypes.ToDictionary(x => x, x => providerFunc(container, x));
 
-            foreach (var contractType in BindInfo.ContractTypes)
+            foreach (var contractType in this.BindInfo.ContractTypes)
             {
                 foreach (var concreteType in concreteTypes)
                 {
-                    if (ValidateBindTypes(concreteType, contractType))
+                    if (this.ValidateBindTypes(concreteType, contractType))
                     {
-                        RegisterProvider(container, contractType, providerMap[concreteType]);
+                        this.RegisterProvider(container, contractType, providerMap[concreteType]);
                     }
                 }
             }

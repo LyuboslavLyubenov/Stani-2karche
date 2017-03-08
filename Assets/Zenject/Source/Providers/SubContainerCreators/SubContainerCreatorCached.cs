@@ -1,8 +1,12 @@
-using System.Collections.Generic;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Providers.SubContainerCreators
 {
+
+    using System.Collections.Generic;
+
+    using Assets.Zenject.Source.Injection;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class SubContainerCreatorCached : ISubContainerCreator
     {
         readonly ISubContainerCreator _subCreator;
@@ -11,7 +15,7 @@ namespace Zenject
 
         public SubContainerCreatorCached(ISubContainerCreator subCreator)
         {
-            _subCreator = subCreator;
+            this._subCreator = subCreator;
         }
 
         public DiContainer CreateSubContainer(List<TypeValuePair> args)
@@ -20,13 +24,13 @@ namespace Zenject
             // the arguments might change when called after the first time
             Assert.IsEmpty(args);
 
-            if (_subContainer == null)
+            if (this._subContainer == null)
             {
-                _subContainer = _subCreator.CreateSubContainer(new List<TypeValuePair>());
-                Assert.IsNotNull(_subContainer);
+                this._subContainer = this._subCreator.CreateSubContainer(new List<TypeValuePair>());
+                Assert.IsNotNull(this._subContainer);
             }
 
-            return _subContainer;
+            return this._subContainer;
         }
     }
 }

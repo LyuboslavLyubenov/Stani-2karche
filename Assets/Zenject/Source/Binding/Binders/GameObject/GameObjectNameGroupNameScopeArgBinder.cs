@@ -1,7 +1,10 @@
 #if !NOT_UNITY3D
 
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders.GameObject
 {
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+
     public class GameObjectNameGroupNameScopeArgBinder : GameObjectGroupNameScopeArgBinder
     {
         public GameObjectNameGroupNameScopeArgBinder(
@@ -13,7 +16,7 @@ namespace Zenject
 
         public GameObjectGroupNameScopeArgBinder WithGameObjectName(string gameObjectName)
         {
-            GameObjectInfo.Name = gameObjectName;
+            this.GameObjectInfo.Name = gameObjectName;
             return this;
         }
     }

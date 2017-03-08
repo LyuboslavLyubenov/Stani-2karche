@@ -1,6 +1,8 @@
-using ModestTree;
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders
 {
+
+    using Assets.Zenject.Source.Binding.BindInfo;
+
     public class CopyIntoSubContainersBinder : NonLazyBinder
     {
         public CopyIntoSubContainersBinder(BindInfo bindInfo)
@@ -10,7 +12,7 @@ namespace Zenject
 
         public NonLazyBinder CopyIntoAllSubContainers()
         {
-            BindInfo.CopyIntoAllSubContainers = true;
+            this.BindInfo.CopyIntoAllSubContainers = true;
             return this;
         }
 

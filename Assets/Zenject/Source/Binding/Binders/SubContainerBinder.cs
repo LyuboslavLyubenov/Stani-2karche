@@ -1,8 +1,15 @@
-using System;
-using ModestTree;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Binding.Binders
 {
+
+    using System;
+
+    using Assets.Zenject.Source.Binding.Binders.GameObject;
+    using Assets.Zenject.Source.Binding.BindInfo;
+    using Assets.Zenject.Source.Binding.Finalizers;
+    using Assets.Zenject.Source.Install;
+    using Assets.Zenject.Source.Internal;
+    using Assets.Zenject.Source.Main;
+
     public class SubContainerBinder
     {
         readonly BindInfo _bindInfo;
@@ -14,9 +21,9 @@ namespace Zenject
             BindFinalizerWrapper finalizerWrapper,
             object subIdentifier)
         {
-            _bindInfo = bindInfo;
-            _finalizerWrapper = finalizerWrapper;
-            _subIdentifier = subIdentifier;
+            this._bindInfo = bindInfo;
+            this._finalizerWrapper = finalizerWrapper;
+            this._subIdentifier = subIdentifier;
 
             // Reset in case the user ends the binding here
             finalizerWrapper.SubFinalizer = null;
@@ -26,14 +33,14 @@ namespace Zenject
         {
             set
             {
-                _finalizerWrapper.SubFinalizer = value;
+                this._finalizerWrapper.SubFinalizer = value;
             }
         }
 
         public ScopeBinder ByInstaller<TInstaller>()
             where TInstaller : InstallerBase
         {
-            return ByInstaller(typeof(TInstaller));
+            return this.ByInstaller(typeof(TInstaller));
         }
 
         public ScopeBinder ByInstaller(Type installerType)
@@ -41,18 +48,18 @@ namespace Zenject
             Assert.That(installerType.DerivesFrom<InstallerBase>(),
                 "Invalid installer type given during bind command.  Expected type '{0}' to derive from 'Installer<>'", installerType.Name());
 
-            SubFinalizer = new SubContainerInstallerBindingFinalizer(
-                _bindInfo, installerType, _subIdentifier);
+            this.SubFinalizer = new SubContainerInstallerBindingFinalizer(
+                this._bindInfo, installerType, this._subIdentifier);
 
-            return new ScopeBinder(_bindInfo);
+            return new ScopeBinder(this._bindInfo);
         }
 
         public ScopeBinder ByMethod(Action<DiContainer> installerMethod)
         {
-            SubFinalizer = new SubContainerMethodBindingFinalizer(
-                _bindInfo, installerMethod, _subIdentifier);
+            this.SubFinalizer = new SubContainerMethodBindingFinalizer(
+                this._bindInfo, installerMethod, this._subIdentifier);
 
-            return new ScopeBinder(_bindInfo);
+            return new ScopeBinder(this._bindInfo);
         }
 
 #if !NOT_UNITY3D
@@ -63,10 +70,10 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            SubFinalizer = new SubContainerPrefabBindingFinalizer(
-                _bindInfo, gameObjectInfo, prefab, _subIdentifier);
+            this.SubFinalizer = new SubContainerPrefabBindingFinalizer(
+                this._bindInfo, gameObjectInfo, prefab, this._subIdentifier);
 
-            return new GameObjectNameGroupNameScopeBinder(_bindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameScopeBinder(this._bindInfo, gameObjectInfo);
         }
 
         public GameObjectNameGroupNameScopeBinder ByPrefabResource(string resourcePath)
@@ -75,10 +82,10 @@ namespace Zenject
 
             var gameObjectInfo = new GameObjectCreationParameters();
 
-            SubFinalizer = new SubContainerPrefabResourceBindingFinalizer(
-                _bindInfo, gameObjectInfo, resourcePath, _subIdentifier);
+            this.SubFinalizer = new SubContainerPrefabResourceBindingFinalizer(
+                this._bindInfo, gameObjectInfo, resourcePath, this._subIdentifier);
 
-            return new GameObjectNameGroupNameScopeBinder(_bindInfo, gameObjectInfo);
+            return new GameObjectNameGroupNameScopeBinder(this._bindInfo, gameObjectInfo);
         }
 #endif
     }
