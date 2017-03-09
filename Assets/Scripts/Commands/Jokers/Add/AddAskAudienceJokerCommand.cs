@@ -17,7 +17,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
 
         public AddAskAudienceJokerCommand(
             AvailableJokersUIController availableJokersUIController,
-            IAudienceAnswerPollResultRetriever pollResultRetriever,
+            IAudienceAnswerPollResultRetrieverFromClient pollResultRetriever,
             GameObject waitingToAnswerUI, 
             GameObject audienceAnswerUI, 
             GameObject loadingUI)

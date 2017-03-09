@@ -5,6 +5,8 @@ namespace Assets.Scripts.DTOs
     using System.Linq;
     using System.Reflection;
 
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     using Commands;
     using EventArgs;
     using Interfaces;
@@ -35,7 +37,7 @@ namespace Assets.Scripts.DTOs
             }
         }
 
-        public JokersData(ServerNetworkManager networkManager)
+        public JokersData(IServerNetworkManager networkManager)
         {
             var jokerTypes = Assembly.GetExecutingAssembly()
                 .GetTypes()

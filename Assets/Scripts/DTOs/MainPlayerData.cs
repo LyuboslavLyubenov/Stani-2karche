@@ -6,7 +6,7 @@ namespace Assets.Scripts.DTOs
     using EventArgs;
     using Interfaces;
     using Network.NetworkManagers;
-
+    using Interfaces.Network.NetworkManager;
     public class MainPlayerData : IPlayerData
     {
 
@@ -45,9 +45,9 @@ namespace Assets.Scripts.DTOs
             }
         }
 
-        private ServerNetworkManager networkManager;
+        private IServerNetworkManager networkManager;
 
-        public MainPlayerData(ServerNetworkManager networkManager)
+        public MainPlayerData(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
             {

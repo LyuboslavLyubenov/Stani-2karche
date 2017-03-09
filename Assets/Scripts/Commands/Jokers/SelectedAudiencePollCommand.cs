@@ -23,7 +23,7 @@ namespace Assets.Scripts.Commands.Jokers
 
         private MainPlayerData mainPlayerData;
 
-        private IAudienceAnswerPollRouter askAudienceJokerRouter;
+        private IHelpFromAudienceJokerRouter askAudienceJokerRouter;
         
 
         private Type askAudienceJokerType;
@@ -32,7 +32,7 @@ namespace Assets.Scripts.Commands.Jokers
 
         public SelectedAudiencePollCommand(
             MainPlayerData mainPlayerData, 
-            IAudienceAnswerPollRouter askAudienceJokerRouter,
+            IHelpFromAudienceJokerRouter askAudienceJokerRouter,
             int timeToAnswerInSeconds
             )
         {

@@ -5,7 +5,7 @@
 
     using Assets.Scripts.EventArgs;
 
-    public interface IAudienceAnswerPollResultRetriever : IDisposable
+    public interface IAudienceAnswerPollResultRetrieverFromClient : IDisposable
     {
         event EventHandler<AudienceVoteEventArgs> OnAudienceVoted;
 

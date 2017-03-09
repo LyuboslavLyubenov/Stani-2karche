@@ -3,57 +3,34 @@ namespace Assets.Scripts.Jokers.Routers
 
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Timers;
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Commands.Jokers;
     using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.DTOs;
+    using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils;
 
     using UnityEngine;
 
-    using Debug = UnityEngine.Debug;
-    using EventArgs = System.EventArgs;
-
     public class AudienceAnswerPollRouter : IAudienceAnswerPollRouter
     {
         public const int MinTimeToAnswerInSeconds = 10;
-
-        private const float MinCorrectAnswerVoteProcentage = 0.40f;
-        private const float MaxCorrectAnswerVoteProcentage = 0.80f;
-
-        private const float MinTimeInSecondsToSendGeneratedAnswer = 1f;
-        private const float MaxTimeInSecondsToSendGeneratedAnswer = 4f;
-
-        public event EventHandler OnBeforeSend = delegate
-            {
-            };
-
+        
         public event EventHandler OnActivated = delegate
             {
             };
 
-        public event EventHandler OnSent = delegate
+        public event EventHandler<AudienceVoteEventArgs> OnVoteFinished = delegate
             {
             };
-
-        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
-            {
-            };
-
+        
         private readonly IServerNetworkManager networkManager;
 
-        private readonly IGameDataIterator gameDataIterator;
-
         private int timeToAnswerInSeconds;
-        private int senderConnectionId;
         private int elapsedTime;
 
         private readonly List<int> clientsThatMustVote = new List<int>();
@@ -61,7 +38,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private readonly Dictionary<string, int> answersVotes = new Dictionary<string, int>();
 
-        private Timer updateTimeTimer;
+        private Timer_ExecuteMethodEverySeconds updateTimeTimer;
 
         public bool Activated
         {
@@ -69,27 +46,20 @@ namespace Assets.Scripts.Jokers.Routers
             private set;
         }
 
-        public AudienceAnswerPollRouter(IServerNetworkManager networkManager, IGameDataIterator gameDataIterator)
+        public AudienceAnswerPollRouter(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
-
-            if (gameDataIterator == null)
-            {
-                throw new ArgumentNullException("gameDataIterator");
-            }
             
             this.networkManager = networkManager;
-            this.gameDataIterator = gameDataIterator;
 
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTime);
-            this.updateTimeTimer.Start();
-
-            this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
+            this.updateTimeTimer.RunOnUnityThread = true;
+            this.updateTimeTimer.Stop();
         }
-        
+
         private void OnReceivedVote(int connectionId, string answer)
         {
             if (!this.Activated)
@@ -108,7 +78,7 @@ namespace Assets.Scripts.Jokers.Routers
             if (this.AreFinishedVoting())
             {
                 this.NoMoreTimeToAnswer();
-                this.SendMainPlayerVoteResult();
+                this.OnVoteFinished(this, new AudienceVoteEventArgs(this.answersVotes));
                 return;
             }
         }
@@ -126,40 +96,20 @@ namespace Assets.Scripts.Jokers.Routers
             {
                 return;
             }
-            
-            this.TellClientsThatJokerIsDeactivated();
-            this.SendMainPlayerVoteResult();
-        }
 
+            this.TellClientsThatVotingIsOver();
+            this.OnVoteFinished(this, new AudienceVoteEventArgs(this.answersVotes));
+        }
+        
         private void NoMoreTimeToAnswer()
         {
             var answerTimeoutCommandData = NetworkCommandData.From<AnswerTimeoutCommand>();
-            this.networkManager.SendAllClientsCommand(answerTimeoutCommandData, this.senderConnectionId);
-        }
 
-        private void SendMainPlayerVoteResult()
-        {
-            this.OnBeforeSend(this, EventArgs.Empty);
-            this.SendVoteResult();
-        }
-
-        private void SendVoteResult()
-        {
-            var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
-            var answersVotesPairs = this.answersVotes.ToArray();
-
-            for (int i = 0; i < answersVotesPairs.Length; i++)
+            for (int i = 0; i < this.clientsThatMustVote.Count; i++)
             {
-                var answer = answersVotesPairs[i].Key;
-                var answerVoteCount = answersVotesPairs[i].Value;
-                voteResultCommandData.AddOption(answer, answerVoteCount.ToString());
+                var clientId = this.clientsThatMustVote[i];
+                this.networkManager.SendClientCommand(clientId, answerTimeoutCommandData);
             }
-
-            this.networkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
-
-            this.Deactivate();
-
-            this.OnSent(this, EventArgs.Empty);
         }
         
         private bool AreFinishedVoting()
@@ -172,7 +122,7 @@ namespace Assets.Scripts.Jokers.Routers
             for (int i = 0; i < this.clientsThatMustVote.Count; i++)
             {
                 var connectionId = this.clientsThatMustVote[i];
-            
+
                 if (!this.votedClientsConnectionId.Contains(connectionId))
                 {
                     return false;
@@ -182,35 +132,42 @@ namespace Assets.Scripts.Jokers.Routers
             return true;
         }
 
-        private void SendJokerSettings()
+        private void SendSettings()
         {
-            var setAskAudienceJokerSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
-            setAskAudienceJokerSettingsCommand.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
-            this.networkManager.SendClientCommand(this.senderConnectionId, setAskAudienceJokerSettingsCommand);
+            var audiencePollSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
+            audiencePollSettingsCommand.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
+
+            for (int i = 0; i < this.clientsThatMustVote.Count; i++)
+            {
+                var clientId = this.clientsThatMustVote[i];
+                this.networkManager.SendClientCommand(clientId, audiencePollSettingsCommand);
+            }
         }
 
-        private void SendQuestionToAudience(ISimpleQuestion question)
+        private void SendQuestionToClients(ISimpleQuestion question)
         {
             var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             var questionJSON = JsonUtility.ToJson(question.Serialize());
             sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
-            this.networkManager.SendAllClientsCommand(sendQuestionCommand, this.senderConnectionId);
+
+            for (int i = 0; i < this.clientsThatMustVote.Count; i++)
+            {
+                var clientId = this.clientsThatMustVote[i];
+                this.networkManager.SendClientCommand(clientId, sendQuestionCommand);
+            }
         }
 
-        private void TellClientsThatJokerIsDeactivated()
+        private void TellClientsThatVotingIsOver()
         {
-            var clients = this.clientsThatMustVote.ToList();
-            clients.Add(this.senderConnectionId);
-
             var notificationCommand = new NetworkCommandData("ShowNotification");
             notificationCommand.AddOption("Color", "yellow");
             notificationCommand.AddOption("Message", "Voting is over!");
 
-            for (int i = 0; i < clients.Count; i++)
+            for (int i = 0; i < this.clientsThatMustVote.Count; i++)
             {
-                var connectionId = clients[i];
-                this.networkManager.SendClientCommand(connectionId, notificationCommand);
-            }
+                var clientId = this.clientsThatMustVote[i];
+                this.networkManager.SendClientCommand(clientId, notificationCommand);
+            }   
         }
 
         private void ResetAnswerVotes(ISimpleQuestion question)
@@ -223,125 +180,61 @@ namespace Assets.Scripts.Jokers.Routers
                 this.answersVotes.Add(answer, 0);
             }
         }
-
-        private void GenerateAudienceVotes(ISimpleQuestion question)
-        { 
-            var correctAnswer = question.Answers[question.CorrectAnswerIndex]; 
-            var correctAnswerChance = (int)(UnityEngine.Random.Range(MinCorrectAnswerVoteProcentage, MaxCorrectAnswerVoteProcentage) * 100); 
-            var wrongAnswersLeftOverChance = 100 - correctAnswerChance; 
-
-            this.answersVotes.Add(correctAnswer, correctAnswerChance); 
-
-            var incorrectAnswers = question.Answers.ToList();
-            incorrectAnswers.Remove(correctAnswer);
-
-            for (int i = 0; i < incorrectAnswers.Count - 1; i++)
-            { 
-                var wrongAnswerChance = UnityEngine.Random.Range(0, wrongAnswersLeftOverChance); 
-                this.answersVotes.Add(incorrectAnswers[i], wrongAnswersLeftOverChance); 
-                wrongAnswersLeftOverChance -= wrongAnswerChance; 
-            }  
-
-            this.answersVotes.Add(incorrectAnswers.Last(), wrongAnswersLeftOverChance);
-        }
-
-        private void SendGeneratedResultToMainPlayer()
-        {
-            var secondsToWait = UnityEngine.Random.Range(MinTimeInSecondsToSendGeneratedAnswer, MaxTimeInSecondsToSendGeneratedAnswer);
-            var timer = TimerUtils.ExecuteAfter(
-                secondsToWait,
-                () =>
-                    {
-                        this.gameDataIterator.GetCurrentQuestion(
-                            (question) =>
-                                {
-                                    this.GenerateAudienceVotes(question);
-                                    this.SendMainPlayerVoteResult();
-                                    this.Deactivate();
-                                },
-                            (exception) =>
-                                {
-                                    Debug.LogException(exception);
-                                    this.Deactivate();
-                                    this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                                });
-                    });
-            
-            timer.AutoDispose = true;
-            timer.RunOnUnityThread = true;
-            timer.Start();
-        }
-
+       
         public void Deactivate()
         {
-            this.TellClientsThatJokerIsDeactivated();
-            
+            this.TellClientsThatVotingIsOver();
+
             this.clientsThatMustVote.Clear();
             this.votedClientsConnectionId.Clear();
             this.answersVotes.Clear();
 
             this.timeToAnswerInSeconds = 0;
-            this.senderConnectionId = 0;
             this.elapsedTime = -1;
 
             this.Activated = false;
         }
 
-        public void Activate(int senderConnectionId, MainPlayerData mainPlayerData, int timeToAnswerInSeconds)
+        public void Activate(int timeToAnswerInSeconds, IEnumerable<int> clientsIdsThatMustVote, ISimpleQuestion question)
         {
             if (this.Activated)
             {
                 throw new InvalidOperationException("Already active");
             }
-            
-            if (mainPlayerData == null)
+
+            if (timeToAnswerInSeconds < MinTimeToAnswerInSeconds)
             {
-                throw new ArgumentNullException("mainPlayerData");
+                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds");
             }
 
-            if (timeToAnswerInSeconds <= 0)
+            if (this.clientsThatMustVote.Count == 0)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("clientsIdsThatMustVote");
             }
 
-
-            this.senderConnectionId = senderConnectionId;
             this.timeToAnswerInSeconds = timeToAnswerInSeconds;
-
-            var minClients = AskAudienceJoker.MinClientsForOnlineVote_Release;
-
-            if (this.networkManager.ConnectedClientsCount < minClients)
-            {
-                this.SendJokerSettings();
-                this.SendGeneratedResultToMainPlayer();
-                return;
-            }
+            this.clientsThatMustVote.AddRange(clientsIdsThatMustVote);
 
             this.elapsedTime = 1;
 
-            var audienceConnectionIds = this.networkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
-            this.clientsThatMustVote.AddRange(audienceConnectionIds);
+            this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
 
-            this.gameDataIterator.GetCurrentQuestion((question) =>
-                {
-                    this.ResetAnswerVotes(question);
-                    this.SendJokerSettings();
-                    this.SendQuestionToAudience(question);
-                    this.Activated = true;
-                    this.OnActivated(this, EventArgs.Empty);
-                }, (exception) =>
-                    {
-                        this.Deactivate();
-                        this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                    });
+            this.ResetAnswerVotes(question);
+            this.SendSettings();
+            this.SendQuestionToClients(question);
+
+            this.Activated = true;
+            this.OnActivated(this, EventArgs.Empty);
         }
 
         public void Dispose()
         {
+            this.Deactivate();
+
+            this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
+
             this.OnActivated = null;
-            this.OnBeforeSend = null;
-            this.OnSent = null;
-            this.OnError = null;
+            this.OnVoteFinished = null;
 
             try
             {
@@ -354,4 +247,5 @@ namespace Assets.Scripts.Jokers.Routers
             }
         }
     }
+
 }

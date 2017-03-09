@@ -5,7 +5,7 @@
 
     using Assets.Scripts.DTOs;
 
-    public interface IAudienceAnswerPollRouter : IJokerRouter, IDisposable
+    public interface IHelpFromAudienceJokerRouter : IJokerRouter, IDisposable
     {
         event EventHandler OnBeforeSend;
 
@@ -13,7 +13,7 @@
 
         bool Activated { get; }
 
-        void Activate(int senderConnectionId, MainPlayerData mainPlayerData, int timeToAnswerInSeconds);
+        void Activate(int senderConnectionId, int timeToAnswerInSeconds);
 
         void Deactivate();
     }
