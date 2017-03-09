@@ -4,11 +4,14 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 
     using UnityEngine;
     using UnityEngine.UI;
+    using UnityEngine.UI.Extensions;
 
     public class MainPlayerUIController : MonoBehaviour
     {
         private const float OpacityLower = 0.25f;
         private const float OpacityHigh = 1f;
+
+        private readonly Color OutlineColor = new Color(255, 200, 255, 0.5f);
 
         public string Username
         {
@@ -23,11 +26,31 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
             }
         }
 
+        public bool RequestedGameStart
+        {
+            get
+            {
+                return this.requestedGameStart;
+            }
+            set
+            {
+                this.requestedGameStart = value;
+                this.outline.enabled = value;
+            }
+        }
+
+        private bool requestedGameStart;
+
         private Image image;
         private Text usernameText;
-        
+        private NicerOutline outline;
+
         void Start()
         {
+            this.outline = this.gameObject.AddComponent<NicerOutline>();
+            this.outline.effectColor = OutlineColor;
+            this.outline.enabled = false;
+
             this.image = this.GetComponent<Image>();
             this.usernameText = this.GetComponentInChildren<Text>();
             this.SetOpaticyToMinimum();
@@ -44,7 +67,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
             var imageColor = this.image.color;
             this.image.color = new Color(imageColor.r, imageColor.g, imageColor.b, OpacityHigh);
         }
-        
+
         public void ClearUsername()
         {
             this.SetOpaticyToMinimum();

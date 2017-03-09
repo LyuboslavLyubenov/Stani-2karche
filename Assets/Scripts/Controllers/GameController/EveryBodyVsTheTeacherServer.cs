@@ -36,7 +36,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             get
             {
-                return this.audiencePlayersconnectionIds;
+                return this.audiencePlayersConnectionIds;
             }
         }
 
@@ -50,24 +50,33 @@ namespace Assets.Scripts.Controllers.GameController
 
         [Inject]
         private IServerNetworkManager serverNetworkManager;
-        
-        private readonly StateMachine StateMachine = new StateMachine();
 
         [Inject]
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
 
+        [Inject]
+        private GameRunningState gameRunningState;
+
+        private readonly StateMachine stateMachine = new StateMachine();
+        
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
-        private HashSet<int> audiencePlayersconnectionIds = new HashSet<int>();
+        private HashSet<int> audiencePlayersConnectionIds = new HashSet<int>();
 
         void Start()
         {
+            this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
         }
 
-        public void StartGame()
+        private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
         {
-            throw new NotImplementedException();
-        }
+            this.mainPlayersConnectionIds = 
+                new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
+            this.audiencePlayersConnectionIds =
+                new HashSet<int>(this.playersConnectingToTheServerState.AudiencePlayersConnectionIds);
 
+            this.stateMachine.SetCurrentState(this.gameRunningState);
+        }
+        
         public void EndGame()
         {
             throw new NotImplementedException();

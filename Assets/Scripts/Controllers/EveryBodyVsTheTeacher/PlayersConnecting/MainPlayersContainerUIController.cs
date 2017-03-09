@@ -1,6 +1,7 @@
 namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -26,11 +27,18 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
         void Start()
         {
             this.state.OnMainPlayerConnected += this.OnMainPlayerConnected;
+            this.state.OnMainPlayerRequestedGameStart += OnMainPlayerRequestedGameStart;
             this.state.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
 
             this.mainPlayerUIControllers = this.GetComponentsInChildren<MainPlayerUIController>();
         }
-        
+
+        private void OnMainPlayerRequestedGameStart(object sender, ClientConnectionDataEventArgs clientConnectionDataEventArgs)
+        {
+            var controller = this.connectedMainPlayersControllers[clientConnectionDataEventArgs.ConnectionId];
+            controller.RequestedGameStart = true;
+        }
+
         private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
         {
             this.ShowMainPlayerOnScreen(args.ConnectionId);
@@ -42,12 +50,13 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
             {
                 return;
             }
-
+            
             this.HideMainPlayerFromScreen(args.ConnectionId);
         }
 
         private void HideMainPlayerFromScreen(int connectionId)
         {
+            this.connectedMainPlayersControllers[connectionId].RequestedGameStart = false;
             this.connectedMainPlayersControllers[connectionId].ClearUsername();
             this.connectedMainPlayersControllers.Remove(connectionId);
         }

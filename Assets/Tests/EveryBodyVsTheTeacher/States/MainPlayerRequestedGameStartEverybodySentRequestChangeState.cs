@@ -32,12 +32,12 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
         {
             this.stateMachine.SetCurrentState(this.state);
 
-            this.state.OnRequestedGameStart += OnRequestedGameStart;
+            this.state.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
 
             this.StartCoroutine(this.SimulateMainPlayerConnection());
         }
 
-        private void OnRequestedGameStart(object sender, EventArgs eventArgs)
+        private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
         {
             IntegrationTest.Pass();
         }
