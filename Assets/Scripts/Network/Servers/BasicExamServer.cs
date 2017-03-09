@@ -100,7 +100,7 @@ namespace Assets.Scripts.Network.Servers
         private ILeaderboardDataManipulator leaderboardDataManipulator = null;
 
         private IAskPlayerQuestionRouter askPlayerQuestionRouter = null;
-        private IAudienceAnswerPollRouter audiencePollRouter = null;
+        private IHelpFromAudienceJokerRouter audiencePollRouter = null;
         private IDisableRandomAnswersRouter disableRandomAnswersJokerRouter = null;
         private IAddRandomJokerRouter addRandomJokerRouter = null;
         private ILeaderboardSender leaderboardSender = null;
@@ -131,7 +131,7 @@ namespace Assets.Scripts.Network.Servers
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, MainPlayerData.JokersData);
            
             this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
-            this.audiencePollRouter = new AudienceAnswerPollRouter(serverNetworkManager, this.GameDataIterator);
+            this.audiencePollRouter = new HelpFromAudienceJokerRouter(serverNetworkManager, this.GameDataIterator);
 
             this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataQuestionsSender, this.GameDataIterator);
 

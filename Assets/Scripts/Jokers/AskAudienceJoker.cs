@@ -44,7 +44,7 @@
         private GameObject loadingUI;
         private GameObject audienceAnswerUI;
 
-        private IAudienceAnswerPollResultRetriever pollDataRetriever;
+        private IAudienceAnswerPollResultRetrieverFromClient pollDataRetriever;
 
         public Sprite Image
         {
@@ -60,7 +60,7 @@
         }
 
         public AskAudienceJoker(
-            IAudienceAnswerPollResultRetriever pollDataRetriever,
+            IAudienceAnswerPollResultRetrieverFromClient pollDataRetriever,
             GameObject waitingToAnswerUI,
             GameObject audienceAnswerUI,
             GameObject loadingUI)

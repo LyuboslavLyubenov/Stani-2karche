@@ -9,12 +9,13 @@ namespace Assets.Scripts.Jokers
     using Assets.Scripts.Commands.Jokers;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Network.NetworkManagers;
     using Assets.Scripts.Utils;
 
     using EventArgs = System.EventArgs;
 
-    public class AudienceAnswerPollResultRetriever : IAudienceAnswerPollResultRetriever
+    public class AudienceAnswerPollResultRetrieverFromClient : IAudienceAnswerPollResultRetrieverFromClient
     {
         public const int MinClientsForOnlineVote_Release = 4;
         public const int MinClientsForOnlineVote_Development = 1;
@@ -39,7 +40,7 @@ namespace Assets.Scripts.Jokers
         {
         };
 
-        private readonly ClientNetworkManager networkManager;
+        private readonly IClientNetworkManager networkManager;
         private Timer timer;
 
         private int receiveSettingsTimeoutInSeconds;
@@ -50,7 +51,7 @@ namespace Assets.Scripts.Jokers
             private set;
         }
 
-        public AudienceAnswerPollResultRetriever(ClientNetworkManager networkManager, int receiveSettingsTimeoutInSeconds)
+        public AudienceAnswerPollResultRetrieverFromClient(IClientNetworkManager networkManager, int receiveSettingsTimeoutInSeconds)
         {
             if (networkManager == null)
             {
