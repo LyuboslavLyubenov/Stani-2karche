@@ -31,6 +31,10 @@ namespace Assets.Tests
             {
             };
 
+        public event EventHandler<DataSentEventArgs> OnSentDataToClient = delegate
+            {
+            };
+        
         private static DummyServerNetworkManager instance;
 
         public static DummyServerNetworkManager Instance
@@ -117,27 +121,44 @@ namespace Assets.Tests
 
         public void SendClientCommand(int connectionId, NetworkCommandData command)
         {
+            this.SendClientMessage(connectionId, command.ToString());
             //
         }
 
         public void SendClientMessage(int connectionId, string message)
         {
-            //
+            this.OnSentDataToClient(this, new DataSentEventArgs(connectionId, "Server", message));
         }
 
         public void SendAllClientsCommand(NetworkCommandData command)
         {
-            //
+            this.SendAllClientsMessage(command.ToString());
         }
 
         public void SendAllClientsCommand(NetworkCommandData command, int exceptConnectionId)
         {
-            //
+            var commandStr = command.ToString();
+
+            for (int i = 0; i < this.ConnectedClientsCount; i++)
+            {
+                var connectionId = this.ConnectedClientsConnectionId[i];
+
+                if (connectionId == exceptConnectionId)
+                {
+                    continue;
+                }
+
+                this.SendClientMessage(connectionId, commandStr);
+            }
         }
 
         public void SendAllClientsMessage(string message)
         {
-            //
+            for (int i = 0; i < this.ConnectedClientsCount; i++)
+            {
+                var connectionId = this.ConnectedClientsConnectionId[i];
+                this.SendClientMessage(connectionId, message);
+            }
         }
 
         public void KickPlayer(int connectionId, string message)
