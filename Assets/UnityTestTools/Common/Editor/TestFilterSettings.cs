@@ -1,13 +1,16 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-using System.Linq;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor
 {
 
+    using System.Collections.Generic;
+    using System.Linq;
+
     using Assets.UnityTestTools.Common;
+    using Assets.UnityTestTools.Common.Editor.ResultWriter;
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
+
+    using UnityEditor;
+
+    using UnityEngine;
 
     public class TestFilterSettings
     {
@@ -30,76 +33,76 @@ namespace UnityTest
         
         public TestFilterSettings(string prefsKey)
         {
-            _prefsKey = prefsKey;
-            Load();
-            UpdateCounters(Enumerable.Empty<ITestResult>());
+            this._prefsKey = prefsKey;
+            this.Load();
+            this.UpdateCounters(Enumerable.Empty<ITestResult>());
         }
             
         public void Load()
         {
-            ShowSucceeded = EditorPrefs.GetBool(_prefsKey + ".ShowSucceeded", true);
-            ShowFailed = EditorPrefs.GetBool(_prefsKey + ".ShowFailed", true);
-            ShowIgnored = EditorPrefs.GetBool(_prefsKey + ".ShowIgnored", true);
-            ShowNotRun = EditorPrefs.GetBool(_prefsKey + ".ShowNotRun", true);
-            FilterByName = EditorPrefs.GetString(_prefsKey + ".FilterByName", string.Empty);
-            FilterByCategory = EditorPrefs.GetInt(_prefsKey + ".FilterByCategory", 0);
+            this.ShowSucceeded = EditorPrefs.GetBool(this._prefsKey + ".ShowSucceeded", true);
+            this.ShowFailed = EditorPrefs.GetBool(this._prefsKey + ".ShowFailed", true);
+            this.ShowIgnored = EditorPrefs.GetBool(this._prefsKey + ".ShowIgnored", true);
+            this.ShowNotRun = EditorPrefs.GetBool(this._prefsKey + ".ShowNotRun", true);
+            this.FilterByName = EditorPrefs.GetString(this._prefsKey + ".FilterByName", string.Empty);
+            this.FilterByCategory = EditorPrefs.GetInt(this._prefsKey + ".FilterByCategory", 0);
         }
         
         public void Save()
         {
-            EditorPrefs.SetBool(_prefsKey + ".ShowSucceeded", ShowSucceeded);
-            EditorPrefs.SetBool(_prefsKey + ".ShowFailed", ShowFailed);
-            EditorPrefs.SetBool(_prefsKey + ".ShowIgnored", ShowIgnored);
-            EditorPrefs.SetBool(_prefsKey + ".ShowNotRun", ShowNotRun);
-            EditorPrefs.SetString(_prefsKey + ".FilterByName", FilterByName);
-            EditorPrefs.SetInt(_prefsKey + ".FilterByCategory", FilterByCategory);
+            EditorPrefs.SetBool(this._prefsKey + ".ShowSucceeded", this.ShowSucceeded);
+            EditorPrefs.SetBool(this._prefsKey + ".ShowFailed", this.ShowFailed);
+            EditorPrefs.SetBool(this._prefsKey + ".ShowIgnored", this.ShowIgnored);
+            EditorPrefs.SetBool(this._prefsKey + ".ShowNotRun", this.ShowNotRun);
+            EditorPrefs.SetString(this._prefsKey + ".FilterByName", this.FilterByName);
+            EditorPrefs.SetInt(this._prefsKey + ".FilterByCategory", this.FilterByCategory);
         }
         
         public void UpdateCounters(IEnumerable<ITestResult> results)
         {
             var summary = new ResultSummarizer(results);
             
-            _succeededBtn = new GUIContent(summary.Passed.ToString(), Icons.SuccessImg, "Show tests that succeeded");
-            _failedBtn = new GUIContent((summary.Errors + summary.Failures + summary.Inconclusive).ToString(), Icons.FailImg, "Show tests that failed");
-            _ignoredBtn = new GUIContent((summary.Ignored + summary.NotRunnable).ToString(), Icons.IgnoreImg, "Show tests that are ignored");
-            _notRunBtn = new GUIContent((summary.TestsNotRun - summary.Ignored - summary.NotRunnable).ToString(), Icons.UnknownImg, "Show tests that didn't run");
+            this._succeededBtn = new GUIContent(summary.Passed.ToString(), Icons.SuccessImg, "Show tests that succeeded");
+            this._failedBtn = new GUIContent((summary.Errors + summary.Failures + summary.Inconclusive).ToString(), Icons.FailImg, "Show tests that failed");
+            this._ignoredBtn = new GUIContent((summary.Ignored + summary.NotRunnable).ToString(), Icons.IgnoreImg, "Show tests that are ignored");
+            this._notRunBtn = new GUIContent((summary.TestsNotRun - summary.Ignored - summary.NotRunnable).ToString(), Icons.UnknownImg, "Show tests that didn't run");
         }
         
         public string[] GetSelectedCategories()
         {
-            if(AvailableCategories == null) return new string[0];
+            if(this.AvailableCategories == null) return new string[0];
             
-            return AvailableCategories.Where ((c, i) => (FilterByCategory & (1 << i)) != 0).ToArray();
+            return this.AvailableCategories.Where ((c, i) => (this.FilterByCategory & (1 << i)) != 0).ToArray();
         }
         
         public void OnGUI()
         {
             EditorGUI.BeginChangeCheck();
             
-            FilterByName = GUILayout.TextField(FilterByName, "ToolbarSeachTextField", GUILayout.MinWidth(100), GUILayout.MaxWidth(250), GUILayout.ExpandWidth(true));
-            if(GUILayout.Button (GUIContent.none, string.IsNullOrEmpty(FilterByName) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton"))
-                FilterByName = string.Empty;
+            this.FilterByName = GUILayout.TextField(this.FilterByName, "ToolbarSeachTextField", GUILayout.MinWidth(100), GUILayout.MaxWidth(250), GUILayout.ExpandWidth(true));
+            if(GUILayout.Button (GUIContent.none, string.IsNullOrEmpty(this.FilterByName) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton"))
+                this.FilterByName = string.Empty;
             
-            if (AvailableCategories != null && AvailableCategories.Length > 0)
-                FilterByCategory = EditorGUILayout.MaskField(FilterByCategory, AvailableCategories, EditorStyles.toolbarDropDown, GUILayout.MaxWidth(90));
+            if (this.AvailableCategories != null && this.AvailableCategories.Length > 0)
+                this.FilterByCategory = EditorGUILayout.MaskField(this.FilterByCategory, this.AvailableCategories, EditorStyles.toolbarDropDown, GUILayout.MaxWidth(90));
             
-            ShowSucceeded = GUILayout.Toggle(ShowSucceeded, _succeededBtn, EditorStyles.toolbarButton);
-            ShowFailed = GUILayout.Toggle(ShowFailed, _failedBtn, EditorStyles.toolbarButton);
-            ShowIgnored = GUILayout.Toggle(ShowIgnored, _ignoredBtn, EditorStyles.toolbarButton);
-            ShowNotRun = GUILayout.Toggle(ShowNotRun, _notRunBtn, EditorStyles.toolbarButton);
+            this.ShowSucceeded = GUILayout.Toggle(this.ShowSucceeded, this._succeededBtn, EditorStyles.toolbarButton);
+            this.ShowFailed = GUILayout.Toggle(this.ShowFailed, this._failedBtn, EditorStyles.toolbarButton);
+            this.ShowIgnored = GUILayout.Toggle(this.ShowIgnored, this._ignoredBtn, EditorStyles.toolbarButton);
+            this.ShowNotRun = GUILayout.Toggle(this.ShowNotRun, this._notRunBtn, EditorStyles.toolbarButton);
             
-            if(EditorGUI.EndChangeCheck()) Save ();
+            if(EditorGUI.EndChangeCheck()) this.Save ();
         }
         
         public RenderingOptions BuildRenderingOptions()
         {
             var options = new RenderingOptions();
-            options.showSucceeded = ShowSucceeded;
-            options.showFailed = ShowFailed;
-            options.showIgnored = ShowIgnored;
-            options.showNotRunned = ShowNotRun;
-            options.nameFilter = FilterByName;
-            options.categories = GetSelectedCategories();
+            options.showSucceeded = this.ShowSucceeded;
+            options.showFailed = this.ShowFailed;
+            options.showIgnored = this.ShowIgnored;
+            options.showNotRunned = this.ShowNotRun;
+            options.nameFilter = this.FilterByName;
+            options.categories = this.GetSelectedCategories();
             return options;
         }
     }

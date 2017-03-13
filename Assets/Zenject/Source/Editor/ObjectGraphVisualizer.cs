@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using Assets.Zenject.Source.Internal;
     using Assets.Zenject.Source.Main;

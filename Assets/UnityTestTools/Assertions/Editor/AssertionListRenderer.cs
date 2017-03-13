@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Editor
 {
+
+    using System.Collections.Generic;
+    using System.Linq;
 
     using Assets.UnityTestTools.Assertions;
     using Assets.UnityTestTools.Assertions.Comparers;
+
+    using UnityEditor;
+
+    using UnityEngine;
 
     public interface IListRenderer
     {
@@ -29,16 +30,16 @@ namespace UnityTest
 
         public void Render(IEnumerable<AssertionComponent> allAssertions, List<string> foldMarkers)
         {
-            foreach (var grouping in GroupResult(allAssertions))
+            foreach (var grouping in this.GroupResult(allAssertions))
             {
-                var key = GetStringKey(grouping.Key);
+                var key = this.GetStringKey(grouping.Key);
                 bool isFolded = foldMarkers.Contains(key);
                 if (key != "")
                 {
                     EditorGUILayout.BeginHorizontal();
 
                     EditorGUI.BeginChangeCheck();
-                    isFolded = PrintFoldout(isFolded,
+                    isFolded = this.PrintFoldout(isFolded,
                                             grouping.Key);
                     if (EditorGUI.EndChangeCheck())
                     {
@@ -76,7 +77,7 @@ namespace UnityTest
                         else
                             foldMarkers.Remove(assertionKey);
                     }
-                    PrintFoldedAssertionLine(assertionComponent);
+                    this.PrintFoldedAssertionLine(assertionComponent);
                     EditorGUILayout.EndHorizontal();
 
                     if (isDetailsFolded)
@@ -84,7 +85,7 @@ namespace UnityTest
                         EditorGUILayout.BeginHorizontal();
                         if (key != "")
                             GUILayout.Space(15);
-                        PrintAssertionLineDetails(assertionComponent);
+                        this.PrintAssertionLineDetails(assertionComponent);
                         EditorGUILayout.EndHorizontal();
                     }
                     GUILayout.Box("", new[] {GUILayout.ExpandWidth(true), GUILayout.Height(1)});
@@ -103,7 +104,7 @@ namespace UnityTest
 
         protected virtual bool PrintFoldout(bool isFolded, T key)
         {
-            var content = new GUIContent(GetFoldoutDisplayName(key));
+            var content = new GUIContent(this.GetFoldoutDisplayName(key));
             var size = EditorStyles.foldout.CalcSize(content);
 
             var rect = GUILayoutUtility.GetRect(content,
@@ -128,7 +129,7 @@ namespace UnityTest
 
             EditorGUILayout.BeginVertical(GUILayout.MaxWidth(300));
             EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(300));
-            PrintPath(assertionComponent.Action.go,
+            this.PrintPath(assertionComponent.Action.go,
                       assertionComponent.Action.thisPropertyPath);
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.EndVertical();
@@ -153,7 +154,7 @@ namespace UnityTest
                     case ComparerBase.CompareToType.CompareToObject:
                         if (comparer.other != null)
                         {
-                            PrintPath(comparer.other,
+                            this.PrintPath(comparer.other,
                                       comparer.otherPropertyPath);
                         }
                         else

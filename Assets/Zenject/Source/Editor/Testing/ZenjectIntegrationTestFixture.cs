@@ -1,19 +1,20 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
-using UnityEditor.SceneManagement;
-using UnityEngine;
-
-using Assert = Assets.Zenject.Source.Internal.Assert;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor.Testing
 {
+
+    using System;
+    using System.Linq;
 
     using Assets.Zenject.Source.Install.Contexts;
     using Assets.Zenject.Source.Main;
     using Assets.Zenject.Source.Runtime.Kernels;
+
+    using NUnit.Framework;
+
+    using UnityEditor.SceneManagement;
+
+    using UnityEngine;
+
+    using Assert = Assets.Zenject.Source.Internal.Assert;
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ValidateOnlyAttribute : Attribute
@@ -31,42 +32,42 @@ namespace Zenject
         {
             get
             {
-                return _sceneContext.Container;
+                return this._sceneContext.Container;
             }
         }
 
         [SetUp]
         public void SetUp()
         {
-            ClearScene();
-            _hasStarted = false;
-            _isValidating = CurrentTestHasAttribute<ValidateOnlyAttribute>();
+            this.ClearScene();
+            this._hasStarted = false;
+            this._isValidating = this.CurrentTestHasAttribute<ValidateOnlyAttribute>();
 
-            ProjectContext.ValidateOnNextRun = _isValidating;
+            ProjectContext.ValidateOnNextRun = this._isValidating;
 
-            _sceneContext = new GameObject("SceneContext").AddComponent<SceneContext>();
-            _sceneContext.ParentNewObjectsUnderRoot = true;
+            this._sceneContext = new GameObject("SceneContext").AddComponent<SceneContext>();
+            this._sceneContext.ParentNewObjectsUnderRoot = true;
             // This creates the container but does not resolve the roots yet
-            _sceneContext.Install();
+            this._sceneContext.Install();
         }
 
         public void Initialize()
         {
-            Assert.That(!_hasStarted);
-            _hasStarted = true;
+            Assert.That(!this._hasStarted);
+            this._hasStarted = true;
 
-            _sceneContext.Resolve();
+            this._sceneContext.Resolve();
 
             // This allows them to make very common bindings fields for use in any of the tests
-            Container.Inject(this);
+            this.Container.Inject(this);
 
-            if (_isValidating)
+            if (this._isValidating)
             {
-                Container.ValidateIValidatables();
+                this.Container.ValidateIValidatables();
             }
             else
             {
-                _sceneContext.gameObject.GetComponent<SceneKernel>().Start();
+                this._sceneContext.gameObject.GetComponent<SceneKernel>().Start();
             }
         }
 
@@ -77,13 +78,13 @@ namespace Zenject
             {
                 // If we expected an exception then initialize would normally not be called
                 // Unless the initialize method itself is what caused the exception
-                if (!CurrentTestHasAttribute<ExpectedExceptionAttribute>())
+                if (!this.CurrentTestHasAttribute<ExpectedExceptionAttribute>())
                 {
-                    Assert.That(_hasStarted, "ZenjectIntegrationTestFixture.Initialize was not called by current test");
+                    Assert.That(this._hasStarted, "ZenjectIntegrationTestFixture.Initialize was not called by current test");
                 }
             }
 
-            ClearScene();
+            this.ClearScene();
         }
 
         bool CurrentTestHasAttribute<T>()

@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Security;
-using System.Text;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor.ResultWriter
 {
 
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Security;
+    using System.Text;
+
     using Assets.UnityTestTools.Common;
+
+    using UnityEngine;
 
     public class XmlResultWriter
     {
@@ -21,27 +22,27 @@ namespace UnityTest
 
         public XmlResultWriter(string suiteName, string platform, ITestResult[] results)
         {
-            m_SuiteName = suiteName;
-            m_Results = results;
-            m_Platform = platform;
+            this.m_SuiteName = suiteName;
+            this.m_Results = results;
+            this.m_Platform = platform;
         }
 
         private const string k_NUnitVersion = "2.6.2-Unity";
 
         public string GetTestResult()
         {
-            InitializeXmlFile(m_SuiteName, new ResultSummarizer(m_Results));
-            foreach (var result in m_Results)
+            this.InitializeXmlFile(this.m_SuiteName, new ResultSummarizer(this.m_Results));
+            foreach (var result in this.m_Results)
             {
-                WriteResultElement(result);
+                this.WriteResultElement(result);
             }
-            TerminateXmlFile();
-            return m_ResultWriter.ToString();
+            this.TerminateXmlFile();
+            return this.m_ResultWriter.ToString();
         }
 
         private void InitializeXmlFile(string resultsName, ResultSummarizer summaryResults)
         {
-            WriteHeader();
+            this.WriteHeader();
 
             DateTime now = DateTime.Now;
             var attributes = new Dictionary<string, string>
@@ -59,62 +60,62 @@ namespace UnityTest
                 {"time", now.ToString("HH:mm:ss")}
             };
 
-            WriteOpeningElement("test-results", attributes);
+            this.WriteOpeningElement("test-results", attributes);
 
-            WriteEnvironment(m_Platform);
-            WriteCultureInfo();
-            WriteTestSuite(resultsName, summaryResults);
-            WriteOpeningElement("results");
+            this.WriteEnvironment(this.m_Platform);
+            this.WriteCultureInfo();
+            this.WriteTestSuite(resultsName, summaryResults);
+            this.WriteOpeningElement("results");
         }
 
         private void WriteOpeningElement(string elementName)
         {
-            WriteOpeningElement(elementName, new Dictionary<string, string>());
+            this.WriteOpeningElement(elementName, new Dictionary<string, string>());
         }
 
         private void WriteOpeningElement(string elementName, Dictionary<string, string> attributes)
         {
-            WriteOpeningElement(elementName, attributes, false);
+            this.WriteOpeningElement(elementName, attributes, false);
         }
 
 
         private void WriteOpeningElement(string elementName, Dictionary<string, string> attributes, bool closeImmediatelly)
         {
-            WriteIndend();
-            m_Indend++;
-            m_ResultWriter.Append("<");
-            m_ResultWriter.Append(elementName);
+            this.WriteIndend();
+            this.m_Indend++;
+            this.m_ResultWriter.Append("<");
+            this.m_ResultWriter.Append(elementName);
             foreach (var attribute in attributes)
             {
-                m_ResultWriter.AppendFormat(" {0}=\"{1}\"", attribute.Key, SecurityElement.Escape(attribute.Value));
+                this.m_ResultWriter.AppendFormat(" {0}=\"{1}\"", attribute.Key, SecurityElement.Escape(attribute.Value));
             }
             if (closeImmediatelly)
             {
-                m_ResultWriter.Append(" /");
-                m_Indend--;
+                this.m_ResultWriter.Append(" /");
+                this.m_Indend--;
             }
-            m_ResultWriter.AppendLine(">");
+            this.m_ResultWriter.AppendLine(">");
         }
 
         private void WriteIndend()
         {
-            for (int i = 0; i < m_Indend; i++)
+            for (int i = 0; i < this.m_Indend; i++)
             {
-                m_ResultWriter.Append("  ");
+                this.m_ResultWriter.Append("  ");
             }
         }
 
         private void WriteClosingElement(string elementName)
         {
-            m_Indend--;
-            WriteIndend();
-            m_ResultWriter.AppendLine("</" + elementName + ">");
+            this.m_Indend--;
+            this.WriteIndend();
+            this.m_ResultWriter.AppendLine("</" + elementName + ">");
         }
 
         private void WriteHeader()
         {
-            m_ResultWriter.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            m_ResultWriter.AppendLine("<!--This file represents the results of running a test suite-->");
+            this.m_ResultWriter.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            this.m_ResultWriter.AppendLine("<!--This file represents the results of running a test suite-->");
         }
 
         static string GetEnvironmentUserName()
@@ -167,7 +168,7 @@ namespace UnityTest
                 {"unity-version", Application.unityVersion},
                 {"unity-platform", targetPlatform}
             };
-            WriteOpeningElement("environment", attributes, true);
+            this.WriteOpeningElement("environment", attributes, true);
         }
 
         private void WriteCultureInfo()
@@ -177,7 +178,7 @@ namespace UnityTest
                 {"current-culture", CultureInfo.CurrentCulture.ToString()},
                 {"current-uiculture", CultureInfo.CurrentUICulture.ToString()}
             };
-            WriteOpeningElement("culture-info", attributes, true);
+            this.WriteOpeningElement("culture-info", attributes, true);
         }
 
         private void WriteTestSuite(string resultsName, ResultSummarizer summaryResults)
@@ -191,41 +192,41 @@ namespace UnityTest
                 {"success", summaryResults.Success ? "True" : "False"},
                 {"time", summaryResults.Duration.ToString("#####0.000", NumberFormatInfo.InvariantInfo)}
             };
-            WriteOpeningElement("test-suite", attributes);
+            this.WriteOpeningElement("test-suite", attributes);
         }
 
         private void WriteResultElement(ITestResult result)
         {
-            StartTestElement(result);
+            this.StartTestElement(result);
 
             switch (result.ResultState)
             {
                 case TestResultState.Ignored:
                 case TestResultState.NotRunnable:
                 case TestResultState.Skipped:
-                    WriteReasonElement(result);
+                    this.WriteReasonElement(result);
                     break;
 
                 case TestResultState.Failure:
                 case TestResultState.Error:
                 case TestResultState.Cancelled:
-                    WriteFailureElement(result);
+                    this.WriteFailureElement(result);
                     break;
                 case TestResultState.Success:
                 case TestResultState.Inconclusive:
                     if (result.Message != null)
-                        WriteReasonElement(result);
+                        this.WriteReasonElement(result);
                     break;
             };
 
-            WriteClosingElement("test-case");
+            this.WriteClosingElement("test-case");
         }
 
         private void TerminateXmlFile()
         {
-            WriteClosingElement("results");
-            WriteClosingElement("test-suite");
-            WriteClosingElement("test-results");
+            this.WriteClosingElement("results");
+            this.WriteClosingElement("test-suite");
+            this.WriteClosingElement("test-results");
         }
 
         #region Element Creation Helpers
@@ -253,29 +254,29 @@ namespace UnityTest
                 attributes.Add("success", result.IsSuccess.ToString());
                 attributes.Add("time", result.Duration.ToString("#####0.000", NumberFormatInfo.InvariantInfo));
             }
-            WriteOpeningElement("test-case", attributes);
+            this.WriteOpeningElement("test-case", attributes);
         }
 
         private void WriteReasonElement(ITestResult result)
         {
-            WriteOpeningElement("reason");
-            WriteOpeningElement("message");
-            WriteCData(result.Message);
-            WriteClosingElement("message");
-            WriteClosingElement("reason");
+            this.WriteOpeningElement("reason");
+            this.WriteOpeningElement("message");
+            this.WriteCData(result.Message);
+            this.WriteClosingElement("message");
+            this.WriteClosingElement("reason");
         }
 
         private void WriteFailureElement(ITestResult result)
         {
-            WriteOpeningElement("failure");
-            WriteOpeningElement("message");
-            WriteCData(result.Message);
-            WriteClosingElement("message");
-            WriteOpeningElement("stack-trace");
+            this.WriteOpeningElement("failure");
+            this.WriteOpeningElement("message");
+            this.WriteCData(result.Message);
+            this.WriteClosingElement("message");
+            this.WriteOpeningElement("stack-trace");
             if (result.StackTrace != null)
-                WriteCData(StackTraceFilter.Filter(result.StackTrace));
-            WriteClosingElement("stack-trace");
-            WriteClosingElement("failure");
+                this.WriteCData(StackTraceFilter.Filter(result.StackTrace));
+            this.WriteClosingElement("stack-trace");
+            this.WriteClosingElement("failure");
         }
 
         #endregion
@@ -284,8 +285,8 @@ namespace UnityTest
         {
             if (string.IsNullOrEmpty(text)) 
                 return;
-            m_ResultWriter.AppendFormat("<![CDATA[{0}]]>", text);
-            m_ResultWriter.AppendLine();
+            this.m_ResultWriter.AppendFormat("<![CDATA[{0}]]>", text);
+            this.m_ResultWriter.AppendLine();
         }
 
         public void WriteToFile(string resultDestiantion, string resultFileName)
@@ -294,7 +295,7 @@ namespace UnityTest
             {
                 var path = Path.Combine(resultDestiantion, resultFileName);
                 Debug.Log("Saving results in " + path);
-                File.WriteAllText(path, GetTestResult(), Encoding.UTF8);
+                File.WriteAllText(path, this.GetTestResult(), Encoding.UTF8);
             }
             catch (Exception e)
             {

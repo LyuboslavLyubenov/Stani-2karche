@@ -1,16 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using UnityEditor;
-using UnityEditorInternal;
-using UnityEngine;
-using System.Linq;
-
-namespace UnityTest.IntegrationTests
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
+    using System;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using UnityEditor;
+
+    using UnityEditorInternal;
+
+    using UnityEngine;
 
     public class PlatformRunner
     {

@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
+
+    using Assets.UnityTestTools.Common.Editor;
+
     public class IntegrationTestsRunnerSettings : ProjectSettingsBase
     {
         public bool blockUIWhenRunning = true;
@@ -12,14 +10,14 @@ namespace UnityTest
         
         public void ToggleBlockUIWhenRunning ()
         {
-            blockUIWhenRunning = !blockUIWhenRunning;
-            Save ();
+            this.blockUIWhenRunning = !this.blockUIWhenRunning;
+            this.Save ();
         }
         
         public void TogglePauseOnTestFailure()
         {
-            pauseOnTestFailure = !pauseOnTestFailure;
-            Save ();
+            this.pauseOnTestFailure = !this.pauseOnTestFailure;
+            this.Save ();
         }
     }
 }

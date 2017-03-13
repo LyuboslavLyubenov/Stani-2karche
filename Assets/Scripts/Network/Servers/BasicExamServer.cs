@@ -334,7 +334,7 @@ namespace Assets.Scripts.Network.Servers
 
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
-            var selectedAudiencePollCommand = new SelectedAudiencePollCommand(this.MainPlayerData, this.audiencePollRouter, 60);
+            var selectedAudiencePollCommand = new SelectedAnswerPollCommand(this.MainPlayerData, this.audiencePollRouter, 60);
             var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };

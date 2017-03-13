@@ -4,7 +4,6 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 
     using UnityEngine;
     using UnityEngine.UI;
-    using UnityEngine.UI.Extensions;
 
     public class MainPlayerUIController : MonoBehaviour
     {

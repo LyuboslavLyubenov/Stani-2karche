@@ -1,11 +1,11 @@
 ﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
 {
 
+    using Assets.Scripts;
     using Assets.Scripts.Utils.Unity;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using UnityEngine;
-    using UnityEngine.UI.Extensions;
 
     public class AssertOutline : ExtendedMonoBehaviour
     {

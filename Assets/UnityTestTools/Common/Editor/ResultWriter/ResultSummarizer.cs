@@ -2,12 +2,11 @@
 // Based on nUnit 2.6.2 (http://www.nunit.org/)
 // ****************************************************************
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor.ResultWriter
 {
+
+    using System;
+    using System.Collections.Generic;
 
     using Assets.UnityTestTools.Common;
 
@@ -31,12 +30,12 @@ namespace UnityTest
         public ResultSummarizer(IEnumerable<ITestResult> results)
         {
             foreach (var result in results)
-                Summarize(result);
+                this.Summarize(result);
         }
 
         public bool Success
         {
-            get { return m_FailureCount == 0; }
+            get { return this.m_FailureCount == 0; }
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace UnityTest
         /// </summary>
         public int ResultCount
         {
-            get { return m_ResultCount; }
+            get { return this.m_ResultCount; }
         }
 
         /// <summary>
@@ -56,7 +55,7 @@ namespace UnityTest
         /// </summary>
         public int TestsRun
         {
-            get { return m_TestsRun; }
+            get { return this.m_TestsRun; }
         }
 
         /// <summary>
@@ -64,7 +63,7 @@ namespace UnityTest
         /// </summary>
         public int Passed
         {
-            get { return m_SuccessCount; }
+            get { return this.m_SuccessCount; }
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace UnityTest
         /// </summary>
         public int Errors
         {
-            get { return m_ErrorCount; }
+            get { return this.m_ErrorCount; }
         }
 
         /// <summary>
@@ -80,7 +79,7 @@ namespace UnityTest
         /// </summary>
         public int Failures
         {
-            get { return m_FailureCount; }
+            get { return this.m_FailureCount; }
         }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace UnityTest
         /// </summary>
         public int Inconclusive
         {
-            get { return m_InconclusiveCount; }
+            get { return this.m_InconclusiveCount; }
         }
 
         /// <summary>
@@ -98,7 +97,7 @@ namespace UnityTest
         /// </summary>
         public int NotRunnable
         {
-            get { return m_NotRunnable; }
+            get { return this.m_NotRunnable; }
         }
 
         /// <summary>
@@ -106,69 +105,69 @@ namespace UnityTest
         /// </summary>
         public int Skipped
         {
-            get { return m_SkipCount; }
+            get { return this.m_SkipCount; }
         }
 
         public int Ignored
         {
-            get { return m_IgnoreCount; }
+            get { return this.m_IgnoreCount; }
         }
 
         public double Duration
         {
-            get { return m_Duration.TotalSeconds; }
+            get { return this.m_Duration.TotalSeconds; }
         }
 
         public int TestsNotRun
         {
-            get { return m_SkipCount + m_IgnoreCount + m_NotRunnable; }
+            get { return this.m_SkipCount + this.m_IgnoreCount + this.m_NotRunnable; }
         }
 
         public void Summarize(ITestResult result)
         {
-            m_Duration += TimeSpan.FromSeconds(result.Duration);
-            m_ResultCount++;
+            this.m_Duration += TimeSpan.FromSeconds(result.Duration);
+            this.m_ResultCount++;
             
             if(!result.Executed)
             {
                 if(result.IsIgnored)
                 {
-                    m_IgnoreCount++;
+                    this.m_IgnoreCount++;
                     return;
                 }
                 
-                m_SkipCount++;
+                this.m_SkipCount++;
                 return;
             }
             
             switch (result.ResultState)
             {
                 case TestResultState.Success:
-                    m_SuccessCount++;
-                    m_TestsRun++;
+                    this.m_SuccessCount++;
+                    this.m_TestsRun++;
                     break;
                 case TestResultState.Failure:
-                    m_FailureCount++;
-                    m_TestsRun++;
+                    this.m_FailureCount++;
+                    this.m_TestsRun++;
                     break;
                 case TestResultState.Error:
                 case TestResultState.Cancelled:
-                    m_ErrorCount++;
-                    m_TestsRun++;
+                    this.m_ErrorCount++;
+                    this.m_TestsRun++;
                     break;
                 case TestResultState.Inconclusive:
-                    m_InconclusiveCount++;
-                    m_TestsRun++;
+                    this.m_InconclusiveCount++;
+                    this.m_TestsRun++;
                     break;
                 case TestResultState.NotRunnable:
-                    m_NotRunnable++;
+                    this.m_NotRunnable++;
                     // errorCount++;
                     break;
                 case TestResultState.Ignored:
-                    m_IgnoreCount++;
+                    this.m_IgnoreCount++;
                     break;
                 default:
-                    m_SkipCount++;
+                    this.m_SkipCount++;
                     break;
             }
         }

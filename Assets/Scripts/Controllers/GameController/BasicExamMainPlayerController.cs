@@ -62,7 +62,7 @@
         private UnableToConnectUIController unableToConnectUIController;
 
         private IGameDataIterator remoteGameDataIterator = null;
-        private IAudienceAnswerPollResultRetrieverFromClient audienceAnswerPollResultRetriever = null;
+        private IAnswerPollResultRetriever audienceAnswerPollResultRetriever = null;
         private IAskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
 
         private ILeaderboardReceiver leaderboardReceiver = null;
@@ -75,7 +75,7 @@
             var threadUtils = ThreadUtils.Instance;
 
             this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
-            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetrieverFromClient(ClientNetworkManager.Instance, 10);
+            this.audienceAnswerPollResultRetriever = new AnswerPollResultRetrieverFromClient(ClientNetworkManager.Instance, 10);
             this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 10);
             this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 10);
 

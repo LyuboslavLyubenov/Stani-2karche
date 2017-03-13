@@ -5,9 +5,9 @@
 
     using Assets.Scripts.EventArgs;
 
-    public interface IAudienceAnswerPollResultRetrieverFromClient : IDisposable
+    public interface IAnswerPollResultRetriever : IDisposable
     {
-        event EventHandler<AudienceVoteEventArgs> OnAudienceVoted;
+        event EventHandler<VoteEventArgs> OnVoted;
 
         event EventHandler<JokerSettingsEventArgs> OnReceivedSettings;
 

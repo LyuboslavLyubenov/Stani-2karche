@@ -1,13 +1,16 @@
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEditorInternal;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor
 {
 
+    using System.Collections.Generic;
+    using System.Linq;
+
     using Assets.Zenject.Source.Internal;
+
+    using UnityEditor;
+
+    using UnityEditorInternal;
+
+    using UnityEngine;
 
     public abstract class UnityInspectorListEditor : UnityEditor.Editor
     {
@@ -31,12 +34,12 @@ namespace Zenject
 
         public virtual void OnEnable()
         {
-            _installersProperties = new List<SerializedProperty>();
-            _installersLists = new List<ReorderableList>();
+            this._installersProperties = new List<SerializedProperty>();
+            this._installersLists = new List<ReorderableList>();
 
-            var descriptions = PropertyDescriptions;
-            var names = PropertyNames;
-            var displayNames = PropertyDisplayNames;
+            var descriptions = this.PropertyDescriptions;
+            var names = this.PropertyNames;
+            var displayNames = this.PropertyDisplayNames;
 
             Assert.IsEqual(descriptions.Length, names.Length);
 
@@ -44,11 +47,11 @@ namespace Zenject
 
             foreach (var info in infos)
             {
-                var installersProperty = serializedObject.FindProperty(info.Name);
-                _installersProperties.Add(installersProperty);
+                var installersProperty = this.serializedObject.FindProperty(info.Name);
+                this._installersProperties.Add(installersProperty);
 
-                ReorderableList installersList = new ReorderableList(serializedObject, installersProperty, true, true, true, true);
-                _installersLists.Add(installersList);
+                ReorderableList installersList = new ReorderableList(this.serializedObject, installersProperty, true, true, true, true);
+                this._installersLists.Add(installersList);
 
                 var closedName = info.DisplayName;
                 var closedDesc = info.Description;
@@ -69,11 +72,11 @@ namespace Zenject
 
         public sealed override void OnInspectorGUI()
         {
-            serializedObject.Update();
+            this.serializedObject.Update();
 
-            OnGui();
+            this.OnGui();
 
-            serializedObject.ApplyModifiedProperties();
+            this.serializedObject.ApplyModifiedProperties();
         }
 
         protected virtual void OnGui()
@@ -83,7 +86,7 @@ namespace Zenject
                 GUI.enabled = false;
             }
 
-            foreach (var list in _installersLists)
+            foreach (var list in this._installersLists)
             {
                 list.DoLayoutList();
             }

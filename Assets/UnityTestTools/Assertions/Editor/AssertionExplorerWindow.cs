@@ -1,18 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
 
 #if UNITY_METRO
 #warning Assertion component is not supported on Windows Store apps
 #endif
 
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Editor
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using Assets.UnityTestTools.Assertions;
     using Assets.UnityTestTools.Assertions.Comparers;
+    using Assets.UnityTestTools.Common.Editor;
+
+    using UnityEditor;
+
+    using UnityEngine;
 
     [Serializable]
     public class AssertionExplorerWindow : EditorWindow
@@ -36,61 +40,61 @@ namespace UnityTest
 
         public AssertionExplorerWindow()
         {
-            titleContent = new GUIContent("Assertion Explorer");
+            this.titleContent = new GUIContent("Assertion Explorer");
         }
 
         public void OnDidOpenScene()
         {
-            ReloadAssertionList();
+            this.ReloadAssertionList();
         }
 
         public void OnFocus()
         {
-            ReloadAssertionList();
+            this.ReloadAssertionList();
         }
 
         private void ReloadAssertionList()
         {
-            m_NextReload = DateTime.Now.AddSeconds(1);
+            this.m_NextReload = DateTime.Now.AddSeconds(1);
             s_ShouldReload = true;
         }
 
         public void OnHierarchyChange()
         {
-            ReloadAssertionList();
+            this.ReloadAssertionList();
         }
 
         public void OnInspectorUpdate()
         {
-            if (s_ShouldReload && m_NextReload < DateTime.Now)
+            if (s_ShouldReload && this.m_NextReload < DateTime.Now)
             {
                 s_ShouldReload = false;
-                m_AllAssertions = new List<AssertionComponent>((AssertionComponent[])Resources.FindObjectsOfTypeAll(typeof(AssertionComponent)));
-                Repaint();
+                this.m_AllAssertions = new List<AssertionComponent>((AssertionComponent[])Resources.FindObjectsOfTypeAll(typeof(AssertionComponent)));
+                this.Repaint();
             }
         }
 
         public void OnGUI()
         {
-            DrawMenuPanel();
+            this.DrawMenuPanel();
 
-            m_ScrollPosition = EditorGUILayout.BeginScrollView(m_ScrollPosition);
-            if (m_AllAssertions != null)
-                GetResultRendere().Render(FilterResults(m_AllAssertions, m_FilterText.ToLower()), m_FoldMarkers);
+            this.m_ScrollPosition = EditorGUILayout.BeginScrollView(this.m_ScrollPosition);
+            if (this.m_AllAssertions != null)
+                this.GetResultRendere().Render(this.FilterResults(this.m_AllAssertions, this.m_FilterText.ToLower()), this.m_FoldMarkers);
             EditorGUILayout.EndScrollView();
         }
 
         private IEnumerable<AssertionComponent> FilterResults(List<AssertionComponent> assertionComponents, string text)
         {
-            if (m_ShowType == ShowType.ShowDisabled)
+            if (this.m_ShowType == ShowType.ShowDisabled)
                 assertionComponents = assertionComponents.Where(c => !c.enabled).ToList();
-            else if (m_ShowType == ShowType.ShowEnabled)
+            else if (this.m_ShowType == ShowType.ShowEnabled)
                 assertionComponents = assertionComponents.Where(c => c.enabled).ToList();
 
             if (string.IsNullOrEmpty(text))
                 return assertionComponents;
 
-            switch (m_FilterType)
+            switch (this.m_FilterType)
             {
                 case FilterType.ComparerName:
                     return assertionComponents.Where(c => c.Action.GetType().Name.ToLower().Contains(text));
@@ -123,18 +127,18 @@ namespace UnityTest
 
         private IListRenderer GetResultRendere()
         {
-            switch (m_GroupBy)
+            switch (this.m_GroupBy)
             {
                 case GroupByType.Comparer:
-                    return m_GroupByComparerRenderer;
+                    return this.m_GroupByComparerRenderer;
                 case GroupByType.ExecutionMethod:
-                    return m_GroupByExecutionMethodRenderer;
+                    return this.m_GroupByExecutionMethodRenderer;
                 case GroupByType.GameObjects:
-                    return m_GroupByGoRenderer;
+                    return this.m_GroupByGoRenderer;
                 case GroupByType.Tests:
-                    return m_GroupByTestsRenderer;
+                    return this.m_GroupByTestsRenderer;
                 default:
-                    return m_GroupByNothingRenderer;
+                    return this.m_GroupByNothingRenderer;
             }
         }
 
@@ -142,17 +146,17 @@ namespace UnityTest
         {
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             EditorGUILayout.LabelField("Group by:", Styles.toolbarLabel, GUILayout.MaxWidth(60));
-            m_GroupBy = (GroupByType)EditorGUILayout.EnumPopup(m_GroupBy, EditorStyles.toolbarPopup, GUILayout.MaxWidth(150));
+            this.m_GroupBy = (GroupByType)EditorGUILayout.EnumPopup(this.m_GroupBy, EditorStyles.toolbarPopup, GUILayout.MaxWidth(150));
 
             GUILayout.FlexibleSpace();
 
-            m_ShowType = (ShowType)EditorGUILayout.EnumPopup(m_ShowType, EditorStyles.toolbarPopup, GUILayout.MaxWidth(100));
+            this.m_ShowType = (ShowType)EditorGUILayout.EnumPopup(this.m_ShowType, EditorStyles.toolbarPopup, GUILayout.MaxWidth(100));
 
             EditorGUILayout.LabelField("Filter by:", Styles.toolbarLabel, GUILayout.MaxWidth(50));
-            m_FilterType = (FilterType)EditorGUILayout.EnumPopup(m_FilterType, EditorStyles.toolbarPopup, GUILayout.MaxWidth(100));
-            m_FilterText = GUILayout.TextField(m_FilterText, "ToolbarSeachTextField", GUILayout.MaxWidth(100));
-            if (GUILayout.Button(GUIContent.none, string.IsNullOrEmpty(m_FilterText) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton", GUILayout.ExpandWidth(false)))
-                m_FilterText = "";
+            this.m_FilterType = (FilterType)EditorGUILayout.EnumPopup(this.m_FilterType, EditorStyles.toolbarPopup, GUILayout.MaxWidth(100));
+            this.m_FilterText = GUILayout.TextField(this.m_FilterText, "ToolbarSeachTextField", GUILayout.MaxWidth(100));
+            if (GUILayout.Button(GUIContent.none, string.IsNullOrEmpty(this.m_FilterText) ? "ToolbarSeachCancelButtonEmpty" : "ToolbarSeachCancelButton", GUILayout.ExpandWidth(false)))
+                this.m_FilterText = "";
             EditorGUILayout.EndHorizontal();
         }
 

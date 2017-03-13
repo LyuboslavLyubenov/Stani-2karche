@@ -1,12 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor
 {
+
+    using System.IO;
+    using System.Linq;
+
+    using UnityEditor;
+
+    using UnityEngine;
+
     public abstract class ProjectSettingsBase : ScriptableObject
     {
         private static readonly string k_SettingsPath = Path.Combine("UnityTestTools", "Common");

@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher
+﻿namespace Assets.Scripts.Controllers
 {
+
     using System;
 
     using Assets.Scripts.DTOs;
@@ -30,7 +31,7 @@
             this.JoinAsAudiencePlayerButton.gameObject.SetActive(gameInfo_DTO.CanConnectAsAudience);
 
             var serverInfo = gameInfo_DTO.ServerInfo;
-            SaveConnectionDataForNextScene(serverInfo);
+            this.SaveConnectionDataForNextScene(serverInfo);
         }
         
         private void SaveConnectionDataForNextScene(ServerInfo_DTO serverInfo)

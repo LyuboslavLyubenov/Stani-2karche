@@ -16,7 +16,7 @@ namespace Assets.Scripts.Controllers.Lobby
     public class LobbyInstaller : MonoInstaller
     {
         public BasicExamServerSelectPlayerTypeUIController BasicExamServerSelectPlayerTypeUIController;
-        public EveryBodyVsTheTeacher.SelectPlayerTypeUIController EveryBodyVsTheTeacherSelectPlayerTypeUiController;
+        public SelectPlayerTypeUIController EveryBodyVsTheTeacherSelectPlayerTypeUiController;
 
         public override void InstallBindings()
         {
@@ -61,7 +61,7 @@ namespace Assets.Scripts.Controllers.Lobby
                 .FromInstance(this.BasicExamServerSelectPlayerTypeUIController)
                 .AsSingle();
 
-            Container.Bind<EveryBodyVsTheTeacher.SelectPlayerTypeUIController>()
+            Container.Bind<SelectPlayerTypeUIController>()
                 .FromInstance(this.EveryBodyVsTheTeacherSelectPlayerTypeUiController)
                 .AsSingle();
 

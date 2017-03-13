@@ -15,11 +15,11 @@ namespace Assets.Scripts.Controllers
     public class SelectPlayerTypeRouter
     {
         private readonly BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController;
-        private readonly EveryBodyVsTheTeacher.SelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
+        private readonly SelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController;
         
         public SelectPlayerTypeRouter(
             BasicExamServerSelectPlayerTypeUIController basicExamServerSelectPlayerTypeUIController,
-            EveryBodyVsTheTeacher.SelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController)
+            SelectPlayerTypeUIController everyBodyVsTheTeacherSelectPlayerTypeUiController)
         {
             if (basicExamServerSelectPlayerTypeUIController == null)
             {

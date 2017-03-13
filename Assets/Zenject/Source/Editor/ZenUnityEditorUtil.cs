@@ -1,20 +1,21 @@
 #if !NOT_UNITY3D
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEditor.SceneManagement;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
 
     using Assets.Zenject.Source.Install.Contexts;
     using Assets.Zenject.Source.Internal;
     using Assets.Zenject.Source.Util;
+
+    using UnityEditor;
+    using UnityEditor.SceneManagement;
+
+    using UnityEngine;
 
     public static class ZenUnityEditorUtil
     {

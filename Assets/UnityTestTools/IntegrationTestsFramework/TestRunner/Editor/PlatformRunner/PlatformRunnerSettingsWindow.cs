@@ -1,17 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using UnityEditor;
-using UnityEngine;
-using Object = UnityEngine.Object;
-using UnityEngine.SceneManagement;
-
-namespace UnityTest.IntegrationTests
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+
+    using Assets.UnityTestTools.Common.Editor;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using UnityEditor;
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
+
+    using Object = UnityEngine.Object;
 
     [Serializable]
     public class PlatformRunnerSettingsWindow : EditorWindow
@@ -42,36 +46,36 @@ namespace UnityTest.IntegrationTests
         
         void Awake()
         {
-            if (m_OtherScenesToBuild == null)
-                m_OtherScenesToBuild = new List<string> ();
+            if (this.m_OtherScenesToBuild == null)
+                this.m_OtherScenesToBuild = new List<string> ();
 
-            if (m_IntegrationTestScenes == null)
-                m_IntegrationTestScenes = new List<string> ();
+            if (this.m_IntegrationTestScenes == null)
+                this.m_IntegrationTestScenes = new List<string> ();
 
-            titleContent = new GUIContent("Platform runner");
-            m_BuildTarget = PlatformRunner.defaultBuildTarget;
-            position.Set(position.xMin, position.yMin, 200, position.height);
-            m_AllScenesInProject = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.unity", SearchOption.AllDirectories).ToList();
-            m_AllScenesInProject.Sort();
+            this.titleContent = new GUIContent("Platform runner");
+            this.m_BuildTarget = PlatformRunner.defaultBuildTarget;
+            this.position.Set(this.position.xMin, this.position.yMin, 200, this.position.height);
+            this.m_AllScenesInProject = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.unity", SearchOption.AllDirectories).ToList();
+            this.m_AllScenesInProject.Sort();
             var currentScene = (Directory.GetCurrentDirectory() + SceneManager.GetActiveScene().path).Replace("\\", "").Replace("/", "");
-            var currentScenePath = m_AllScenesInProject.Where(s => s.Replace("\\", "").Replace("/", "") == currentScene);
-            m_SelectedScenes.AddRange(currentScenePath);
+            var currentScenePath = this.m_AllScenesInProject.Where(s => s.Replace("\\", "").Replace("/", "") == currentScene);
+            this.m_SelectedScenes.AddRange(currentScenePath);
 
-            m_Interfaces.Add("(Any)");
-            m_Interfaces.AddRange(TestRunnerConfigurator.GetAvailableNetworkIPs());
-            m_Interfaces.Add("127.0.0.1");
+            this.m_Interfaces.Add("(Any)");
+            this.m_Interfaces.AddRange(TestRunnerConfigurator.GetAvailableNetworkIPs());
+            this.m_Interfaces.Add("127.0.0.1");
 
-            LoadFromPrefereneces ();
+            this.LoadFromPrefereneces ();
         }
 
         public void OnEnable()
         {
-            m_Settings = ProjectSettingsBase.Load<PlatformRunnerSettings>();
+            this.m_Settings = ProjectSettingsBase.Load<PlatformRunnerSettings>();
 
             // If not configured pre populate with all scenes that have test components on game objects
             // This needs to be done outsie of constructor
-            if (m_IntegrationTestScenes.Count == 0)
-                m_IntegrationTestScenes = GetScenesWithTestComponents (m_AllScenesInProject);
+            if (this.m_IntegrationTestScenes.Count == 0)
+                this.m_IntegrationTestScenes = GetScenesWithTestComponents (this.m_AllScenesInProject);
         }
 
         public void OnGUI()
@@ -90,14 +94,14 @@ namespace UnityTest.IntegrationTests
                     label = new GUIContent("Tests:", "All Integration Test scenes that you wish to run on the platform");
                     EditorGUILayout.LabelField(label, EditorStyles.boldLabel, GUILayout.Height(20f));
 
-                    EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(m_SelectedSceneInTest));
+                    EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(this.m_SelectedSceneInTest));
                         if (GUILayout.Button("Remove Integration Test")) {
-                        m_IntegrationTestScenes.Remove(m_SelectedSceneInTest);
-                        m_SelectedSceneInTest = "";
+                        this.m_IntegrationTestScenes.Remove(this.m_SelectedSceneInTest);
+                        this.m_SelectedSceneInTest = "";
                     }
                     EditorGUI.EndDisabledGroup();
 
-                    DrawVerticalSceneList (ref m_IntegrationTestScenes, ref m_SelectedSceneInTest, ref m_ScrollPositionIntegrationTests);
+                    this.DrawVerticalSceneList (ref this.m_IntegrationTestScenes, ref this.m_SelectedSceneInTest, ref this.m_ScrollPositionIntegrationTests);
                     EditorGUILayout.EndVertical ();
         
                     // Extra scenes to include in build
@@ -106,14 +110,14 @@ namespace UnityTest.IntegrationTests
                         EditorGUILayout.LabelField(label, EditorStyles.boldLabel, GUILayout.Height(20f));
 
             
-                    EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(m_SelectedSceneInBuild));
+                    EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(this.m_SelectedSceneInBuild));
                     if (GUILayout.Button("Remove From Build")) {
-                        m_OtherScenesToBuild.Remove(m_SelectedSceneInBuild);
-                        m_SelectedSceneInBuild = "";
+                        this.m_OtherScenesToBuild.Remove(this.m_SelectedSceneInBuild);
+                        this.m_SelectedSceneInBuild = "";
                     }
                     EditorGUI.EndDisabledGroup();
 
-                    DrawVerticalSceneList (ref m_OtherScenesToBuild, ref m_SelectedSceneInBuild, ref m_ScrollPositionOtherScenes);
+                    this.DrawVerticalSceneList (ref this.m_OtherScenesToBuild, ref this.m_SelectedSceneInBuild, ref this.m_ScrollPositionOtherScenes);
                     EditorGUILayout.EndVertical ();
 
                     EditorGUILayout.Separator ();
@@ -125,23 +129,23 @@ namespace UnityTest.IntegrationTests
 
             
                     EditorGUILayout.BeginHorizontal ();
-                    EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(m_SelectedSceneInAll));
+                    EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(this.m_SelectedSceneInAll));
                     if (GUILayout.Button("Add As Test")) {
-                        if (!m_IntegrationTestScenes.Contains (m_SelectedSceneInAll) && !m_OtherScenesToBuild.Contains (m_SelectedSceneInAll)) {
-                            m_IntegrationTestScenes.Add(m_SelectedSceneInAll);
+                        if (!this.m_IntegrationTestScenes.Contains (this.m_SelectedSceneInAll) && !this.m_OtherScenesToBuild.Contains (this.m_SelectedSceneInAll)) {
+                            this.m_IntegrationTestScenes.Add(this.m_SelectedSceneInAll);
                         }
                     }
             
                     if (GUILayout.Button("Add to Build")) {
-                        if (!m_IntegrationTestScenes.Contains (m_SelectedSceneInAll) && !m_OtherScenesToBuild.Contains (m_SelectedSceneInAll)) {
-                            m_OtherScenesToBuild.Add(m_SelectedSceneInAll);
+                        if (!this.m_IntegrationTestScenes.Contains (this.m_SelectedSceneInAll) && !this.m_OtherScenesToBuild.Contains (this.m_SelectedSceneInAll)) {
+                            this.m_OtherScenesToBuild.Add(this.m_SelectedSceneInAll);
                         }
                     }
                     EditorGUI.EndDisabledGroup();
 
                     EditorGUILayout.EndHorizontal ();
 
-                    DrawVerticalSceneList (ref m_AllScenesInProject, ref m_SelectedSceneInAll, ref m_ScrollPositionAllScenes);
+                    this.DrawVerticalSceneList (ref this.m_AllScenesInProject, ref this.m_SelectedSceneInAll, ref this.m_ScrollPositionAllScenes);
                     EditorGUILayout.EndVertical ();
                     
             // ButtoNetworkResultsReceiverns to edit scenes in lists
@@ -152,25 +156,25 @@ namespace UnityTest.IntegrationTests
                 GUILayout.Space(3);
                 
                 // Select target platform
-                m_BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build tests for", m_BuildTarget);
+                this.m_BuildTarget = (BuildTarget)EditorGUILayout.EnumPopup("Build tests for", this.m_BuildTarget);
 
-                if (PlatformRunner.defaultBuildTarget != m_BuildTarget)
+                if (PlatformRunner.defaultBuildTarget != this.m_BuildTarget)
                 {
                     if (GUILayout.Button("Make default target platform"))
                     {
-                    PlatformRunner.defaultBuildTarget = m_BuildTarget;
+                    PlatformRunner.defaultBuildTarget = this.m_BuildTarget;
                     }
                 }
                 GUI.enabled = true;
             
                 // Select various Network settings
-                DrawSetting();
+                this.DrawSetting();
                 var build = GUILayout.Button("Build and run tests");
             EditorGUILayout.EndVertical();
 
             if (build) 
             {
-                BuildAndRun ();
+                this.BuildAndRun ();
             }
         }
 
@@ -220,38 +224,38 @@ namespace UnityTest.IntegrationTests
             EditorGUI.BeginChangeCheck();
 
             EditorGUILayout.BeginHorizontal();
-            m_Settings.resultsPath = EditorGUILayout.TextField(m_Label, m_Settings.resultsPath);
+            this.m_Settings.resultsPath = EditorGUILayout.TextField(this.m_Label, this.m_Settings.resultsPath);
             if (GUILayout.Button("Search", EditorStyles.miniButton, GUILayout.Width(50)))
             {
-                var selectedPath = EditorUtility.SaveFolderPanel("Result files destination", m_Settings.resultsPath, "");
+                var selectedPath = EditorUtility.SaveFolderPanel("Result files destination", this.m_Settings.resultsPath, "");
                 if (!string.IsNullOrEmpty(selectedPath))
-                    m_Settings.resultsPath = Path.GetFullPath(selectedPath);
+                    this.m_Settings.resultsPath = Path.GetFullPath(selectedPath);
             }
             EditorGUILayout.EndHorizontal();
 
-            if (!string.IsNullOrEmpty(m_Settings.resultsPath))
+            if (!string.IsNullOrEmpty(this.m_Settings.resultsPath))
             {
                 Uri uri;
-                if (!Uri.TryCreate(m_Settings.resultsPath, UriKind.Absolute, out uri) || !uri.IsFile || uri.IsWellFormedOriginalString())
+                if (!Uri.TryCreate(this.m_Settings.resultsPath, UriKind.Absolute, out uri) || !uri.IsFile || uri.IsWellFormedOriginalString())
                 {
                     EditorGUILayout.HelpBox("Invalid URI path", MessageType.Warning);
                 }
             }
 
-            m_Settings.sendResultsOverNetwork = EditorGUILayout.Toggle("Send results to editor", m_Settings.sendResultsOverNetwork);
-            EditorGUI.BeginDisabledGroup(!m_Settings.sendResultsOverNetwork);
-            m_AdvancedNetworkingSettings = EditorGUILayout.Foldout(m_AdvancedNetworkingSettings, "Advanced network settings");
-            if (m_AdvancedNetworkingSettings)
+            this.m_Settings.sendResultsOverNetwork = EditorGUILayout.Toggle("Send results to editor", this.m_Settings.sendResultsOverNetwork);
+            EditorGUI.BeginDisabledGroup(!this.m_Settings.sendResultsOverNetwork);
+            this.m_AdvancedNetworkingSettings = EditorGUILayout.Foldout(this.m_AdvancedNetworkingSettings, "Advanced network settings");
+            if (this.m_AdvancedNetworkingSettings)
             {
-                m_SelectedInterface = EditorGUILayout.Popup("Network interface", m_SelectedInterface, m_Interfaces.ToArray());
+                this.m_SelectedInterface = EditorGUILayout.Popup("Network interface", this.m_SelectedInterface, this.m_Interfaces.ToArray());
                 EditorGUI.BeginChangeCheck();
-                m_Settings.port = EditorGUILayout.IntField("Network port", m_Settings.port);
+                this.m_Settings.port = EditorGUILayout.IntField("Network port", this.m_Settings.port);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    if (m_Settings.port > IPEndPoint.MaxPort)
-                        m_Settings.port = IPEndPoint.MaxPort;
-                    else if (m_Settings.port < IPEndPoint.MinPort)
-                        m_Settings.port = IPEndPoint.MinPort;
+                    if (this.m_Settings.port > IPEndPoint.MaxPort)
+                        this.m_Settings.port = IPEndPoint.MaxPort;
+                    else if (this.m_Settings.port < IPEndPoint.MinPort)
+                        this.m_Settings.port = IPEndPoint.MinPort;
                 }
             }
 
@@ -259,45 +263,45 @@ namespace UnityTest.IntegrationTests
 
             if (EditorGUI.EndChangeCheck())
             {
-                m_Settings.Save();
+                this.m_Settings.Save();
             }
         }
 
         private void BuildAndRun()
         {
-            SaveToPreferences ();
+            this.SaveToPreferences ();
 
             var config = new PlatformRunnerConfiguration
             {
-                buildTarget = m_BuildTarget,
-                buildScenes = m_OtherScenesToBuild,
-                testScenes = m_IntegrationTestScenes,
-                projectName = m_IntegrationTestScenes.Count > 1 ? "IntegrationTests" : Path.GetFileNameWithoutExtension(SceneManager.GetActiveScene().path),
-                resultsDir = m_Settings.resultsPath,
-                sendResultsOverNetwork = m_Settings.sendResultsOverNetwork,
-                ipList = m_Interfaces.Skip(1).ToList(),
-                port = m_Settings.port
+                buildTarget = this.m_BuildTarget,
+                buildScenes = this.m_OtherScenesToBuild,
+                testScenes = this.m_IntegrationTestScenes,
+                projectName = this.m_IntegrationTestScenes.Count > 1 ? "IntegrationTests" : Path.GetFileNameWithoutExtension(SceneManager.GetActiveScene().path),
+                resultsDir = this.m_Settings.resultsPath,
+                sendResultsOverNetwork = this.m_Settings.sendResultsOverNetwork,
+                ipList = this.m_Interfaces.Skip(1).ToList(),
+                port = this.m_Settings.port
             };
             
-            if (m_SelectedInterface > 0)
-            config.ipList = new List<string> {m_Interfaces.ElementAt(m_SelectedInterface)};
+            if (this.m_SelectedInterface > 0)
+            config.ipList = new List<string> {this.m_Interfaces.ElementAt(this.m_SelectedInterface)};
             
             PlatformRunner.BuildAndRunInPlayer(config);
-            Close ();
+            this.Close ();
         }
 
         public void OnLostFocus() {
-            SaveToPreferences ();
+            this.SaveToPreferences ();
         }
 
         public void OnDestroy() {
-            SaveToPreferences ();
+            this.SaveToPreferences ();
         }
 
         private void SaveToPreferences()
         {
-            EditorPrefs.SetString (Animator.StringToHash (Application.dataPath + "uttTestScenes").ToString (), String.Join (",",m_IntegrationTestScenes.ToArray()));
-            EditorPrefs.SetString (Animator.StringToHash (Application.dataPath + "uttBuildScenes").ToString (), String.Join (",",m_OtherScenesToBuild.ToArray()));
+            EditorPrefs.SetString (Animator.StringToHash (Application.dataPath + "uttTestScenes").ToString (), String.Join (",",this.m_IntegrationTestScenes.ToArray()));
+            EditorPrefs.SetString (Animator.StringToHash (Application.dataPath + "uttBuildScenes").ToString (), String.Join (",",this.m_OtherScenesToBuild.ToArray()));
         }
         
         private void LoadFromPrefereneces()
@@ -310,13 +314,13 @@ namespace UnityTest.IntegrationTests
             
             // Sanity check scenes actually exist
             foreach (string str in parsedTestScenes) {
-                if (m_AllScenesInProject.Contains(str))
-                    m_IntegrationTestScenes.Add(str);
+                if (this.m_AllScenesInProject.Contains(str))
+                    this.m_IntegrationTestScenes.Add(str);
             }
             
             foreach (string str in parsedBuildScenes) {
-                if (m_AllScenesInProject.Contains(str))
-                    m_OtherScenesToBuild.Add(str);
+                if (this.m_AllScenesInProject.Contains(str))
+                    this.m_OtherScenesToBuild.Add(str);
             }
         }
     }

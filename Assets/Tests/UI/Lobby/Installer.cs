@@ -14,7 +14,7 @@
     public class Installer : MonoInstaller
     {
         public BasicExamServerSelectPlayerTypeUIController BasicExamServerSelectPlayerTypeUIController;
-        public Scripts.Controllers.EveryBodyVsTheTeacher.SelectPlayerTypeUIController EveryBodyVsTheTeacherSelectPlayerTypeUiController;
+        public SelectPlayerTypeUIController EveryBodyVsTheTeacherSelectPlayerTypeUiController;
 
         public override void InstallBindings()
         {
@@ -22,7 +22,7 @@
                 .FromInstance(this.BasicExamServerSelectPlayerTypeUIController)
                 .AsSingle();
 
-            Container.Bind<Scripts.Controllers.EveryBodyVsTheTeacher.SelectPlayerTypeUIController>()
+            Container.Bind<SelectPlayerTypeUIController>()
                 .FromInstance(this.EveryBodyVsTheTeacherSelectPlayerTypeUiController)
                 .AsSingle();
 

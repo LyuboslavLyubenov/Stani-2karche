@@ -51,7 +51,7 @@ namespace Assets.Scripts.Jokers.Routers
         
         private int senderConnectionId;
 
-        private IAudienceAnswerPollRouter audienceAnswerPollRouter;
+        private IAnswerPollRouter answerPollRouter;
 
         public bool Activated
         {
@@ -73,13 +73,13 @@ namespace Assets.Scripts.Jokers.Routers
 
             this.networkManager = networkManager;
             this.gameDataIterator = gameDataIterator;
-            this.audienceAnswerPollRouter = new AudienceAnswerPollRouter(this.networkManager);
-            this.audienceAnswerPollRouter.OnVoteFinished += OnAudienceAnswerPollVoteFinished;
+            this.answerPollRouter = new AnswerPollRouter(this.networkManager);
+            this.answerPollRouter.OnVoteFinished += this.OnAnswerPollVoteFinished;
         }
 
-        private void OnAudienceAnswerPollVoteFinished(object sender, AudienceVoteEventArgs audienceVoteEventArgs)
+        private void OnAnswerPollVoteFinished(object sender, VoteEventArgs voteEventArgs)
         {
-            this.SendMainPlayerVoteResult(audienceVoteEventArgs.AnswersVotes);
+            this.SendMainPlayerVoteResult(voteEventArgs.AnswersVotes);
         }
 
         private void SendMainPlayerVoteResult(Dictionary<string, int> answersVotes)
@@ -90,7 +90,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void SendVoteResult(Dictionary<string, int> answersVotes)
         {
-            var voteResultCommandData = NetworkCommandData.From<AudiencePollResultCommand>();
+            var voteResultCommandData = NetworkCommandData.From<AnswerPollResultCommand>();
             var answersVotesPairs = answersVotes.ToArray();
 
             for (int i = 0; i < answersVotesPairs.Length; i++)
@@ -159,7 +159,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         public void Deactivate()
         {
-            this.audienceAnswerPollRouter.Deactivate();
+            this.answerPollRouter.Deactivate();
             this.senderConnectionId = 0;
             this.Activated = false;
         }
@@ -182,7 +182,7 @@ namespace Assets.Scripts.Jokers.Routers
 
             if (this.networkManager.ConnectedClientsCount < minClients)
             {
-                var audiencePollSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
+                var audiencePollSettingsCommand = NetworkCommandData.From<AnswerPollSettingsCommand>();
                 audiencePollSettingsCommand.AddOption("TimeToAnswerInSeconds", this.senderConnectionId.ToString());
 
                 this.SendGeneratedResultToMainPlayer();
@@ -192,7 +192,7 @@ namespace Assets.Scripts.Jokers.Routers
             this.gameDataIterator.GetCurrentQuestion((question) =>
                 {
                     var audienceConnectionIds = this.networkManager.ConnectedClientsConnectionId.Where(connectionId => connectionId != senderConnectionId);
-                    this.audienceAnswerPollRouter.Activate(timeToAnswerInSeconds, audienceConnectionIds, question);
+                    this.answerPollRouter.Activate(timeToAnswerInSeconds, audienceConnectionIds, question);
 
                     this.Activated = true;
                     this.OnActivated(this, EventArgs.Empty);
@@ -210,7 +210,7 @@ namespace Assets.Scripts.Jokers.Routers
             this.OnSent = null;
             this.OnError = null;
             
-            this.audienceAnswerPollRouter.Dispose();
+            this.answerPollRouter.Dispose();
         }
     }
 

@@ -9,7 +9,7 @@
     {
         public BasicExamServerSelectPlayerTypeUIController BasicExamSelectPlayerTypeUiController;
 
-        public Scripts.Controllers.EveryBodyVsTheTeacher.SelectPlayerTypeUIController
+        public SelectPlayerTypeUIController
             EveryBodyVsTheTeacherSelectPlayerTypeUiController;
 
         public override void InstallBindings()

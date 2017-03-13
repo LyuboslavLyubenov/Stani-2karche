@@ -13,7 +13,7 @@ namespace Assets.Scripts.Commands.Jokers
 
     using EventArgs = System.EventArgs;
 
-    public class SelectedAudiencePollCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+    public class SelectedAnswerPollCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
         public EventHandler OnExecuted
         {
@@ -30,7 +30,7 @@ namespace Assets.Scripts.Commands.Jokers
 
         private int timeToAnswerInSeconds;
 
-        public SelectedAudiencePollCommand(
+        public SelectedAnswerPollCommand(
             MainPlayerData mainPlayerData, 
             IHelpFromAudienceJokerRouter askAudienceJokerRouter,
             int timeToAnswerInSeconds
@@ -64,7 +64,7 @@ namespace Assets.Scripts.Commands.Jokers
             }
 
             this.mainPlayerData.JokersData.RemoveJoker(this.askAudienceJokerType);
-            this.askAudienceJokerRouter.Activate(senderConnectionId, this.mainPlayerData, this.timeToAnswerInSeconds);
+            this.askAudienceJokerRouter.Activate(senderConnectionId, this.timeToAnswerInSeconds);
 
             if (this.OnExecuted != null)
             {

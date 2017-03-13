@@ -1,9 +1,11 @@
-using System;
-using System.Reflection;
-using UnityEditor;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
+
+    using System;
+    using System.Reflection;
+
+    using UnityEditor;
+
     public static class GuiHelper
     {
         public static bool GetConsoleErrorPause()

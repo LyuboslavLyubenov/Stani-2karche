@@ -18,7 +18,7 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
         private PlayersConnectingToTheServerState state;
 
         [Inject]
-        private GameRunningState gameRunningState;
+        private FirstRoundState firstRoundState;
 
         [Inject]
         private IServerNetworkManager networkManager;

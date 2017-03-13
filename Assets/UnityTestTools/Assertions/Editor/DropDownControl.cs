@@ -1,10 +1,12 @@
-using System;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Editor
 {
+
+    using System;
+
+    using UnityEditor;
+
+    using UnityEngine;
+
     [Serializable]
     internal class DropDownControl<T>
     {
@@ -20,7 +22,7 @@ namespace UnityTest
 
         public void Draw(T selected, T[] options, Action<T> onValueSelected)
         {
-            Draw(null,
+            this.Draw(null,
                  selected,
                  options,
                  onValueSelected);
@@ -28,7 +30,7 @@ namespace UnityTest
 
         public void Draw(string label, T selected, T[] options, Action<T> onValueSelected)
         {
-            Draw(label, selected, () => options, onValueSelected);
+            this.Draw(label, selected, () => options, onValueSelected);
         }
 
         public void Draw(string label, T selected, Func<T[]> loadOptions, Action<T> onValueSelected)
@@ -41,21 +43,21 @@ namespace UnityTest
             if (!string.IsNullOrEmpty(label))
                 GUILayout.Label(label, EditorStyles.label, GUILayout.Width(labelSize.x));
 
-            if (GUILayout.Button(new GUIContent(convertForButtonLabel(selected), tooltip),
-                                 EditorStyles.popup, m_ButtonLayoutOptions))
+            if (GUILayout.Button(new GUIContent(this.convertForButtonLabel(selected), this.tooltip),
+                                 EditorStyles.popup, this.m_ButtonLayoutOptions))
             {
                 if (Event.current.button == 0)
                 {
-                    PrintMenu(loadOptions());
+                    this.PrintMenu(loadOptions());
                 }
-                else if (printContextMenu != null && Event.current.button == 1)
-                    printContextMenu(selected);
+                else if (this.printContextMenu != null && Event.current.button == 1)
+                    this.printContextMenu(selected);
             }
 
-            if (m_SelectedValue != null)
+            if (this.m_SelectedValue != null)
             {
-                onValueSelected((T)m_SelectedValue);
-                m_SelectedValue = null;
+                onValueSelected((T)this.m_SelectedValue);
+                this.m_SelectedValue = null;
             }
             if (!string.IsNullOrEmpty(label))
                 EditorGUILayout.EndHorizontal();
@@ -67,9 +69,9 @@ namespace UnityTest
             foreach (var s in options)
             {
                 var localS = s;
-                menu.AddItem(new GUIContent((ignoreConvertForGUIContent(options) ? localS.ToString() : convertForGUIContent(localS))),
+                menu.AddItem(new GUIContent((this.ignoreConvertForGUIContent(options) ? localS.ToString() : this.convertForGUIContent(localS))),
                              false,
-                             () => { m_SelectedValue = localS; }
+                             () => { this.m_SelectedValue = localS; }
                              );
             }
             menu.ShowAsContext();

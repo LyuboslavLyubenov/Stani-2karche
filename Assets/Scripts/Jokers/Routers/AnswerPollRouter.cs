@@ -3,12 +3,14 @@ namespace Assets.Scripts.Jokers.Routers
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Commands.Jokers;
     using Assets.Scripts.Commands.Server;
     using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
@@ -16,15 +18,15 @@ namespace Assets.Scripts.Jokers.Routers
 
     using UnityEngine;
 
-    public class AudienceAnswerPollRouter : IAudienceAnswerPollRouter
+    public class AnswerPollRouter : IAnswerPollRouter
     {
-        public const int MinTimeToAnswerInSeconds = 10;
+        public const int MinTimeToAnswerInSeconds = 5;
         
         public event EventHandler OnActivated = delegate
             {
             };
 
-        public event EventHandler<AudienceVoteEventArgs> OnVoteFinished = delegate
+        public event EventHandler<VoteEventArgs> OnVoteFinished = delegate
             {
             };
         
@@ -40,13 +42,15 @@ namespace Assets.Scripts.Jokers.Routers
 
         private Timer_ExecuteMethodEverySeconds updateTimeTimer;
 
+        private ISimpleQuestion question;
+
         public bool Activated
         {
             get;
             private set;
         }
 
-        public AudienceAnswerPollRouter(IServerNetworkManager networkManager)
+        public AnswerPollRouter(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
             {
@@ -62,23 +66,21 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void OnReceivedVote(int connectionId, string answer)
         {
-            if (!this.Activated)
+            if (!this.Activated ||
+                !this.clientsThatMustVote.Contains(connectionId) ||
+                this.votedClientsConnectionId.Contains(connectionId) ||
+                !this.question.Answers.Contains(answer))
             {
                 return;
             }
-
-            if (!this.clientsThatMustVote.Contains(connectionId))
-            {
-                return;
-            }
-
+            
             this.answersVotes[answer]++;
             this.votedClientsConnectionId.Add(connectionId);
 
             if (this.AreFinishedVoting())
             {
                 this.NoMoreTimeToAnswer();
-                this.OnVoteFinished(this, new AudienceVoteEventArgs(this.answersVotes));
+                this.OnVoteFinished(this, new VoteEventArgs(this.answersVotes.ToDictionary(k => k.Key, v => v.Value)));
                 return;
             }
         }
@@ -98,7 +100,7 @@ namespace Assets.Scripts.Jokers.Routers
             }
 
             this.TellClientsThatVotingIsOver();
-            this.OnVoteFinished(this, new AudienceVoteEventArgs(this.answersVotes));
+            this.OnVoteFinished(this, new VoteEventArgs(this.answersVotes.ToDictionary(k => k.Key, v => v.Value)));
         }
         
         private void NoMoreTimeToAnswer()
@@ -134,7 +136,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void SendSettings()
         {
-            var audiencePollSettingsCommand = NetworkCommandData.From<AudiencePollSettingsCommand>();
+            var audiencePollSettingsCommand = NetworkCommandData.From<AnswerPollSettingsCommand>();
             audiencePollSettingsCommand.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
 
             for (int i = 0; i < this.clientsThatMustVote.Count; i++)
@@ -183,11 +185,17 @@ namespace Assets.Scripts.Jokers.Routers
        
         public void Deactivate()
         {
+            if (this.networkManager.CommandsManager.Exists("AnswerSelected"))
+            {
+                this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
+            }
+            
             this.TellClientsThatVotingIsOver();
 
             this.clientsThatMustVote.Clear();
             this.votedClientsConnectionId.Clear();
             this.answersVotes.Clear();
+            this.question = null;
 
             this.timeToAnswerInSeconds = 0;
             this.elapsedTime = -1;
@@ -207,12 +215,13 @@ namespace Assets.Scripts.Jokers.Routers
                 throw new ArgumentOutOfRangeException("timeToAnswerInSeconds");
             }
 
-            if (this.clientsThatMustVote.Count == 0)
+            if (clientsIdsThatMustVote == null || !clientsIdsThatMustVote.Any())
             {
                 throw new ArgumentNullException("clientsIdsThatMustVote");
             }
 
             this.timeToAnswerInSeconds = timeToAnswerInSeconds;
+            this.question = question;
             this.clientsThatMustVote.AddRange(clientsIdsThatMustVote);
 
             this.elapsedTime = 1;
@@ -222,17 +231,18 @@ namespace Assets.Scripts.Jokers.Routers
             this.ResetAnswerVotes(question);
             this.SendSettings();
             this.SendQuestionToClients(question);
+            
+            this.updateTimeTimer.Reset();
 
             this.Activated = true;
             this.OnActivated(this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// when dispoing its calling and deactivate
+        /// </summary>
         public void Dispose()
         {
-            this.Deactivate();
-
-            this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
-
             this.OnActivated = null;
             this.OnVoteFinished = null;
 
@@ -247,5 +257,4 @@ namespace Assets.Scripts.Jokers.Routers
             }
         }
     }
-
 }

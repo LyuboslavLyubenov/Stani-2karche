@@ -1,9 +1,9 @@
-using UnityEditor;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor.Editors
 {
 
     using Assets.Zenject.Source.Install.Contexts;
+
+    using UnityEditor;
 
     [CustomEditor(typeof(SceneContext))]
     public class SceneContextEditor : ContextEditor
@@ -17,20 +17,20 @@ namespace Zenject
         {
             base.OnEnable();
 
-            _contractNameProperty = serializedObject.FindProperty("_contractNames");
-            _parentContractNameProperty = serializedObject.FindProperty("_parentContractName");
-            _parentNewObjectsUnderRootProperty = serializedObject.FindProperty("_parentNewObjectsUnderRoot");
-            _autoRun = serializedObject.FindProperty("_autoRun");
+            this._contractNameProperty = this.serializedObject.FindProperty("_contractNames");
+            this._parentContractNameProperty = this.serializedObject.FindProperty("_parentContractName");
+            this._parentNewObjectsUnderRootProperty = this.serializedObject.FindProperty("_parentNewObjectsUnderRoot");
+            this._autoRun = this.serializedObject.FindProperty("_autoRun");
         }
 
         protected override void OnGui()
         {
             base.OnGui();
 
-            EditorGUILayout.PropertyField(_contractNameProperty, true);
-            EditorGUILayout.PropertyField(_parentContractNameProperty);
-            EditorGUILayout.PropertyField(_parentNewObjectsUnderRootProperty);
-            EditorGUILayout.PropertyField(_autoRun);
+            EditorGUILayout.PropertyField(this._contractNameProperty, true);
+            EditorGUILayout.PropertyField(this._parentContractNameProperty);
+            EditorGUILayout.PropertyField(this._parentNewObjectsUnderRootProperty);
+            EditorGUILayout.PropertyField(this._autoRun);
         }
     }
 }

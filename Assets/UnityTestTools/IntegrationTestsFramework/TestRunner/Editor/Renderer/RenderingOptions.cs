@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
 {
+
     public class RenderingOptions
     {
         public string nameFilter;

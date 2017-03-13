@@ -1,11 +1,11 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
+﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher
 {
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
     using Assets.Zenject.Source.Usage;
-    
+
     public class RequestGameStart : ExtendedMonoBehaviour
     {
         [Inject]

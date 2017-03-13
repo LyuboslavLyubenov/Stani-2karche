@@ -1,10 +1,15 @@
 ﻿/// Credit Melang
 /// Sourced from - http://forum.unity3d.com/members/melang.593409/
 
-using System.Collections.Generic;
-namespace UnityEngine.UI.Extensions
+namespace Assets.Scripts
 {
-	//An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
+
+    using System.Collections.Generic;
+
+    using UnityEngine;
+    using UnityEngine.UI;
+
+    //An outline that looks a bit nicer than the default one. It has less "holes" in the outline by drawing more copies of the effect
 	[AddComponentMenu("UI/Effects/Extensions/Nicer Outline")]
 	public class NicerOutline : BaseMeshEffect
 	{
@@ -105,7 +110,7 @@ namespace UnityEngine.UI.Extensions
                 v.y += y;
                 vt.position = v;
                 var newColor = color;
-                if (m_UseGraphicAlpha)
+                if (this.m_UseGraphicAlpha)
                     newColor.a = (byte)((newColor.a * verts[i].color.a) / 255);
                 vt.color = newColor;
                 verts[i] = vt;
@@ -118,7 +123,7 @@ namespace UnityEngine.UI.Extensions
             if (verts.Capacity < neededCpacity)
                 verts.Capacity = neededCpacity;
 
-            ApplyShadowZeroAlloc(verts, color, start, end, x, y);
+            this.ApplyShadowZeroAlloc(verts, color, start, end, x, y);
         }
 
 
@@ -131,7 +136,7 @@ namespace UnityEngine.UI.Extensions
             List < UIVertex > verts = new List<UIVertex>();
             vh.GetUIVertexStream(verts);
 
-            Text foundtext = GetComponent<Text>();
+            Text foundtext = this.GetComponent<Text>();
 			
 			float best_fit_adjustment = 1f;
 			

@@ -1,9 +1,9 @@
-using UnityEditor;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor.Editors
 {
 
     using Assets.Zenject.Source.Install.Contexts;
+
+    using UnityEditor;
 
     [CustomEditor(typeof(GameObjectContext))]
     public class GameObjectContextEditor : ContextEditor
@@ -14,14 +14,14 @@ namespace Zenject
         {
             base.OnEnable();
 
-            _kernel = serializedObject.FindProperty("_kernel");
+            this._kernel = this.serializedObject.FindProperty("_kernel");
         }
 
         protected override void OnGui()
         {
             base.OnGui();
 
-            EditorGUILayout.PropertyField(_kernel);
+            EditorGUILayout.PropertyField(this._kernel);
         }
     }
 }

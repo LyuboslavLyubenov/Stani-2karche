@@ -1,11 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEditor;
-
-namespace UnityTest
+﻿namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
 
+    using Assets.UnityTestTools.Common.Editor;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
+
+    using UnityEditor;
+
+    using UnityEngine;
 
     [InitializeOnLoad]
     public class IntegrationTestsHierarchyAnnotation {

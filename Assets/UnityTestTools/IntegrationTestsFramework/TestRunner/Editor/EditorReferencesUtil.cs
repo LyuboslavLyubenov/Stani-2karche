@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-using Object = UnityEngine.Object;
-
-namespace UnityTest
+﻿namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
+
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+
+    using UnityEditor;
+
+    using UnityEngine;
+
+    using Object = UnityEngine.Object;
+
     public static class EditorReferencesUtil
     {
 

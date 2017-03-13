@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor
 {
+
+    using UnityEditor;
+
+    using UnityEngine;
+
     public static class Styles
     {
         public static GUIStyle info;

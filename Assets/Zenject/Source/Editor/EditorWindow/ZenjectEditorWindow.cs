@@ -1,13 +1,14 @@
-using System;
-using UnityEditor;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor.EditorWindow
 {
+
+    using System;
 
     using Assets.Zenject.Source.Install.Contexts;
     using Assets.Zenject.Source.Main;
     using Assets.Zenject.Source.Runtime;
     using Assets.Zenject.Source.Usage;
+
+    using UnityEditor;
 
     public abstract class ZenjectEditorWindow : EditorWindow
     {
@@ -34,54 +35,54 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
         public virtual void OnEnable()
         {
-            _container = new DiContainer(StaticContext.Container);
+            this._container = new DiContainer(StaticContext.Container);
 
             // Make sure we don't create any game objects since editor windows don't have a scene
-            _container.AssertOnNewGameObjects = true;
+            this._container.AssertOnNewGameObjects = true;
 
-            _container.Bind<TickableManager>().AsSingle();
-            _container.Bind<InitializableManager>().AsSingle();
-            _container.Bind<DisposableManager>().AsSingle();
-            _container.Bind<GuiRenderableManager>().AsSingle();
+            this._container.Bind<TickableManager>().AsSingle();
+            this._container.Bind<InitializableManager>().AsSingle();
+            this._container.Bind<DisposableManager>().AsSingle();
+            this._container.Bind<GuiRenderableManager>().AsSingle();
 
-            InstallBindings();
+            this.InstallBindings();
 
-            _container.Inject(this);
+            this._container.Inject(this);
 
-            _initializableManager.Initialize();
+            this._initializableManager.Initialize();
         }
 
         public virtual void OnDisable()
         {
-            if (_disposableManager != null)
+            if (this._disposableManager != null)
             {
-                _disposableManager.Dispose();
-                _disposableManager = null;
+                this._disposableManager.Dispose();
+                this._disposableManager = null;
             }
         }
 
         public virtual void Update()
         {
-            if (_tickableManager != null)
+            if (this._tickableManager != null)
             {
-                _tickableManager.Update();
+                this._tickableManager.Update();
             }
 
             // We might also consider only calling Repaint when changes occur
-            Repaint();
+            this.Repaint();
         }
 
         public virtual void OnGUI()
         {
-            if (_guiRenderableManager != null)
+            if (this._guiRenderableManager != null)
             {
-                _guiRenderableManager.OnGui();
+                this._guiRenderableManager.OnGui();
             }
         }
 

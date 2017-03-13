@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Zenject;
-using NUnit.Framework;
-
-using Assert=Assets.Zenject.Source.Internal.Assert;
-
-namespace Zenject
+﻿namespace Assets.Zenject.Source.Editor.Testing
 {
 
     using Assets.Zenject.Source.Main;
+
+    using NUnit.Framework;
 
     // Inherit from this and mark you class with [TestFixture] attribute to do some unit tests
     // For anything more complicated than this, such as tests involving interaction between
@@ -26,14 +18,14 @@ namespace Zenject
         {
             get
             {
-                return _container;
+                return this._container;
             }
         }
 
         [SetUp]
         public virtual void Setup()
         {
-            _container = new DiContainer();
+            this._container = new DiContainer();
         }
     }
 }

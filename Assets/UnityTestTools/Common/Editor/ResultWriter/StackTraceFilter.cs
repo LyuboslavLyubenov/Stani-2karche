@@ -2,13 +2,12 @@
 // Based on nUnit 2.6.2 (http://www.nunit.org/)
 // ****************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor.ResultWriter
 {
+
+    using System;
+    using System.IO;
+
     /// <summary>
     /// Summary description for StackTraceFilter.
     /// </summary>

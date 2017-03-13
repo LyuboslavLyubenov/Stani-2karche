@@ -1,16 +1,9 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
-using UnityEditor;
-using UnityEditorInternal;
-using UnityEngine;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor.Editors
 {
 
     using Assets.Zenject.Source.Install.Contexts;
+
+    using UnityEditor;
 
     [CustomEditor(typeof(SceneDecoratorContext))]
     public class SceneDecoratorContextEditor : ContextEditor
@@ -21,14 +14,14 @@ namespace Zenject
         {
             base.OnEnable();
 
-            _decoratedContractNameProperty = serializedObject.FindProperty("_decoratedContractName");
+            this._decoratedContractNameProperty = this.serializedObject.FindProperty("_decoratedContractName");
         }
 
         protected override void OnGui()
         {
             base.OnGui();
 
-            EditorGUILayout.PropertyField(_decoratedContractNameProperty);
+            EditorGUILayout.PropertyField(this._decoratedContractNameProperty);
         }
     }
 }

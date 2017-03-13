@@ -24,7 +24,7 @@
         public const int MinClientsForOnlineVote_Release = 4;
         public const int MinClientsForOnlineVote_Development = 1;
 
-        public event EventHandler<AudienceVoteEventArgs> OnAudienceVoted = delegate
+        public event EventHandler<VoteEventArgs> OnAudienceVoted = delegate
             {
             };
 
@@ -44,7 +44,7 @@
         private GameObject loadingUI;
         private GameObject audienceAnswerUI;
 
-        private IAudienceAnswerPollResultRetrieverFromClient pollDataRetriever;
+        private IAnswerPollResultRetriever pollDataRetriever;
 
         public Sprite Image
         {
@@ -60,7 +60,7 @@
         }
 
         public AskAudienceJoker(
-            IAudienceAnswerPollResultRetrieverFromClient pollDataRetriever,
+            IAnswerPollResultRetriever pollDataRetriever,
             GameObject waitingToAnswerUI,
             GameObject audienceAnswerUI,
             GameObject loadingUI)
@@ -89,7 +89,7 @@
 
             this.pollDataRetriever.OnReceiveSettingsTimeout += this.OnReceiveSettingsTimeout;
             this.pollDataRetriever.OnReceivedSettings += this.OnReceivedJokerSettings;
-            this.pollDataRetriever.OnAudienceVoted += this.Retriever_OnAudienceVoted;
+            this.pollDataRetriever.OnVoted += this.RetrieverOnVoted;
             this.pollDataRetriever.OnReceiveAudienceVoteTimeout += this.OnReceiveAudienceVoteTimeout;
         }
 
@@ -114,7 +114,7 @@
             this.waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = args.TimeToAnswerInSeconds;
         }
 
-        private void Retriever_OnAudienceVoted(object sender, AudienceVoteEventArgs args)
+        private void RetrieverOnVoted(object sender, VoteEventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
             this.audienceAnswerUI.SetActive(true);

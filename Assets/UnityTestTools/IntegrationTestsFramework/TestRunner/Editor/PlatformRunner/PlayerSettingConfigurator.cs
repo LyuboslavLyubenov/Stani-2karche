@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
+
+    using System.Collections.Generic;
+    using System.IO;
+
+    using UnityEditor;
+
     class PlayerSettingConfigurator
     {
         private string resourcesPath {
-            get { return m_Temp ? k_TempPath : m_ProjectResourcesPath; }
+            get { return this.m_Temp ? k_TempPath : this.m_ProjectResourcesPath; }
         }
 
         private readonly string m_ProjectResourcesPath = Path.Combine("Assets", "Resources");
@@ -24,50 +24,50 @@ namespace UnityTest
 
         public PlayerSettingConfigurator(bool saveInTempFolder)
         {
-            m_Temp = saveInTempFolder;
+            this.m_Temp = saveInTempFolder;
         }
 
         public void ChangeSettingsForIntegrationTests()
         {
-            m_DisplayResolutionDialog = PlayerSettings.displayResolutionDialog;
+            this.m_DisplayResolutionDialog = PlayerSettings.displayResolutionDialog;
             PlayerSettings.displayResolutionDialog = ResolutionDialogSetting.Disabled;
 
-            m_RunInBackground = PlayerSettings.runInBackground;
+            this.m_RunInBackground = PlayerSettings.runInBackground;
             PlayerSettings.runInBackground = true;
 
-            m_FullScreen = PlayerSettings.defaultIsFullScreen;
+            this.m_FullScreen = PlayerSettings.defaultIsFullScreen;
             PlayerSettings.defaultIsFullScreen = false;
 
-            m_ResizableWindow = PlayerSettings.resizableWindow;
+            this.m_ResizableWindow = PlayerSettings.resizableWindow;
             PlayerSettings.resizableWindow = true;
         }
 
         public void RevertSettingsChanges()
         {
-            PlayerSettings.defaultIsFullScreen = m_FullScreen;
-            PlayerSettings.runInBackground = m_RunInBackground;
-            PlayerSettings.displayResolutionDialog = m_DisplayResolutionDialog;
-            PlayerSettings.resizableWindow = m_ResizableWindow;
+            PlayerSettings.defaultIsFullScreen = this.m_FullScreen;
+            PlayerSettings.runInBackground = this.m_RunInBackground;
+            PlayerSettings.displayResolutionDialog = this.m_DisplayResolutionDialog;
+            PlayerSettings.resizableWindow = this.m_ResizableWindow;
         }
 
         public void AddConfigurationFile(string fileName, string content)
         {
-            var resourcesPathExists = Directory.Exists(resourcesPath);
+            var resourcesPathExists = Directory.Exists(this.resourcesPath);
             if (!resourcesPathExists) AssetDatabase.CreateFolder("Assets", "Resources");
 
-            var filePath = Path.Combine(resourcesPath, fileName);
+            var filePath = Path.Combine(this.resourcesPath, fileName);
             File.WriteAllText(filePath, content);
 
-            m_TempFileList.Add(filePath);
+            this.m_TempFileList.Add(filePath);
         }
 
         public void RemoveAllConfigurationFiles()
         {
-            foreach (var filePath in m_TempFileList)
+            foreach (var filePath in this.m_TempFileList)
                 AssetDatabase.DeleteAsset(filePath);
-            if (Directory.Exists(resourcesPath)
-                && Directory.GetFiles(resourcesPath).Length == 0)
-                AssetDatabase.DeleteAsset(resourcesPath);
+            if (Directory.Exists(this.resourcesPath)
+                && Directory.GetFiles(this.resourcesPath).Length == 0)
+                AssetDatabase.DeleteAsset(this.resourcesPath);
         }
     }
 }

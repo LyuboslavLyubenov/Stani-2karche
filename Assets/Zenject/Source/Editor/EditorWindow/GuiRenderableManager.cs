@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Zenject
+namespace Assets.Zenject.Source.Editor.EditorWindow
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using Assets.Zenject.Source.Internal;
     using Assets.Zenject.Source.Usage;
@@ -21,7 +21,7 @@ namespace Zenject
             [Inject(Optional = true, Source = InjectSources.Local)]
             List<ValuePair<Type, int>> priorities)
         {
-            _renderables = new List<RenderableInfo>();
+            this._renderables = new List<RenderableInfo>();
 
             foreach (var renderable in renderables)
             {
@@ -33,13 +33,13 @@ namespace Zenject
 
                 int priority = matches.IsEmpty() ? 0 : matches.Single();
 
-                _renderables.Add(
+                this._renderables.Add(
                     new RenderableInfo(renderable, priority));
             }
 
-            _renderables = _renderables.OrderBy(x => x.Priority).ToList();
+            this._renderables = this._renderables.OrderBy(x => x.Priority).ToList();
 
-            foreach (var renderable in _renderables.Select(x => x.Renderable).GetDuplicates())
+            foreach (var renderable in this._renderables.Select(x => x.Renderable).GetDuplicates())
             {
                 Assert.That(false, "Found duplicate IGuiRenderable with type '{0}'".Fmt(renderable.GetType()));
             }
@@ -47,7 +47,7 @@ namespace Zenject
 
         public void OnGui()
         {
-            foreach (var renderable in _renderables)
+            foreach (var renderable in this._renderables)
             {
                 try
                 {
@@ -73,8 +73,8 @@ namespace Zenject
 
             public RenderableInfo(IGuiRenderable renderable, int priority)
             {
-                Renderable = renderable;
-                Priority = priority;
+                this.Renderable = renderable;
+                this.Priority = priority;
             }
         }
     }

@@ -1,15 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Editor
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
     using Assets.UnityTestTools.Assertions;
     using Assets.UnityTestTools.Assertions.Comparers;
+
+    using UnityEditor;
+
+    using UnityEngine;
 
     public class PropertyPathSelector
     {
@@ -22,20 +24,20 @@ namespace UnityTest
 
         public PropertyPathSelector(string name)
         {
-            m_Name = name;
-            m_ThisDropDown.convertForGUIContent = m_ReplaceDotWithSlashAndAddGoGroup;
-            m_ThisDropDown.tooltip = "Select the path to the value you want to use for comparison.";
+            this.m_Name = name;
+            this.m_ThisDropDown.convertForGUIContent = this.m_ReplaceDotWithSlashAndAddGoGroup;
+            this.m_ThisDropDown.tooltip = "Select the path to the value you want to use for comparison.";
         }
 
         public void Draw(GameObject go, ActionBase comparer, string propertPath, Type[] accepatbleTypes, Action<GameObject> onSelectedGo, Action<string> onSelectedPath)
         {
-            var newGo = (GameObject)EditorGUILayout.ObjectField(m_Name, go, typeof(GameObject), true);
+            var newGo = (GameObject)EditorGUILayout.ObjectField(this.m_Name, go, typeof(GameObject), true);
             if (newGo != go)
                 onSelectedGo(newGo);
 
             if (go != null)
             {
-                var newPath =  DrawListOfMethods(go, comparer, propertPath, accepatbleTypes, m_ThisDropDown);
+                var newPath =  this.DrawListOfMethods(go, comparer, propertPath, accepatbleTypes, this.m_ThisDropDown);
 
                 if (newPath != propertPath)
                     onSelectedPath(newPath);
@@ -47,7 +49,7 @@ namespace UnityTest
             string result = propertPath;
             if (accepatbleTypes == null)
             {
-                result = DrawManualPropertyEditField(go, propertPath, accepatbleTypes, dropDown);
+                result = this.DrawManualPropertyEditField(go, propertPath, accepatbleTypes, dropDown);
             }
             else
             {
@@ -82,7 +84,7 @@ namespace UnityTest
                 }
                 else
                 {
-                    result = DrawManualPropertyEditField(go, propertPath, accepatbleTypes, dropDown);
+                    result = this.DrawManualPropertyEditField(go, propertPath, accepatbleTypes, dropDown);
                 }
             }
             return result;
@@ -134,7 +136,7 @@ namespace UnityTest
                 Event.current.Use();
                 dropDown.PrintMenu(loadProps());
                 GUI.FocusControl("");
-                m_FocusBackToEdit = true;
+                this.m_FocusBackToEdit = true;
             }
 
             EditorGUI.BeginChangeCheck();
@@ -142,12 +144,12 @@ namespace UnityTest
             var result = GUILayout.TextField(propertPath, EditorStyles.textField);
             if (EditorGUI.EndChangeCheck())
             {
-                m_Error = DoesPropertyExist(go, result);
+                this.m_Error = this.DoesPropertyExist(go, result);
             }
 
-            if (m_FocusBackToEdit)
+            if (this.m_FocusBackToEdit)
             {
-                m_FocusBackToEdit = false;
+                this.m_FocusBackToEdit = false;
                 GUI.FocusControl(btnName);
             }
 
@@ -155,8 +157,8 @@ namespace UnityTest
             {
                 result = "";
                 GUI.FocusControl(null);
-                m_FocusBackToEdit = true;
-                m_Error = DoesPropertyExist(go, result);
+                this.m_FocusBackToEdit = true;
+                this.m_Error = this.DoesPropertyExist(go, result);
             }
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.BeginHorizontal();
@@ -166,12 +168,12 @@ namespace UnityTest
                           {
                               result = s;
                               GUI.FocusControl(null);
-                              m_FocusBackToEdit = true;
-                              m_Error = DoesPropertyExist(go, result);
+                              this.m_FocusBackToEdit = true;
+                              this.m_Error = this.DoesPropertyExist(go, result);
                           });
             EditorGUILayout.EndHorizontal();
 
-            switch (m_Error)
+            switch (this.m_Error)
             {
                 case SelectedPathError.InvalidPath:
                     EditorGUILayout.HelpBox("This property does not exist", MessageType.Error);

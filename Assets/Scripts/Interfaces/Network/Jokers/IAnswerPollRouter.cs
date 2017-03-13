@@ -5,11 +5,11 @@
 
     using Assets.Scripts.EventArgs;
 
-    public interface IAudienceAnswerPollRouter : IDisposable
+    public interface IAnswerPollRouter : IDisposable
     {
         event EventHandler OnActivated;
 
-        event EventHandler<AudienceVoteEventArgs> OnVoteFinished;
+        event EventHandler<VoteEventArgs> OnVoteFinished;
 
         bool Activated { get; }
 

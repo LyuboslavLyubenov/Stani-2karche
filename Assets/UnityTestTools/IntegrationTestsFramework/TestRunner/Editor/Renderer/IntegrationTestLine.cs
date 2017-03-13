@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
 {
 
+    using System.Collections.Generic;
+
+    using Assets.UnityTestTools.Common.Editor;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using UnityEngine;
 
     class IntegrationTestLine : IntegrationTestRendererBase
     {
@@ -15,7 +15,7 @@ namespace UnityTest
 
         public IntegrationTestLine(GameObject gameObject, TestResult testResult) : base(gameObject)
         {
-            m_Result = testResult;
+            this.m_Result = testResult;
         }
 
         protected internal override void DrawLine(Rect rect, GUIContent label, bool isSelected, RenderingOptions options)
@@ -25,7 +25,7 @@ namespace UnityTest
 
             Styles.testName.Draw (rect, label, false, false, false, isSelected);
 
-            if (m_Result.IsTimeout)
+            if (this.m_Result.IsTimeout)
             {
                 float min, max;
                 Styles.testName.CalcMinMaxWidth(label, out min, out max);
@@ -37,24 +37,24 @@ namespace UnityTest
 
         protected internal override TestResult.ResultType GetResult()
         {
-            if (!m_Result.Executed && test.ignored) return TestResult.ResultType.Ignored;
-            return m_Result.resultType;
+            if (!this.m_Result.Executed && this.test.ignored) return TestResult.ResultType.Ignored;
+            return this.m_Result.resultType;
         }
 
         protected internal override bool IsVisible(RenderingOptions options)
         {
-            if (!string.IsNullOrEmpty(options.nameFilter) && !m_GameObject.name.ToLower().Contains(options.nameFilter.ToLower())) return false;
-            if (!options.showSucceeded && m_Result.IsSuccess) return false;
-            if (!options.showFailed && m_Result.IsFailure) return false;
-            if (!options.showNotRunned && !m_Result.Executed) return false;
-            if (!options.showIgnored && test.ignored) return false;
+            if (!string.IsNullOrEmpty(options.nameFilter) && !this.m_GameObject.name.ToLower().Contains(options.nameFilter.ToLower())) return false;
+            if (!options.showSucceeded && this.m_Result.IsSuccess) return false;
+            if (!options.showFailed && this.m_Result.IsFailure) return false;
+            if (!options.showNotRunned && !this.m_Result.Executed) return false;
+            if (!options.showIgnored && this.test.ignored) return false;
             return true;
         }
 
         public override bool SetCurrentTest(TestComponent tc)
         {
-            m_IsRunning = test == tc;
-            return m_IsRunning;
+            this.m_IsRunning = this.test == tc;
+            return this.m_IsRunning;
         }
     }
 }

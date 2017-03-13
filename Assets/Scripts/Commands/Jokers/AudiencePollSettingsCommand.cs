@@ -9,7 +9,7 @@ namespace Assets.Scripts.Commands.Jokers
 
     using EventArgs = System.EventArgs;
 
-    public class AudiencePollSettingsCommand : IOneTimeExecuteCommand
+    public class AnswerPollSettingsCommand : IOneTimeExecuteCommand
     {
         public delegate void OnReceivedSettings(int timeToAnswerInSeconds);
 
@@ -27,7 +27,7 @@ namespace Assets.Scripts.Commands.Jokers
             set;
         }
 
-        public AudiencePollSettingsCommand(OnReceivedSettings onReceivedSettings)
+        public AnswerPollSettingsCommand(OnReceivedSettings onReceivedSettings)
         {
             if (onReceivedSettings == null)
             {

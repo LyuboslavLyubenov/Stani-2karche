@@ -1,12 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Common.Editor
 {
+
+    using System;
+    using System.IO;
+    using System.Linq;
+
+    using UnityEditor;
+
+    using UnityEngine;
+
     public static class Icons
     {
         const string k_IconsFolderName = "icons";

@@ -1,14 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEditor;
-using UnityEngine;
-using Object = UnityEngine.Object;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
 {
 
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Assets.UnityTestTools.Common.Editor;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using UnityEditor;
+
+    using UnityEngine;
+
+    using Object = UnityEngine.Object;
 
     public abstract class IntegrationTestRendererBase : IComparable<IntegrationTestRendererBase>
     {
@@ -29,52 +33,52 @@ namespace UnityTest
 
         protected IntegrationTestRendererBase(GameObject gameObject)
         {
-            test = gameObject.GetComponent(typeof(TestComponent)) as TestComponent;
-            if (test == null) throw new ArgumentException("Provided GameObject is not a test object");
-            m_GameObject = gameObject;
-            m_Name = test.Name;
+            this.test = gameObject.GetComponent(typeof(TestComponent)) as TestComponent;
+            if (this.test == null) throw new ArgumentException("Provided GameObject is not a test object");
+            this.m_GameObject = gameObject;
+            this.m_Name = this.test.Name;
         }
 
         public int CompareTo(IntegrationTestRendererBase other)
         {
-            return test.CompareTo(other.test);
+            return this.test.CompareTo(other.test);
         }
 
         public bool Render(RenderingOptions options)
         {
             s_Refresh = false;
             EditorGUIUtility.SetIconSize(new Vector2(15, 15));
-            Render(0, options);
+            this.Render(0, options);
             EditorGUIUtility.SetIconSize(Vector2.zero);
             return s_Refresh;
         }
 
         protected internal virtual void Render(int indend, RenderingOptions options)
         {
-            if (!IsVisible(options)) return;
+            if (!this.IsVisible(options)) return;
             EditorGUILayout.BeginHorizontal();
             GUILayout.Space(indend * 10);
 
             var tempColor = GUI.color;
-            if (m_IsRunning)
+            if (this.m_IsRunning)
             {
                 var frame = Mathf.Abs(Mathf.Cos(Time.realtimeSinceStartup * 4)) * 0.6f + 0.4f;
                 GUI.color = new Color(1, 1, 1, frame);
             }
 
-            var isSelected = Selection.gameObjects.Contains(m_GameObject);
+            var isSelected = Selection.gameObjects.Contains(this.m_GameObject);
 
-            var value = GetResult();
+            var value = this.GetResult();
             var icon = GetIconForResult(value);
 
-            var label = new GUIContent(m_Name, icon);
+            var label = new GUIContent(this.m_Name, icon);
             var labelRect = GUILayoutUtility.GetRect(label, EditorStyles.label, GUILayout.ExpandWidth(true), GUILayout.Height(18));
 
-            OnLeftMouseButtonClick(labelRect);
-            OnContextClick(labelRect);
-            DrawLine(labelRect, label, isSelected, options);
+            this.OnLeftMouseButtonClick(labelRect);
+            this.OnContextClick(labelRect);
+            this.DrawLine(labelRect, label, isSelected, options);
 
-            if (m_IsRunning) GUI.color = tempColor;
+            if (this.m_IsRunning) GUI.color = tempColor;
             EditorGUILayout.EndHorizontal();
         }
 
@@ -86,10 +90,10 @@ namespace UnityTest
                 GUIUtility.keyboardControl = 0;
             }
 
-            if ((Event.current.control || Event.current.command) && Selection.gameObjects.Contains(test.gameObject))
-                Selection.objects = Selection.gameObjects.Where(o => o != test.gameObject).ToArray();
+            if ((Event.current.control || Event.current.command) && Selection.gameObjects.Contains(this.test.gameObject))
+                Selection.objects = Selection.gameObjects.Where(o => o != this.test.gameObject).ToArray();
             else
-                Selection.objects = Selection.gameObjects.Concat(new[] { test.gameObject }).ToArray();
+                Selection.objects = Selection.gameObjects.Concat(new[] { this.test.gameObject }).ToArray();
         }
 
         protected void OnLeftMouseButtonClick(Rect rect)
@@ -99,7 +103,7 @@ namespace UnityTest
                 rect.width = 20;
                 if (rect.Contains(Event.current.mousePosition)) return;
                 Event.current.Use();
-                OnSelect();
+                this.OnSelect();
             }
         }
 
@@ -107,7 +111,7 @@ namespace UnityTest
         {
             if (rect.Contains(Event.current.mousePosition) && Event.current.type == EventType.ContextClick)
             {
-                DrawContextMenu(test);
+                DrawContextMenu(this.test);
             }
         }
 

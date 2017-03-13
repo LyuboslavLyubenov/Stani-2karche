@@ -16,7 +16,7 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
             this.Container.Bind<PlayersConnectingToTheServerState>()
                 .ToSelf();
 
-            this.Container.Bind<GameRunningState>()
+            this.Container.Bind<FirstRoundState>()
                 .ToSelf();
 
             this.Container.Bind<IServerNetworkManager>()

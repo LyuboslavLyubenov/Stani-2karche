@@ -16,7 +16,7 @@
     {
         public BasicExamServerSelectPlayerTypeUIController BasicExamServerSelectPlayerTypeUiController;
 
-        public Scripts.Controllers.EveryBodyVsTheTeacher.SelectPlayerTypeUIController
+        public SelectPlayerTypeUIController
             EveryBodyVsTheTeacherSelectPlayerTypeUiController;
 
         public override void InstallBindings()
@@ -27,7 +27,7 @@
 
             var obj2 = new GameObject("EveryBodyVsTheTeacherSelectPlayerTypeUI");
             this.EveryBodyVsTheTeacherSelectPlayerTypeUiController =
-                obj2.AddComponent<Scripts.Controllers.EveryBodyVsTheTeacher.SelectPlayerTypeUIController>();
+                obj2.AddComponent<SelectPlayerTypeUIController>();
 
             Container.Bind<ILANServersDiscoverer>()
                 .To<DummyIlanServersDiscoverer>()

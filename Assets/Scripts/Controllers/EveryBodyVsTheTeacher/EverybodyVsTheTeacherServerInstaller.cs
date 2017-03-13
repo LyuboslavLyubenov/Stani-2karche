@@ -1,8 +1,7 @@
-﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
+﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher
 {
 
     using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Network.NetworkManagers;
     using Assets.Zenject.Source.Install;

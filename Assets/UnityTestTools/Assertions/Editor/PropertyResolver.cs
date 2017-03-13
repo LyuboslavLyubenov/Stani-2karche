@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using UnityEngine;
-
-namespace UnityTest
+namespace Assets.UnityTestTools.Assertions.Editor
 {
 
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text.RegularExpressions;
+
     using Assets.UnityTestTools.Assertions;
+
+    using UnityEngine;
 
     [Serializable]
     public class PropertyResolver
@@ -19,15 +20,15 @@ namespace UnityTest
 
         public PropertyResolver()
         {
-            ExcludedFieldNames = new string[] { };
-            ExcludedTypes = new Type[] { };
-            AllowedTypes = new Type[] { };
+            this.ExcludedFieldNames = new string[] { };
+            this.ExcludedTypes = new Type[] { };
+            this.AllowedTypes = new Type[] { };
         }
 
         public IList<string> GetFieldsAndPropertiesUnderPath(GameObject go, string propertPath)
         {
             propertPath = propertPath.Trim();
-            if (!PropertyPathIsValid(propertPath))
+            if (!this.PropertyPathIsValid(propertPath))
             {
                 throw new ArgumentException("Incorrect property path: " + propertPath);
             }
@@ -36,7 +37,7 @@ namespace UnityTest
 
             if (idx < 0)
             {
-                var components = GetFieldsAndPropertiesFromGameObject(go, 2, null);
+                var components = this.GetFieldsAndPropertiesFromGameObject(go, 2, null);
                 return components;
             }
 
@@ -51,7 +52,7 @@ namespace UnityTest
                 propertyToSearch = propertPath.Substring(0, idx);
                 if (!MemberResolver.TryGetMemberType(go, propertyToSearch, out type))
                 {
-                    var components = GetFieldsAndPropertiesFromGameObject(go, 2, null);
+                    var components = this.GetFieldsAndPropertiesFromGameObject(go, 2, null);
                     return components.Where(s => s.StartsWith(propertPath.Substring(idx + 1))).ToArray();
                 }
             }
@@ -95,22 +96,22 @@ namespace UnityTest
         {
             if (depthOfSearch < 1) throw new ArgumentOutOfRangeException("depthOfSearch has to be greater than 0");
 
-            var goVals = GetPropertiesAndFieldsFromType(typeof(GameObject),
+            var goVals = this.GetPropertiesAndFieldsFromType(typeof(GameObject),
                                                         depthOfSearch - 1).Select(s => "gameObject." + s);
 
             var result = new List<string>();
-            if (AllowedTypes == null || !AllowedTypes.Any() || AllowedTypes.Contains(typeof(GameObject)))
+            if (this.AllowedTypes == null || !this.AllowedTypes.Any() || this.AllowedTypes.Contains(typeof(GameObject)))
                 result.Add("gameObject");
             result.AddRange(goVals);
 
-            foreach (var componentType in GetAllComponents(gameObject))
+            foreach (var componentType in this.GetAllComponents(gameObject))
             {
-                if (AllowedTypes == null || !AllowedTypes.Any() || AllowedTypes.Any(t => t.IsAssignableFrom(componentType)))
+                if (this.AllowedTypes == null || !this.AllowedTypes.Any() || this.AllowedTypes.Any(t => t.IsAssignableFrom(componentType)))
                     result.Add(componentType.Name);
 
                 if (depthOfSearch > 1)
                 {
-                    var vals = GetPropertiesAndFieldsFromType(componentType, depthOfSearch - 1);
+                    var vals = this.GetPropertiesAndFieldsFromType(componentType, depthOfSearch - 1);
                     var valsFullName = vals.Select(s => componentType.Name + "." + s);
                     result.AddRange(valsFullName);
                 }
@@ -120,7 +121,7 @@ namespace UnityTest
             {
                 var memberResolver = new MemberResolver(gameObject, extendPath);
                 var pathType = memberResolver.GetMemberType();
-                var vals = GetPropertiesAndFieldsFromType(pathType, depthOfSearch - 1);
+                var vals = this.GetPropertiesAndFieldsFromType(pathType, depthOfSearch - 1);
                 var valsFullName = vals.Select(s => extendPath + "." + s);
                 result.AddRange(valsFullName);
             }
@@ -139,19 +140,19 @@ namespace UnityTest
 
             foreach (var member in fields)
             {
-                var memberType = GetMemberFieldType(member);
+                var memberType = this.GetMemberFieldType(member);
                 var memberTypeName = memberType.Name;
 
-                if (AllowedTypes == null
-                    || !AllowedTypes.Any()
-                    || (AllowedTypes.Any(t => t.IsAssignableFrom(memberType)) && !ExcludedFieldNames.Contains(memberTypeName)))
+                if (this.AllowedTypes == null
+                    || !this.AllowedTypes.Any()
+                    || (this.AllowedTypes.Any(t => t.IsAssignableFrom(memberType)) && !this.ExcludedFieldNames.Contains(memberTypeName)))
                 {
                     result.Add(member.Name);
                 }
 
-                if (level > 0 && IsTypeOrNameNotExcluded(memberType, memberTypeName))
+                if (level > 0 && this.IsTypeOrNameNotExcluded(memberType, memberTypeName))
                 {
-                    var vals = GetPropertiesAndFieldsFromType(memberType, level);
+                    var vals = this.GetPropertiesAndFieldsFromType(memberType, level);
                     var valsFullName = vals.Select(s => member.Name + "." + s);
                     result.AddRange(valsFullName);
                 }
@@ -175,7 +176,7 @@ namespace UnityTest
             foreach (var component in components)
             {
                 var componentType = component.GetType();
-                if (IsTypeOrNameNotExcluded(componentType, null))
+                if (this.IsTypeOrNameNotExcluded(componentType, null))
                 {
                     result.Add(componentType);
                 }
@@ -185,7 +186,7 @@ namespace UnityTest
 
         private bool IsTypeOrNameNotExcluded(Type memberType, string memberTypeName)
         {
-            return !ExcludedTypes.Contains(memberType) && !ExcludedFieldNames.Contains(memberTypeName);
+            return !this.ExcludedTypes.Contains(memberType) && !this.ExcludedFieldNames.Contains(memberTypeName);
         }
     }
 }
