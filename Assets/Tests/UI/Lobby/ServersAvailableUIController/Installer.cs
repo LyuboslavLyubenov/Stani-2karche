@@ -8,6 +8,7 @@
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Interfaces.Services;
     using Assets.Scripts.Network;
+    using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Install;
 
     using UnityEngine;

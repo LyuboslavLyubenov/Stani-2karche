@@ -1,10 +1,9 @@
-namespace Assets.Tests
+namespace Assets.Tests.DummyObjects
 {
 
     using System;
 
     using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Services;
 
     public class DummyIlanServersDiscoverer : ILANServersDiscoverer

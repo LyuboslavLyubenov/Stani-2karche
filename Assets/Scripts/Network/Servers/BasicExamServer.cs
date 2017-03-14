@@ -131,7 +131,9 @@ namespace Assets.Scripts.Network.Servers
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, MainPlayerData.JokersData);
            
             this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
-            this.audiencePollRouter = new HelpFromAudienceJokerRouter(serverNetworkManager, this.GameDataIterator);
+
+            var answerPollRouter = new AnswerPollRouter(serverNetworkManager);
+            this.audiencePollRouter = new HelpFromAudienceJokerRouter(serverNetworkManager, this.GameDataIterator, answerPollRouter);
 
             this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataQuestionsSender, this.GameDataIterator);
 

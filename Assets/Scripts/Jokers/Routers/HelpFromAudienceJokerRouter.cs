@@ -1,6 +1,5 @@
 namespace Assets.Scripts.Jokers.Routers
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,7 +8,6 @@ namespace Assets.Scripts.Jokers.Routers
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.DTOs;
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.GameData;
@@ -59,7 +57,10 @@ namespace Assets.Scripts.Jokers.Routers
             private set;
         }
 
-        public HelpFromAudienceJokerRouter(IServerNetworkManager networkManager, IGameDataIterator gameDataIterator)
+        public HelpFromAudienceJokerRouter(
+            IServerNetworkManager networkManager,
+            IGameDataIterator gameDataIterator, 
+            IAnswerPollRouter answerPollRouter)
         {
             if (networkManager == null)
             {
@@ -71,9 +72,14 @@ namespace Assets.Scripts.Jokers.Routers
                 throw new ArgumentNullException("gameDataIterator");
             }
 
+            if (answerPollRouter == null)
+            {
+                throw new ArgumentNullException("answerPollRouter");
+            }
+
             this.networkManager = networkManager;
             this.gameDataIterator = gameDataIterator;
-            this.answerPollRouter = new AnswerPollRouter(this.networkManager);
+            this.answerPollRouter = answerPollRouter;
             this.answerPollRouter.OnVoteFinished += this.OnAnswerPollVoteFinished;
         }
 
@@ -90,7 +96,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void SendVoteResult(Dictionary<string, int> answersVotes)
         {
-            var voteResultCommandData = NetworkCommandData.From<AnswerPollResultCommand>();
+            var voteResultCommandData = NetworkCommandData.From<AudienceAnswerPollResultCommand>();
             var answersVotesPairs = answersVotes.ToArray();
 
             for (int i = 0; i < answersVotesPairs.Length; i++)
@@ -101,9 +107,7 @@ namespace Assets.Scripts.Jokers.Routers
             }
 
             this.networkManager.SendClientCommand(this.senderConnectionId, voteResultCommandData);
-
-            this.Deactivate();
-
+            
             this.OnSent(this, EventArgs.Empty);
         }
        
@@ -173,7 +177,12 @@ namespace Assets.Scripts.Jokers.Routers
             
             if (timeToAnswerInSeconds <= 0)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentOutOfRangeException("timeToAnswerInSeconds");
+            }
+
+            if (senderConnectionId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("senderConnectionId");
             }
             
             this.senderConnectionId = senderConnectionId;
@@ -213,5 +222,4 @@ namespace Assets.Scripts.Jokers.Routers
             this.answerPollRouter.Dispose();
         }
     }
-
 }

@@ -6,6 +6,7 @@ using Assets.Scripts.Interfaces.Network.Jokers;
 using Assets.Scripts.Interfaces.Network.NetworkManager;
 using Assets.Scripts.Utils.Unity;
 using Assets.Tests;
+using Assets.Tests.DummyObjects;
 using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
 using Assets.Zenject.Source.Usage;
 

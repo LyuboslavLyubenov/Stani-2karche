@@ -3,6 +3,7 @@
     using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Install;
 
     public class Installer : MonoInstaller {

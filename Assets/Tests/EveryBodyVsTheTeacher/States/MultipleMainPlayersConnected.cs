@@ -10,6 +10,7 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.Scripts.StateMachine;
     using Assets.Scripts.Utils;
     using Assets.Scripts.Utils.Unity;
+    using Assets.Tests.DummyObjects;
     using Assets.Tests.Extensions;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;

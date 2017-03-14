@@ -8,6 +8,7 @@
     using Assets.Scripts.Interfaces.Services;
     using Assets.Scripts.Network;
     using Assets.Scripts.Utils.Unity;
+    using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Usage;
 
     using UnityEngine;

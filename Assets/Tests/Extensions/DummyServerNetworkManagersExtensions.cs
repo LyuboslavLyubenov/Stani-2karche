@@ -3,6 +3,7 @@
 
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.Server;
+    using Assets.Tests.DummyObjects;
 
     public static class DummyServerNetworkManagersExtensions
     {

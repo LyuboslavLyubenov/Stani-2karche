@@ -8,6 +8,7 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.StateMachine;
+    using Assets.Tests.DummyObjects;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;
 

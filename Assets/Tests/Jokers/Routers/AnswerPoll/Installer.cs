@@ -21,6 +21,7 @@ namespace Assets.Tests.Jokers.Routers.AnswerPoll
     using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Jokers.Routers;
+    using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Install;
 
     public class Installer : MonoInstaller

@@ -82,7 +82,7 @@ namespace Assets.Scripts.Jokers
         private void OnReceivedJokerSettings(int timeToAnswerInSeconds)
         {
             var receivedPollResultCommand =
-                new AnswerPollResultCommand(
+                new AudienceAnswerPollResultCommand(
                     (votes) => this.OnVoted(this, new VoteEventArgs(votes)));
 
             this.networkManager.CommandsManager.AddCommand(receivedPollResultCommand);

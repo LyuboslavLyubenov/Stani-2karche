@@ -5,6 +5,7 @@
 
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
+    using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Usage;
 
     using UnityEngine;
