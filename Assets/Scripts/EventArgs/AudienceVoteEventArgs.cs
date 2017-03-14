@@ -21,8 +21,5 @@ namespace Assets.Scripts.EventArgs
             get;
             private set;
         }
-
     }
-
 }
-
