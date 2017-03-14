@@ -350,11 +350,9 @@
             }
             else
             {
-                var username = this.GetClientUsername(connectionId); 
-
                 if (this.OnReceivedData != null)
                 {
-                    this.OnReceivedData(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, username, message));    
+                    this.OnReceivedData(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, message));    
                 }
             }
         }

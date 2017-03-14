@@ -6,10 +6,9 @@
     public class DataSentEventArgs : EventArgs
     {
 
-        public DataSentEventArgs(int connectionId, string username, string message)
+        public DataSentEventArgs(int connectionId, string message)
         {
             this.ConnectionId = connectionId;
-            this.Username = username;
             this.Message = message;
         }
 
@@ -18,13 +17,7 @@
             get;
             private set;
         }
-
-        public string Username
-        {
-            get;
-            private set;
-        }
-
+        
         public string Message
         {
             get;

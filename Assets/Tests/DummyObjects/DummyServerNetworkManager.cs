@@ -126,7 +126,7 @@ namespace Assets.Tests.DummyObjects
 
         public void SendClientMessage(int connectionId, string message)
         {
-            this.OnSentDataToClient(this, new DataSentEventArgs(connectionId, "Server", message));
+            this.OnSentDataToClient(this, new DataSentEventArgs(connectionId, message));
         }
 
         public void SendAllClientsCommand(NetworkCommandData command)
@@ -231,7 +231,7 @@ namespace Assets.Tests.DummyObjects
             }
             else
             {
-                this.OnReceivedData(this, new DataSentEventArgs(fromConnectionId, clientUsername, message));
+                this.OnReceivedData(this, new DataSentEventArgs(fromConnectionId, message));
             }
         }
     }

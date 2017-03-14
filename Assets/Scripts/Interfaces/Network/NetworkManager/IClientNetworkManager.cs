@@ -26,12 +26,7 @@ namespace Assets.Scripts.Interfaces.Network.NetworkManager
         {
             get;
         }
-
-        int ServerConnectedClientsCount
-        {
-            get;
-        }
-
+        
         NetworkConnectionError ConnectToHost(string ip);
 
         NetworkError Disconnect();

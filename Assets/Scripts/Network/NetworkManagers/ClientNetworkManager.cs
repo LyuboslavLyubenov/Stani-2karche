@@ -303,12 +303,11 @@
             }
             else
             {
-                var username = this.GetUsername();
                 var serverConnectionId = networkData.ConnectionId;
 
                 if (this.OnReceivedDataEvent != null)
                 {
-                    this.OnReceivedDataEvent(this, new DataSentEventArgs(serverConnectionId, username, message));
+                    this.OnReceivedDataEvent(this, new DataSentEventArgs(serverConnectionId, message));
                 }
             }
         }
