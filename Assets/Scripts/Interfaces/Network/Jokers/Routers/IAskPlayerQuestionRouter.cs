@@ -3,13 +3,18 @@
 
     using System;
 
-    public interface IAskPlayerQuestionRouter : IJokerRouter, IDisposable
-    {
-        event EventHandler OnSent;
-        
-        bool Active { get; }
+    using Assets.Scripts.EventArgs;
 
-        void Activate(int senderConnectionId, int friendConnectionId, int timeToAnswerInSeconds);
+    /// <summary>
+    /// Used to send question to client and receive response
+    /// </summary>
+    public interface IAskClientQuestionRouter : IJokerRouter, IDisposable
+    {
+        event EventHandler<AnswerEventArgs> OnReceivedAnswer;
+
+        bool Active { get; }
+        
+        void Activate(int clientConnectionId, int timeToAnswerInSeconds, ISimpleQuestion question);
 
         void Deactivate();
     }

@@ -7,6 +7,7 @@
     using Assets.Scripts.Commands;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils.Unity;
     using Assets.Tests.DummyObjects;

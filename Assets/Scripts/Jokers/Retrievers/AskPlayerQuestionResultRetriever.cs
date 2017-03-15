@@ -63,7 +63,7 @@ namespace Assets.Scripts.Jokers
         {
             this.DisposeTimer();
 
-            var responseCommand = new AskPlayerResponseCommand(this._OnReceivedAnswer);
+            var responseCommand = new AskPlayerQuestionJokerResponseCommand(this._OnReceivedAnswer);
             this.networkManager.CommandsManager.AddCommand(responseCommand);
 
             this.timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, this.Timer_OnReceiveAnswerTimeout);
@@ -77,7 +77,7 @@ namespace Assets.Scripts.Jokers
         private void Timer_OnReceiveSettingsTimeout()
         {
             this.DisposeTimer();
-            this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
+            this.networkManager.CommandsManager.RemoveCommand<AskPlayerQuestionSettingsCommand>();
             this.Active = false;
             this.OnReceiveSettingsTimeout(this, EventArgs.Empty);
         }
@@ -93,7 +93,7 @@ namespace Assets.Scripts.Jokers
         {
             this.DisposeTimer();
 
-            this.networkManager.CommandsManager.RemoveCommand<HelpFromFriendJokerSettingsCommand>();
+            this.networkManager.CommandsManager.RemoveCommand<AskPlayerQuestionSettingsCommand>();
             this.Active = false;
             this.OnReceiveAnswerTimeout(this, EventArgs.Empty);
         }
@@ -123,7 +123,7 @@ namespace Assets.Scripts.Jokers
 
             this.networkManager.SendServerCommand(selected);
 
-            var receivedSettingsCommand = new HelpFromFriendJokerSettingsCommand(this._OnReceivedSettings);
+            var receivedSettingsCommand = new AskPlayerQuestionSettingsCommand(this._OnReceivedSettings);
             this.networkManager.CommandsManager.AddCommand(receivedSettingsCommand);
 
             this.timer = TimerUtils.ExecuteAfter(this.receiveSettingsTimeout, this.Timer_OnReceiveSettingsTimeout);

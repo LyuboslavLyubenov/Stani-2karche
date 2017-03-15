@@ -1,24 +1,9 @@
-﻿//TODO:
-/*
- * Get vote from audience (for current question)
- * Send command containing answer with highest score to the mainplayers (and present screen?)?
- * 
- * Throws error if:
- * * TimeToAnswerInSeconds <= 0
- * * clientsThatMustVote.Count == 0
- * 
- * Is selecting highest rated answer?
- * Is sending highest rated answer to the main players?
- * Is sending to all main players?
- * 
- */
-
-namespace Assets.Tests.Jokers.Routers.AnswerPoll
+﻿namespace Assets.Tests.Jokers.Routers.AnswerPoll
 {
 
     using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Jokers.Routers;
     using Assets.Tests.DummyObjects;
