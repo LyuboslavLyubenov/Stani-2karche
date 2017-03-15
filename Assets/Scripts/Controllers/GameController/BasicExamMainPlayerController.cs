@@ -6,6 +6,7 @@
     using Assets.Scripts.Interfaces.GameData;
     using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Interfaces.Network.Leaderboard;
+    using Assets.Scripts.Jokers.Retrievers;
 
     using Utils;
 
@@ -75,7 +76,7 @@
             var threadUtils = ThreadUtils.Instance;
 
             this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
-            this.audienceAnswerPollResultRetriever = new AnswerPollResultRetrieverFromClient(ClientNetworkManager.Instance, 10);
+            this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 10);
             this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 10);
             this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 10);
 

@@ -1,14 +1,13 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers
+﻿namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
 {
+
     using System;
     using System.Collections.Generic;
 
     using Assets.Scripts.EventArgs;
 
-    public interface IAnswerPollRouter : IDisposable
+    public interface IAnswerPollRouter : IJokerRouter, IDisposable
     {
-        event EventHandler OnActivated;
-
         event EventHandler<VoteEventArgs> OnVoteFinished;
 
         bool Activated { get; }
