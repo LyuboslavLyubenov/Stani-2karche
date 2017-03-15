@@ -25,13 +25,13 @@ namespace Assets.Scripts.Commands.Jokers
 
         private MainPlayerData mainPlayerData;
 
-        private IAskPlayerQuestionRouter jokerServerRouter;
+        private IAskPlayerQuestionJokerRouter jokerServerRouter;
 
         private int timeToAnswerInSeconds;
 
         private Type helpFromFriendJokerType;
 
-        public SelectedAskPlayerQuestionCommand(IServerNetworkManager networkManager, MainPlayerData mainPlayerData, IAskPlayerQuestionRouter jokerServerRouter, int timeToAnswerInSeconds)
+        public SelectedAskPlayerQuestionCommand(IServerNetworkManager networkManager, MainPlayerData mainPlayerData, IAskPlayerQuestionJokerRouter jokerServerRouter, int timeToAnswerInSeconds)
         {
             if (networkManager == null)
             {

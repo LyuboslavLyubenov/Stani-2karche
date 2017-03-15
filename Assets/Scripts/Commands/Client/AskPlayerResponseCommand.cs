@@ -3,12 +3,10 @@
     using System;
 
     using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Interfaces;
-
+    
     using EventArgs = System.EventArgs;
 
-    public class AskPlayerResponseCommand : IOneTimeExecuteCommand
+    public class AskPlayerQuestionJokerResponseCommand : IOneTimeExecuteCommand
     {
         public delegate void OnReceivedAnswer(string username,string answer);
 
@@ -26,7 +24,7 @@
 
         private OnReceivedAnswer onReceivedAnswer;
 
-        public AskPlayerResponseCommand(OnReceivedAnswer onReceivedAnswer)
+        public AskPlayerQuestionJokerResponseCommand(OnReceivedAnswer onReceivedAnswer)
         {
             if (onReceivedAnswer == null)
             {

@@ -96,7 +96,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void SendVoteResult(Dictionary<string, int> answersVotes)
         {
-            var voteResultCommandData = NetworkCommandData.From<AudienceAnswerPollResultCommand>();
+            var voteResultCommandData = NetworkCommandData.From<AnswerPollResultCommand>();
             var answersVotesPairs = answersVotes.ToArray();
 
             for (int i = 0; i < answersVotesPairs.Length; i++)

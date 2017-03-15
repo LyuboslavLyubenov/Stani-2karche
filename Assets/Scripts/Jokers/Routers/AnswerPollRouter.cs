@@ -13,6 +13,7 @@ namespace Assets.Scripts.Jokers.Routers
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Utils;
 
@@ -23,6 +24,10 @@ namespace Assets.Scripts.Jokers.Routers
         public const int MinTimeToAnswerInSeconds = 5;
         
         public event EventHandler OnActivated = delegate
+            {
+            };
+
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
             {
             };
 

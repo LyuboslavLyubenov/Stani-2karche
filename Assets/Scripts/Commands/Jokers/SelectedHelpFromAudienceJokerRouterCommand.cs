@@ -13,7 +13,7 @@ namespace Assets.Scripts.Commands.Jokers
 
     using EventArgs = System.EventArgs;
 
-    public class SelectedAnswerPollCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+    public class SelectedHelpFromAudienceJokerRouterCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
         public EventHandler OnExecuted
         {
@@ -25,12 +25,11 @@ namespace Assets.Scripts.Commands.Jokers
 
         private IHelpFromAudienceJokerRouter askAudienceJokerRouter;
         
-
         private Type askAudienceJokerType;
 
         private int timeToAnswerInSeconds;
 
-        public SelectedAnswerPollCommand(
+        public SelectedHelpFromAudienceJokerRouterCommand(
             MainPlayerData mainPlayerData, 
             IHelpFromAudienceJokerRouter askAudienceJokerRouter,
             int timeToAnswerInSeconds

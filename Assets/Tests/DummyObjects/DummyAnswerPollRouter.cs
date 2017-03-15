@@ -1,22 +1,30 @@
 ﻿namespace Assets.Tests.DummyObjects
 {
-
     using System;
     using System.Collections.Generic;
 
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-
-    using UnityEngine;
-
+    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    
     public class DummyAnswerPollRouter : IAnswerPollRouter
     {
-        public event EventHandler OnActivated = delegate {};
+        public event EventHandler OnActivated = delegate
+            {
+            };
 
-        public event EventHandler<VoteEventArgs> OnVoteFinished = delegate {};
+        public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
+            {
+            };
 
-        public bool Activated { get; private set; }
+        public event EventHandler<VoteEventArgs> OnVoteFinished = delegate
+            {
+            };
+
+        public bool Activated
+        {
+            get; private set;
+        }
 
         public void Activate(int timeToAnswerInSeconds, IEnumerable<int> clientsIdsThatMustVote, ISimpleQuestion question)
         {
@@ -26,14 +34,14 @@
 
         public DummyAnswerPollRouter()
         {
-            
+
         }
 
         public void Deactivate()
         {
             this.Activated = false;
         }
-        
+
         public void Dispose()
         {
         }

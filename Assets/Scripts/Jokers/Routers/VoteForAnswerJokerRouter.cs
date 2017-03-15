@@ -9,12 +9,13 @@
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.GameData;
     using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.Jokers;
     using Assets.Scripts.Interfaces.Network.Jokers.Routers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     public class VoteForAnswerJokerRouter : IVoteForAnswerJokerRouter
     {
+        public event EventHandler OnActivated = delegate {};
+
         public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate
         {
         };
@@ -76,6 +77,7 @@
                         try
                         {
                             this.pollRouter.Activate(timeToAnswerInSeconds, clientsThatMustVote, question);
+                            this.OnActivated(this, EventArgs.Empty);
                         }
                         catch (Exception exception)
                         {

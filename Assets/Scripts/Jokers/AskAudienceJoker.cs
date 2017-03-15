@@ -87,10 +87,10 @@
 
             this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
 
-            this.pollDataRetriever.OnReceiveSettingsTimeout += this.OnReceiveSettingsTimeout;
+            this.pollDataRetriever.OnReceivedSettingsTimeout += this.OnReceiveSettingsTimeout;
             this.pollDataRetriever.OnReceivedSettings += this.OnReceivedJokerSettings;
             this.pollDataRetriever.OnVoted += this.RetrieverOnVoted;
-            this.pollDataRetriever.OnReceiveAudienceVoteTimeout += this.OnReceiveAudienceVoteTimeout;
+            this.pollDataRetriever.OnReceivedVoteTimeout += this.OnReceiveVoteTimeout;
         }
 
         private void OnReceiveSettingsTimeout(object sender, EventArgs args)
@@ -134,7 +134,7 @@
             }
         }
 
-        private void OnReceiveAudienceVoteTimeout(object sender, EventArgs args)
+        private void OnReceiveVoteTimeout(object sender, EventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
 

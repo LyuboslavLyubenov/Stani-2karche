@@ -37,9 +37,13 @@
         private const int MaxConnectionAttempts = 3;
         private const int MaxServerReactionTimeInSeconds = 6;
         private const int MaxNetworkErrorsBeforeDisconnect = 5;
+        
+        public event EventHandler OnConnectedEvent = delegate { };
+        public event EventHandler<DataSentEventArgs> OnReceivedDataEvent = delegate { };
+        public event EventHandler OnDisconnectedEvent = delegate { };
 
         public bool ShowDebugMenu = false;
-
+        
         private int connectionId = 0;
         private int genericHostId = 0;
         private ConnectionConfig connectionConfig = null;
@@ -55,6 +59,11 @@
 
         private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
+        
+        private Timer keepAliveTimer;
+        private Timer connectedClientsCountTimer;
+        private Timer receiveNetworkMessagesTimer;
+        private Timer validateConnectionTimer;
 
         private static ClientNetworkManager instance;
 
@@ -70,13 +79,7 @@
                 return instance;
             }
         }
-
-        public event EventHandler OnConnectedEvent;
-
-        public event EventHandler<DataSentEventArgs> OnReceivedDataEvent;
-
-        public event EventHandler OnDisconnectedEvent;
-
+        
         public bool IsConnected
         {
             get
@@ -113,28 +116,11 @@
                 return this.serverConnectedClientsCount.Value;
             }
         }
-
-        private Timer keepAliveTimer;
-        private Timer connectedClientsCountTimer;
-        private Timer receiveNetworkMessagesTimer;
-        private Timer validateConnectionTimer;
-
+        
         public ClientNetworkManager()
         {
             NetworkTransport.Init();
-
-            this.OnConnectedEvent = delegate
-            {
-            };
-
-            this.OnReceivedDataEvent = delegate
-            {
-            };
-
-            this.OnDisconnectedEvent = delegate
-            {
-            };
-
+            
             this.ConfigureCommands();
             this.ConfigureClient();
 

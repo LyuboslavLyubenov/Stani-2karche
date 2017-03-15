@@ -10,7 +10,7 @@ namespace Assets.Scripts.Commands.Client
 
     using EventArgs = System.EventArgs;
 
-    public class AudienceAnswerPollResultCommand : IOneTimeExecuteCommand
+    public class AnswerPollResultCommand : IOneTimeExecuteCommand
     {
         public EventHandler OnFinishedExecution
         {
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Commands.Client
 
         private Action<Dictionary<string, int>> onReceivedAnswersVotes;
 
-        public AudienceAnswerPollResultCommand(Action<Dictionary<string, int>> onReceivedAnswersVotes)
+        public AnswerPollResultCommand(Action<Dictionary<string, int>> onReceivedAnswersVotes)
         {
             if (onReceivedAnswersVotes == null)
             {

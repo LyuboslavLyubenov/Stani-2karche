@@ -99,7 +99,7 @@ namespace Assets.Scripts.Network.Servers
 
         private ILeaderboardDataManipulator leaderboardDataManipulator = null;
 
-        private IAskPlayerQuestionRouter askPlayerQuestionRouter = null;
+        private IAskPlayerQuestionJokerRouter askPlayerQuestionRouter = null;
         private IHelpFromAudienceJokerRouter audiencePollRouter = null;
         private IDisableRandomAnswersRouter disableRandomAnswersJokerRouter = null;
         private IAddRandomJokerRouter addRandomJokerRouter = null;
@@ -130,7 +130,7 @@ namespace Assets.Scripts.Network.Servers
             this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, MainPlayerData);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, MainPlayerData.JokersData);
            
-            this.askPlayerQuestionRouter = new AskPlayerQuestionRouter(serverNetworkManager, this.GameDataIterator);
+            this.askPlayerQuestionRouter = new AskPlayerQuestionJokerRouter(serverNetworkManager, this.GameDataIterator, new AskClientQuestionRouter(serverNetworkManager));
 
             var answerPollRouter = new AnswerPollRouter(serverNetworkManager);
             this.audiencePollRouter = new HelpFromAudienceJokerRouter(serverNetworkManager, this.GameDataIterator, answerPollRouter);
@@ -336,7 +336,7 @@ namespace Assets.Scripts.Network.Servers
 
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
-            var selectedAudiencePollCommand = new SelectedAnswerPollCommand(this.MainPlayerData, this.audiencePollRouter, 60);
+            var selectedAudiencePollCommand = new SelectedHelpFromAudienceJokerRouterCommand(this.MainPlayerData, this.audiencePollRouter, 60);
             var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };
