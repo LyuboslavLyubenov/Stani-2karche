@@ -19,11 +19,11 @@ namespace Assets.Scripts.Commands
 
         private const string CommandTag = "[COMMAND]";
 
-        private const char OptionsDelitemerSymbol = ';';
+        private const char OptionsDelimiterSymbol = ';';
 
-        private const char OptionsBeginDelitemerSymbol = '-';
+        private const char OptionsBeginDelimiterSymbol = '-';
 
-        private const char OptionValueDelitemerSymbol = '=';
+        private const char OptionValueDelimiterSymbol = '=';
 
         private readonly string commandName;
 
@@ -52,7 +52,7 @@ namespace Assets.Scripts.Commands
         {
             get
             {
-                return new char[] { OptionsDelitemerSymbol, OptionsBeginDelitemerSymbol, OptionValueDelitemerSymbol };
+                return new char[] { OptionsDelimiterSymbol, OptionsBeginDelimiterSymbol, OptionValueDelimiterSymbol };
             }
         }
 
@@ -129,7 +129,7 @@ namespace Assets.Scripts.Commands
             }
 
             var commandWithoutTag = command.Substring(CommandTag.Length);
-            var optionsBeginDelitemerIndex = commandWithoutTag.IndexOf(OptionsBeginDelitemerSymbol);
+            var optionsBeginDelitemerIndex = commandWithoutTag.IndexOf(OptionsBeginDelimiterSymbol);
 
             if (optionsBeginDelitemerIndex < 0)
             {
@@ -145,7 +145,7 @@ namespace Assets.Scripts.Commands
 
             var commandOptionsValues = new Dictionary<string, string>();
             var options = commandWithoutTag.Substring(optionsBeginDelitemerIndex + 1)
-                .Split(new char[] { OptionsDelitemerSymbol }, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new char[] { OptionsDelimiterSymbol }, StringSplitOptions.RemoveEmptyEntries);
 
             if (options.Length < 1)
             {
@@ -155,14 +155,14 @@ namespace Assets.Scripts.Commands
             for (int i = 0; i < options.Length; i++)
             {
                 var option = options[i];
-                var optionNameValueDelitemerIndex = option.IndexOf(OptionValueDelitemerSymbol);
+                var optionNameValueDelitemerIndex = option.IndexOf(OptionValueDelimiterSymbol);
 
                 if (optionNameValueDelitemerIndex < 0)
                 {
                     throw new ArgumentException("Option must have value");
                 }
 
-                var optionNameValue = option.Split(new char[] { OptionValueDelitemerSymbol }, StringSplitOptions.RemoveEmptyEntries);
+                var optionNameValue = option.Split(new char[] { OptionValueDelimiterSymbol }, StringSplitOptions.RemoveEmptyEntries);
 
                 if (optionNameValue.Length != 2)
                 {
@@ -211,7 +211,7 @@ namespace Assets.Scripts.Commands
 
             if (this.Options.Count > 0)
             {
-                command.Append(OptionsBeginDelitemerSymbol);
+                command.Append(OptionsBeginDelimiterSymbol);
             }
 
             var optionsKeyValues = this.Options.ToArray();
@@ -230,7 +230,7 @@ namespace Assets.Scripts.Commands
                     continue;
                 }
 
-                command.Append(parameterName).Append(OptionValueDelitemerSymbol).Append(parameterValue).Append(OptionsDelitemerSymbol);
+                command.Append(parameterName).Append(OptionValueDelimiterSymbol).Append(parameterValue).Append(OptionsDelimiterSymbol);
             }
 
             return command.ToString();
