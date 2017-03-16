@@ -6,7 +6,9 @@ namespace Assets.Scripts.Jokers.Retrievers
 
     public class AudienceAnswerPollResultRetriever : AnswerPollResultRetriever
     {
-        public AudienceAnswerPollResultRetriever(IClientNetworkManager networkManager, int receiveSettingsTimeoutInSeconds)
+        public const int DefaultTime = 5;
+
+        public AudienceAnswerPollResultRetriever(IClientNetworkManager networkManager, int receiveSettingsTimeoutInSeconds = DefaultTime)
             : base(networkManager, receiveSettingsTimeoutInSeconds)
         {
         }
