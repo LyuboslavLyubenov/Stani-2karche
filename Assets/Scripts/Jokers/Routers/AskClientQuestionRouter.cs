@@ -107,7 +107,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void SendSettings(int connectionId)
         {
-            var settingsCommandData = NetworkCommandData.From<AskPlayerQuestionSettingsCommand>();
+            var settingsCommandData = NetworkCommandData.From<AskClientQuestionSettingsCommand>();
             settingsCommandData.AddOption("TimeToAnswerInSeconds", this.timeToAnswerInSeconds.ToString());
             this.networkManager.SendClientCommand(connectionId, settingsCommandData);
         }

@@ -1,4 +1,7 @@
-﻿namespace Assets.Scripts.Controllers.GameController
+﻿using AskPlayerQuestionResultRetriever = Jokers.Retrievers.AskPlayerQuestionResultRetriever;
+using IAskClientQuestionResultRetriever = Interfaces.Network.Jokers.IAskClientQuestionResultRetriever;
+
+namespace Assets.Scripts.Controllers.GameController
 {
     using System;
     using System.Collections;
@@ -64,7 +67,7 @@
 
         private IGameDataIterator remoteGameDataIterator = null;
         private IAnswerPollResultRetriever audienceAnswerPollResultRetriever = null;
-        private IAskPlayerQuestionResultRetriever askPlayerQuestionResultRetriever = null;
+        private IAskClientQuestionResultRetriever askClientQuestionResultRetriever = null;
 
         private ILeaderboardReceiver leaderboardReceiver = null;
 
@@ -77,7 +80,7 @@
 
             this.remoteGameDataIterator = new RemoteGameDataIterator(ClientNetworkManager.Instance);
             this.audienceAnswerPollResultRetriever = new AudienceAnswerPollResultRetriever(ClientNetworkManager.Instance, 10);
-            this.askPlayerQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 10);
+            this.askClientQuestionResultRetriever = new AskPlayerQuestionResultRetriever(ClientNetworkManager.Instance, 10);
             this.leaderboardReceiver = new LeaderboardReceiver(ClientNetworkManager.Instance, 10);
 
             this.unableToConnectUIController = this.UnableToConnectUI.GetComponent<UnableToConnectUIController>();
@@ -279,7 +282,7 @@
             var networkManager = ClientNetworkManager.Instance;
 
             networkManager.CommandsManager.AddCommand(new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver));
-            networkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, networkManager, this.askPlayerQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
+            networkManager.CommandsManager.AddCommand(new AddHelpFromFriendJokerCommand(this.AvailableJokersUIController, networkManager, this.askClientQuestionResultRetriever, this.CallAFriendUI, this.FriendAnswerUI, this.WaitingToAnswerUI, this.LoadingUI));
             networkManager.CommandsManager.AddCommand(new AddAskAudienceJokerCommand(this.AvailableJokersUIController, this.audienceAnswerPollResultRetriever, this.WaitingToAnswerUI, this.AudienceAnswerUI, this.LoadingUI));
             networkManager.CommandsManager.AddCommand(new AddDisableRandomAnswersJokerCommand(this.AvailableJokersUIController, networkManager, this.QuestionUIController));
             networkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController));
@@ -349,7 +352,7 @@
         public void Dispose()
         {
             this.audienceAnswerPollResultRetriever.Dispose();
-            this.askPlayerQuestionResultRetriever.Dispose();
+            this.askClientQuestionResultRetriever.Dispose();
             this.leaderboardReceiver.Dispose();
 
             ClientNetworkManager.Instance.CommandsManager.RemoveAllCommands();
@@ -357,7 +360,7 @@
 
             this.remoteGameDataIterator = null;
             this.audienceAnswerPollResultRetriever = null;
-            this.askPlayerQuestionResultRetriever = null;
+            this.askClientQuestionResultRetriever = null;
             this.leaderboardReceiver = null;
 
             Resources.UnloadUnusedAssets();

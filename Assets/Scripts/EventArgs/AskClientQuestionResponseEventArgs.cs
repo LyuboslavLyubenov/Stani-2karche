@@ -5,7 +5,7 @@ namespace Assets.Scripts.EventArgs
 
     using EventArgs = System.EventArgs;
 
-    public class AskPlayerResponseEventArgs : EventArgs
+    public class AskClientQuestionResponseEventArgs : EventArgs
     {
         public string Username
         {
@@ -19,7 +19,7 @@ namespace Assets.Scripts.EventArgs
             private set;
         }
 
-        public AskPlayerResponseEventArgs(string username, string answer)
+        public AskClientQuestionResponseEventArgs(string username, string answer)
         {
             if (username == null)
             {

@@ -1,3 +1,5 @@
+using IAskClientQuestionResultRetriever = Interfaces.Network.Jokers.IAskClientQuestionResultRetriever;
+
 namespace Assets.Scripts.Commands.Jokers.Add
 {
     using System.Collections.Generic;
@@ -18,7 +20,7 @@ namespace Assets.Scripts.Commands.Jokers.Add
 
         public AddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
                                              IClientNetworkManager networkManager,
-                                             IAskPlayerQuestionResultRetriever resultRetriever,
+                                             IAskClientQuestionResultRetriever resultRetriever,
                                              GameObject callAFriendUI, 
                                              GameObject friendAnswerUI, 
                                              GameObject waitingToAnswerUI, 

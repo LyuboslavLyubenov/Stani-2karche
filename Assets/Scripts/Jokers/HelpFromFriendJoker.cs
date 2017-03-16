@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Jokers
+﻿using IAskClientQuestionResultRetriever = Interfaces.Network.Jokers.IAskClientQuestionResultRetriever;
+
+namespace Assets.Scripts.Jokers
 {
     using System;
     using System.Linq;
@@ -46,7 +48,7 @@
         private readonly CallAFriendUIController callAFriendUIController;
         private readonly IClientNetworkManager networkManager;
 
-        private readonly IAskPlayerQuestionResultRetriever resultRetriever;
+        private readonly IAskClientQuestionResultRetriever resultRetriever;
 
         private readonly GameObject callAFriendUI;
         private readonly GameObject friendAnswerUI;
@@ -66,7 +68,7 @@
         }
 
         public HelpFromFriendJoker(IClientNetworkManager networkManager,
-                                   IAskPlayerQuestionResultRetriever resultRetriever,
+                                   IAskClientQuestionResultRetriever resultRetriever,
                                    GameObject callAFriendUI,
                                    GameObject friendAnswerUI,
                                    GameObject waitingToAnswerUI,
@@ -157,7 +159,7 @@
             }
         }
 
-        private void OnReceivedAnswer(object sender, AskPlayerResponseEventArgs args)
+        private void OnReceivedAnswer(object sender, AskClientQuestionResponseEventArgs args)
         {
             this.waitingToAnswerUI.SetActive(false);
             this.friendAnswerUI.SetActive(true);

@@ -6,7 +6,7 @@
     
     using EventArgs = System.EventArgs;
 
-    public class AskPlayerQuestionJokerResponseCommand : IOneTimeExecuteCommand
+    public class AskClientQuestionResponseCommand : IOneTimeExecuteCommand
     {
         public delegate void OnReceivedAnswer(string username,string answer);
 
@@ -24,7 +24,7 @@
 
         private OnReceivedAnswer onReceivedAnswer;
 
-        public AskPlayerQuestionJokerResponseCommand(OnReceivedAnswer onReceivedAnswer)
+        public AskClientQuestionResponseCommand(OnReceivedAnswer onReceivedAnswer)
         {
             if (onReceivedAnswer == null)
             {

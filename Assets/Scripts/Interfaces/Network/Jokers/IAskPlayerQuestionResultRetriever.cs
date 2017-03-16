@@ -1,13 +1,13 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers
+﻿namespace Interfaces.Network.Jokers
 {
 
     using System;
 
     using Assets.Scripts.EventArgs;
 
-    public interface IAskPlayerQuestionResultRetriever : IDisposable
+    public interface IAskClientQuestionResultRetriever : IDisposable
     {
-        event EventHandler<AskPlayerResponseEventArgs> OnReceivedAnswer;
+        event EventHandler<AskClientQuestionResponseEventArgs> OnReceivedAnswer;
 
         event EventHandler<JokerSettingsEventArgs> OnReceivedSettings;
 
@@ -18,6 +18,8 @@
         bool Active { get; }
 
         void Activate(int playerConnectionId);
+
+        void Deactivate();
     }
 
 }

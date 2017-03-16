@@ -8,7 +8,7 @@ namespace Assets.Scripts.Commands.Jokers
 
     using EventArgs = System.EventArgs;
 
-    public class AskPlayerQuestionSettingsCommand : IOneTimeExecuteCommand
+    public class AskClientQuestionSettingsCommand : IOneTimeExecuteCommand
     {
         public delegate void OnReceivedSettings(int timeToAnswerInSeconds);
 
@@ -26,7 +26,7 @@ namespace Assets.Scripts.Commands.Jokers
 
         private OnReceivedSettings onReceivedSettings;
 
-        public AskPlayerQuestionSettingsCommand(OnReceivedSettings onReceivedSettings)
+        public AskClientQuestionSettingsCommand(OnReceivedSettings onReceivedSettings)
         {
             if (onReceivedSettings == null)
             {

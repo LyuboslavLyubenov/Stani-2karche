@@ -83,7 +83,7 @@ namespace Assets.Scripts.Jokers.Routers
 
         private void SendMainPlayerAnswerResponse(int connectionId, string answer)
         {
-            var sendFriendResponseCommand = NetworkCommandData.From<AskPlayerQuestionJokerResponseCommand>();
+            var sendFriendResponseCommand = NetworkCommandData.From<AskClientQuestionResponseCommand>();
             var friendUsername = this.networkManager.GetClientUsername(connectionId);
 
             sendFriendResponseCommand.AddOption("Username", friendUsername);
@@ -146,7 +146,7 @@ namespace Assets.Scripts.Jokers.Routers
             
             this.senderConnectionId = senderConnectionId;
             
-            var settingsCommandData = NetworkCommandData.From<AskPlayerQuestionSettingsCommand>();
+            var settingsCommandData = NetworkCommandData.From<AskClientQuestionSettingsCommand>();
             settingsCommandData.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
             this.networkManager.SendClientCommand(senderConnectionId, settingsCommandData);
 
