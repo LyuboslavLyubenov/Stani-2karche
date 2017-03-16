@@ -66,6 +66,19 @@
             this.commands.Remove(commandName);
         }
 
+        public void RemoveCommand(INetworkManagerCommand command)
+        {
+            var commandName = command.GetType()
+                .Name.Replace("Command", "");
+
+            if (!this.Exists(commandName))
+            {
+                throw new ArgumentException("Command doesnt exists");
+            }
+
+            this.commands[commandName].Remove(command);
+        }
+
         public void RemoveAllCommands()
         {
             this.commands.Clear();
@@ -89,14 +102,13 @@
 
                 var oneTimeExecuteCommand = commandToExecute as IOneTimeExecuteCommand;
 
-                if (oneTimeExecuteCommand != null && oneTimeExecuteCommand.FinishedExecution)
+                if (oneTimeExecuteCommand != null && 
+                    oneTimeExecuteCommand.FinishedExecution &&
+                    this.Exists(commandName))
                 {
                     this.commands[commandName].Remove(oneTimeExecuteCommand);
                 }
             }
         }
-
-
     }
-
 }
