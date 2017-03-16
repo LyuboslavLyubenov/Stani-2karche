@@ -90,7 +90,7 @@ namespace Jokers.Retrievers
         private void Timer_OnReceiveAnswerTimeout()
         {
             this.DisposeTimer();
-
+            
             this.networkManager.CommandsManager.RemoveCommand<AskClientQuestionSettingsCommand>();
             this.Active = false;
             this.OnReceiveAnswerTimeout(this, EventArgs.Empty);
@@ -121,6 +121,16 @@ namespace Jokers.Retrievers
         /// </summary>
         public virtual void Activate(int clientConnectionId)
         {
+            if (this.Active)
+            {
+                throw new InvalidOperationException("Already started");
+            }
+
+            if (clientConnectionId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("clientConnectionId");
+            }
+
             var receivedSettingsCommand = new AskClientQuestionSettingsCommand(this._OnReceivedSettings);
             this.networkManager.CommandsManager.AddCommand(receivedSettingsCommand);
 
@@ -150,12 +160,12 @@ namespace Jokers.Retrievers
 
         public virtual void Dispose()
         {
+            this.Deactivate();
+
             this.OnReceivedAnswer = null;
             this.OnReceiveAnswerTimeout = null;
             this.OnReceivedSettings = null;
             this.OnReceiveSettingsTimeout = null;
-
-            this.DisposeTimer();
         }
     }
 
