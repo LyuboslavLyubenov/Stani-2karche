@@ -114,6 +114,19 @@ namespace Assets.Scripts.Jokers.Retrievers
             }
         }
 
+        private void RemoveCommands()
+        {
+            if (this.networkManager.CommandsManager.Exists<AnswerPollSettingsCommand>())
+            {
+                this.networkManager.CommandsManager.RemoveCommand<AnswerPollSettingsCommand>();
+            }
+
+            if (this.networkManager.CommandsManager.Exists<AnswerPollResultCommand>())
+            {
+                this.networkManager.CommandsManager.RemoveCommand<AnswerPollSettingsCommand>();
+            }
+        }
+
         private void Timer_OnReceiveVoteTimeout()
         {
             this.DisposeTimer();
@@ -150,9 +163,11 @@ namespace Assets.Scripts.Jokers.Retrievers
 
             this.Activated = true;
         }
-
+        
         public virtual void Dispose()
         {
+            this.Activated = false;
+            this.RemoveCommands();
             this.DisposeTimer();
         }
     }

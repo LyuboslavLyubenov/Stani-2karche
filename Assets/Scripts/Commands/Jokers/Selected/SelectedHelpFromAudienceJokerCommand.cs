@@ -1,26 +1,17 @@
-namespace Assets.Scripts.Commands.Jokers
+namespace Commands.Jokers.Selected
 {
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces.Network.Jokers.Routers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using DTOs;
-    using Interfaces;
-    using Scripts.Jokers;
+    using Assets.Scripts.Jokers;
 
     using EventArgs = System.EventArgs;
 
-    public class SelectedHelpFromAudienceJokerRouterCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+    public class SelectedHelpFromAudienceJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
-        public EventHandler OnExecuted
-        {
-            get;
-            set;
-        }
-
         private MainPlayerData mainPlayerData;
 
         private IHelpFromAudienceJokerRouter askAudienceJokerRouter;
@@ -29,7 +20,13 @@ namespace Assets.Scripts.Commands.Jokers
 
         private int timeToAnswerInSeconds;
 
-        public SelectedHelpFromAudienceJokerRouterCommand(
+        public EventHandler OnExecuted
+        {
+            get;
+            set;
+        }
+
+        public SelectedHelpFromAudienceJokerCommand(
             MainPlayerData mainPlayerData, 
             IHelpFromAudienceJokerRouter askAudienceJokerRouter,
             int timeToAnswerInSeconds
@@ -71,5 +68,4 @@ namespace Assets.Scripts.Commands.Jokers
             }
         }
     }
-
 }
