@@ -67,6 +67,23 @@
 
         public void FakeReceiveMessage(string message)
         {
+            NetworkCommandData commandData = null;
+
+            try
+            {
+                commandData = NetworkCommandData.Parse(message);
+            }
+            catch
+            {
+            }
+
+            if (commandData != null &&
+                this.CommandsManager.Exists(commandData.Name))
+            {
+                this.CommandsManager.Execute(commandData);
+                return;
+            }
+
             this.OnReceivedDataEvent(this, new DataSentEventArgs(0, message));
         }
     }
