@@ -17,6 +17,8 @@
 
         void RemoveCommand(string commandName);
 
+        void RemoveCommand(INetworkManagerCommand command);
+
         void RemoveAllCommands();
 
         void Execute(NetworkCommandData command);

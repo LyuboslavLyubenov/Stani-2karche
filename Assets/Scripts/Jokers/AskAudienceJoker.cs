@@ -8,7 +8,6 @@
     using UnityEngine;
 
     using Exceptions;
-    using Network.NetworkManagers;
     using Utils.Unity;
 
     using Controllers;

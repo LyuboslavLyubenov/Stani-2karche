@@ -7,7 +7,6 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.Scripts.Commands;
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Controllers.GameController;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.StateMachine;
     using Assets.Scripts.Utils.Unity;
