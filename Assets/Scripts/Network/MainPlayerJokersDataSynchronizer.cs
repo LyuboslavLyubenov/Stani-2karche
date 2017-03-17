@@ -1,3 +1,5 @@
+using MainPlayerData = Network.MainPlayerData;
+
 namespace Assets.Scripts.Network
 {
     using System;

@@ -8,6 +8,8 @@ namespace Commands.Jokers.Selected
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.Jokers;
 
+    using Network;
+
     using EventArgs = System.EventArgs;
 
     public class SelectedHelpFromAudienceJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback

@@ -1,3 +1,5 @@
+using MainPlayerData = Network.MainPlayerData;
+
 namespace Assets.Scripts.Commands.Jokers
 {
     using System;

@@ -1,18 +1,22 @@
-namespace Assets.Scripts.DTOs
+namespace Network
 {
+
     using System;
 
-    using Commands.Server;
-    using EventArgs;
-    using Interfaces;
-    using Network.NetworkManagers;
-    using Interfaces.Network.NetworkManager;
+    using Assets.Scripts.Commands.Server;
+    using Assets.Scripts.DTOs;
+    using Assets.Scripts.EventArgs;
+    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
     public class MainPlayerData : IPlayerData
     {
-
         public event EventHandler<ClientConnectionDataEventArgs> OnConnected = delegate { };
-
         public event EventHandler<ClientConnectionDataEventArgs> OnDisconnected = delegate { };
+
+        private IServerNetworkManager networkManager;
+
+        private readonly INetworkManagerCommand mainPlayerConnecting;
 
         public JokersData JokersData
         {
@@ -45,8 +49,6 @@ namespace Assets.Scripts.DTOs
             }
         }
 
-        private IServerNetworkManager networkManager;
-
         public MainPlayerData(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
@@ -55,11 +57,13 @@ namespace Assets.Scripts.DTOs
             }
 
             this.networkManager = networkManager;
+
+            this.mainPlayerConnecting = new MainPlayerConnectingCommand(this.OnMainPlayerConnecting);
             this.JokersData = new JokersData(networkManager);
 
             networkManager.OnClientDisconnected += this.OnClientDisconnected;
-            networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
-            
+            networkManager.CommandsManager.AddCommand(this.mainPlayerConnecting);
+
             this.IsConnected = false;
         }
 
@@ -70,10 +74,9 @@ namespace Assets.Scripts.DTOs
                 return;
             }
 
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+            this.networkManager.CommandsManager.AddCommand(this.mainPlayerConnecting);
 
             this.IsConnected = false;
-
             this.OnDisconnected(this, args);
         }
 
@@ -81,8 +84,6 @@ namespace Assets.Scripts.DTOs
         {
             this.ConnectionId = connectionId;
             this.IsConnected = true;
-
-            this.networkManager.CommandsManager.RemoveCommand<MainPlayerConnectingCommand>();
 
             this.OnConnected(this, new ClientConnectionDataEventArgs(connectionId));
         }

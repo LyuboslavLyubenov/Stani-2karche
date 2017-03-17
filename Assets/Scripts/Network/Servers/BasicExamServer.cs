@@ -1,5 +1,6 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
 
+using MainPlayerData = Network.MainPlayerData;
 using SelectedHelpFromAudienceJokerCommand = Commands.Jokers.Selected.SelectedHelpFromAudienceJokerCommand;
 
 namespace Assets.Scripts.Network.Servers

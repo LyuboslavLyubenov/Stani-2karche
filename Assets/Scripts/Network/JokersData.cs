@@ -10,20 +10,22 @@ namespace Assets.Scripts.DTOs
     using Commands;
     using EventArgs;
     using Interfaces;
-    using Network.NetworkManagers;
     using Utils;
 
+    /// <summary>
+    /// Tracks player jokers
+    /// </summary>
     public class JokersData
     {
-        public EventHandler<JokerTypeEventArgs> OnAddedJoker = delegate
+        public event EventHandler<JokerTypeEventArgs> OnAddedJoker = delegate
             {
             };
 
-        public EventHandler<JokerTypeEventArgs> OnUsedJoker = delegate
+        public event EventHandler<JokerTypeEventArgs> OnUsedJoker = delegate
             {
             };
 
-        public EventHandler<JokerTypeEventArgs> OnRemovedJoker = delegate
+        public event EventHandler<JokerTypeEventArgs> OnRemovedJoker = delegate
             {
             };
 
