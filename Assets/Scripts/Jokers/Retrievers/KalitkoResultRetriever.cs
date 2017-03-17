@@ -4,7 +4,6 @@ namespace Assets.Scripts.Jokers.Retrievers
 {
 
     using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Jokers;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     public class KalitkoResultRetriever : AnswerPollResultRetriever
