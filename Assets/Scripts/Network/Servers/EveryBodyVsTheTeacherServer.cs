@@ -6,6 +6,7 @@ namespace Network.Servers
 
     using Assets.Scripts.Commands.Server;
     using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
+    using Assets.Scripts.DTOs;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.StateMachine;
@@ -32,6 +33,8 @@ namespace Network.Servers
 
         [Inject]
         private FirstRoundState firstRoundState;
+
+        private JokersData jokers;
 
         private readonly StateMachine stateMachine = new StateMachine();
 
@@ -82,9 +85,6 @@ namespace Network.Servers
 
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
         {
-            this.mainPlayersConnectionIds =
-                new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
-
             this.stateMachine.SetCurrentState(this.firstRoundState);
         }
 
