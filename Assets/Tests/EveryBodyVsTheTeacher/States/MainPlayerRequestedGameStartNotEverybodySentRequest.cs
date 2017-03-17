@@ -12,6 +12,8 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;
 
+    using Network.Servers;
+
     public class MainPlayerRequestedGameStartNotEverybodySentRequest : ExtendedMonoBehaviour
     {
         private StateMachine stateMachine = new StateMachine();

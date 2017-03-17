@@ -67,7 +67,7 @@
             this.OnUsedJoker(this, new JokerEventArgs(joker));
 
             this.jokers.Remove(joker);
-            Destroy(jokerObj);//TODO: EXIT ANIMATION?  
+            Destroy(jokerObj);
         }
 
         public void AddJoker(IJoker joker)

@@ -1,11 +1,11 @@
-namespace Assets.Scripts.Controllers.GameController
+namespace Network.Servers
 {
+
     using System;
     using System.Collections.Generic;
 
     using Assets.Scripts.Commands.Server;
     using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
     using Assets.Scripts.StateMachine;

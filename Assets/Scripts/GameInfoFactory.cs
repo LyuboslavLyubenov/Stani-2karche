@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts
+﻿using EveryBodyVsTheTeacherServer = Network.Servers.EveryBodyVsTheTeacherServer;
+
+namespace Assets.Scripts
 {
     using System;
     using System.Linq;

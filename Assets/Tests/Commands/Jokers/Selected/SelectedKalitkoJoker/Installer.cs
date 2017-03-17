@@ -2,11 +2,9 @@
 
 namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
-
     using Assets.Scripts.Interfaces.Network;
     using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Install;
-    using Assets.Zenject.Source.Usage;
 
     public class Installer : MonoInstaller
     {
