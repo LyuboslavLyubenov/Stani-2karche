@@ -4,18 +4,36 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
+    using Extensions;
+
     using Interfaces.Network.NetworkManager;
 
-    public class MainPlayerDisconnectedCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+    public class MainPlayerDisconnectedCommand : INetworkManagerCommand
     {
-        public EventHandler OnExecuted
+        private readonly IMainPlayersContainerUIController mainPlayersContainerUiController;
+
+        public MainPlayerDisconnectedCommand(IMainPlayersContainerUIController mainPlayersContainerUiController)
         {
-            get; set;
+            if (mainPlayersContainerUiController == null)
+            {
+                throw new ArgumentNullException("mainPlayersContainerUiController");
+            }
+
+            this.mainPlayersContainerUiController = mainPlayersContainerUiController;
         }
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            throw new NotImplementedException();
+            var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
+
+            if (!this.mainPlayersContainerUiController.IsOnScreen(connectionId))
+            {
+                return;
+            }
+
+            this.mainPlayersContainerUiController.HideMainPlayer(connectionId);
         }
     }
 }

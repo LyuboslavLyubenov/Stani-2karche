@@ -1,6 +1,5 @@
 ﻿namespace Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
 {
-
     using System;
     using System.Collections.Generic;
 
@@ -15,7 +14,7 @@
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            throw new NotImplementedException();
+            this.OnExecuted(this, EventArgs.Empty);
         }
     }
 }
