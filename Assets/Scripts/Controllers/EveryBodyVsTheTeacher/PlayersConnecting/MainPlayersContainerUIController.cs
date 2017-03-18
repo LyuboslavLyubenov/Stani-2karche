@@ -1,74 +1,62 @@
-using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
-
 namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using EventArgs;
-
-    using Interfaces.Network.NetworkManager;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
-
-    public class MainPlayersContainerUIController : MonoBehaviour
+    public class MainPlayersContainerUIController : MonoBehaviour, IMainPlayersContainerUIController
     {   
         private Dictionary<int, MainPlayerUIController> connectedMainPlayersControllers = new Dictionary<int, MainPlayerUIController>();
         private MainPlayerUIController[] mainPlayerUIControllers;
-
-        [Inject]
-        private IServerNetworkManager serverNetworkManager;
-
-        [Inject]
-        private PlayersConnectingToTheServerState state;
-
+        
         void Start()
         {
-            this.state.OnMainPlayerConnected += this.OnMainPlayerConnected;
-            this.state.OnMainPlayerRequestedGameStart += this.OnMainPlayerRequestedGameStart;
-            this.state.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
-
             this.mainPlayerUIControllers = this.GetComponentsInChildren<MainPlayerUIController>();
         }
 
-        private void OnMainPlayerRequestedGameStart(object sender, ClientConnectionDataEventArgs clientConnectionDataEventArgs)
+        public void ShowMainPlayerRequestedGameStart(int connectionId)
         {
-            var controller = this.connectedMainPlayersControllers[clientConnectionDataEventArgs.ConnectionId];
+            if (!this.connectedMainPlayersControllers.ContainsKey(connectionId))
+            {
+                throw new ArgumentNullException("connectionId");
+            }
+
+            var controller = this.connectedMainPlayersControllers[connectionId];
             controller.RequestedGameStart = true;
         }
 
-        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        public void ShowMainPlayer(int connectionId, string username)
         {
-            this.ShowMainPlayerOnScreen(args.ConnectionId);
+            if (connectionId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("connectionId");
+            }
+
+            if (string.IsNullOrEmpty(username))
+            {
+                throw new ArgumentNullException("username");
+            }
+
+            var controller = this.GetFirstNotUsedMainPlayerObject();
+            controller.Username = username;
+            this.connectedMainPlayersControllers.Add(connectionId, controller);
         }
 
-        private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        public void HideMainPlayer(int connectionId)
         {
-            if (!this.IsOnScreen(args.ConnectionId))
+            if (!this.IsOnScreen(connectionId))
             {
                 return;
             }
-            
-            this.HideMainPlayerFromScreen(args.ConnectionId);
-        }
 
-        private void HideMainPlayerFromScreen(int connectionId)
-        {
             this.connectedMainPlayersControllers[connectionId].RequestedGameStart = false;
             this.connectedMainPlayersControllers[connectionId].ClearUsername();
             this.connectedMainPlayersControllers.Remove(connectionId);
-        }
-
-        private void ShowMainPlayerOnScreen(int connectionId)
-        {
-            var playerUsername = this.serverNetworkManager.GetClientUsername(connectionId);
-            var controller = this.GetFirstNotUsedMainPlayerObject();
-            controller.Username = playerUsername;
-
-            this.connectedMainPlayersControllers.Add(connectionId, controller);
         }
         
         private MainPlayerUIController GetFirstNotUsedMainPlayerObject()
@@ -77,10 +65,9 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
             return controller;
         }
 
-        private bool IsOnScreen(int connectionId)
+        public bool IsOnScreen(int connectionId)
         {
             return this.connectedMainPlayersControllers.ContainsKey(connectionId);
         }
     }
-
 }

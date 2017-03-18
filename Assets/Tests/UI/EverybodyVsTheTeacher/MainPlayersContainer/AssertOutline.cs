@@ -10,7 +10,7 @@
     public class AssertOutline : ExtendedMonoBehaviour
     {
         public GameObject Obj;
-        public bool ShouldBeActivate = true;
+        public bool ShouldBeActive = true;
 
         public float CheckAfterTimeInSeconds = 1f;
 
@@ -24,7 +24,7 @@
         {
             var outlineComponent = this.Obj.GetComponent<NicerOutline>();
 
-            if (outlineComponent == null || outlineComponent.enabled != this.ShouldBeActivate)
+            if (outlineComponent == null || outlineComponent.enabled != this.ShouldBeActive)
             {
                 IntegrationTest.Fail();
             }
