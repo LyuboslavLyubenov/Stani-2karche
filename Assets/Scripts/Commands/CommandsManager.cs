@@ -3,6 +3,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Interfaces.Network.NetworkManager;
 
@@ -35,6 +36,16 @@
             }
 
             this.commands[commandName].Add(commandToExecute);
+        }
+
+        public void AddCommands(IEnumerable<INetworkManagerCommand> commands)
+        {
+            if (commands == null || !commands.Any())
+            {
+                throw new ArgumentNullException("commands");
+            }
+
+            commands.ToList().ForEach(this.AddCommand);
         }
 
         public bool Exists<T>()
@@ -75,6 +86,11 @@
             }
 
             this.commands[commandName].Remove(command);
+
+            if (this.commands[commandName].Count == 0)
+            {
+                this.commands.Remove(commandName);
+            }
         }
 
         public void RemoveAllCommands()
