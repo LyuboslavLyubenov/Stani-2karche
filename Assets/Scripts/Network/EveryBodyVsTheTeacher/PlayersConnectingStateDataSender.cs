@@ -8,6 +8,7 @@
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     public class PlayersConnectingStateDataSender : IPlayersConnectingStateDataSender
@@ -17,7 +18,7 @@
         private readonly IEveryBodyVsTheTeacherServer server;
 
         public PlayersConnectingStateDataSender(
-            PlayersConnectingToTheServerState playersConnectingState, 
+            IPlayersConnectingToTheServerState playersConnectingState, 
             IServerNetworkManager networkManager,
             IEveryBodyVsTheTeacherServer server)
         {

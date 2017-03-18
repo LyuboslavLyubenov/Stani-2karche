@@ -62,6 +62,7 @@
                     
                     if (args.ConnectionId == senderId && areVotesInSameState)
                     {
+                        this.helpFromAudienceJokerRouter.Dispose();
                         IntegrationTest.Pass();
                     }
                 }
