@@ -1,9 +1,9 @@
-﻿using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
-
-namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
+﻿namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
     using System.Collections.Generic;
+
+    using Assets.Scripts.Interfaces.Controllers;
 
     using EventArgs;
 
@@ -16,7 +16,7 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 
     using Zenject.Source.Usage;
 
-    public class AudiencePlayersContainerUIController : MonoBehaviour
+    public class AudiencePlayersContainerUIController : MonoBehaviour, IAudiencePlayersContainerUIController
     {
         private const int AudiencePlayerObjectStartPositionX = -550;
 
@@ -25,13 +25,7 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
         public GameObject DotsInAudienceContainer;
         
         public ObjectsPool AudienceObjectsPool;
-
-        [Inject]
-        private PlayersConnectingToTheServerState state;
-
-        [Inject]
-        private IServerNetworkManager serverNetworkManager;
-
+        
         private readonly Queue<GameObject> audiencePlayerObjects = new Queue<GameObject>();
         private readonly Dictionary<int, GameObject> connectionIdAudienceObj = new Dictionary<int, GameObject>();
 
@@ -42,36 +36,9 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 
         void Start()
         {
-            this.state.OnAudiencePlayerConnected += this.OnAudiencePlayerConnected;
-            this.state.OnAudiencePlayerDisconnected += this.OnAudiencePlayerDisconnected;
-
             this.DotsInAudienceContainer.SetActive(false);
         }
-
-        private void OnAudiencePlayerConnected(object sender, ClientConnectionDataEventArgs args)
-        {
-            this.ShowAudiencePlayerOnScreen(args.ConnectionId);
-        }
-
-        private void OnAudiencePlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
-        {
-            if (!this.IsOnScreen(args.ConnectionId))
-            {
-                return;
-            }
-
-            this.HideAudiencePlayerFromScreen(args.ConnectionId);
-        }
-
-        private void HideAudiencePlayerFromScreen(int connectionId)
-        {
-            var obj = this.connectionIdAudienceObj[connectionId];
-            obj.SetActive(false);
-
-            this.connectionIdAudienceObj.Remove(connectionId);
-            this.HideDotsIfNoMoreThanFourPlayersAreConnected();
-        }
-
+        
         private void HideDotsIfNoMoreThanFourPlayersAreConnected()
         {
             if (this.connectionIdAudienceObj.Count <= 3)
@@ -79,25 +46,7 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
                 this.DotsInAudienceContainer.SetActive(false);
             }
         }
-
-        private void ShowAudiencePlayerOnScreen(int connectionId)
-        {
-            if (this.audiencePlayerObjects.Count >= 3)
-            {
-                var audienceObjectToBeDeactived = this.audiencePlayerObjects.Dequeue();
-                audienceObjectToBeDeactived.SetActive(false);
-                
-                this.DotsInAudienceContainer.SetActive(true);
-            }
-
-            var newAudienceObject = this.GetAudienceObjectFromPoolWithStartPosition();
-
-            this.GetUsernameFromServerAndSetItToAudienceObject(connectionId, newAudienceObject);
-            
-            this.connectionIdAudienceObj.Add(connectionId, newAudienceObject);
-            this.audiencePlayerObjects.Enqueue(newAudienceObject);
-        }
-
+        
         private GameObject GetAudienceObjectFromPoolWithStartPosition()
         {
             var audiencePlayerTransform = this.AudienceObjectsPool.Get();
@@ -108,11 +57,37 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
             return audiencePlayerTransform.gameObject;
         }
 
-        private void GetUsernameFromServerAndSetItToAudienceObject(int connectionId, GameObject audienceObj)
+        public void ShowAudiencePlayer(int connectionId, string username)
         {
-            var playerUsername = this.serverNetworkManager.GetClientUsername(connectionId);
-            var textComponent = audienceObj.GetComponentInChildren<Text>();
-            textComponent.text = playerUsername;
+            if (this.audiencePlayerObjects.Count >= 3)
+            {
+                var audienceObjectToBeDeactivated = this.audiencePlayerObjects.Dequeue();
+                audienceObjectToBeDeactivated.SetActive(false);
+
+                this.DotsInAudienceContainer.SetActive(true);
+            }
+
+            var newAudienceObject = this.GetAudienceObjectFromPoolWithStartPosition();
+
+            var textComponent = newAudienceObject.GetComponentInChildren<Text>();
+            textComponent.text = username;
+
+            this.connectionIdAudienceObj.Add(connectionId, newAudienceObject);
+            this.audiencePlayerObjects.Enqueue(newAudienceObject);
+        }
+
+        public void HideAudiencePlayer(int connectionId)
+        {
+            if (!this.IsOnScreen(connectionId))
+            {
+                return;
+            }
+
+            var obj = this.connectionIdAudienceObj[connectionId];
+            obj.SetActive(false);
+
+            this.connectionIdAudienceObj.Remove(connectionId);
+            this.HideDotsIfNoMoreThanFourPlayersAreConnected();
         }
 
         public bool IsOnScreen(int connectionId)
