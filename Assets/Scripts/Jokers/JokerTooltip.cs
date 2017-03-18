@@ -1,9 +1,11 @@
-﻿namespace Assets.Scripts.Jokers
+﻿namespace Jokers
 {
+
     using Localization;
-    using Utils.Unity.UI;
 
     using UnityEngine;
+
+    using Utils.Unity.UI;
 
     [RequireComponent(typeof(ActivateTooltip))]
     public class JokerTooltip : MonoBehaviour

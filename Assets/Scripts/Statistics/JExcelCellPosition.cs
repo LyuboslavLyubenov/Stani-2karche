@@ -1,7 +1,7 @@
-using System;
-
-namespace Assets.Scripts.Statistics
+namespace Statistics
 {
+
+    using System;
 
     public class JExcelCellPosition
     {

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Network.NetworkManager
+﻿namespace Interfaces.Network.NetworkManager
 {
 
     using System.Collections.Generic;

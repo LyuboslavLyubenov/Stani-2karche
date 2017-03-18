@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.AnimationControllers
+﻿namespace AnimationControllers
 {
 
-    using Assets.Scripts.Controllers;
+    using Controllers;
+
+    using UnityEngine;
+    using UnityEngine.UI;
 
     public class FireSelectedAnswerEvent : StateMachineBehaviour
     {

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher
+﻿namespace Interfaces.Network.EveryBodyVsTheTeacher
 {
     public interface IPlayersConnectingStateDataSender
     {

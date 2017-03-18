@@ -1,14 +1,14 @@
-﻿namespace Assets.Scripts.DialogSwitchers
+﻿namespace DialogSwitchers
 {
 
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.IO;
+
+    using Controllers;
 
     using UnityEngine;
 
-    using Controllers;
     using Utils.Unity;
 
     public abstract class DialogSwitcher : ExtendedMonoBehaviour
@@ -54,7 +54,7 @@
             string[] dialogFileLines;
 
 #if UNITY_ANDROID
-        var file = Resources.Load<TextAsset>(DialogFilePath).text;
+        var file = Resources.Load<TextAsset>(this.DialogFilePath).text;
         dialogFileLines = file.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
         #else
             dialogFileLines = File.ReadAllLines(this.DialogFilePath);

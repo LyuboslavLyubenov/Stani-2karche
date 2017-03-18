@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-
-using UnityEngine;
-namespace Assets.Scripts.Commands.GameData
+﻿namespace Commands.GameData
 {
 
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using System;
+    using System.Collections.Generic;
 
     using EventArgs;
+
     using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.NetworkManager;
+
     using Network;
-    using Network.NetworkManagers;
+
+    using UnityEngine;
 
     public abstract class GameDataGetQuestionAbstractCommand : INetworkManagerCommand
     {

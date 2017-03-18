@@ -1,19 +1,19 @@
-﻿namespace Assets.Scripts.Localization
+﻿namespace Localization
 {
+
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Xml;
 
-    using Assets.Scripts.Interfaces.Localization;
+    using EventArgs;
+
+    using Interfaces.Localization;
 
     using UnityEngine;
-    using EventArgs;
-    using Extensions;
-    using Utils.Unity;
 
-    using UnityEngine.SceneManagement;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
 
@@ -130,12 +130,12 @@
     private void CollectLanguages()
     {
         var allLanguages = Resources.LoadAll<TextAsset>("Languages");
-        languageFiles = new string[allLanguages.Length];
+        this.languageFiles = new string[allLanguages.Length];
 
         for (int i = 0; i < allLanguages.Length; i++)
         {
-            languageFiles[i] = allLanguages[i].name;
-            mobileLanguages.Add(allLanguages[i].name, allLanguages[i].text);
+            this.languageFiles[i] = allLanguages[i].name;
+            this.mobileLanguages.Add(allLanguages[i].name, allLanguages[i].text);
         }
     }
         
@@ -169,8 +169,8 @@
                 language = DefaultLanguage;
             }
 
-            var xml = mobileLanguages[language];
-            mainDoc.LoadXml(xml);
+            var xml = this.mobileLanguages[language];
+            this.mainDoc.LoadXml(xml);
 
             #endif
 

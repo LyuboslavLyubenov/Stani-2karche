@@ -1,13 +1,13 @@
-namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryToChoiceBinder
+namespace Zenject.Source.Binding.Binders.Factory.FactoryToChoiceBinder
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Binding.Binders.Factory.FactoryFromBinder;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Internal;
 
     public class FactoryToChoiceBinder<TParam1, TParam2, TParam3, TContract> : FactoryFromBinder<TParam1, TParam2, TParam3, TContract>
     {

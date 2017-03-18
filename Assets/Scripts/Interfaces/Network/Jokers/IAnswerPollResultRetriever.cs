@@ -1,8 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers
+﻿namespace Interfaces.Network.Jokers
 {
+
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface IAnswerPollResultRetriever : IDisposable
     {

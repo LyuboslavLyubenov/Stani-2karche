@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Injection
+namespace Zenject.Source.Injection
 {
 
     using System;
 
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Main;
+    using Zenject.Source.Usage;
 
     // An injectable is a field or property with [Inject] attribute
     // Or a constructor parameter

@@ -1,7 +1,7 @@
-﻿namespace Assets.Tests.UI.Lobby.SelectPlayerTypeRouter
+﻿namespace Tests.UI.Lobby.SelectPlayerTypeRouter
 {
 
-    using Assets.Scripts.DTOs;
+    using DTOs;
 
     public class CreatedGameInfoCreatorForTests
     {

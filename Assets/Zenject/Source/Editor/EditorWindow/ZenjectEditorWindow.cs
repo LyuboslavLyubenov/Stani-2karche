@@ -1,14 +1,14 @@
-namespace Assets.Zenject.Source.Editor.EditorWindow
+namespace Zenject.Source.Editor.EditorWindow
 {
 
     using System;
 
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Runtime;
-    using Assets.Zenject.Source.Usage;
-
     using UnityEditor;
+
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Main;
+    using Zenject.Source.Runtime;
+    using Zenject.Source.Usage;
 
     public abstract class ZenjectEditorWindow : EditorWindow
     {

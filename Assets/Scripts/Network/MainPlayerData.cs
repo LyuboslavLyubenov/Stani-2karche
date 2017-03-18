@@ -3,11 +3,12 @@ namespace Network
 
     using System;
 
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Commands.Server;
+
+    using EventArgs;
+
+    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     public class MainPlayerData : IPlayerData
     {

@@ -1,14 +1,14 @@
-namespace Assets.Zenject.Source.Binding.Binders
+namespace Zenject.Source.Binding.Binders
 {
 
     using System;
 
-    using Assets.Zenject.Source.Binding.Binders.GameObject;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Install;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Binding.Binders.GameObject;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Install;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public class SubContainerBinder
     {

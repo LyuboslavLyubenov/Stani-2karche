@@ -1,20 +1,24 @@
-﻿namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
 
     using System.Collections;
     using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network;
+    using Interfaces.Network.EveryBodyVsTheTeacher;
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+    using Tests.Extensions;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class EveryBodyRequestedGameStart : MonoBehaviour
     {
@@ -50,7 +54,7 @@
 
             var dummyState = (DummyPlayersConnectingToTheServerState)this.state;
 
-            this.StartCoroutine(AllMainPlayersRequestGameStart(this.server, dummyNetworkManager, dummyState));
+            this.StartCoroutine(this.AllMainPlayersRequestGameStart(this.server, dummyNetworkManager, dummyState));
         }
 
         IEnumerator AllMainPlayersRequestGameStart(
@@ -58,7 +62,7 @@
             DummyServerNetworkManager dummyNetworkManager,
             DummyPlayersConnectingToTheServerState state)
         {
-            yield return this.StartCoroutine(SimulateMainPlayersConnected(server, dummyNetworkManager));
+            yield return this.StartCoroutine(this.SimulateMainPlayersConnected(server, dummyNetworkManager));
             state.SimulateAllMainPlayersRequestedGameStart();
         }
 

@@ -1,10 +1,10 @@
-namespace Assets.Tests.DummyObjects
+namespace Tests.DummyObjects
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network;
+    using Interfaces.Network;
 
     public class DummySimpleTcpClient : ISimpleTcpClient
     {

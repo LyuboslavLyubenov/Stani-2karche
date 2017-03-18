@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
 {
 
     public class RenderingOptions

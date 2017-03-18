@@ -1,10 +1,11 @@
-﻿namespace Assets.Scripts.Commands.Jokers
+﻿namespace Commands.Jokers
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Interfaces.Network.NetworkManager;
+
     public class NotEnoughVotesForJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
         public EventHandler OnExecuted

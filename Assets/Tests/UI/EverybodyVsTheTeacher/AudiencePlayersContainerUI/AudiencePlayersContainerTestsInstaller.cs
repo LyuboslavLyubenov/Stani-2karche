@@ -1,14 +1,13 @@
-namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
+namespace Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
 {
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Controllers.GameController;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+    using Interfaces.Network.NetworkManager;
 
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class AudiencePlayersContainerTestsInstaller : Installer<AudiencePlayersContainerTestsInstaller>
     {
@@ -16,11 +15,11 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
         {
             var serverNetworkManager = DummyServerNetworkManager.Instance;
 
-            Container.Bind<IServerNetworkManager>()
+            this.Container.Bind<IServerNetworkManager>()
                 .FromInstance(serverNetworkManager)
                 .AsSingle();
 
-            Container.Bind<PlayersConnectingToTheServerState>()
+            this.Container.Bind<PlayersConnectingToTheServerState>()
                 .AsSingle();
         }
     }

@@ -1,20 +1,23 @@
-namespace Assets.Tests.EveryBodyVsTheTeacher.States
+using EveryBodyVsTheTeacherServer = Network.Servers.EveryBodyVsTheTeacherServer;
+using NetworkCommandData = Commands.NetworkCommandData;
+using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestCommand;
+
+namespace Tests.EveryBodyVsTheTeacher.States
 {
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Controllers.GameController;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.StateMachine;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
 
-    using Network.Servers;
+    using Interfaces.Network.NetworkManager;
 
+    using StateMachine;
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
+    using Tests.DummyObjects;
+    using Tests.Extensions;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class MainPlayerRequestedGameStartNotEverybodySentRequest : ExtendedMonoBehaviour
     {

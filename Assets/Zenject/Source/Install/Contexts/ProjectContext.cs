@@ -3,18 +3,18 @@
 #if UNITY_EDITOR
 #endif
 
-namespace Assets.Zenject.Source.Install.Contexts
+namespace Zenject.Source.Install.Contexts
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Runtime;
-    using Assets.Zenject.Source.Runtime.Kernels;
-
     using UnityEngine;
+
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Runtime;
+    using Zenject.Source.Runtime.Kernels;
 
     public class ProjectContext : Context
     {

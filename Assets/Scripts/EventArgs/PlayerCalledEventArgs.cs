@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.EventArgs
+﻿namespace EventArgs
 {
 
     using EventArgs = System.EventArgs;

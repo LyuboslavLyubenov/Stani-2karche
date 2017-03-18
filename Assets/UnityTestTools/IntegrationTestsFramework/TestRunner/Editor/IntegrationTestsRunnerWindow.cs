@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
 
     using System;
@@ -6,15 +6,14 @@ namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
     using System.Linq;
     using System.Text;
 
-    using Assets.UnityTestTools.Common;
-    using Assets.UnityTestTools.Common.Editor;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
-
     using UnityEditor;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using UnityTestTools.Common;
+    using UnityTestTools.Common.Editor;
+    using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
 
     [Serializable]
     public class IntegrationTestsRunnerWindow : EditorWindow, IHasCustomMenu

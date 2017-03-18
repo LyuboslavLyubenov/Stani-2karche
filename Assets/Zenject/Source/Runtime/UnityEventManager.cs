@@ -1,13 +1,13 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Runtime
+namespace Zenject.Source.Runtime
 {
 
     using System;
 
-    using Assets.Zenject.Source.Usage;
-
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     // Note: this corresponds to the values expected in
     // Input.GetMouseButtonDown() and similar methods

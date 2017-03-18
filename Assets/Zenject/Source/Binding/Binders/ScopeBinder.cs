@@ -1,8 +1,8 @@
-namespace Assets.Zenject.Source.Binding.Binders
+namespace Zenject.Source.Binding.Binders
 {
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Internal;
 
     public class ScopeBinder : ConditionBinder
     {

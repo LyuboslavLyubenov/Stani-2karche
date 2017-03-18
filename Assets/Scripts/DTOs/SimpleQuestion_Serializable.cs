@@ -1,9 +1,9 @@
-namespace Assets.Scripts.DTOs
+namespace DTOs
 {
 
     using System;
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     [Serializable]
     public class SimpleQuestion_Serializable

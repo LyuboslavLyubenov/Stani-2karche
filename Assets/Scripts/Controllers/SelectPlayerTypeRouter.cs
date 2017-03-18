@@ -1,16 +1,19 @@
-namespace Assets.Scripts.Controllers
+namespace Controllers
 {
+
     using System;
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils;
-    
+    using Controllers.Lobby;
+
+    using DTOs;
+
+    using Notifications;
+
     using UnityEngine;
+
+    using Utils;
 
     public class SelectPlayerTypeRouter
     {
@@ -79,7 +82,7 @@ namespace Assets.Scripts.Controllers
 
         public void Handle(string gameType, string gameTypeJSON)
         {
-            RouteReceivedGameInfo(gameType, gameTypeJSON);
+            this.RouteReceivedGameInfo(gameType, gameTypeJSON);
         }
     }
 }

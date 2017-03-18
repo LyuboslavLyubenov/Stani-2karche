@@ -1,21 +1,18 @@
-namespace Assets.Scripts.Network.Leaderboard
+namespace Network.Leaderboard
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.Leaderboard;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
+    using Commands;
     using Commands.Client;
+
+    using DTOs;
 
     using EventArgs;
 
-    using Commands;
-    using DTOs;
-    using IO;
-
-    using NetworkManagers;
+    using Interfaces;
+    using Interfaces.Network.Leaderboard;
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
 
@@ -72,7 +69,7 @@ namespace Assets.Scripts.Network.Leaderboard
             var noMoreEntitiesCommand = new NetworkCommandData("LeaderboardNoMoreEntities");
             this.networkManager.SendClientCommand(connectionId, noMoreEntitiesCommand);
 
-            OnSentLeaderboard(this, new LeaderboardDataEventArgs(allPlayersData));
+            this.OnSentLeaderboard(this, new LeaderboardDataEventArgs(allPlayersData));
         }
     }
 }

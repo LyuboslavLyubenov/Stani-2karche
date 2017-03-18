@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Controllers
+namespace Controllers
 {
 
     public enum BasicExamClientRole

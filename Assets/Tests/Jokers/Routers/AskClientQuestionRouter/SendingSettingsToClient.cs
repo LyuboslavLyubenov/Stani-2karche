@@ -1,18 +1,22 @@
-﻿namespace Assets.Tests.Jokers.Routers.AskClientQuestionRouter
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Jokers.Routers.AskClientQuestionRouter
 {
 
     using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+    using Tests.Extensions;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class SendingSettingsToClient : MonoBehaviour
     {

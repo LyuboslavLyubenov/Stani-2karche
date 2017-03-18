@@ -1,16 +1,21 @@
+using AskClientQuestionResponseCommand = Commands.Client.AskClientQuestionResponseCommand;
+using AskClientQuestionSettingsCommand = Commands.Jokers.Settings.AskClientQuestionSettingsCommand;
+using NetworkCommandData = Commands.NetworkCommandData;
+
 namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 {
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
 
+    using Interfaces;
     using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class ReceivedAnswer : ExtendedMonoBehaviour
     {

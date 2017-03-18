@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Runtime
+namespace Zenject.Source.Runtime
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Usage;
 
     public class DisposableManager : IDisposable
     {

@@ -1,11 +1,12 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
+
+    using DTOs;
 
     using UnityEngine;
     using UnityEngine.UI;
-
-    using DTOs;
 
     public class ConnectedClientDataElementUIController : MonoBehaviour
     {

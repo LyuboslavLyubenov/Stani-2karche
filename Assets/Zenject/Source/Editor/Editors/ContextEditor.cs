@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Editor.Editors
+namespace Zenject.Source.Editor.Editors
 {
     public class ContextEditor : UnityInspectorListEditor
     {

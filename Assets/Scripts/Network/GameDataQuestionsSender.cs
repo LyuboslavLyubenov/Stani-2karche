@@ -1,19 +1,15 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Network
 {
+
     using System;
-
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Utils;
-
-    using IO;
-    using NetworkManagers;
 
     using Commands;
     using Commands.GameData;
+
     using EventArgs;
+
+    using Interfaces.GameData;
+    using Interfaces.Network.NetworkManager;
 
     using EventArgs = System.EventArgs;
 

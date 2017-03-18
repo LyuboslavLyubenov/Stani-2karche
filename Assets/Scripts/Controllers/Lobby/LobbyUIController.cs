@@ -1,15 +1,18 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
-namespace Assets.Scripts.Controllers.Lobby
+namespace Controllers.Lobby
 {
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Services;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Utils;
-    using Assets.Zenject.Source.Usage;
+
+    using Interfaces.Network;
+    using Interfaces.Services;
+
+    using Network.GameInfo;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using Utils;
+
+    using Zenject.Source.Usage;
 
     public class LobbyUIController : MonoBehaviour
     {

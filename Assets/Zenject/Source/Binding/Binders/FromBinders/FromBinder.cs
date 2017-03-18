@@ -1,26 +1,26 @@
 #if !NOT_UNITY3D
 #endif
 
-namespace Assets.Zenject.Source.Binding.Binders.FromBinders
+namespace Zenject.Source.Binding.Binders.FromBinders
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.Binders.GameObject;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders;
-    using Assets.Zenject.Source.Providers.GameObjectProviders;
-    using Assets.Zenject.Source.Providers.Singleton;
-    using Assets.Zenject.Source.Util;
-
     using UnityEngine;
+
+    using Zenject.Source.Binding.Binders.GameObject;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders;
+    using Zenject.Source.Providers.GameObjectProviders;
+    using Zenject.Source.Providers.Singleton;
+    using Zenject.Source.Util;
 
     public abstract class FromBinder : ScopeArgBinder
     {

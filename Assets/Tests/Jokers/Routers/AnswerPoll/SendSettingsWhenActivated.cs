@@ -1,18 +1,22 @@
-﻿namespace Assets.Tests.Jokers.Routers.AnswerPoll
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Jokers.Routers.AnswerPoll
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class SendSettingsWhenActivated : ExtendedMonoBehaviour
     {

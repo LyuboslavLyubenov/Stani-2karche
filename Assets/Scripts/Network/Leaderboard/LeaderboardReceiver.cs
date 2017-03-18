@@ -1,20 +1,21 @@
-﻿namespace Assets.Scripts.Network.Leaderboard
+﻿namespace Network.Leaderboard
 {
+
     using System;
     using System.Collections.Generic;
-
-    using Assets.Scripts.Interfaces.Network.Leaderboard;
-
-    using EventArgs;
-
-    using Utils;
 
     using Commands;
     using Commands.Client;
 
     using DTOs;
 
-    using NetworkManagers;
+    using EventArgs;
+
+    using Interfaces.Network.Leaderboard;
+
+    using Network.NetworkManagers;
+
+    using Utils;
 
     using EventArgs = System.EventArgs;
 

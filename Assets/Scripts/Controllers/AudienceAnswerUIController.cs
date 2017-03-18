@@ -1,12 +1,13 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System.Collections.Generic;
     using System.Linq;
 
+    using Extensions;
+
     using UnityEngine;
     using UnityEngine.UI;
-
-    using Extensions;
 
     public class AudienceAnswerUIController : MonoBehaviour
     {

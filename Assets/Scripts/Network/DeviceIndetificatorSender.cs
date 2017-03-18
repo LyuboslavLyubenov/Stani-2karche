@@ -1,12 +1,13 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Network
 {
+
     using System;
 
-    using NetworkManagers;
+    using Commands;
+
+    using Network.NetworkManagers;
 
     using UnityEngine;
-
-    using Commands;
 
     public class DeviceIndetificatorSender
     {

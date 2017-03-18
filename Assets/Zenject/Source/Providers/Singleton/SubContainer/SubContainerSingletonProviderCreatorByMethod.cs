@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Providers.Singleton.SubContainer
+namespace Zenject.Source.Providers.Singleton.SubContainer
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers.SubContainerCreators;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers.SubContainerCreators;
 
     public class SubContainerSingletonProviderCreatorByMethod
     {

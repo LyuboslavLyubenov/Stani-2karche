@@ -1,16 +1,16 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Install.Contexts
+namespace Zenject.Source.Install.Contexts
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-
     using UnityEngine;
     using UnityEngine.Serialization;
+
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public class SceneDecoratorContext : Context
     {

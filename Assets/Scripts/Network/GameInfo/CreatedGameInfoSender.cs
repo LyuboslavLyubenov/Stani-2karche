@@ -1,18 +1,15 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Network.GameInfo
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Interfaces;
-
-    using NetworkManagers;
-
-    using UnityEngine;
     using EventArgs;
 
-    using TcpSockets;
+    using Interfaces;
+    using Interfaces.Network;
+    using Interfaces.Network.NetworkManager;
+
+    using UnityEngine;
 
     public class CreatedGameInfoSender : ICreatedGameInfoSender
     {
@@ -77,11 +74,11 @@
 
             if (!this.client.IsConnectedTo(args.IPAddress))
             {
-                this.client.ConnectTo(args.IPAddress, 7772, () => SendGameInfo(args.IPAddress));
+                this.client.ConnectTo(args.IPAddress, 7772, () => this.SendGameInfo(args.IPAddress));
                 return;
             }
 
-            SendGameInfo(args.IPAddress);
+            this.SendGameInfo(args.IPAddress);
         }
 
         private void SendGameInfo(string ipAddress)

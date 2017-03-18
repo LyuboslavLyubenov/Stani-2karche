@@ -1,13 +1,14 @@
-﻿namespace Assets.Tests.DummyObjects
+﻿namespace Tests.DummyObjects
 {
 
     using System;
     using System.Collections.ObjectModel;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States;
-    using Assets.Scripts.StateMachine;
+    using EventArgs;
+
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
+
+    using StateMachine;
 
     public class DummyPlayersConnectingToTheServerState : IPlayersConnectingToTheServerState
     {

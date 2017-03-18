@@ -1,6 +1,6 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System.Collections.Generic;

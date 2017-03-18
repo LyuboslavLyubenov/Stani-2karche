@@ -1,15 +1,15 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers
+namespace Zenject.Source.Providers
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-
     using UnityEngine;
+
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
 
     public class ResourceProvider : IProvider
     {

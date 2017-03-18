@@ -1,12 +1,13 @@
-namespace Assets.Scripts.Jokers.Routers
+namespace Jokers.Routers
 {
 
     using System;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Commands;
+
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
 
     using EventArgs = System.EventArgs;
 

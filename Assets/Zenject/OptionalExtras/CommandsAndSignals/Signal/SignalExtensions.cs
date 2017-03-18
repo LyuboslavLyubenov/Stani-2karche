@@ -1,10 +1,10 @@
-namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Signal
+namespace Zenject.OptionalExtras.CommandsAndSignals.Signal
 {
 
     using System;
 
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Util;
+    using Zenject.Source.Main;
+    using Zenject.Source.Util;
 
     public static class SignalExtensions
     {

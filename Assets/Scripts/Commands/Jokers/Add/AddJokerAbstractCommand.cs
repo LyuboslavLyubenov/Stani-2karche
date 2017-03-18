@@ -1,12 +1,13 @@
-namespace Assets.Scripts.Commands.Jokers.Add
+namespace Commands.Jokers.Add
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
     using Controllers;
+
     using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     public abstract class AddJokerAbstractCommand : INetworkManagerCommand
     {

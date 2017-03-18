@@ -1,8 +1,8 @@
-namespace Assets.Zenject.Source.Install
+namespace Zenject.Source.Install
 {
 
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Main;
+    using Zenject.Source.Usage;
 
     public abstract class InstallerBase : IInstaller
     {

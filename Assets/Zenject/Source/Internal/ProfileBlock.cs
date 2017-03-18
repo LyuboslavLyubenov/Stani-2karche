@@ -1,6 +1,6 @@
 //#define PROFILING_ENABLED
 
-namespace Assets.Zenject.Source.Internal
+namespace Zenject.Source.Internal
 {
 
     using System;

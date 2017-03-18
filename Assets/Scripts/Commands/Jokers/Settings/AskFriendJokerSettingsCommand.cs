@@ -1,11 +1,10 @@
-namespace Assets.Scripts.Commands.Jokers
+namespace Commands.Jokers.Settings
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     using Utils.Unity;
 

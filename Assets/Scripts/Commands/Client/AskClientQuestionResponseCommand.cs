@@ -1,9 +1,10 @@
-﻿namespace Assets.Scripts.Commands.Client
+﻿namespace Commands.Client
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    
+    using Interfaces.Network.NetworkManager;
+
     using EventArgs = System.EventArgs;
 
     public class AskClientQuestionResponseCommand : IOneTimeExecuteCommand

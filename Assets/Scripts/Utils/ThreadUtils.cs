@@ -1,13 +1,14 @@
-﻿namespace Assets.Scripts.Utils
+﻿namespace Utils
 {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    using UnityEngine;
     using CielaSpike.Thread_Ninja;
 
+    using UnityEngine;
     using UnityEngine.SceneManagement;
 
     public class ThreadUtils : MonoBehaviour, IDisposable
@@ -41,7 +42,7 @@
 
         void Start()
         {
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
 
         void OnApplicationQuit()
@@ -65,7 +66,7 @@
         private void OnActiveSceneChanged(Scene arg0, Scene scene)
         {
             this.Dispose();
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
         }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
@@ -127,7 +128,7 @@
 
         public void CancelCoroutine(IEnumerator coroutine)
         {
-            RunOnMainThread(() => _CancelCoroutine(coroutine));
+            this.RunOnMainThread(() => this._CancelCoroutine(coroutine));
         }
 
         public void RunOnMainThread(IEnumerator coroutine)

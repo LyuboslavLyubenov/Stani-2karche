@@ -1,10 +1,12 @@
-﻿namespace Assets.Tests.Test_choose_category
+﻿using ClientNetworkManager = Network.NetworkManagers.ClientNetworkManager;
+using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Test_choose_category
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Utils.Unity;
+    using Controllers;
+
+    using Utils.Unity;
 
     public class TESTClientSendSelectedCategory : ExtendedMonoBehaviour
     {

@@ -1,9 +1,4 @@
-namespace Assets.Scripts
+public class JokerConstants
 {
-
-    public class JokerConstants
-    {
-        public const string JokerImagesPath = "Images/Buttons/Jokers/";
-    }
-
+    public const string JokerImagesPath = "Images/Buttons/Jokers/";
 }

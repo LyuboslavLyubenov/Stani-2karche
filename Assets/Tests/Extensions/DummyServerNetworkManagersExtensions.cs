@@ -1,9 +1,10 @@
-﻿namespace Assets.Tests.Extensions
+﻿using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
+using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Extensions
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Tests.DummyObjects;
+    using Tests.DummyObjects;
 
     public static class DummyServerNetworkManagersExtensions
     {

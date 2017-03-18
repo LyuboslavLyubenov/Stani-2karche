@@ -1,10 +1,10 @@
-﻿using System.IO;
-
-using CSharpJExcel.Jxl;
-using CSharpJExcel.Jxl.Write;
-
-namespace Assets.Scripts.Statistics
+﻿namespace Statistics
 {
+
+    using System.IO;
+
+    using CSharpJExcel.Jxl;
+    using CSharpJExcel.Jxl.Write;
 
     public class WorkbookUtils
     {

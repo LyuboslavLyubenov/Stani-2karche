@@ -1,16 +1,15 @@
-namespace Assets.UnityTestTools.Common.Editor
+namespace UnityTestTools.Common.Editor
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.UnityTestTools.Common;
-    using Assets.UnityTestTools.Common.Editor.ResultWriter;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
-
     using UnityEditor;
 
     using UnityEngine;
+
+    using UnityTestTools.Common.Editor.ResultWriter;
+    using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
 
     public class TestFilterSettings
     {

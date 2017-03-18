@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Utils.Unity
+﻿namespace Utils.Unity
 {
+
     using System;
     using System.Collections;
 
@@ -29,7 +30,7 @@
 
         private NetworkManagerUtils()
         {
-            SceneManager.activeSceneChanged += OnActiveSceneChanged; 
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged; 
         }
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)

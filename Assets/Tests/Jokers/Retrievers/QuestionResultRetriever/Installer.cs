@@ -2,12 +2,16 @@ using AskPlayerQuestionResultRetriever = Jokers.Retrievers.AskPlayerQuestionResu
 
 namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 {
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+
+    using DTOs;
+
+    using Interfaces;
     using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {

@@ -1,8 +1,8 @@
-namespace Assets.Zenject.Source.Install
+namespace Zenject.Source.Install
 {
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Main;
 
     //
     // I'd recommmend using Installer<> instead, and then always use the approach

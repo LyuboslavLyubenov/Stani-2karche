@@ -1,17 +1,21 @@
-namespace Assets.Tests.EveryBodyVsTheTeacher.States
+namespace Tests.EveryBodyVsTheTeacher.States
 {
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.StateMachine;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using EventArgs;
 
+    using Interfaces.Network.NetworkManager;
+
+    using StateMachine;
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
+    using Tests.DummyObjects;
+    using Tests.Extensions;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class AudiencePlayerConnected : ExtendedMonoBehaviour
     {
@@ -28,7 +32,7 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
         
         void Start()
         {
-            this.stateMachine.SetCurrentState(state);
+            this.stateMachine.SetCurrentState(this.state);
             this.state.OnAudiencePlayerConnected += this.OnAudiencePlayerConnected;
             this.CoroutineUtils.WaitForFrames(1, this.SimulateAudiencePlayerConnected);
         }

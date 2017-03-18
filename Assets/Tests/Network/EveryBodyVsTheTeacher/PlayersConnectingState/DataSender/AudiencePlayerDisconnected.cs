@@ -1,18 +1,21 @@
-﻿namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network;
+    using Interfaces.Network.EveryBodyVsTheTeacher;
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
+    using Interfaces.Network.NetworkManager;
 
-    using UnityEngine;
+    using Tests.DummyObjects;
+    using Tests.Extensions;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class AudiencePlayerDisconnected : ExtendedMonoBehaviour
     {

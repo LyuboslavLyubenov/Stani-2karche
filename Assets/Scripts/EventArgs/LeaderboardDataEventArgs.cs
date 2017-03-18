@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.EventArgs
+﻿namespace EventArgs
 {
 
-    using Assets.Scripts.DTOs;
+    using System;
+    using System.Collections.Generic;
+
+    using DTOs;
 
     using EventArgs = System.EventArgs;
 

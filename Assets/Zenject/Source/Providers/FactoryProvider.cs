@@ -1,14 +1,14 @@
-namespace Assets.Zenject.Source.Providers
+namespace Zenject.Source.Providers
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Validation;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Validation;
 
     public abstract class FactoryProviderBase<TValue, TFactory> : IProvider
         where TFactory : IFactory

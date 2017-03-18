@@ -1,16 +1,16 @@
-namespace Assets.Zenject.Source.Editor
+namespace Zenject.Source.Editor
 {
 
     using System.Collections.Generic;
     using System.Linq;
-
-    using Assets.Zenject.Source.Internal;
 
     using UnityEditor;
 
     using UnityEditorInternal;
 
     using UnityEngine;
+
+    using Zenject.Source.Internal;
 
     public abstract class UnityInspectorListEditor : UnityEditor.Editor
     {

@@ -1,15 +1,14 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.UnityTestTools.Common.Editor;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-
     using UnityEditor;
 
     using UnityEngine;
+
+    using UnityTestTools.Common.Editor;
 
     class IntegrationTestGroupLine : IntegrationTestRendererBase
     {

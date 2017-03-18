@@ -1,7 +1,7 @@
-namespace Assets.Zenject.Source.Usage
+namespace Zenject.Source.Usage
 {
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     public abstract class InjectAttributeBase : PreserveAttribute
     {

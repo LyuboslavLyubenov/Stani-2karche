@@ -1,7 +1,7 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
 
-    using Assets.UnityTestTools.Common.Editor;
+    using UnityTestTools.Common.Editor;
 
     public class IntegrationTestsRunnerSettings : ProjectSettingsBase
     {

@@ -1,14 +1,15 @@
-﻿namespace Assets.Scripts.IO
+﻿namespace IO
 {
-    using System;
 
-    using Assets.Scripts.Interfaces.GameData;
+    using System;
 
     using DTOs;
 
     using EventArgs;
 
     using Interfaces;
+    using Interfaces.GameData;
+
     using Localization;
 
     public class GameDataIterator : IGameDataIterator
@@ -138,9 +139,9 @@
 
         private void OnLoadedGameData(object sender, EventArgs args)
         {
-            if (OnLoaded != null)
+            if (this.OnLoaded != null)
             {
-                OnLoaded(this, EventArgs.Empty);
+                this.OnLoaded(this, EventArgs.Empty);
             }
         }
 

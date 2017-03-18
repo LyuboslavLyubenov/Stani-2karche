@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Common.Editor
+namespace UnityTestTools.Common.Editor
 {
 
     using System;

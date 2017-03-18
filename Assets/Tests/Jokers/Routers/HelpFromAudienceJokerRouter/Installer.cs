@@ -1,14 +1,18 @@
-namespace Assets.Tests.Jokers.Routers.HelpFromAudienceJokerRouter
+using Routers_HelpFromAudienceJokerRouter = Jokers.Routers.HelpFromAudienceJokerRouter;
+
+namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 {
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Jokers.Routers;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+
+    using DTOs;
+
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {
@@ -16,10 +20,10 @@ namespace Assets.Tests.Jokers.Routers.HelpFromAudienceJokerRouter
         {
             var question = new SimpleQuestion("Question text", new[] { "answer1", "answer2", "answer3", "answer4" }, 1);
 
-            Container.Bind<ISimpleQuestion>()
+            this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);
 
-            Container.Bind<IServerNetworkManager>()
+            this.Container.Bind<IServerNetworkManager>()
                 .To<DummyServerNetworkManager>()
                 .AsSingle();
 
@@ -33,16 +37,16 @@ namespace Assets.Tests.Jokers.Routers.HelpFromAudienceJokerRouter
                 SecondsForAnswerQuestion = 60
             };
 
-            Container.Bind<IGameDataIterator>()
+            this.Container.Bind<IGameDataIterator>()
                 .FromInstance(dummyGameDataIterator)
                 .AsSingle();
 
-            Container.Bind<IAnswerPollRouter>()
+            this.Container.Bind<IAnswerPollRouter>()
                 .To<DummyAnswerPollRouter>()
                 .AsSingle();
 
-            Container.Bind<IHelpFromAudienceJokerRouter>()
-                .To<HelpFromAudienceJokerRouter>();
+            this.Container.Bind<IHelpFromAudienceJokerRouter>()
+                .To<Routers_HelpFromAudienceJokerRouter>();
         }
     }
 }

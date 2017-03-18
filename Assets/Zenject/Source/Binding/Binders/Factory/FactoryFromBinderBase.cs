@@ -2,27 +2,27 @@
 
 #endif
 
-namespace Assets.Zenject.Source.Binding.Binders.Factory
+namespace Zenject.Source.Binding.Binders.Factory
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.Binders.GameObject;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.ComponentProviders;
-    using Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders;
-    using Assets.Zenject.Source.Providers.GameObjectProviders;
-    using Assets.Zenject.Source.Providers.PrefabCreators;
-    using Assets.Zenject.Source.Providers.PrefabProviders;
-
     using UnityEngine;
+
+    using Zenject.Source.Binding.Binders.GameObject;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.ComponentProviders;
+    using Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders;
+    using Zenject.Source.Providers.GameObjectProviders;
+    using Zenject.Source.Providers.PrefabCreators;
+    using Zenject.Source.Providers.PrefabProviders;
 
     public class FactoryFromBinderBase<TContract> : ConditionBinder
     {

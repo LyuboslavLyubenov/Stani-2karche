@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using UnityEngine.Events;
-
-/**** * 
+﻿/**** * 
  * Animation Initialized Object
  * 
  * new AnimationParts(AnimationParts.State.CLOSE, 
@@ -13,8 +10,11 @@ using UnityEngine.Events;
  * 
  * 
  ****/
-namespace Assets.UITween.Scripts
+namespace UITween.Scripts
 {
+
+    using UnityEngine;
+    using UnityEngine.Events;
 
     [System.Serializable]
     public class EasyTween : MonoBehaviour

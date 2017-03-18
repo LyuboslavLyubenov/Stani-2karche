@@ -1,11 +1,11 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.PrefabProviders
+namespace Zenject.Source.Providers.PrefabProviders
 {
 
-    using Assets.Zenject.Source.Internal;
-
     using UnityEngine;
+
+    using Zenject.Source.Internal;
 
     public class PrefabProviderResource : IPrefabProvider
     {

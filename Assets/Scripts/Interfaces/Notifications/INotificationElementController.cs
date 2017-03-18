@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Notifications
+﻿namespace Interfaces.Notifications
 {
 
     using UnityEngine.EventSystems;

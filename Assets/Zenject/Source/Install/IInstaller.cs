@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Install
+namespace Zenject.Source.Install
 {
     // We extract the interface so that monobehaviours can be installers
     public interface IInstaller

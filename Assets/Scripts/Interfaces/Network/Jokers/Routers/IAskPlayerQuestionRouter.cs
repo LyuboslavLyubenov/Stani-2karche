@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
+﻿namespace Interfaces.Network.Jokers.Routers
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     /// <summary>
     /// Used to send question to client and receive response

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Assertions
+namespace UnityTestTools.Assertions
 {
 
     using System;

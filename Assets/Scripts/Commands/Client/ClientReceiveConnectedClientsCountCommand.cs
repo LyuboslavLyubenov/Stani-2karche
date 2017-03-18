@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Commands.Client
+﻿namespace Commands.Client
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Interfaces.Network.NetworkManager;
 
-    using Interfaces;
     using Utils;
 
     public class ClientReceiveConnectedClientsCountCommand : INetworkManagerCommand

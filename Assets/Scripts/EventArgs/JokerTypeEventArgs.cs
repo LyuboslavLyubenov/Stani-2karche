@@ -1,9 +1,9 @@
-using System;
-
-namespace Assets.Scripts.EventArgs
+namespace EventArgs
 {
 
-    using Assets.Scripts.Utils;
+    using System;
+
+    using Utils;
 
     using EventArgs = System.EventArgs;
 

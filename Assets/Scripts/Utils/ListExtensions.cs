@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.Utils
+﻿namespace Utils
 {
+
+    using System;
+    using System.Collections.Generic;
 
     public static class ListExtensions
     {

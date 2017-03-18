@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Network.Broadcast
+﻿namespace Network.Broadcast
 {
 
     using System;
@@ -8,9 +8,12 @@
     using System.Security.Cryptography;
 
     using CielaSpike.Thread_Ninja;
+
     using Extensions;
-    using Utils;
+
     using SecuritySettings;
+
+    using Utils;
 
     public abstract class LANBroadcastService : IDisposable
     {

@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Providers
+namespace Zenject.Source.Providers
 {
 
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
 
     public static class IProviderExtensions
     {

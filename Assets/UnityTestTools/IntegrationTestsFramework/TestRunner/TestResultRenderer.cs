@@ -1,12 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
-
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
-    using Assets.UnityTestTools.Common;
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using UnityEngine;
+
+    using UnityTestTools.Common;
 
     public class TestResultRenderer
     {

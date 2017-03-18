@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-
-namespace Assets.Scripts.EventArgs
+namespace EventArgs
 {
+
+    using System;
+    using System.Collections.Generic;
 
     public class VoteEventArgs : System.EventArgs
     {

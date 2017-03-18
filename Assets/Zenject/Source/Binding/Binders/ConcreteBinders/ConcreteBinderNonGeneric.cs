@@ -1,17 +1,17 @@
-namespace Assets.Zenject.Source.Binding.Binders.ConcreteBinders
+namespace Zenject.Source.Binding.Binders.ConcreteBinders
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.Binders.Conventions;
-    using Assets.Zenject.Source.Binding.Binders.FromBinders;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.Singleton;
+    using Zenject.Source.Binding.Binders.Conventions;
+    using Zenject.Source.Binding.Binders.FromBinders;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.Singleton;
 
     public class ConcreteBinderNonGeneric : FromBinderNonGeneric
     {

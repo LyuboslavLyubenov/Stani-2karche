@@ -1,15 +1,17 @@
-﻿namespace Assets.Scripts.Commands.GameData
+﻿namespace Commands.GameData
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using DTOs;
+
+    using Interfaces;
+    using Interfaces.Network.NetworkManager;
+
+    using Network;
 
     using UnityEngine;
-
-    using DTOs;
-    using Interfaces;
-    using Network;
 
     public class GameDataQuestionCommand : INetworkManagerCommand
     {

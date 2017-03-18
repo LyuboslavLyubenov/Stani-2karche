@@ -1,14 +1,14 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.PrefabCreators
+namespace Zenject.Source.Providers.PrefabCreators
 {
 
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Injection;
-
     using UnityEngine;
+
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Injection;
 
     public interface IPrefabInstantiator
     {

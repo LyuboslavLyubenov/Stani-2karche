@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Editor.EditorWindow
+namespace Zenject.Source.Editor.EditorWindow
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Usage;
 
     // This class is only used inside EditorWindowDependencyRoot, since in most cases
     // people aren't going to want it

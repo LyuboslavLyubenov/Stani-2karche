@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
+    using UnityEngine;
 
     public class RiskyTrustUIController : MonoBehaviour
     {

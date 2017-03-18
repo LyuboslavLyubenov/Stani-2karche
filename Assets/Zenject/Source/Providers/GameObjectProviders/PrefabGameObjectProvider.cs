@@ -1,15 +1,15 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.GameObjectProviders
+namespace Zenject.Source.Providers.GameObjectProviders
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Providers.PrefabCreators;
-
     using UnityEngine;
+
+    using Zenject.Source.Injection;
+    using Zenject.Source.Providers.PrefabCreators;
 
     public class PrefabGameObjectProvider : IProvider
     {

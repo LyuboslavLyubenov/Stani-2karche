@@ -1,12 +1,10 @@
-﻿namespace Assets.Scripts.Commands
+﻿namespace Commands
 {
+
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     public class CommandsManager : ICommandsManager
     {

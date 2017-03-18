@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Install;
+    using Zenject.Source.Install;
 
     public class ExecutionOrderInstaller : Installer<List<Type>, ExecutionOrderInstaller>
     {

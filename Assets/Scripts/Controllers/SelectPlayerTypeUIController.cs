@@ -1,14 +1,15 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
 
     using System;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Utils.Unity;
+    using DTOs;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;
+
+    using Utils.Unity;
 
     public class SelectPlayerTypeUIController : MonoBehaviour
     {

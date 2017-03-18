@@ -1,14 +1,18 @@
-namespace Assets.Tests.DummyObjects
+using CommandsManager = Commands.CommandsManager;
+using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.DummyObjects
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using DTOs;
+
+    using EventArgs;
+
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
 

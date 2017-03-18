@@ -1,11 +1,13 @@
-﻿namespace Assets.Tests
+﻿namespace Tests
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.StateMachine;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+
+    using StateMachine;
 
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     public class StateActivator : MonoBehaviour
     {

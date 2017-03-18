@@ -1,11 +1,11 @@
-namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Signal
+namespace Zenject.OptionalExtras.CommandsAndSignals.Signal
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     // Zero Parameters
     public abstract class Signal<TDerived> : ISignal

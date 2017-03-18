@@ -1,17 +1,17 @@
-namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder
+namespace Zenject.Source.Binding.Binders.Factory.FactoryFromBinder
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
+    using Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
 
     public class FactoryFromBinder<TParam1, TParam2, TParam3, TParam4, TParam5, TContract> : FactoryFromBinderBase<TContract>
     {

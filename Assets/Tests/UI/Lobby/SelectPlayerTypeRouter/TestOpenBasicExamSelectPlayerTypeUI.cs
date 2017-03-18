@@ -1,9 +1,11 @@
-﻿namespace Assets.Tests.UI.Lobby.SelectPlayerTypeRouter
+﻿namespace Tests.UI.Lobby.SelectPlayerTypeRouter
 {
-    using Assets.Scripts.Controllers;
-    using Assets.Zenject.Source.Usage;
+
+    using Controllers;
 
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     public class TestOpenBasicExamSelectPlayerTypeUI : MonoBehaviour
     {
@@ -12,7 +14,7 @@
 
         void Start()
         {
-            TestBasicExamSelectPlayerType(this.router);
+            this.TestBasicExamSelectPlayerType(this.router);
         }
 
         private void TestBasicExamSelectPlayerType(SelectPlayerTypeRouter router)

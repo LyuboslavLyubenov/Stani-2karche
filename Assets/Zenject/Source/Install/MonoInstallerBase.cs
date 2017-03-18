@@ -1,14 +1,14 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Install
+namespace Zenject.Source.Install
 {
 
     using System;
 
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Usage;
-
     using UnityEngine;
+
+    using Zenject.Source.Main;
+    using Zenject.Source.Usage;
 
     // We'd prefer to make this abstract but Unity 5.3.5 has a bug where references
     // can get lost during compile errors for classes that are abstract

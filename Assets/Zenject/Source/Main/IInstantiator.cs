@@ -2,15 +2,15 @@
 
 #endif
 
-namespace Assets.Zenject.Source.Main
+namespace Zenject.Source.Main
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-
     using UnityEngine;
+
+    using Zenject.Source.Injection;
 
     // You can optionally inject this interface into your classes/factories
     // rather than using DiContainer which contains many methods you might not need

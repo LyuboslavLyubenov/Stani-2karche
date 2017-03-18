@@ -1,9 +1,11 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
-    using UnityEngine;
 
     using Commands;
+
     using Network.NetworkManagers;
+
+    using UnityEngine;
 
     public class SurrenderConfirmUIController : MonoBehaviour
     {

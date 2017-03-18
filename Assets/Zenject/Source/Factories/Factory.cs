@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Factories
+namespace Zenject.Source.Factories
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
+    using Zenject.Source.Injection;
 
     // Zero parameters
     public class Factory<TValue> : DynamicFactory<TValue>, IFactory<TValue>

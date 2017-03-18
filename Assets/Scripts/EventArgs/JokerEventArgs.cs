@@ -1,9 +1,9 @@
-using System;
-
-namespace Assets.Scripts.EventArgs
+namespace EventArgs
 {
 
-    using Assets.Scripts.Interfaces;
+    using System;
+
+    using Interfaces;
 
     public class JokerEventArgs : System.EventArgs
     {

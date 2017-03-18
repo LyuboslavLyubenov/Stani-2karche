@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
     using System.Collections.Generic;

@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
 
-    using Assets.Scripts.DTOs.KinveyDtoObjs;
+    using DTOs.KinveyDtoObjs;
 
     using Network;
 

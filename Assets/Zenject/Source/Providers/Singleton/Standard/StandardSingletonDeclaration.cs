@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Providers.Singleton.Standard
+namespace Zenject.Source.Providers.Singleton.Standard
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
+    using Zenject.Source.Injection;
 
     public class StandardSingletonDeclaration
     {

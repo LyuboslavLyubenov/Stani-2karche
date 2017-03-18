@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace Assets.Scripts.Commands.GameData
+﻿namespace Commands.GameData
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
+    using System.Collections.Generic;
+
+    using Interfaces.GameData;
+    using Interfaces.Network.NetworkManager;
+
+    using Network;
 
     using Debug = UnityEngine.Debug;
 

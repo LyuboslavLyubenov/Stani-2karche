@@ -1,10 +1,10 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.UnityTestTools.Common;
+    using UnityTestTools.Common;
 
     [Serializable]
     public class ResultDTO

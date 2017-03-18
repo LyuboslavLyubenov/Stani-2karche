@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Main
+namespace Zenject.Source.Main
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     // When the app starts up, typically there is a list of instances that need to be injected
     // The question is, what is the order that they should be injected?  Originally we would

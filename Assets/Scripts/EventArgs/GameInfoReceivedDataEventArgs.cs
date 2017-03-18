@@ -1,10 +1,11 @@
-﻿namespace Assets.Scripts.EventArgs
+﻿namespace EventArgs
 {
+
     using System;
 
-    using UnityEngine;
-
     using DTOs;
+
+    using UnityEngine;
 
     using EventArgs = System.EventArgs;
 

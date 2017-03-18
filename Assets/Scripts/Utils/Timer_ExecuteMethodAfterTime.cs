@@ -1,5 +1,6 @@
-namespace Assets.Scripts.Utils
+namespace Utils
 {
+
     using System;
     using System.Timers;
 
@@ -29,7 +30,7 @@ namespace Assets.Scripts.Utils
 
         private void OnElapsed(object sender, ElapsedEventArgs args)
         {
-            if (RunOnUnityThread)
+            if (this.RunOnUnityThread)
             {
                 ThreadUtils.Instance.RunOnMainThread(this.Method);
             }

@@ -1,12 +1,13 @@
 ﻿using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
 
-namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher
+namespace Controllers.EveryBodyVsTheTeacher
 {
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Zenject.Source.Install;
+    using Interfaces.Network.NetworkManager;
+
+    using Network.NetworkManagers;
+
+    using Zenject.Source.Install;
 
     public class EverybodyVsTheTeacherServerInstaller : MonoInstaller
     {

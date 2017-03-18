@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Leaderboard
+﻿namespace Interfaces.Network.Leaderboard
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface ILeaderboardReceiver : IDisposable
     {

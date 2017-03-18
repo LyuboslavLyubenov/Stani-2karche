@@ -1,8 +1,8 @@
-using CSharpJExcel.Jxl;
-using CSharpJExcel.Jxl.Biff;
-
-namespace Assets.Scripts.Statistics
+namespace Statistics
 {
+
+    using CSharpJExcel.Jxl;
+    using CSharpJExcel.Jxl.Biff;
 
     public static class SheetExtensions
     {

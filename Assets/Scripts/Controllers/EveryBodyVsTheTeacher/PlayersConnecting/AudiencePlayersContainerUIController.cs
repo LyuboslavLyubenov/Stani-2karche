@@ -1,19 +1,20 @@
 ﻿using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
 
-namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
+namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
     using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Zenject.Source.Usage;
+    using EventArgs;
+
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
     using UnityEngine.UI;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class AudiencePlayersContainerUIController : MonoBehaviour
     {

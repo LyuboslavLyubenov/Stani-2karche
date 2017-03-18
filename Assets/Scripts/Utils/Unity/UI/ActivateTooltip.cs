@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Utils.Unity.UI
-{
+﻿using FollowObj = Tests.FollowObj;
 
-    using Assets.Tests;
+namespace Utils.Unity.UI
+{
 
     using UnityEngine;
     using UnityEngine.EventSystems;

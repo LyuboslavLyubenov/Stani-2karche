@@ -1,12 +1,12 @@
 namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Zenject.Source.Usage;
-
+    using Interfaces;
     using Interfaces.Network.Jokers;
 
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     public class CannotActivateTwice : MonoBehaviour
     {

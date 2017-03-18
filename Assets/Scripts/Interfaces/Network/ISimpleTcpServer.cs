@@ -1,9 +1,9 @@
-namespace Assets.Scripts.Interfaces.Network
+namespace Interfaces.Network
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface ISimpleTcpServer : IDisposable
     {

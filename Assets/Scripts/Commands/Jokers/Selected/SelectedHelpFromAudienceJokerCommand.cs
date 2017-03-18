@@ -1,12 +1,12 @@
+using AskAudienceJoker = Jokers.AskAudienceJoker;
+
 namespace Commands.Jokers.Selected
 {
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Jokers;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
 
     using Network;
 

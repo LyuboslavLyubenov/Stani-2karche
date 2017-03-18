@@ -1,12 +1,16 @@
-﻿namespace Assets.Scripts.Utils.Unity
+﻿namespace Utils.Unity
 {
+
     using System;
     using System.Collections;
     using System.Security.Cryptography;
 
     using CielaSpike.Thread_Ninja;
+
     using DTOs;
+
     using Exceptions;
+
     using SecuritySettings;
 
     using UnityEngine;
@@ -187,12 +191,12 @@
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
             instance = null;
         }
     }

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Assertions.Comparers
+namespace UnityTestTools.Assertions.Comparers
 {
 
     using System;

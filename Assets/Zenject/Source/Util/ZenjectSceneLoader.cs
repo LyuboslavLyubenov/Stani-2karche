@@ -1,16 +1,16 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
 
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public enum LoadSceneRelationship
     {

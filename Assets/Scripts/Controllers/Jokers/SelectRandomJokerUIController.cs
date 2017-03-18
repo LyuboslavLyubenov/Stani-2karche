@@ -1,14 +1,16 @@
-﻿namespace Assets.Scripts.Controllers.Jokers
+﻿namespace Controllers.Jokers
 {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
+    using EventArgs;
+
     using UnityEngine;
     using UnityEngine.UI;
 
-    using EventArgs;
     using Utils;
     using Utils.Unity;
 

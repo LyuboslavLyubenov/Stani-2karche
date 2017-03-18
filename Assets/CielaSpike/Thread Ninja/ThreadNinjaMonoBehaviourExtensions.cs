@@ -1,4 +1,4 @@
-namespace Assets.CielaSpike.Thread_Ninja
+namespace CielaSpike.Thread_Ninja
 {
 
     using System.Collections;

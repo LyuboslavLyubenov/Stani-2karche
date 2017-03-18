@@ -1,30 +1,32 @@
-﻿namespace Assets.Scripts.Network.NetworkManagers
+﻿namespace Network.NetworkManagers
 {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
     using System.Timers;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Broadcast;
-
     using Commands;
     using Commands.Server;
 
     using DTOs;
+
     using EventArgs;
+
     using Exceptions;
+
+    using Interfaces.Network.NetworkManager;
+
     using Localization;
+
+    using Network.Broadcast;
+
+    using UnityEngine;
+    using UnityEngine.Networking;
 
     using Utils;
     using Utils.Unity;
-
-    using UnityEngine;
-    using UnityEngine.Assertions.Must;
-    using UnityEngine.Networking;
 
     using Debug = UnityEngine.Debug;
 

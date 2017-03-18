@@ -1,11 +1,11 @@
-namespace Assets.Zenject.Source.Binding.Binders
+namespace Zenject.Source.Binding.Binders
 {
 
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Injection;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Injection;
 
     public class ArgumentsBinder : ConditionBinder
     {

@@ -1,15 +1,17 @@
-﻿namespace Assets.Tests.Jokers.Routers.HelpFromAudienceJokerRouter
+﻿namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 {
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+    using Tests.Extensions;
 
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     public class CanActivateOnlyOneTime : MonoBehaviour
     {

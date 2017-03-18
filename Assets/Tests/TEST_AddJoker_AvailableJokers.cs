@@ -1,9 +1,11 @@
-﻿namespace Assets.Tests
+﻿using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
+
+namespace Tests
 {
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Jokers;
-    using Assets.Scripts.Utils.Unity;
+    using Controllers;
+
+    using Utils.Unity;
 
     public class TEST_AddJoker_AvailableJokers : ExtendedMonoBehaviour
     {

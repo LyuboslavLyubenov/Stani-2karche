@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.IO
+﻿namespace IO
 {
+
     using System;
     using System.IO;
     using System.Linq;

@@ -1,11 +1,11 @@
-﻿using System.Collections;
-
-using UnityEngine;
-
-namespace Assets.UITween.ScenesExamplesScripts
+﻿namespace UITween.ScenesExamplesScripts
 {
 
-    using Assets.UITween.Scripts;
+    using System.Collections;
+
+    using UITween.Scripts;
+
+    using UnityEngine;
 
     public class ActivateOnEnable : MonoBehaviour {
 

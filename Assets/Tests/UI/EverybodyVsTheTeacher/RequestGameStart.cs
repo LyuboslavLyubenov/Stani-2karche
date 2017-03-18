@@ -1,11 +1,15 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.UI.EverybodyVsTheTeacher
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class RequestGameStart : ExtendedMonoBehaviour
     {

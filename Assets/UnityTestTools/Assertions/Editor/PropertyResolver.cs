@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Assertions.Editor
+namespace UnityTestTools.Assertions.Editor
 {
 
     using System;
@@ -6,8 +6,6 @@ namespace Assets.UnityTestTools.Assertions.Editor
     using System.Linq;
     using System.Reflection;
     using System.Text.RegularExpressions;
-
-    using Assets.UnityTestTools.Assertions;
 
     using UnityEngine;
 

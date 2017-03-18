@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
+﻿namespace Interfaces.Network.Jokers.Routers
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface IAnswerPollRouter : IJokerRouter, IDisposable
     {

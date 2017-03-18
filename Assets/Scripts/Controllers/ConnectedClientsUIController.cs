@@ -1,15 +1,19 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
     using System.Collections.Generic;
+
+    using DTOs;
+
+    using EventArgs;
+
+    using Network.NetworkManagers;
 
     using UnityEngine;
     using UnityEngine.EventSystems;
     using UnityEngine.UI;
 
-    using DTOs;
-    using EventArgs;
-    using Network.NetworkManagers;
     using Utils.Unity;
 
     public class ConnectedClientsUIController : ExtendedMonoBehaviour

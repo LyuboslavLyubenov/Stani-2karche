@@ -1,15 +1,15 @@
-namespace Assets.Zenject.Source.Providers.Singleton
+namespace Zenject.Source.Providers.Singleton
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers.Singleton.Prefab;
-    using Assets.Zenject.Source.Providers.Singleton.Standard;
-    using Assets.Zenject.Source.Providers.Singleton.SubContainer;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers.Singleton.Prefab;
+    using Zenject.Source.Providers.Singleton.Standard;
+    using Zenject.Source.Providers.Singleton.SubContainer;
 
     public class SingletonProviderCreator
     {

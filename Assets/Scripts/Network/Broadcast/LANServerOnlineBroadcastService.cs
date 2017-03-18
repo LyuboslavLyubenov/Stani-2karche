@@ -1,6 +1,8 @@
-﻿namespace Assets.Scripts.Network.Broadcast
+﻿namespace Network.Broadcast
 {
+
     using Extensions;
+
     using Utils;
 
     public class LANServerOnlineBroadcastService : LANBroadcastService
@@ -13,7 +15,7 @@
         
         public LANServerOnlineBroadcastService()
         {
-            timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, SendServerOnline);
+            this.timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, this.SendServerOnline);
             this.timer.Start();
         }
         

@@ -1,6 +1,6 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Runtime.Kernels
+namespace Zenject.Source.Runtime.Kernels
 {
     public class SceneKernel : MonoKernel
     {

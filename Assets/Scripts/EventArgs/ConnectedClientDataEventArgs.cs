@@ -1,9 +1,9 @@
-namespace Assets.Scripts.EventArgs
+namespace EventArgs
 {
 
     using System;
 
-    using Assets.Scripts.DTOs;
+    using DTOs;
 
     using EventArgs = System.EventArgs;
 

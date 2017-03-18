@@ -1,21 +1,26 @@
-namespace Assets.Tests.EveryBodyVsTheTeacher.States
+namespace Tests.EveryBodyVsTheTeacher.States
 {
+
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.StateMachine;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using EventArgs;
 
+    using Interfaces.Network.NetworkManager;
+
+    using StateMachine;
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
+    using Tests.DummyObjects;
+    using Tests.Extensions;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils;
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class MultipleMainPlayersConnected : ExtendedMonoBehaviour
     {

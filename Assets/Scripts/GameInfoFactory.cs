@@ -1,135 +1,129 @@
-﻿using EveryBodyVsTheTeacherServer = Network.Servers.EveryBodyVsTheTeacherServer;
+﻿using System;
+using System.Linq;
+using System.Reflection;
 
-namespace Assets.Scripts
+using DTOs;
+
+using Extensions;
+
+using Interfaces;
+using Interfaces.Network.NetworkManager;
+
+using Network.Servers;
+
+using Utils.Unity;
+
+public class GameInfoFactory
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
+    private static GameInfoFactory instance;
 
-    using Assets.Scripts.Controllers.GameController;
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Network.Servers;
-
-    using DTOs;
-
-    using Utils.Unity;
-
-    public class GameInfoFactory
+    public static GameInfoFactory Instance
     {
-        private static GameInfoFactory instance;
-
-        public static GameInfoFactory Instance
+        get
         {
-            get
+            if (instance == null)
             {
-                if (instance == null)
-                {
-                    instance = new GameInfoFactory();
-                }
-
-                return instance;
-            }
-        }
-
-        private string externalIp = "";
-
-        GameInfoFactory()
-        {
-            NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
-        }
-
-        public CreatedGameInfo_DTO Get(IServerNetworkManager serverNetworkManager, IGameServer server)
-        {
-            var gameName = server.GetGameTypeName();
-            var methodName = "Get" + gameName + "GameInfo";
-            var methodInfo = this.GetType()
-                .GetMethod(
-                    methodName,
-                    BindingFlags.NonPublic |
-                    BindingFlags.Instance |
-                    BindingFlags.InvokeMethod);
-
-            if (methodInfo == null)
-            {
-                throw new NotImplementedException();
+                instance = new GameInfoFactory();
             }
 
-            return (CreatedGameInfo_DTO)methodInfo.Invoke(this, new object[] { serverNetworkManager, server });
-        }
-
-        private BasicExamGameInfo_DTO GetBasicExamGameInfo(IServerNetworkManager serverNetworkManager, IGameServer server)
-        {
-            var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
-            var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
-            var gameTypeName = server.GetGameTypeName();
-            var hostUsername = this. GetHostUsername();
-            var serverInfo = this.GetServerInfo(serverNetworkManager);
-
-            var gameInfo = new BasicExamGameInfo_DTO()
-            {
-                CanConnectAsMainPlayer = canConnectAsMainPlayer,
-                CanConnectAsAudience = canConnectAsAudience,
-                GameType = gameTypeName,
-                HostUsername = hostUsername,
-                ServerInfo = serverInfo
-            };
-
-            return gameInfo;
-        }
-
-        private EveryBodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(IServerNetworkManager networkManager, IGameServer gameServer)
-        {
-            var server = (EveryBodyVsTheTeacherServer)gameServer;
-
-            var canConnectAsMainPlayer = 
-                !server.IsGameOver &&
-                !server.StartedGame &&
-                server.MainPlayersConnectionIds.Count() < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame;
-
-            var canConnectAsAudience = 
-                !server.IsGameOver &&
-                !server.StartedGame;
-
-            var gameTypeName = server.GetGameTypeName();
-            var hostUsername = this.GetHostUsername();
-            var serverInfo = this.GetServerInfo(networkManager);
-
-            var gameInfo = new EveryBodyVsTheTeacherGameInfo_DTO()
-            {
-                GameType = gameTypeName,
-                HostUsername = hostUsername,
-                ServerInfo = serverInfo,
-                CanConnectAsMainPlayer = canConnectAsMainPlayer,
-                CanConnectAsAudience = canConnectAsAudience,
-                IsGameStarted = server.StartedGame
-            };
-
-            return gameInfo;
-        }
-        
-        private string GetHostUsername()
-        {
-            return PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
-        }
-
-        private ServerInfo_DTO GetServerInfo(IServerNetworkManager serverNetworkManager)
-        {
-            var localIPAddress = NetworkUtils.GetLocalIP();
-            var connectedClientsCount = serverNetworkManager.ConnectedClientsCount;
-            var maxConnections = serverNetworkManager.MaxConnections;
-            var serverInfo = new ServerInfo_DTO()
-            {
-                ExternalIpAddress = this.externalIp,
-                LocalIPAddress = localIPAddress,
-                ConnectedClientsCount = connectedClientsCount,
-                MaxConnectionsAllowed = maxConnections
-            };
-
-            return serverInfo;
+            return instance;
         }
     }
 
+    private string externalIp = "";
+
+    GameInfoFactory()
+    {
+        NetworkUtils.GetExternalIP((ip) => this.externalIp = ip);
+    }
+
+    public CreatedGameInfo_DTO Get(IServerNetworkManager serverNetworkManager, IGameServer server)
+    {
+        var gameName = server.GetGameTypeName();
+        var methodName = "Get" + gameName + "GameInfo";
+        var methodInfo = this.GetType()
+            .GetMethod(
+                methodName,
+                BindingFlags.NonPublic |
+                BindingFlags.Instance |
+                BindingFlags.InvokeMethod);
+
+        if (methodInfo == null)
+        {
+            throw new NotImplementedException();
+        }
+
+        return (CreatedGameInfo_DTO)methodInfo.Invoke(this, new object[] { serverNetworkManager, server });
+    }
+
+    private BasicExamGameInfo_DTO GetBasicExamGameInfo(IServerNetworkManager serverNetworkManager, IGameServer server)
+    {
+        var canConnectAsMainPlayer = !((BasicExamServer)server).MainPlayerData.IsConnected;
+        var canConnectAsAudience = serverNetworkManager.ConnectedClientsCount < (serverNetworkManager.MaxConnections - 1);
+        var gameTypeName = server.GetGameTypeName();
+        var hostUsername = this. GetHostUsername();
+        var serverInfo = this.GetServerInfo(serverNetworkManager);
+
+        var gameInfo = new BasicExamGameInfo_DTO()
+                       {
+                           CanConnectAsMainPlayer = canConnectAsMainPlayer,
+                           CanConnectAsAudience = canConnectAsAudience,
+                           GameType = gameTypeName,
+                           HostUsername = hostUsername,
+                           ServerInfo = serverInfo
+                       };
+
+        return gameInfo;
+    }
+
+    private EveryBodyVsTheTeacherGameInfo_DTO GetEveryBodyVsTheTeacherGameInfo(IServerNetworkManager networkManager, IGameServer gameServer)
+    {
+        var server = (EveryBodyVsTheTeacherServer)gameServer;
+
+        var canConnectAsMainPlayer = 
+            !server.IsGameOver &&
+            !server.StartedGame &&
+            server.MainPlayersConnectionIds.Count() < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame;
+
+        var canConnectAsAudience = 
+            !server.IsGameOver &&
+            !server.StartedGame;
+
+        var gameTypeName = server.GetGameTypeName();
+        var hostUsername = this.GetHostUsername();
+        var serverInfo = this.GetServerInfo(networkManager);
+
+        var gameInfo = new EveryBodyVsTheTeacherGameInfo_DTO()
+                       {
+                           GameType = gameTypeName,
+                           HostUsername = hostUsername,
+                           ServerInfo = serverInfo,
+                           CanConnectAsMainPlayer = canConnectAsMainPlayer,
+                           CanConnectAsAudience = canConnectAsAudience,
+                           IsGameStarted = server.StartedGame
+                       };
+
+        return gameInfo;
+    }
+        
+    private string GetHostUsername()
+    {
+        return PlayerPrefsEncryptionUtils.HasKey("Username") ? PlayerPrefsEncryptionUtils.GetString("Username") : "Anonymous";
+    }
+
+    private ServerInfo_DTO GetServerInfo(IServerNetworkManager serverNetworkManager)
+    {
+        var localIPAddress = NetworkUtils.GetLocalIP();
+        var connectedClientsCount = serverNetworkManager.ConnectedClientsCount;
+        var maxConnections = serverNetworkManager.MaxConnections;
+        var serverInfo = new ServerInfo_DTO()
+                         {
+                             ExternalIpAddress = this.externalIp,
+                             LocalIPAddress = localIPAddress,
+                             ConnectedClientsCount = connectedClientsCount,
+                             MaxConnectionsAllowed = maxConnections
+                         };
+
+        return serverInfo;
+    }
 }

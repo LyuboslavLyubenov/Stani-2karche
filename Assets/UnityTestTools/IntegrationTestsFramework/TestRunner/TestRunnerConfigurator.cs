@@ -11,7 +11,7 @@ using System.Net.NetworkInformation;
 
 #endif
 
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
     using System;

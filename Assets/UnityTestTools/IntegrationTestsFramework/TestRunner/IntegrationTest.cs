@@ -1,11 +1,11 @@
-using System;
-using System.IO;
-using System.Linq;
-
-using UnityEngine;
-
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.IO;
+    using System.Linq;
+
+    using UnityEngine;
 
     public static class IntegrationTest
     {

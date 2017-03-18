@@ -5,11 +5,14 @@
     using System.Linq;
     using System.Timers;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils;
+    using EventArgs;
+
+    using Extensions;
+
+    using Interfaces.Network;
+    using Interfaces.Network.NetworkManager;
+
+    using Utils;
 
     public class SelectedKalitkoJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {

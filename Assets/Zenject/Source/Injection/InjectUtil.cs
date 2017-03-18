@@ -1,11 +1,11 @@
-namespace Assets.Zenject.Source.Injection
+namespace Zenject.Source.Injection
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     [System.Diagnostics.DebuggerStepThrough]
     public class TypeValuePair

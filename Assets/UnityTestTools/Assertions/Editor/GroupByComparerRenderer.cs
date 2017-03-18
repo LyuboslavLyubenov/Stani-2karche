@@ -1,11 +1,9 @@
-namespace Assets.UnityTestTools.Assertions.Editor
+namespace UnityTestTools.Assertions.Editor
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
-    using Assets.UnityTestTools.Assertions;
 
     public class GroupByComparerRenderer : AssertionListRenderer<Type>
     {

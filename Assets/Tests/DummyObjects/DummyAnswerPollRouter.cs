@@ -1,12 +1,14 @@
-﻿namespace Assets.Tests.DummyObjects
+﻿namespace Tests.DummyObjects
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    
+    using EventArgs;
+
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+
     public class DummyAnswerPollRouter : IAnswerPollRouter
     {
         public event EventHandler OnActivated = delegate

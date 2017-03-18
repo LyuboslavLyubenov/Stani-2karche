@@ -1,15 +1,17 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
+
+    using DTOs;
+
+    using Localization;
 
     using Network.NetworkManagers;
 
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.UI;
-
-    using DTOs;
-    using Localization;
 
     public class BasicExamClientOptionsUIController : MonoBehaviour
     {

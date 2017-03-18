@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States
+﻿namespace Interfaces.Network.EveryBodyVsTheTeacher.States
 {
 
     using System;
     using System.Collections.ObjectModel;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface IPlayersConnectingToTheServerState : IState
     {

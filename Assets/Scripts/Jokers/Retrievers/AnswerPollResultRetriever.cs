@@ -1,15 +1,18 @@
-namespace Assets.Scripts.Jokers.Retrievers
+namespace Jokers.Retrievers
 {
 
     using System;
     using System.Timers;
 
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils;
+    using Commands.Client;
+    using Commands.Jokers.Settings;
+
+    using EventArgs;
+
+    using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
+
+    using Utils;
 
     using EventArgs = System.EventArgs;
 

@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
@@ -6,7 +6,7 @@ namespace Assets.Zenject.Source.Util
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Zenject.Source.Injection;
+    using Zenject.Source.Injection;
 
     public class PostInjectableInfo
     {

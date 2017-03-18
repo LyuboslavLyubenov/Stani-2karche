@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.UITween.ScenesExamplesScripts
+﻿namespace UITween.ScenesExamplesScripts
 {
 
-    using Assets.UITween.Scripts;
+    using System.Collections.Generic;
+
+    using UITween.Scripts;
+
+    using UnityEngine;
 
     public class CreateAnimImage : MonoBehaviour {
 

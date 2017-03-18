@@ -1,5 +1,5 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
-namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
+namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
     using UnityEngine;
@@ -47,7 +47,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
         void Start()
         {
             this.outline = this.gameObject.AddComponent<NicerOutline>();
-            this.outline.effectColor = OutlineColor;
+            this.outline.effectColor = this.OutlineColor;
             this.outline.enabled = false;
 
             this.image = this.GetComponent<Image>();

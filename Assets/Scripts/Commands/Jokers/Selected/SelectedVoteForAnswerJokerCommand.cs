@@ -1,11 +1,13 @@
-﻿namespace Assets.Scripts.Commands.Jokers
+﻿namespace Commands.Jokers.Selected
 {
+
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Extensions;
+
+    using Interfaces.Network;
+    using Interfaces.Network.NetworkManager;
 
     public class SelectedVoteForAnswerJokerCommand : INetworkManagerCommand
     {

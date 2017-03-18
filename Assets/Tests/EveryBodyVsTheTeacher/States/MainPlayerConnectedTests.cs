@@ -1,20 +1,25 @@
-namespace Assets.Tests.EveryBodyVsTheTeacher.States
+using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
+using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.EveryBodyVsTheTeacher.States
 {
+
     using System.Collections;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.StateMachine;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using EventArgs;
 
+    using Interfaces.Network.NetworkManager;
+
+    using StateMachine;
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
 
+    using Tests.DummyObjects;
+
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class MainPlayerConnectedTests : MonoBehaviour
     {

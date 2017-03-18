@@ -1,12 +1,7 @@
-﻿namespace Assets.Scripts.Utils.Unity.UI
+﻿namespace Utils.Unity.UI
 {
 
-    using System;
-
-    using Assets.Scripts.Extensions;
-
     using UnityEngine;
-    using UnityEngine.SceneManagement;
 
     public class FPSSettings : MonoBehaviour
     {

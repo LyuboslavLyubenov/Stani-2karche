@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
     using System;
@@ -8,15 +8,14 @@ namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Plat
     using System.Net;
     using System.Net.Sockets;
 
-    using Assets.UnityTestTools.Common;
-    using Assets.UnityTestTools.Common.Editor.ResultWriter;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-
     using UnityEditor;
 
     using UnityEditorInternal;
 
     using UnityEngine;
+
+    using UnityTestTools.Common;
+    using UnityTestTools.Common.Editor.ResultWriter;
 
     [Serializable]
     public class NetworkResultsReceiver : EditorWindow

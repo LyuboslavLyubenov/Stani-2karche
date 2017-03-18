@@ -1,13 +1,16 @@
-﻿namespace Assets.Scripts.Controllers.Lobby
+﻿namespace Controllers.Lobby
 {
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Notifications;
-    using Assets.Zenject.Source.Usage;
+    using EventArgs;
+
+    using Network.GameInfo;
+
+    using Notifications;
 
     using UnityEngine;
     using UnityEngine.UI;
+
+    using Zenject.Source.Usage;
 
     public class ConnectToExternalServerUIController : MonoBehaviour
     {

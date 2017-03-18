@@ -1,33 +1,34 @@
-﻿namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
+﻿using PlayersConnectingStateDataSender = Network.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender;
+
+namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
 
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+    using Interfaces.Network;
+    using Interfaces.Network.EveryBodyVsTheTeacher;
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
+    using Interfaces.Network.NetworkManager;
 
-    using UnityEngine;
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.Bind<IServerNetworkManager>()
+            this.Container.Bind<IServerNetworkManager>()
                 .To<DummyServerNetworkManager>()
                 .AsSingle();
 
-            Container.Bind<IPlayersConnectingToTheServerState>()
+            this.Container.Bind<IPlayersConnectingToTheServerState>()
                 .To<DummyPlayersConnectingToTheServerState>()
                 .AsSingle();
 
-            Container.Bind<IEveryBodyVsTheTeacherServer>()
+            this.Container.Bind<IEveryBodyVsTheTeacherServer>()
                 .To<DummyEveryBodyVsTheTeacherServer>()
                 .AsSingle();
 
-            Container.Bind<IPlayersConnectingStateDataSender>()
+            this.Container.Bind<IPlayersConnectingStateDataSender>()
                 .To<PlayersConnectingStateDataSender>()
                 .AsSingle();
         }

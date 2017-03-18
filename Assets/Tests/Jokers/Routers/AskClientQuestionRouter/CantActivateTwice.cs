@@ -1,11 +1,12 @@
-﻿namespace Assets.Tests.Jokers.Routers.AskClientQuestionRouter
+﻿namespace Tests.Jokers.Routers.AskClientQuestionRouter
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
 
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     public class CantActivateTwice : MonoBehaviour
     {

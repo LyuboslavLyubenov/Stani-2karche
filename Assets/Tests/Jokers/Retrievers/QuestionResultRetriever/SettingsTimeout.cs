@@ -1,13 +1,14 @@
 namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
-
+    using Interfaces;
     using Interfaces.Network.Jokers;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class SettingsTimeout : MonoBehaviour
     {

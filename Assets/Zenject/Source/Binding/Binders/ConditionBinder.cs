@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Binding.Binders
+namespace Zenject.Source.Binding.Binders
 {
 
     using System;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public class ConditionBinder : CopyIntoSubContainersBinder
     {

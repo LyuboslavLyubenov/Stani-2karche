@@ -1,14 +1,13 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Network.GameInfo
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
     using EventArgs;
-    using TcpSockets;
+
+    using Interfaces.Network;
+    using Interfaces.Network.NetworkManager;
 
     public class CreatedGameInfoReceiver : ICreatedGameInfoReceiver
     {

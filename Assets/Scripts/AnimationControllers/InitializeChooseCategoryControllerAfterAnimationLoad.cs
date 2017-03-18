@@ -1,12 +1,16 @@
-﻿namespace Assets.Scripts.AnimationControllers
+﻿namespace AnimationControllers
 {
-    using UnityEngine;
 
     using Controllers;
+
     using Localization;
+
     using Network;
     using Network.NetworkManagers;
+
     using Notifications;
+
+    using UnityEngine;
 
     public class InitializeChooseCategoryControllerAfterAnimationLoad : StateMachineBehaviour
     {

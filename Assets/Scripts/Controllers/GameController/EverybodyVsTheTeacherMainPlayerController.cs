@@ -1,23 +1,30 @@
-﻿namespace Assets.Scripts.Controllers.GameController
+﻿namespace Controllers.GameController
 {
 
     using System;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.StateMachine;
-    using Assets.Scripts.Utils;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Zenject.Source.Usage;
+    using Commands;
+    using Commands.Server;
+
+    using Controllers.EveryBodyVsTheTeacher;
+
+    using Extensions;
+
+    using Interfaces;
+    using Interfaces.Network.NetworkManager;
+
+    using Localization;
+
+    using Notifications;
+
+    using StateMachine;
 
     using UnityEngine;
-    using UnityEngine.UI;
+
+    using Utils;
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class EverybodyVsTheTeacherMainPlayerController : ExtendedMonoBehaviour
     {

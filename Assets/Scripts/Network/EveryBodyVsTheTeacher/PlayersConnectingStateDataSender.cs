@@ -1,15 +1,17 @@
-﻿namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
+﻿namespace Network.EveryBodyVsTheTeacher
 {
+
     using System;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender;
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher.States;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Commands;
+    using Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender;
+
+    using EventArgs;
+
+    using Interfaces.Network;
+    using Interfaces.Network.EveryBodyVsTheTeacher;
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
+    using Interfaces.Network.NetworkManager;
 
     public class PlayersConnectingStateDataSender : IPlayersConnectingStateDataSender
     {
@@ -40,14 +42,14 @@
             this.networkManager = networkManager;
             this.server = server;
 
-            playersConnectingState.OnMainPlayerConnected += OnMainPlayerConnected;
-            playersConnectingState.OnMainPlayerDisconnected += OnMainPlayerDisconnected;
+            playersConnectingState.OnMainPlayerConnected += this.OnMainPlayerConnected;
+            playersConnectingState.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
 
-            playersConnectingState.OnAudiencePlayerConnected += OnAudiencePlayerConnected;
-            playersConnectingState.OnAudiencePlayerDisconnected += OnAudiencePlayerDisconnected;
+            playersConnectingState.OnAudiencePlayerConnected += this.OnAudiencePlayerConnected;
+            playersConnectingState.OnAudiencePlayerDisconnected += this.OnAudiencePlayerDisconnected;
 
-            playersConnectingState.OnMainPlayerRequestedGameStart += OnMainPlayerRequestedGameStart;
-            playersConnectingState.OnEveryBodyRequestedGameStart += OnEveryBodyRequestedGameStart;
+            playersConnectingState.OnMainPlayerRequestedGameStart += this.OnMainPlayerRequestedGameStart;
+            playersConnectingState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
         }
 
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs args)

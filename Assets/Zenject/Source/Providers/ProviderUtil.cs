@@ -1,9 +1,9 @@
-namespace Assets.Zenject.Source.Providers
+namespace Zenject.Source.Providers
 {
 
     using System;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     public static class ProviderUtil
     {

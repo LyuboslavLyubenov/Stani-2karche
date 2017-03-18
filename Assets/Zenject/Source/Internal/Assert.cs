@@ -1,11 +1,11 @@
-﻿namespace Assets.Zenject.Source.Internal
+﻿namespace Zenject.Source.Internal
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Util;
+    using Zenject.Source.Util;
 
     public static class Assert
     {

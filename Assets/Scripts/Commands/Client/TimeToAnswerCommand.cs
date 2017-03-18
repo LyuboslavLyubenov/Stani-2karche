@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Commands.Client
+﻿namespace Commands.Client
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Interfaces.Network.NetworkManager;
 
     public class TimeToAnswerCommand : INetworkManagerCommand
     {

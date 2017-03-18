@@ -1,12 +1,12 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Install
+namespace Zenject.Source.Install
 {
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     // We'd prefer to make this abstract but Unity 5.3.5 has a bug where references
     // can get lost during compile errors for classes that are abstract

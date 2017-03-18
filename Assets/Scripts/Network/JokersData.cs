@@ -1,15 +1,18 @@
-namespace Assets.Scripts.DTOs
+namespace Network
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
     using Commands;
+
     using EventArgs;
+
     using Interfaces;
+    using Interfaces.Network.NetworkManager;
+
     using Utils;
 
     /// <summary>

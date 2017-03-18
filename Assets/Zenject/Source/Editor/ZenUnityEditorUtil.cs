@@ -1,6 +1,6 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Editor
+namespace Zenject.Source.Editor
 {
 
     using System;
@@ -8,14 +8,14 @@ namespace Assets.Zenject.Source.Editor
     using System.IO;
     using System.Linq;
 
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Util;
-
     using UnityEditor;
     using UnityEditor.SceneManagement;
 
     using UnityEngine;
+
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Util;
 
     public static class ZenUnityEditorUtil
     {

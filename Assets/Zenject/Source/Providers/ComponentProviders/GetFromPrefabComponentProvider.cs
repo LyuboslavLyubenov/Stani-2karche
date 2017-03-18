@@ -1,15 +1,15 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.ComponentProviders
+namespace Zenject.Source.Providers.ComponentProviders
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Providers.PrefabCreators;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Providers.PrefabCreators;
 
     public class GetFromPrefabComponentProvider : IProvider
     {

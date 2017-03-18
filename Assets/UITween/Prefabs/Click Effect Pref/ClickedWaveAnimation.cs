@@ -1,10 +1,9 @@
-﻿namespace Assets.UITween.Prefabs.Click_Effect_Pref
+﻿namespace UITween.Prefabs.Click_Effect_Pref
 {
 
-    using System.Collections;
     using System.Collections.Generic;
 
-    using Assets.UITween.Scripts;
+    using UITween.Scripts;
 
     using UnityEngine;
     using UnityEngine.EventSystems;

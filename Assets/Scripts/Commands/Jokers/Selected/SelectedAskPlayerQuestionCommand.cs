@@ -1,17 +1,14 @@
+using HelpFromFriendJoker = Jokers.HelpFromFriendJoker;
 using MainPlayerData = Network.MainPlayerData;
 
-namespace Assets.Scripts.Commands.Jokers
+namespace Commands.Jokers.Selected
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using DTOs;
-    using Interfaces;
-    using Scripts.Jokers;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
 
     using EventArgs = System.EventArgs;
 

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Assertions
+namespace UnityTestTools.Assertions
 {
 
     using System;
@@ -6,9 +6,9 @@ namespace Assets.UnityTestTools.Assertions
     using System.Diagnostics;
     using System.Linq;
 
-    using Assets.UnityTestTools.Assertions.Comparers;
-
     using UnityEngine;
+
+    using UnityTestTools.Assertions.Comparers;
 
     using Debug = UnityEngine.Debug;
     using Object = UnityEngine.Object;

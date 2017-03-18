@@ -2,7 +2,7 @@
 
 #endif
 
-namespace Assets.Zenject.Source.Main
+namespace Zenject.Source.Main
 {
 
     using System;
@@ -10,24 +10,24 @@ namespace Assets.Zenject.Source.Main
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.Binders;
-    using Assets.Zenject.Source.Binding.Binders.ConcreteBinders;
-    using Assets.Zenject.Source.Binding.Binders.Conventions;
-    using Assets.Zenject.Source.Binding.Binders.Factory.FactoryToChoiceBinder;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Install;
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.Singleton;
-    using Assets.Zenject.Source.Usage;
-    using Assets.Zenject.Source.Util;
-    using Assets.Zenject.Source.Validation;
-
     using UnityEngine;
+
+    using Zenject.Source.Binding.Binders;
+    using Zenject.Source.Binding.Binders.ConcreteBinders;
+    using Zenject.Source.Binding.Binders.Conventions;
+    using Zenject.Source.Binding.Binders.Factory.FactoryToChoiceBinder;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Install;
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.Singleton;
+    using Zenject.Source.Usage;
+    using Zenject.Source.Util;
+    using Zenject.Source.Validation;
 
     public delegate bool BindingCondition(InjectContext c);
 

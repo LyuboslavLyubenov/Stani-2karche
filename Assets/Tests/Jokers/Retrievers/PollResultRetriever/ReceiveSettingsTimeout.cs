@@ -1,12 +1,14 @@
-﻿namespace Assets.Tests.Jokers.Retrievers.AudiencePollResultRetriever
+﻿namespace Tests.Jokers.Retrievers.PollResultRetriever
 {
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class ReceiveSettingsTimeout : MonoBehaviour
     {

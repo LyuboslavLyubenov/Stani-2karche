@@ -1,11 +1,12 @@
-﻿namespace Assets.Tests.DummyObjects
+﻿namespace Tests.DummyObjects
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
+    using EventArgs;
+
+    using Interfaces;
+    using Interfaces.GameData;
 
     public class DummyGameDataIterator : IGameDataIterator
     {

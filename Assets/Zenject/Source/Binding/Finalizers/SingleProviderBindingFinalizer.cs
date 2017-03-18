@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Binding.Finalizers
+namespace Zenject.Source.Binding.Finalizers
 {
 
     using System;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
 
     public class SingleProviderBindingFinalizer : ProviderBindingFinalizer
     {

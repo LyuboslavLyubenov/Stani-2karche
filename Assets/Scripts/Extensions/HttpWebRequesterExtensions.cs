@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Extensions
+namespace Extensions
 {
 
     using System;

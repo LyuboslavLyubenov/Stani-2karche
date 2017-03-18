@@ -1,8 +1,9 @@
-﻿namespace Assets.Scripts.Notifications
+﻿namespace Notifications
 {
+
     using System.Collections;
 
-    using Assets.Scripts.Interfaces.Notifications;
+    using Interfaces.Notifications;
 
     using UnityEngine;
     using UnityEngine.EventSystems;

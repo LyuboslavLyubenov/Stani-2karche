@@ -1,17 +1,22 @@
-﻿namespace Assets.Tests.UI.Lobby.ServersAvailableUIController
+﻿using CreatedGameInfoReceiver = Network.GameInfo.CreatedGameInfoReceiver;
+using KinveyWrapper = Network.KinveyWrapper;
+
+namespace Tests.UI.Lobby.ServersAvailableUIController
 {
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.Kinvey;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Interfaces.Services;
-    using Assets.Scripts.Network;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+
+    using Controllers;
+    using Controllers.Lobby;
+
+    using Interfaces.Network;
+    using Interfaces.Network.Kinvey;
+    using Interfaces.Network.NetworkManager;
+    using Interfaces.Services;
+
+    using Tests.DummyObjects;
 
     using UnityEngine;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {
@@ -30,19 +35,19 @@
             this.EveryBodyVsTheTeacherSelectPlayerTypeUiController =
                 obj2.AddComponent<SelectPlayerTypeUIController>();
 
-            Container.Bind<ILANServersDiscoverer>()
+            this.Container.Bind<ILANServersDiscoverer>()
                 .To<DummyIlanServersDiscoverer>()
                 .AsSingle();
 
-            Container.Bind<ISimpleTcpClient>()
+            this.Container.Bind<ISimpleTcpClient>()
                 .To<DummySimpleTcpClient>()
                 .AsSingle();
 
-            Container.Bind<ISimpleTcpServer>()
+            this.Container.Bind<ISimpleTcpServer>()
                 .To<DummySimpleTcpServer>()
                 .AsSingle();
 
-            Container.Bind<ICreatedGameInfoReceiver>()
+            this.Container.Bind<ICreatedGameInfoReceiver>()
                 .To<CreatedGameInfoReceiver>()
                 .AsSingle();
 
@@ -51,11 +56,11 @@
                 this.EveryBodyVsTheTeacherSelectPlayerTypeUiController
                 );
 
-            Container.Bind<SelectPlayerTypeRouter>()
+            this.Container.Bind<SelectPlayerTypeRouter>()
                 .FromInstance(selectPlayerTypeRouter)
                 .AsSingle();
 
-            Container.Bind<IKinveyWrapper>()
+            this.Container.Bind<IKinveyWrapper>()
                 .To<KinveyWrapper>()
                 .AsSingle();
             

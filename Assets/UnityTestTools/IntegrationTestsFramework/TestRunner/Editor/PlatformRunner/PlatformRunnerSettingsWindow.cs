@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
     using System;
@@ -7,13 +7,12 @@ namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Plat
     using System.Linq;
     using System.Net;
 
-    using Assets.UnityTestTools.Common.Editor;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-
     using UnityEditor;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using UnityTestTools.Common.Editor;
 
     using Object = UnityEngine.Object;
 

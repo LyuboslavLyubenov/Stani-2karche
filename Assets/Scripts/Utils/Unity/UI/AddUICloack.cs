@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Utils.Unity.UI
+﻿namespace Utils.Unity.UI
 {
 
     using UnityEngine;

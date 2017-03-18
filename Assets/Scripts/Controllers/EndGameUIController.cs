@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-
-namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
+    using UnityEngine;
+    using UnityEngine.UI;
+
     public class EndGameUIController : MonoBehaviour
     {
         public void SetMark(int mark)

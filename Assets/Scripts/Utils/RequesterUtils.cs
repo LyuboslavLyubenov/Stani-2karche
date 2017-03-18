@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Utils
+﻿namespace Utils
 {
+
     using System;
     using System.IO;
     using System.Net;

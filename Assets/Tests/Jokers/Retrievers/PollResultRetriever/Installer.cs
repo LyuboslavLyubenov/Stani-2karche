@@ -1,32 +1,36 @@
-namespace Assets.Tests.Jokers.Retrievers.AudiencePollResultRetriever
+using AudienceAnswerPollResultRetriever = Jokers.Retrievers.AudienceAnswerPollResultRetriever;
+
+namespace Tests.Jokers.Retrievers.PollResultRetriever
 {
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Jokers.Retrievers;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+    using DTOs;
+
+    using Interfaces;
+    using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.Bind<IClientNetworkManager>()
+            this.Container.Bind<IClientNetworkManager>()
                 .To<DummyClientNetworkManager>()
                 .AsSingle();
 
-            Container.Bind<int>()
+            this.Container.Bind<int>()
                 .FromInstance(5)
                 .WhenInjectedInto<IAnswerPollResultRetriever>();
 
-            Container.Bind<IAnswerPollResultRetriever>()
+            this.Container.Bind<IAnswerPollResultRetriever>()
                 .To<AudienceAnswerPollResultRetriever>();
             
             var question = new SimpleQuestion("QuestionText1", new[] { "Answer1", "Answer2", "Answer3", "Answer4" }, 0);
 
-            Container.Bind<ISimpleQuestion>()
+            this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);
         }
     }

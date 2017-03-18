@@ -1,15 +1,13 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces;
+    using EventArgs;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    using EventArgs;
-
-    using Network.NetworkManagers;
     using Utils.Unity;
 
     public class WaitingToAnswerUIController : MonoBehaviour

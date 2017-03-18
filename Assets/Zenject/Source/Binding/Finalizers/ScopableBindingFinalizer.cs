@@ -1,15 +1,15 @@
-namespace Assets.Zenject.Source.Binding.Finalizers
+namespace Zenject.Source.Binding.Finalizers
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.Singleton;
-    using Assets.Zenject.Source.Providers.Singleton.Standard;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.Singleton;
+    using Zenject.Source.Providers.Singleton.Standard;
 
     public class ScopableBindingFinalizer : ProviderBindingFinalizer
     {

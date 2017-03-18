@@ -1,12 +1,10 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
     using System;
     using System.Linq;
     using System.Net;
     using System.Net.Sockets;
-
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using UnityEditor;
 

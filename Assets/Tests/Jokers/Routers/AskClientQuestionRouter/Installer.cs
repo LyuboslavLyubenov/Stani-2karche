@@ -1,30 +1,32 @@
-﻿namespace Assets.Tests.Jokers.Routers.AskClientQuestionRouter
+﻿using Routers_AskClientQuestionRouter = Jokers.Routers.AskClientQuestionRouter;
+
+namespace Tests.Jokers.Routers.AskClientQuestionRouter
 {
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Jokers.Routers;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+    using DTOs;
 
-    using UnityEngine;
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {
         public override void InstallBindings()
         {
-            Container.Bind<IServerNetworkManager>()
+            this.Container.Bind<IServerNetworkManager>()
                 .To<DummyServerNetworkManager>()
                 .AsSingle();
 
             var question = new SimpleQuestion("QuestionText", new[] { "answer1", "answer2", "answer3", "answer4" }, 0);
-            Container.Bind<ISimpleQuestion>()
+            this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);
 
-            Container.Bind<IAskClientQuestionRouter>()
-                .To<AskClientQuestionRouter>();
+            this.Container.Bind<IAskClientQuestionRouter>()
+                .To<Routers_AskClientQuestionRouter>();
         }
     }
 

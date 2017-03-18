@@ -1,11 +1,13 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
+
+    using EventArgs;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    using EventArgs;
     using Utils.Unity;
 
     public class EnterNameUIController : ExtendedMonoBehaviour

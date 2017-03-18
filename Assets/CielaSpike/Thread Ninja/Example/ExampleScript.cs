@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Threading;
-
-using UnityEngine;
-
-namespace Assets.CielaSpike.Thread_Ninja.Example
+﻿namespace CielaSpike.Thread_Ninja.Example
 {
+
+    using System;
+    using System.Collections;
+    using System.Threading;
+
+    using UnityEngine;
 
     public class ExampleScript : MonoBehaviour {
         private void Start()

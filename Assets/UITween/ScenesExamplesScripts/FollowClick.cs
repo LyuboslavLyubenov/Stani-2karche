@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-
-namespace Assets.UITween.ScenesExamplesScripts
+﻿namespace UITween.ScenesExamplesScripts
 {
 
-    using Assets.UITween.Scripts;
+    using UITween.Scripts;
+
+    using UnityEngine;
 
     public class FollowClick : MonoBehaviour {
 

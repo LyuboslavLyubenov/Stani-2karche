@@ -1,14 +1,17 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
+    using DTOs;
+
+    using EventArgs;
+
     using UnityEngine;
     using UnityEngine.UI;
 
-    using DTOs;
-    using EventArgs;
     using Utils.Unity;
 
     /// <summary>

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Common
+namespace UnityTestTools.Common
 {
 
     public interface ITestResult

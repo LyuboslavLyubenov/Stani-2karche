@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces.Network.NetworkManager
+﻿namespace Interfaces.Network.NetworkManager
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface ICreatedGameInfoReceiver
     {

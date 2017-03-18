@@ -1,12 +1,12 @@
-namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders
+namespace Zenject.OptionalExtras.CommandsAndSignals.Command.Binders
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Main;
 
     public class CommandBinderBase<TCommand, TAction>
         where TCommand : ICommand

@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Utils.Unity
+﻿namespace Utils.Unity
 {
 
     using System;
     using System.Security.Cryptography;
 
-    using Assets.Scripts.SecuritySettings;
+    using SecuritySettings;
 
     using UnityEngine;
 

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Assertions.Editor
+namespace UnityTestTools.Assertions.Editor
 {
 
     using System;
@@ -6,12 +6,11 @@ namespace Assets.UnityTestTools.Assertions.Editor
     using System.Linq;
     using System.Reflection;
 
-    using Assets.UnityTestTools.Assertions;
-    using Assets.UnityTestTools.Assertions.Comparers;
-
     using UnityEditor;
 
     using UnityEngine;
+
+    using UnityTestTools.Assertions.Comparers;
 
     public class PropertyPathSelector
     {

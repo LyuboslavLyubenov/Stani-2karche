@@ -1,15 +1,16 @@
 ﻿
-namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
+using BasicExamServer = Network.Servers.BasicExamServer;
+using KinveyWrapper = Network.KinveyWrapper;
+
+namespace Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
 {
 
-    using Assets.Scripts.DTOs.KinveyDtoObjs;
-    using Assets.Scripts.Network.Servers;
+    using DTOs;
+    using DTOs.KinveyDtoObjs;
 
     using UnityEngine;
 
-    using Scripts.DTOs;
-    using Scripts.Network;
-    using Scripts.Utils.Unity;
+    using Utils.Unity;
 
     public class TEST_UploadServerInfo : ExtendedMonoBehaviour
     {
@@ -25,7 +26,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
             kinveyWrapper.LoginAsync(
                 "ivan", 
                 "ivan", 
-                (data) => OnReceivedLoginResponse(kinveyWrapper, data), 
+                (data) => this.OnReceivedLoginResponse(kinveyWrapper, data), 
                 Debug.LogException);
         }
 

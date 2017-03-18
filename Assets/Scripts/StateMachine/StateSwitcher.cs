@@ -1,7 +1,7 @@
-namespace Assets.Scripts.StateMachine
+namespace StateMachine
 {
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public class StateMachine
     {
@@ -43,7 +43,7 @@ namespace Assets.Scripts.StateMachine
 
         public void SetCurrentState(IState state)
         {
-            ChangeState(state);
+            this.ChangeState(state);
         }
     }
 

@@ -1,6 +1,6 @@
 #if !(UNITY_WSA && ENABLE_DOTNET)
 
-namespace Assets.Zenject.Source.Binding.Binders.Conventions
+namespace Zenject.Source.Binding.Binders.Conventions
 {
 
     using System;
@@ -8,7 +8,7 @@ namespace Assets.Zenject.Source.Binding.Binders.Conventions
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     public class ConventionFilterTypesBinder : ConventionAssemblySelectionBinder
     {

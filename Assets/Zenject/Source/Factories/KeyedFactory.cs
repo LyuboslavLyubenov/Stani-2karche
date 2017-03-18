@@ -1,17 +1,17 @@
-namespace Assets.Zenject.Source.Factories
+namespace Zenject.Source.Factories
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.Binders;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Usage;
-    using Assets.Zenject.Source.Util;
-    using Assets.Zenject.Source.Validation;
+    using Zenject.Source.Binding.Binders;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Usage;
+    using Zenject.Source.Util;
+    using Zenject.Source.Validation;
 
     public abstract class KeyedFactoryBase<TBase, TKey> : IValidatable
     {

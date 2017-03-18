@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Localization
+﻿namespace Localization
 {
+
     using Utils.Unity;
 
     public class LanguageLoader : ExtendedMonoBehaviour

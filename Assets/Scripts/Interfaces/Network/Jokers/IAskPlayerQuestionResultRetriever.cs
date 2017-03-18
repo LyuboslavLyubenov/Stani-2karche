@@ -3,7 +3,7 @@
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface IAskClientQuestionResultRetriever : IDisposable
     {

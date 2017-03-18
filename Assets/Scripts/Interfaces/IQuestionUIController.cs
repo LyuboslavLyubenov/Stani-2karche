@@ -1,9 +1,9 @@
-using System;
-
-namespace Assets.Scripts.Interfaces
+namespace Interfaces
 {
 
-    using Assets.Scripts.EventArgs;
+    using System;
+
+    using EventArgs;
 
     public interface IQuestionUIController
     {

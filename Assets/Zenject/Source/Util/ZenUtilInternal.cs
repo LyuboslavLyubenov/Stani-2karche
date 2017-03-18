@@ -2,16 +2,16 @@
 
 #endif
 
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Internal;
-
     using UnityEngine;
+
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Internal;
 
     public class ZenUtilInternal
     {

@@ -1,11 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.Networking;
-using UnityEngine.UI;
-
-namespace Assets.Tests
+﻿namespace Tests
 {
 
-    using Assets.Scripts.Utils.Unity;
+    using UnityEngine;
+    using UnityEngine.Networking;
+    using UnityEngine.UI;
+
+    using Utils.Unity;
 
     public class TEST_IsServerAvailable : MonoBehaviour
     {

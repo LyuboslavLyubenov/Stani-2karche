@@ -1,17 +1,17 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.GameObjectProviders
+namespace Zenject.Source.Providers.GameObjectProviders
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-
     using UnityEngine;
+
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public class EmptyGameObjectProvider : IProvider
     {

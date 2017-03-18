@@ -1,13 +1,13 @@
-namespace Assets.Scripts.Commands.Client
+namespace Commands.Client
 {
+
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using DTOs;
+
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
-
-    using DTOs;
-    using Interfaces;
 
     public class LeaderboardEntityCommand : INetworkManagerCommand
     {

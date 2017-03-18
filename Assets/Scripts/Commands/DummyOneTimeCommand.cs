@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
-
 //Mediator
 
-namespace Assets.Scripts.Commands
+namespace Commands
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using System;
+    using System.Collections.Generic;
+
+    using Interfaces.Network.NetworkManager;
 
     using EventArgs = System.EventArgs;
 

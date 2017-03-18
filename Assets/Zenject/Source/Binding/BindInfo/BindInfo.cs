@@ -1,11 +1,11 @@
-namespace Assets.Zenject.Source.Binding.BindInfo
+namespace Zenject.Source.Binding.BindInfo
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Main;
 
     public enum ScopeTypes
     {

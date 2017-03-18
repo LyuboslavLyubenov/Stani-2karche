@@ -1,11 +1,11 @@
-namespace Assets.Zenject.Source.Providers
+namespace Zenject.Source.Providers
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
 
     public class CachedProvider : IProvider
     {

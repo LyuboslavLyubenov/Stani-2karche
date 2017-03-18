@@ -1,7 +1,7 @@
-namespace Assets.Zenject.Source.Binding.Binders
+namespace Zenject.Source.Binding.Binders
 {
 
-    using Assets.Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.BindInfo;
 
     public class CopyIntoSubContainersBinder : NonLazyBinder
     {

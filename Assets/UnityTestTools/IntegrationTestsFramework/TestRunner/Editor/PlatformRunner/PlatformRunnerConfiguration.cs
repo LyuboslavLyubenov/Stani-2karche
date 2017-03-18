@@ -1,17 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-
-using UnityEditor;
-
-using UnityEngine;
-using UnityEngine.SceneManagement;
-
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Sockets;
+
+    using UnityEditor;
+
+    using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     [Serializable]
     public class PlatformRunnerConfiguration

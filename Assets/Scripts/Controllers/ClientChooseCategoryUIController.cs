@@ -1,17 +1,21 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
     using System.Collections;
+
+    using EventArgs;
+
+    using Interfaces;
+
+    using Network.NetworkManagers;
+
+    using Notifications;
 
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.EventSystems;
     using UnityEngine.UI;
-
-    using EventArgs;
-    using Interfaces;
-    using Network.NetworkManagers;
-    using Notifications;
 
     using EventArgs = System.EventArgs;
 

@@ -1,10 +1,11 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
-    using UnityEngine;
+
+    using EventArgs;
 
     using Network.Servers;
 
-    using EventArgs;
+    using UnityEngine;
 
     using EventArgs = System.EventArgs;
 

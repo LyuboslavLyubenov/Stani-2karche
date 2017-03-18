@@ -1,10 +1,13 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
-    using UnityEngine;
 
     using EventArgs;
+
     using Localization;
+
     using Network.Servers;
+
+    using UnityEngine;
 
     public class MainPlayerInfoUIController : MonoBehaviour
     {

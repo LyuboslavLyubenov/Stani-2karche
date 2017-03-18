@@ -1,20 +1,22 @@
-namespace Assets.Scripts.Jokers.Routers
+namespace Jokers.Routers
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Timers;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils;
+    using Commands;
+    using Commands.Client;
+    using Commands.Jokers.Settings;
+
+    using EventArgs;
+
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Utils;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;

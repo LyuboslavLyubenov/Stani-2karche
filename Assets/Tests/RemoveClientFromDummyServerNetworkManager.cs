@@ -1,11 +1,13 @@
-﻿namespace Assets.Tests
+﻿namespace Tests
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class RemoveClientFromDummyServerNetworkManager : ExtendedMonoBehaviour
     {

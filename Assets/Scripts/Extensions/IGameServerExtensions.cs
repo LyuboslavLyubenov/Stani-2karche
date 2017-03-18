@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Extensions
+﻿namespace Extensions
 {
 
-    using Assets.Scripts.Interfaces;
+    using Interfaces;
 
     public static class IGameServerExtensions
     {

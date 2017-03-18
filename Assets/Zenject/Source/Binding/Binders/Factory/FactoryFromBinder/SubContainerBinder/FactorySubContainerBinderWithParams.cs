@@ -1,16 +1,16 @@
-namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder
+namespace Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder
 {
 
     using System;
 
-    using Assets.Zenject.Source.Binding.Binders.GameObject;
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Install;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.PrefabProviders;
-    using Assets.Zenject.Source.Providers.SubContainerCreators;
+    using Zenject.Source.Binding.Binders.GameObject;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Install;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.PrefabProviders;
+    using Zenject.Source.Providers.SubContainerCreators;
 
     public class FactorySubContainerBinderWithParams<TContract> : FactorySubContainerBinderBase<TContract>
     {

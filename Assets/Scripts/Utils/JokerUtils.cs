@@ -1,9 +1,9 @@
-using System;
-using System.Linq;
-using System.Reflection;
-
-namespace Assets.Scripts.Utils
+namespace Utils
 {
+
+    using System;
+    using System.Linq;
+    using System.Reflection;
 
     public class JokerUtils
     {

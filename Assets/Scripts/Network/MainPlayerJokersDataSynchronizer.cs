@@ -1,17 +1,14 @@
-using MainPlayerData = Network.MainPlayerData;
-
-namespace Assets.Scripts.Network
+namespace Network
 {
+
     using System;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
     using Commands;
-    using DTOs;
+
     using EventArgs;
-    using NetworkManagers;
+
+    using Interfaces.Network.NetworkManager;
 
     public class MainPlayerJokersDataSynchronizer
     {

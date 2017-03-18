@@ -1,10 +1,11 @@
-﻿using UnityEngine;
-
-namespace Assets.Tests
+﻿namespace Tests
 {
 
-    using Assets.Scripts.Controllers.Jokers;
-    using Assets.Scripts.Utils;
+    using Controllers.Jokers;
+
+    using UnityEngine;
+
+    using Utils;
 
     public class Test_SelectRandomJoker : MonoBehaviour
     {

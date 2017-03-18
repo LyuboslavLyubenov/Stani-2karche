@@ -1,19 +1,20 @@
-﻿namespace Assets.Scripts.Statistics
+﻿namespace Statistics
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Interfaces.Statistics;
-
     using Commands.Server;
+
     using EventArgs;
+
     using Interfaces;
-    using IO;
+    using Interfaces.GameData;
+    using Interfaces.Network.NetworkManager;
+    using Interfaces.Statistics;
+
     using Network;
-    using Network.NetworkManagers;
     using Network.Servers;
 
     using EventArgs = System.EventArgs;

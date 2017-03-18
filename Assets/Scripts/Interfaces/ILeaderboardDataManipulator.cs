@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces
+﻿namespace Interfaces
 {
 
     using System.Collections.Generic;
 
-    using Assets.Scripts.DTOs;
+    using DTOs;
 
     public interface ILeaderboardDataManipulator
     {

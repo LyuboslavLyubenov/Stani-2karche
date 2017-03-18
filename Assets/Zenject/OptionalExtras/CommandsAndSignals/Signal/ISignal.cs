@@ -1,4 +1,4 @@
-namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Signal
+namespace Zenject.OptionalExtras.CommandsAndSignals.Signal
 {
 
     using System;

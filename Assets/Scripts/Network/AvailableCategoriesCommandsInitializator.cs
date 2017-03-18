@@ -1,14 +1,11 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Network
 {
-
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
 
     using Commands.Server;
 
-    using IO;
-    using NetworkManagers;
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.NetworkManager;
 
     public class AvailableCategoriesCommandsInitializator
     {

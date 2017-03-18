@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
 
     public static class ValidationUtil
     {

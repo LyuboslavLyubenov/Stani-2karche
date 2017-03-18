@@ -1,18 +1,16 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
     using System.Collections.Generic;
+
+    using EventArgs;
+
+    using Interfaces;
 
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.UI;
-
-    using EventArgs;
-    using Interfaces;
-
-    using UnityEngine.SceneManagement;
-
-    using Debug = UnityEngine.Debug;
 
     public class AvailableJokersUIController : MonoBehaviour
     {

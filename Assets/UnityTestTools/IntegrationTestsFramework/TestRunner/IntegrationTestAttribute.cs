@@ -1,8 +1,8 @@
-using System;
-using System.IO;
-
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
+
+    using System;
+    using System.IO;
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class IntegrationTestAttribute : Attribute

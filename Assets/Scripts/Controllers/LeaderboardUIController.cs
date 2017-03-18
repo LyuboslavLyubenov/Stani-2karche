@@ -1,12 +1,13 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
     using System.Collections;
 
+    using DTOs;
+
     using UnityEngine;
     using UnityEngine.UI;
-
-    using DTOs;
 
     public class LeaderboardUIController : MonoBehaviour
     {

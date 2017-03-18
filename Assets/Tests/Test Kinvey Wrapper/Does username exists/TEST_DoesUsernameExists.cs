@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using KinveyWrapper = Network.KinveyWrapper;
 
-namespace Assets.Tests.Test_Kinvey_Wrapper.Does_username_exists
+namespace Tests.Test_Kinvey_Wrapper.Does_username_exists
 {
 
-    using Assets.Scripts.Network;
+    using UnityEngine;
 
     public class TEST_DoesUsernameExists : MonoBehaviour
     {

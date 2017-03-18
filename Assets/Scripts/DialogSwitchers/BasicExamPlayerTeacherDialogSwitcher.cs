@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.DialogSwitchers
+﻿namespace DialogSwitchers
 {
+
     using UnityEngine;
 
     public class BasicExamPlayerTeacherDialogSwitcher : DialogSwitcher

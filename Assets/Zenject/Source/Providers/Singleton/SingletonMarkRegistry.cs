@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Providers.Singleton
+namespace Zenject.Source.Providers.Singleton
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     public class SingletonMarkRegistry
     {

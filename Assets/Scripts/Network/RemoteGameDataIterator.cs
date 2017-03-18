@@ -1,21 +1,23 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Network
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Commands;
+    using Commands.GameData;
+
+    using DTOs;
+
+    using EventArgs;
+
+    using Exceptions;
 
     using Extensions;
 
-    using DTOs;
-    using NetworkManagers;
-
-    using Commands;
-    using Commands.GameData;
-    using EventArgs;
-    using Exceptions;
     using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
 

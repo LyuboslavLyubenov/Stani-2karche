@@ -1,10 +1,11 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
+    using Localization;
+
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.UI;
-
-    using Localization;
 
     public class AvailableLanguagesUIController : MonoBehaviour
     {

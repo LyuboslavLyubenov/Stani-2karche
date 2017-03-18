@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher
+﻿namespace Commands.EveryBodyVsTheTeacher
 {
     public class StartGameRequestCommand : DummyCommand
     {

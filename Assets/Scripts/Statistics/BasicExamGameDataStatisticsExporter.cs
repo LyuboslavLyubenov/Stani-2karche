@@ -1,20 +1,20 @@
-﻿namespace Assets.Scripts.Statistics
+﻿namespace Statistics
 {
+
     using System;
     using System.IO;
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Statistics;
-
     using CSharpJExcel.Jxl;
     using CSharpJExcel.Jxl.Write;
 
-    using IO;
+    using Extensions;
 
-    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Statistics;
+
+    using IO;
 
     public class BasicExamGameDataStatisticsExporter : IStatisticsExporter
     {
@@ -255,7 +255,7 @@
                 
                 for (int i = GameDataExtractor.QuestionsStartRow; i < sheet.getRows(); )
                 {
-                    var questionAnswersCount = ExtractQuestionAnswersCount(sheet, i);
+                    var questionAnswersCount = this.ExtractQuestionAnswersCount(sheet, i);
                     this.UpdateQuestionStatisticsData(sheet, sheetW, i, questionAnswersCount);
                     i += questionAnswersCount + 2; //1 question text row, 1 empty row 
                 }

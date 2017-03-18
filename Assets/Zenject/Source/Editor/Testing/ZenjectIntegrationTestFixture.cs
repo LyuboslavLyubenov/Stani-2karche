@@ -1,12 +1,8 @@
-namespace Assets.Zenject.Source.Editor.Testing
+namespace Zenject.Source.Editor.Testing
 {
 
     using System;
     using System.Linq;
-
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Runtime.Kernels;
 
     using NUnit.Framework;
 
@@ -14,7 +10,11 @@ namespace Assets.Zenject.Source.Editor.Testing
 
     using UnityEngine;
 
-    using Assert = Assets.Zenject.Source.Internal.Assert;
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Main;
+    using Zenject.Source.Runtime.Kernels;
+
+    using Assert = Zenject.Source.Internal.Assert;
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class ValidateOnlyAttribute : Attribute

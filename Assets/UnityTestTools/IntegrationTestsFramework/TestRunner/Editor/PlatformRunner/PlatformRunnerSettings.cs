@@ -1,7 +1,7 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
 
-    using Assets.UnityTestTools.Common.Editor;
+    using UnityTestTools.Common.Editor;
 
     public class PlatformRunnerSettings : ProjectSettingsBase
     {

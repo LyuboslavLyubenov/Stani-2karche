@@ -1,7 +1,7 @@
-﻿namespace Assets.Scripts.Localization
+﻿namespace Localization
 {
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     using UnityEngine.SceneManagement;
     using UnityEngine.UI;

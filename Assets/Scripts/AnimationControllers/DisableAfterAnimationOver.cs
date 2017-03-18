@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.Scripts.AnimationControllers
+﻿namespace AnimationControllers
 {
+
+    using UnityEngine;
 
     public class DisableAfterAnimationOver : StateMachineBehaviour
     {

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
 
     using System;
@@ -6,15 +6,14 @@ namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
     using System.IO;
     using System.Linq;
 
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner;
-
     using UnityEditor;
     using UnityEditor.SceneManagement;
 
     using UnityEditorInternal;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner;
 
     public static partial class Batch
     {

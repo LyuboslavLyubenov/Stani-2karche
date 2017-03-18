@@ -1,12 +1,13 @@
 ﻿
-namespace Assets.Scripts.Controllers
+namespace Controllers
 {
+
     using System;
+
+    using Network.NetworkManagers;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
-
-    using Network.NetworkManagers;
 
     using EventArgs = System.EventArgs;
 

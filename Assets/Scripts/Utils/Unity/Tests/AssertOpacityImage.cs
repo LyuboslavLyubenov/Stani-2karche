@@ -1,12 +1,11 @@
-﻿namespace Assets.Scripts.Utils.Unity.Tests
+﻿namespace Utils.Unity.Tests
 {
 
     using System.Linq;
 
-    using Assets.Scripts.Utils.Unity;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-
     using UnityEngine.UI;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     public class AssertOpacityImage : ExtendedMonoBehaviour
     {

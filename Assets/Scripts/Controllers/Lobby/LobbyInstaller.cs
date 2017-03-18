@@ -1,17 +1,18 @@
-namespace Assets.Scripts.Controllers.Lobby
+namespace Controllers.Lobby
 {
 
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.Kinvey;
-    using Assets.Scripts.Interfaces.Services;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.Broadcast;
-    using Assets.Scripts.Network.TcpSockets;
-    using Assets.Zenject.Source.Install;
+    using Interfaces.Network;
+    using Interfaces.Network.Kinvey;
+    using Interfaces.Services;
+
+    using Network;
+    using Network.Broadcast;
+    using Network.GameInfo;
+    using Network.TcpSockets;
 
     using UnityEngine;
+
+    using Zenject.Source.Install;
 
     public class LobbyInstaller : MonoInstaller
     {
@@ -22,50 +23,50 @@ namespace Assets.Scripts.Controllers.Lobby
         {
             this.InstallSelectPlayerTypeRouterBindings();
 
-            Container.Bind<ISimpleTcpServer>()
+            this.Container.Bind<ISimpleTcpServer>()
                 .FromInstance(new SimpleTcpServer(7772))
                 .AsSingle();
 
-            Container.Bind<ISimpleTcpClient>()
+            this.Container.Bind<ISimpleTcpClient>()
                 .To<SimpleTcpClient>()
                 .AsSingle();
 
             var connectToExternalServerUIController = GameObject.FindObjectOfType<ConnectToExternalServerUIController>();
 
-            Container.Bind<ConnectToExternalServerUIController>()
+            this.Container.Bind<ConnectToExternalServerUIController>()
                 .FromInstance(connectToExternalServerUIController)
                 .AsSingle();
 
             var serversAvailableUIController = GameObject.FindObjectOfType<ServersAvailableUIController>();
 
-            Container.Bind<ServersAvailableUIController>()
+            this.Container.Bind<ServersAvailableUIController>()
                 .FromInstance(serversAvailableUIController)
                 .AsSingle();
 
-            Container.Bind<IKinveyWrapper>()
+            this.Container.Bind<IKinveyWrapper>()
                 .To<KinveyWrapper>()
                 .AsSingle();
 
-            Container.Bind<ILANServersDiscoverer>()
+            this.Container.Bind<ILANServersDiscoverer>()
                 .To<LANServersDiscoverer>()
                 .AsSingle();
 
-            Container.Bind<CreatedGameInfoReceiver>()
+            this.Container.Bind<CreatedGameInfoReceiver>()
                 .AsSingle();
 
         }
         
         private void InstallSelectPlayerTypeRouterBindings()
         {
-            Container.Bind<BasicExamServerSelectPlayerTypeUIController>()
+            this.Container.Bind<BasicExamServerSelectPlayerTypeUIController>()
                 .FromInstance(this.BasicExamServerSelectPlayerTypeUIController)
                 .AsSingle();
 
-            Container.Bind<SelectPlayerTypeUIController>()
+            this.Container.Bind<SelectPlayerTypeUIController>()
                 .FromInstance(this.EveryBodyVsTheTeacherSelectPlayerTypeUiController)
                 .AsSingle();
 
-            Container.Bind<SelectPlayerTypeRouter>()
+            this.Container.Bind<SelectPlayerTypeRouter>()
                 .AsSingle();
         }
     }

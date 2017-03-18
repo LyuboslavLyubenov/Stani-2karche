@@ -1,14 +1,16 @@
-﻿using System.Linq;
+﻿using KinveyWrapper = Network.KinveyWrapper;
 
-using UnityEngine;
-
-namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
+namespace Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
 {
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.DTOs.KinveyDtoObjs;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Utils.Unity;
+    using System.Linq;
+
+    using DTOs;
+    using DTOs.KinveyDtoObjs;
+
+    using UnityEngine;
+
+    using Utils.Unity;
 
     public class TEST_RetrieveServerInfo : ExtendedMonoBehaviour
     {
@@ -20,7 +22,7 @@ namespace Assets.Tests.Test_Kinvey_Wrapper.Upload_and_retrieve_from_collection
         private void TestRetrieveGameInfo()
         {
             var kinveyWrapper = new KinveyWrapper();
-            kinveyWrapper.LoginAsync("ivan", "ivan", (data) => OnReceivedLoginResponse(kinveyWrapper, data), Debug.LogException);
+            kinveyWrapper.LoginAsync("ivan", "ivan", (data) => this.OnReceivedLoginResponse(kinveyWrapper, data), Debug.LogException);
         }
 
         private void OnReceivedLoginResponse(KinveyWrapper kinveyWrapper, _UserReceivedData data)

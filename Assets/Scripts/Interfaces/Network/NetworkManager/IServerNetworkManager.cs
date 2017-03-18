@@ -1,10 +1,11 @@
-namespace Assets.Scripts.Interfaces.Network.NetworkManager
+namespace Interfaces.Network.NetworkManager
 {
 
     using System;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.EventArgs;
+    using Commands;
+
+    using EventArgs;
 
     public interface IServerNetworkManager
     {

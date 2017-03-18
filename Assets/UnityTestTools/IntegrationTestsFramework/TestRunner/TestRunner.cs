@@ -1,6 +1,6 @@
 // #define IMITATE_BATCH_MODE //uncomment if you want to imitate batch mode behaviour in non-batch mode mode run
 
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
     using System;
@@ -9,10 +9,10 @@ namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
     using System.IO;
     using System.Linq;
 
-    using Assets.UnityTestTools.Assertions;
-
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using UnityTestTools.Assertions;
 
     [Serializable]
     public class TestRunner : MonoBehaviour

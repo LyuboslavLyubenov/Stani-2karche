@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Common.Editor.ResultWriter
+namespace UnityTestTools.Common.Editor.ResultWriter
 {
 
     using System;
@@ -7,8 +7,6 @@ namespace Assets.UnityTestTools.Common.Editor.ResultWriter
     using System.IO;
     using System.Security;
     using System.Text;
-
-    using Assets.UnityTestTools.Common;
 
     using UnityEngine;
 

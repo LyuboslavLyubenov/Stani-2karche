@@ -1,9 +1,9 @@
-namespace Assets.Scripts.Interfaces.Services
+namespace Interfaces.Services
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface ILANServersDiscoverer : IDisposable
     {

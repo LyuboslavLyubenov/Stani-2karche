@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.AnimationControllers
+﻿namespace AnimationControllers
 {
 
     using UnityEngine;

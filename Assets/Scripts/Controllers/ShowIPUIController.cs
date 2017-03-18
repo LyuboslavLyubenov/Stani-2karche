@@ -1,11 +1,13 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
+
+    using Localization;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    using Localization;
     using Utils.Unity;
 
     public class ShowIPUIController : MonoBehaviour

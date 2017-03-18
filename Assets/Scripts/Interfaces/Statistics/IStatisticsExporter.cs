@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Interfaces.Statistics
+namespace Interfaces.Statistics
 {
 
     public interface IStatisticsExporter

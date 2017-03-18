@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
+﻿namespace Interfaces.Network.Jokers.Routers
 {
 
     using System.Collections.Generic;

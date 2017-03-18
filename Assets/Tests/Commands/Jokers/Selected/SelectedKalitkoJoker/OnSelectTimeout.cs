@@ -7,12 +7,15 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network;
+
+    using Tests.DummyObjects;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class OnSelectTimeout : MonoBehaviour
     {

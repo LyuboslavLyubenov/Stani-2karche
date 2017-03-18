@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-
-using UnityEngine;
-
-namespace Assets.Tests
+﻿namespace Tests
 {
 
-    using Assets.Scripts.Controllers;
+    using System.Collections.Generic;
+
+    using Controllers;
+
+    using UnityEngine;
 
     public class TESTAudienceAnswers : MonoBehaviour
     {

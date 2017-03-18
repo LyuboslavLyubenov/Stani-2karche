@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-
 //Mediator
 
-namespace Assets.Scripts.EventArgs
+namespace EventArgs
 {
+
+    using System;
+    using System.Collections.Generic;
 
     using EventArgs = System.EventArgs;
 

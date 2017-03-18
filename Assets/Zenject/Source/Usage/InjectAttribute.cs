@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Usage
+namespace Zenject.Source.Usage
 {
 
     using System;

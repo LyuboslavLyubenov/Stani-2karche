@@ -1,21 +1,24 @@
 ﻿//Mediator
 // ReSharper disable ArrangeTypeMemberModifiers
-namespace Assets.Scripts.Controllers.GameController
+namespace Controllers.GameController
 {
-
-    using Assets.Scripts.Network.Leaderboard;
 
     using Commands;
     using Commands.Client;
+
     using EventArgs;
-    using Exceptions;
+
     using Interfaces;
+
+    using Network.Leaderboard;
     using Network.NetworkManagers;
+
     using Notifications;
-    using Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
@@ -84,7 +87,7 @@ namespace Assets.Scripts.Controllers.GameController
         {
             var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, NotificationsesController.Instance);
             var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
-            var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, leaderboardReceiver);
+            var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver);
 
             ClientNetworkManager.Instance.CommandsManager.AddCommand(answerTimeout);
             ClientNetworkManager.Instance.CommandsManager.AddCommand(loadQuestion);
@@ -98,7 +101,7 @@ namespace Assets.Scripts.Controllers.GameController
 
             this.questionUIController.OnAnswerClick += this.OnAnswerClick;
 
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)

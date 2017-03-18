@@ -1,14 +1,14 @@
-namespace Assets.Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder
+namespace Zenject.Source.Binding.Binders.Factory.FactoryFromBinder.SubContainerBinder
 {
 
     using System;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.SubContainerCreators;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.SubContainerCreators;
 
     public class FactorySubContainerBinder<TParam1, TParam2, TParam3, TParam4, TContract>
         : FactorySubContainerBinderWithParams<TContract>

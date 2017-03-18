@@ -1,9 +1,10 @@
-﻿namespace Assets.Tests.UI.Lobby.SelectPlayerTypeRouter
+﻿namespace Tests.UI.Lobby.SelectPlayerTypeRouter
 {
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Zenject.Source.Install;
+    using Controllers;
+    using Controllers.Lobby;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {

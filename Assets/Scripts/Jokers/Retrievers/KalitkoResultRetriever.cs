@@ -1,10 +1,11 @@
 ﻿using SelectedKalitkoJokerCommand = Commands.Jokers.Selected.SelectedKalitkoJokerCommand;
 
-namespace Assets.Scripts.Jokers.Retrievers
+namespace Jokers.Retrievers
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Commands;
+
+    using Interfaces.Network.NetworkManager;
 
     public class KalitkoResultRetriever : AnswerPollResultRetriever
     {

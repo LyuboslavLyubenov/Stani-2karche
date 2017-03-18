@@ -1,16 +1,14 @@
-﻿namespace Assets.Scripts.Commands.Client
+﻿namespace Commands.Client
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Interfaces.Notifications;
+    using Interfaces.Network.NetworkManager;
+    using Interfaces.Notifications;
 
     using UnityEngine;
-
-    using Interfaces;
-    using Notifications;
 
     public class NotificationFromServerCommand : INetworkManagerCommand
     {

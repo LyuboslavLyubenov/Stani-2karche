@@ -1,9 +1,9 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Install.Contexts
+namespace Zenject.Source.Install.Contexts
 {
 
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Main;
 
     // For some platforms, it's desirable to be able to add dependencies to Zenject before
     // Unity even starts up (eg. WSA as described here https://github.com/modesttree/Zenject/issues/118)

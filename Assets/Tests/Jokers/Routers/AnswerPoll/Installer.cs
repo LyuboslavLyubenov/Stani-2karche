@@ -1,13 +1,17 @@
-﻿namespace Assets.Tests.Jokers.Routers.AnswerPoll
+﻿using AnswerPollRouter = Jokers.Routers.AnswerPollRouter;
+
+namespace Tests.Jokers.Routers.AnswerPoll
 {
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Jokers.Routers;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Install;
+    using DTOs;
+
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
     {

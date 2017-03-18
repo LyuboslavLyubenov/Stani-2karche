@@ -1,8 +1,8 @@
-namespace Assets.Zenject.Source.Binding.Binders.ConcreteBinders
+namespace Zenject.Source.Binding.Binders.ConcreteBinders
 {
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
 
     public class ConcreteIdBinderGeneric<TContract> : ConcreteBinderGeneric<TContract>
     {

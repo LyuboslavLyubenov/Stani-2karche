@@ -1,11 +1,13 @@
-﻿namespace Assets.Tests.EveryBodyVsTheTeacher.States
+﻿namespace Tests.EveryBodyVsTheTeacher.States
 {
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
 
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class WhenNotEnteredIntoStateTests : ExtendedMonoBehaviour
     {

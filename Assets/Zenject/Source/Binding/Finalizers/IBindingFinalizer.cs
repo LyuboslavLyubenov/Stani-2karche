@@ -1,7 +1,7 @@
-namespace Assets.Zenject.Source.Binding.Finalizers
+namespace Zenject.Source.Binding.Finalizers
 {
 
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Main;
 
     public interface IBindingFinalizer
     {

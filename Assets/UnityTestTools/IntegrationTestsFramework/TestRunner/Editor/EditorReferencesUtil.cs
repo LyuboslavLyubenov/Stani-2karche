@@ -1,4 +1,4 @@
-﻿namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
+﻿namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 {
 
     using System.Collections.Generic;

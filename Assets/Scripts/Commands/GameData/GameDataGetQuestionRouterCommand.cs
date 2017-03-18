@@ -1,14 +1,12 @@
-﻿namespace Assets.Scripts.Commands.GameData
+﻿namespace Commands.GameData
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Interfaces.Network.NetworkManager;
 
-    using Network.NetworkManagers;
-
-    using Interfaces;
     using Network;
 
     public class GameDataGetQuestionRouterCommand : INetworkManagerCommand

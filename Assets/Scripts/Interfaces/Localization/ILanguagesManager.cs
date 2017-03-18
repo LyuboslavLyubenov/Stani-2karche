@@ -1,7 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces.Localization
+﻿namespace Interfaces.Localization
 {
+
     using System;
-    using Assets.Scripts.EventArgs;
+
+    using EventArgs;
 
     public interface ILanguagesManager
     {

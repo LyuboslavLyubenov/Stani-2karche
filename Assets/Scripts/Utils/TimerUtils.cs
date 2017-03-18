@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Utils
+﻿namespace Utils
 {
+
     using System;
 
     public class TimerUtils

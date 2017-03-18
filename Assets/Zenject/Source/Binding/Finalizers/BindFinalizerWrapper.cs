@@ -1,8 +1,8 @@
-namespace Assets.Zenject.Source.Binding.Finalizers
+namespace Zenject.Source.Binding.Finalizers
 {
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public class BindFinalizerWrapper : IBindingFinalizer
     {

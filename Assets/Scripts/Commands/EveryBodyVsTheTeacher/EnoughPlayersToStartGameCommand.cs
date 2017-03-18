@@ -1,8 +1,9 @@
-﻿namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher
+﻿namespace Commands.EveryBodyVsTheTeacher
 {
+
     using System.Collections.Generic;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine.UI;
 

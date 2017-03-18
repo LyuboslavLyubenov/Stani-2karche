@@ -1,10 +1,11 @@
-using System;
-
-namespace Assets.Scripts.EventArgs
+namespace EventArgs
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Network;
+    using System;
+
+    using Interfaces;
+
+    using Network;
 
     using EventArgs = System.EventArgs;
 

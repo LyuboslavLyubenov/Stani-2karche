@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
@@ -6,9 +6,9 @@ namespace Assets.Zenject.Source.Util
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Usage;
 
     public static class TypeAnalyzer
     {

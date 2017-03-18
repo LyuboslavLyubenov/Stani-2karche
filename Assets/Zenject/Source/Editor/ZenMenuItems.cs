@@ -1,18 +1,18 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Editor
+namespace Zenject.Source.Editor
 {
 
     using System;
     using System.IO;
 
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Internal;
-
     using UnityEditor;
     using UnityEditor.SceneManagement;
 
     using UnityEngine;
+
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Internal;
 
     public static class ZenMenuItems
     {

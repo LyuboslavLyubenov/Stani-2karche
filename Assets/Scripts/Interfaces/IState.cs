@@ -1,7 +1,7 @@
-namespace Assets.Scripts.Interfaces
+namespace Interfaces
 {
 
-    using Assets.Scripts.StateMachine;
+    using StateMachine;
 
     public interface IState
     {    

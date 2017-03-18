@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Network.TcpSockets
+﻿namespace Network.TcpSockets
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,11 +10,12 @@
     using System.Text;
     using System.Timers;
 
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
+    using Extensions;
+
+    using Interfaces.Network;
 
     using SecuritySettings;
+
     using Utils;
 
     using Debug = UnityEngine.Debug;
@@ -107,7 +109,7 @@
         {
             Socket socket;
 
-            lock (myLock)
+            lock (this.myLock)
             {
                 socket = this.connectedToServersIPsSockets[ipAddress];
             }
@@ -167,7 +169,7 @@
 
             try
             {
-                lock (myLock)
+                lock (this.myLock)
                 {
                     this.connectedToServersIPsSockets.Remove(state.IPAddress);
                 }
@@ -195,7 +197,7 @@
                 throw new ArgumentNullException("message", "Cannot send empty message");
             }
 
-            lock (myLock)
+            lock (this.myLock)
             {
                 if (!this.connectedToServersIPsSockets.ContainsKey(ipAddress))
                 {
@@ -218,7 +220,7 @@
                 throw new ArgumentOutOfRangeException("port", "Invalid port");
             }
 
-            lock (myLock)
+            lock (this.myLock)
             {
                 if (this.connectedToServersIPsSockets.ContainsKey(ipAddress))
                 {
@@ -233,7 +235,7 @@
         {
             Socket socket;
 
-            lock (myLock)
+            lock (this.myLock)
             {
 
                 if (!this.connectedToServersIPsSockets.ContainsKey(ipAddress))

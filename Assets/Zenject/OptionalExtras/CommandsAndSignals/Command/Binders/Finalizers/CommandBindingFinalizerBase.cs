@@ -1,17 +1,17 @@
-namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders.Finalizers
+namespace Zenject.OptionalExtras.CommandsAndSignals.Command.Binders.Finalizers
 {
 
     using System;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
-    using Assets.Zenject.Source.Providers.Singleton;
-    using Assets.Zenject.Source.Providers.Singleton.Standard;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
+    using Zenject.Source.Providers.Singleton;
+    using Zenject.Source.Providers.Singleton.Standard;
 
     // Zero Parameters
 

@@ -1,17 +1,22 @@
-﻿namespace Assets.Tests.UI.Lobby.ServersAvailableUIController
+﻿using CreatedGameInfoSender = Network.GameInfo.CreatedGameInfoSender;
+
+namespace Tests.UI.Lobby.ServersAvailableUIController
 {
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Services;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Usage;
+    using Controllers;
+
+    using DTOs;
+
+    using Interfaces.Network;
+    using Interfaces.Services;
+
+    using Tests.DummyObjects;
 
     using UnityEngine;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class AddFoundLocalServer : ExtendedMonoBehaviour
     {

@@ -1,13 +1,16 @@
-﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
+﻿using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
+using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class MakeClientMainPlayer : ExtendedMonoBehaviour
     {
@@ -19,7 +22,7 @@
     
         void Start ()
         {
-            CoroutineUtils.WaitForSeconds(this.SetAfterTimeInSeconds, this.MakeAsMainPlayer);		
+            this.CoroutineUtils.WaitForSeconds(this.SetAfterTimeInSeconds, this.MakeAsMainPlayer);		
         }
 
         void MakeAsMainPlayer()

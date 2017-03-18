@@ -1,16 +1,22 @@
-﻿namespace Assets.Tests.Jokers.Retrievers.AudiencePollResultRetriever
+﻿using AnswerPollResultCommand = Commands.Client.AnswerPollResultCommand;
+using AnswerPollSettingsCommand = Commands.Jokers.Settings.AnswerPollSettingsCommand;
+using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Tests.Jokers.Retrievers.PollResultRetriever
 {
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Client;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
-    
+
+    using Interfaces;
+    using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
+
     public class Voted : ExtendedMonoBehaviour
     {
         [Inject]

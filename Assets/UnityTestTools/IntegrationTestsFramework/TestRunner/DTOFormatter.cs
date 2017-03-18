@@ -1,4 +1,4 @@
-﻿namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+﻿namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
     using System;
@@ -6,7 +6,7 @@
     using System.Runtime.Serialization;
     using System.Text;
 
-    using Assets.UnityTestTools.Common;
+    using UnityTestTools.Common;
 
     public class DTOFormatter {
     

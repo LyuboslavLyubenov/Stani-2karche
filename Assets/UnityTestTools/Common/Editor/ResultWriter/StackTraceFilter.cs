@@ -2,7 +2,7 @@
 // Based on nUnit 2.6.2 (http://www.nunit.org/)
 // ****************************************************************
 
-namespace Assets.UnityTestTools.Common.Editor.ResultWriter
+namespace UnityTestTools.Common.Editor.ResultWriter
 {
 
     using System;

@@ -1,9 +1,7 @@
-﻿namespace Assets.UITween.Editor
+﻿namespace UITween.Editor
 {
 
-    using System.Collections;
-
-    using Assets.UITween.Scripts;
+    using UITween.Scripts;
 
     using UnityEditor;
 

@@ -1,14 +1,18 @@
-﻿using UnityEngine;
+﻿using ClientNetworkManager = Network.NetworkManagers.ClientNetworkManager;
+using RemoteAvailableCategoriesReader = Network.RemoteAvailableCategoriesReader;
 
-namespace Assets.Tests.Test_receive_available_categories
+namespace Tests.Test_receive_available_categories
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Localization;
-    using Assets.Scripts.Network;
-    using Assets.Scripts.Network.NetworkManagers;
-    using Assets.Scripts.Notifications;
-    using Assets.Scripts.Utils;
+    using Interfaces;
+
+    using Localization;
+
+    using Notifications;
+
+    using UnityEngine;
+
+    using Utils;
 
     public class TESTClientGetAvailableCategories : MonoBehaviour
     {

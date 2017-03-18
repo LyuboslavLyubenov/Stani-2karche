@@ -1,6 +1,8 @@
-namespace Assets.Scripts.Utils
+namespace Utils
 {
+
     using System;
+
     using UnityEngine;
 
     public static class JsonArrayUtility

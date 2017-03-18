@@ -1,5 +1,6 @@
-namespace Assets.Scripts.Network.TcpSockets
+namespace Network.TcpSockets
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,12 +10,14 @@ namespace Assets.Scripts.Network.TcpSockets
     using System.Text;
     using System.Threading;
 
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network;
-
     using EventArgs;
+
+    using Extensions;
+
+    using Interfaces.Network;
+
     using SecuritySettings;
+
     using Utils;
 
     using Debug = UnityEngine.Debug;
@@ -142,7 +145,7 @@ namespace Assets.Scripts.Network.TcpSockets
                     this.connectedIPClientsSocket[ip] = connectionSocket;
                 }
 
-                ThreadUtils.Instance.RunOnMainThread(() => OnClientConnected(this, new IpEventArgs(ip)));
+                ThreadUtils.Instance.RunOnMainThread(() => this.OnClientConnected(this, new IpEventArgs(ip)));
 
                 this.BeginReceiveMessage(ip);
             }
@@ -157,7 +160,7 @@ namespace Assets.Scripts.Network.TcpSockets
 
         private void BeginReceiveMessage(string ipAddress)
         {
-            lock (myLock)
+            lock (this.myLock)
             {
                 var socket = this.connectedIPClientsSocket[ipAddress];
                 var state = new ReceiveMessageState(socket, MessageBuffer);
@@ -216,7 +219,7 @@ namespace Assets.Scripts.Network.TcpSockets
                     ThreadUtils.Instance.RunOnMainThread(() => this.OnReceivedMessage(this, args));
                 }
 
-                lock (myLock)
+                lock (this.myLock)
                 {
                     this.socketsMessageState[socket] = new ReceiveMessageState(socket, MessageBuffer);
                 }
@@ -233,7 +236,7 @@ namespace Assets.Scripts.Network.TcpSockets
 
             try
             {
-                lock (myLock)
+                lock (this.myLock)
                 {
                     this.connectedIPClientsSocket.Remove(state.IPAddress);
 
@@ -295,7 +298,7 @@ namespace Assets.Scripts.Network.TcpSockets
 
         public void Disconnect(string ipAddress, Action onSuccess = null, Action<Exception> onError = null)
         {
-            lock (myLock)
+            lock (this.myLock)
             {
                 if (!this.connectedIPClientsSocket.ContainsKey(ipAddress))
                 {
@@ -319,8 +322,8 @@ namespace Assets.Scripts.Network.TcpSockets
             {
             }
             
-            DisconnectAllSockets();
-            ClearMessagesRequestQueue();
+            this.DisconnectAllSockets();
+            this.ClearMessagesRequestQueue();
             
             this.removeDisconnectedSocketsTimer.Stop();
             this.removeDisconnectedSocketsTimer.Dispose();

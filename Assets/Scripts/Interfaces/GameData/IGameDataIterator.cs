@@ -1,9 +1,9 @@
-﻿namespace Assets.Scripts.Interfaces.GameData
+﻿namespace Interfaces.GameData
 {
 
     using System;
 
-    using Assets.Scripts.EventArgs;
+    using EventArgs;
 
     public interface IGameDataIterator
     {

@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Runtime.Kernels
+namespace Zenject.Source.Runtime.Kernels
 {
 
     using System;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Usage;
 
     [System.Diagnostics.DebuggerStepThrough]
     public class Kernel : IInitializable, IDisposable, ITickable, ILateTickable, IFixedTickable

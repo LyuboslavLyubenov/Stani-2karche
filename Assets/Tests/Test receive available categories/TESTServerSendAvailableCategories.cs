@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using GetAvailableCategoriesCommand = Commands.Server.GetAvailableCategoriesCommand;
+using SelectedCategoryCommand = Commands.Server.SelectedCategoryCommand;
+using ServerNetworkManager = Network.NetworkManagers.ServerNetworkManager;
 
-namespace Assets.Tests.Test_receive_available_categories
+namespace Tests.Test_receive_available_categories
 {
 
-    using Assets.Scripts.IO;
-    using Assets.Scripts.Network.NetworkManagers;
+    using IO;
 
-    using Scripts.Commands.Server;
+    using UnityEngine;
 
     public class TESTServerSendAvailableCategories : MonoBehaviour
     {

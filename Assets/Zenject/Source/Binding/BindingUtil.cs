@@ -5,20 +5,20 @@
 
 #endif
 
-namespace Assets.Zenject.Source.Binding
+namespace Zenject.Source.Binding
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Util;
-
     using UnityEditor;
 
     using UnityEngine;
+
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Util;
 
     internal static class BindingUtil
     {

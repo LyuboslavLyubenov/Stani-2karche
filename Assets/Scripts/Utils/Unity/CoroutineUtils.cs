@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Utils.Unity
+﻿namespace Utils.Unity
 {
+
     using System;
     using System.Collections;
 
@@ -21,12 +22,12 @@
 
         public void WaitForSeconds(float seconds, Action callback)
         {
-            this.instance.StartCoroutine(WaitForSecondsCoroutine(seconds, callback));
+            this.instance.StartCoroutine(this.WaitForSecondsCoroutine(seconds, callback));
         }
 
         public void WaitForFrames(int frames, Action callback)
         {
-            this.instance.StartCoroutine(WaitForFramesCoroutine(frames, callback));
+            this.instance.StartCoroutine(this.WaitForFramesCoroutine(frames, callback));
         }
 
         public void WaitForRenderGUIFrames(int frames, Action callback)

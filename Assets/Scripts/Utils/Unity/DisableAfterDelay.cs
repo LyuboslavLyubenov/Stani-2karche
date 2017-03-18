@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Utils.Unity
+﻿namespace Utils.Unity
 {
+
     using System;
     using System.Collections;
     using System.Linq;
@@ -81,7 +82,7 @@
 
         private void Disable()
         {
-            onTimeEnd(this, EventArgs.Empty);
+            this.onTimeEnd(this, EventArgs.Empty);
             
             if (this.UseAnimator)
             {

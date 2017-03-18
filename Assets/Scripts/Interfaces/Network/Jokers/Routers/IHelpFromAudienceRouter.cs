@@ -1,9 +1,7 @@
-﻿namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
+﻿namespace Interfaces.Network.Jokers.Routers
 {
 
     using System;
-
-    using Assets.Scripts.DTOs;
 
     /// <summary>
     /// sender = senderConnectionId

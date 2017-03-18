@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Injection
+namespace Zenject.Source.Injection
 {
 
     using System;
@@ -6,9 +6,9 @@ namespace Assets.Zenject.Source.Injection
     using System.Linq;
     using System.Text;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Usage;
 
     public class InjectContext
     {

@@ -1,9 +1,9 @@
-namespace Assets.Scripts.Interfaces.Network.Kinvey
+namespace Interfaces.Network.Kinvey
 {
 
     using System;
 
-    using Assets.Scripts.DTOs.KinveyDtoObjs;
+    using DTOs.KinveyDtoObjs;
 
     public interface IKinveyWrapper
     {

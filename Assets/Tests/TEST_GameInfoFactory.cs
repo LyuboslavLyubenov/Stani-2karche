@@ -1,12 +1,10 @@
-﻿using Assets.Scripts;
-using Assets.Scripts.Network.NetworkManagers;
+﻿using BasicExamServer = Network.Servers.BasicExamServer;
+using ServerNetworkManager = Network.NetworkManagers.ServerNetworkManager;
 
-using UnityEngine;
-
-namespace Assets.Tests
+namespace Tests
 {
 
-    using Assets.Scripts.Network.Servers;
+    using UnityEngine;
 
     public class TEST_GameInfoFactory : MonoBehaviour
     {

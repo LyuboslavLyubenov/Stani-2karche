@@ -1,16 +1,19 @@
-﻿namespace Assets.Scripts.Jokers.Routers
+﻿namespace Jokers.Routers
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.Jokers;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Commands;
+    using Commands.Jokers;
+
+    using EventArgs;
+
+    using Interfaces.GameData;
+    using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
 
     public class VoteForAnswerJokerRouter : IVoteForAnswerJokerRouter
     {

@@ -1,4 +1,4 @@
-namespace Assets.UnityTestTools.Assertions.Editor
+namespace UnityTestTools.Assertions.Editor
 {
 
     using System;

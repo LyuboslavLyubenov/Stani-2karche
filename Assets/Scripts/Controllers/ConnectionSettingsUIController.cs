@@ -1,11 +1,12 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
+
+    using EventArgs;
 
     using UnityEngine;
     using UnityEngine.UI;
-
-    using EventArgs;
 
     public class ConnectionSettingsUIController : MonoBehaviour
     {

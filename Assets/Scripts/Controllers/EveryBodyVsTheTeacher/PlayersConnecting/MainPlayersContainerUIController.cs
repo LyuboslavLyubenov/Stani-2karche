@@ -1,19 +1,18 @@
 using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
 
-namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
+namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Zenject.Source.Usage;
+    using EventArgs;
+
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
+
+    using Zenject.Source.Usage;
 
     public class MainPlayersContainerUIController : MonoBehaviour
     {   
@@ -29,7 +28,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
         void Start()
         {
             this.state.OnMainPlayerConnected += this.OnMainPlayerConnected;
-            this.state.OnMainPlayerRequestedGameStart += OnMainPlayerRequestedGameStart;
+            this.state.OnMainPlayerRequestedGameStart += this.OnMainPlayerRequestedGameStart;
             this.state.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
 
             this.mainPlayerUIControllers = this.GetComponentsInChildren<MainPlayerUIController>();

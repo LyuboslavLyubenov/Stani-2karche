@@ -1,4 +1,4 @@
-namespace Assets.Scripts.IO
+﻿namespace IO
 {
 
     using System;
@@ -8,16 +8,20 @@ namespace Assets.Scripts.IO
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Interfaces.GameData;
-
     using CielaSpike.Thread_Ninja;
-    using DTOs;
-    using Exceptions;
-    using Interfaces;
-    using Statistics;
-    using Utils;
 
     using CSharpJExcel.Jxl;
+
+    using DTOs;
+
+    using Exceptions;
+
+    using Interfaces;
+    using Interfaces.GameData;
+
+    using Statistics;
+
+    using Utils;
 
     public class GameDataExtractor : IGameDataExtractor
     {

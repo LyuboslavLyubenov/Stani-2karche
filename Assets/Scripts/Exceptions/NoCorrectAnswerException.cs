@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Exceptions
+namespace Exceptions
 {
 
     public class NoCorrectAnswerException : ExtractAnswersException

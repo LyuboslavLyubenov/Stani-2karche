@@ -1,24 +1,26 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Scripts.DTOs.KinveyDtoObjs;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Kinvey;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Interfaces.Services;
-    using Assets.Zenject.Source.Usage;
+    using Controllers.Lobby;
+
+    using DTOs;
+    using DTOs.KinveyDtoObjs;
+
+    using EventArgs;
+
+    using Interfaces.Network.Kinvey;
+    using Interfaces.Network.NetworkManager;
+    using Interfaces.Services;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    using DTOs;
-
-    using EventArgs;
-    using Network;
     using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     using Debug = UnityEngine.Debug;
 
@@ -61,7 +63,7 @@
         {
             NetworkUtils.CheckInternetConnection((isConnectedToInternet) =>
                 {
-                    if (!isConnectedToInternet || !kinveyWrapper.IsLoggedIn)
+                    if (!isConnectedToInternet || !this.kinveyWrapper.IsLoggedIn)
                     {
                         return;
                     }
@@ -111,7 +113,7 @@
 
             var button = obj.GetComponent<Button>();
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => OnClickedOnServerElement(gameInfo.GameType, receivedData.JSON));
+            button.onClick.AddListener(() => this.OnClickedOnServerElement(gameInfo.GameType, receivedData.JSON));
         }
 
         private void OnClickedOnServerElement(string gameType, string gameInfoJSON)

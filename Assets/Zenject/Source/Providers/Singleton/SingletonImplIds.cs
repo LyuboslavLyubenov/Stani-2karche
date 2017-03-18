@@ -1,9 +1,9 @@
-namespace Assets.Zenject.Source.Providers.Singleton
+namespace Zenject.Source.Providers.Singleton
 {
 
     using System;
 
-    using Assets.Zenject.Source.Internal;
+    using Zenject.Source.Internal;
 
     public static class SingletonImplIds
     {

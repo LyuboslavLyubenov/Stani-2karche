@@ -1,7 +1,7 @@
-namespace Assets.Scripts.Interfaces
+namespace Interfaces
 {
 
-    using Assets.Scripts.DTOs;
+    using DTOs;
 
     public interface ISelectPlayerTypeUIController<in T> : ISelectPlayerTypeUIController where T : CreatedGameInfo_DTO
     {

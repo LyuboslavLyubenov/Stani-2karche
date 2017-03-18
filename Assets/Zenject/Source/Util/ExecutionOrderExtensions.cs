@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Runtime;
-    using Assets.Zenject.Source.Usage;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Runtime;
+    using Zenject.Source.Usage;
 
     public static class ExecutionOrderExtensions
     {

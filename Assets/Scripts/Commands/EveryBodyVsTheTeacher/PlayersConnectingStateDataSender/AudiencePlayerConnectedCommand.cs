@@ -1,10 +1,11 @@
-﻿namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
+﻿namespace Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Interfaces.Network.NetworkManager;
+
     public class AudiencePlayerConnectedCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
         public EventHandler OnExecuted

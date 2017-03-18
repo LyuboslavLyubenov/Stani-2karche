@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace Assets.Scripts.Utils
+﻿namespace Utils
 {
+
+    using System;
+    using System.IO;
+    using System.Security.Cryptography;
+    using System.Text;
 
     public class CipherUtility
     {

@@ -1,14 +1,14 @@
-namespace Assets.Scripts.Network
+namespace Network
 {
-    using System;
-    using System.Timers;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using System;
 
     using Commands;
     using Commands.Client;
+
     using Interfaces;
-    using NetworkManagers;
+    using Interfaces.Network.NetworkManager;
+
     using Utils;
 
     public class RemoteAvailableCategoriesReader : IAvailableCategoriesReader, IDisposable

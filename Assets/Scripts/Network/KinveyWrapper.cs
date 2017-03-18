@@ -1,17 +1,20 @@
-namespace Assets.Scripts.Network
+namespace Network
 {
 
     using System;
     using System.Collections;
 
-    using Assets.CielaSpike.Thread_Ninja;
-    using Assets.Scripts.DTOs.KinveyDtoObjs;
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Kinvey;
-    using Assets.Scripts.Utils;
+    using CielaSpike.Thread_Ninja;
+
+    using DTOs.KinveyDtoObjs;
+
+    using Extensions;
+
+    using Interfaces.Network.Kinvey;
 
     using UnityEngine;
+
+    using Utils;
 
     public class KinveyWrapper : IKinveyWrapper
     {

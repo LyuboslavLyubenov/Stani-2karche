@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Utils.Unity.UI
+﻿namespace Utils.Unity.UI
 {
 
     using UnityEngine;
@@ -10,7 +10,7 @@
         void Start()
         {
 #if UNITY_ANDROID
-        GetComponent<Button>().interactable = false;
+        this.GetComponent<Button>().interactable = false;
         #endif
         }
     }

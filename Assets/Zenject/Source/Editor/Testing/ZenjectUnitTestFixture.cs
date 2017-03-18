@@ -1,9 +1,9 @@
-﻿namespace Assets.Zenject.Source.Editor.Testing
+﻿namespace Zenject.Source.Editor.Testing
 {
 
-    using Assets.Zenject.Source.Main;
-
     using NUnit.Framework;
+
+    using Zenject.Source.Main;
 
     // Inherit from this and mark you class with [TestFixture] attribute to do some unit tests
     // For anything more complicated than this, such as tests involving interaction between

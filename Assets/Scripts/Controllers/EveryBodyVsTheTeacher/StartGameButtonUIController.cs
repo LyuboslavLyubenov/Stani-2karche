@@ -1,13 +1,15 @@
-﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher
+﻿namespace Controllers.EveryBodyVsTheTeacher
 {
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Zenject.Source.Usage;
+    using Commands;
+    using Commands.EveryBodyVsTheTeacher;
+
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
     using UnityEngine.UI;
+
+    using Zenject.Source.Usage;
 
     public class StartGameButtonUIController : MonoBehaviour
     {

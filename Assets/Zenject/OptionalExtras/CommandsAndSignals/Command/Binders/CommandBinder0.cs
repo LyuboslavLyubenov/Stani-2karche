@@ -1,14 +1,14 @@
-namespace Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders
+namespace Zenject.OptionalExtras.CommandsAndSignals.Command.Binders
 {
 
     using System;
 
-    using Assets.Zenject.OptionalExtras.CommandsAndSignals.Command.Binders.Finalizers;
-    using Assets.Zenject.Source.Binding.Binders;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers;
+    using Zenject.OptionalExtras.CommandsAndSignals.Command.Binders.Finalizers;
+    using Zenject.Source.Binding.Binders;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers;
 
     // Zero parameters
     public class CommandBinder<TCommand> : CommandBinderBase<TCommand, Action>

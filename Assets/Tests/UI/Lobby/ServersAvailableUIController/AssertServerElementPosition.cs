@@ -1,12 +1,14 @@
-namespace Assets.Tests.UI.Lobby.ServersAvailableUIController
+namespace Tests.UI.Lobby.ServersAvailableUIController
 {
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+    using Controllers;
+    using Controllers.Lobby;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
 
     public class AssertServerElementPosition : ExtendedMonoBehaviour
     {
@@ -26,7 +28,7 @@ namespace Assets.Tests.UI.Lobby.ServersAvailableUIController
             var server = servers[this.ElementIndex];
             var rect = server.GetComponent<RectTransform>()
                 .rect;
-            var isOnTargetPosition = rect.Overlaps(Target.rect);
+            var isOnTargetPosition = rect.Overlaps(this.Target.rect);
 
             if (isOnTargetPosition)
             {

@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Internal
+namespace Zenject.Source.Internal
 {
     // C# 3.5 only defines Func and Action to a maximum of 4 generic parameters
     // Note that if you are using .NET framework > 3.5 you will have to comment these out to avoid ambiguous errors

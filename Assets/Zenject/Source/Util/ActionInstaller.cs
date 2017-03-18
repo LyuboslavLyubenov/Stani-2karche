@@ -1,10 +1,10 @@
-namespace Assets.Zenject.Source.Util
+namespace Zenject.Source.Util
 {
 
     using System;
 
-    using Assets.Zenject.Source.Install;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Install;
+    using Zenject.Source.Main;
 
     public class ActionInstaller : Installer<ActionInstaller>
     {

@@ -1,12 +1,13 @@
-namespace Assets.Tests.Jokers.Routers.AnswerPoll
+namespace Tests.Jokers.Routers.AnswerPoll
 {
 
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class CantSetBelowMinimumTime : ExtendedMonoBehaviour
     {

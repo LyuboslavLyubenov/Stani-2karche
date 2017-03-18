@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace Assets.UITween.Scripts
+﻿namespace UITween.Scripts
 {
+
+    using UnityEngine;
 
     public class ReferencedFrom : MonoBehaviour { }
 

@@ -1,17 +1,19 @@
-﻿namespace Assets.Scripts.Jokers
+﻿namespace Jokers
 {
+
     using System;
     using System.Linq;
 
-    using UnityEngine;
-
-    using Assets.Scripts.Exceptions;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Network.NetworkManagers;
-
     using Commands;
     using Commands.Jokers;
+    using Commands.Jokers.Selected;
+
+    using Exceptions;
+
     using Interfaces;
+    using Interfaces.Network.NetworkManager;
+
+    using UnityEngine;
 
     using Utils;
 
@@ -73,13 +75,13 @@
         
         private void OnReceiveSettingsTimeout()
         {
-            DisposeTimer();
+            this.DisposeTimer();
             this.networkManager.CommandsManager.RemoveCommand<DisableRandomAnswersJokerSettingsCommand>();
 
-            if (OnError != null)
+            if (this.OnError != null)
             {
                 var exception = new JokerSettingsTimeoutException();
-                OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
             }
         }
 
@@ -114,9 +116,9 @@
             {
                 var exception = new ArgumentException("Answers to disable count must be less than answers count");
 
-                if (OnError != null)
+                if (this.OnError != null)
                 {
-                    OnError(this, new UnhandledExceptionEventArgs(exception, true));
+                    this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
                 }
 
                 return;
@@ -139,9 +141,9 @@
 
             this.Dispose();
 
-            if (OnFinishedExecution != null)
+            if (this.OnFinishedExecution != null)
             {
-                OnFinishedExecution(this, EventArgs.Empty);
+                this.OnFinishedExecution(this, EventArgs.Empty);
             }
         }
         
@@ -159,15 +161,15 @@
             this.networkManager.CommandsManager.AddCommand(receiveJokerSettings);
 
             this.receiveSettingsTimeoutTimer =
-                TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, OnReceiveSettingsTimeout);
+                TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, this.OnReceiveSettingsTimeout);
 
             this.receiveSettingsTimeoutTimer.AutoDispose = true;
             this.receiveSettingsTimeoutTimer.RunOnUnityThread = true;
             this.receiveSettingsTimeoutTimer.Start();
 
-            if (OnActivated != null)
+            if (this.OnActivated != null)
             {
-                OnActivated(this, EventArgs.Empty);
+                this.OnActivated(this, EventArgs.Empty);
             }
 
             this.Activated = true;
@@ -178,7 +180,7 @@
             this.OnActivated = null;
             this.OnError = null;
             this.OnFinishedExecution = null;
-            DisposeTimer();
+            this.DisposeTimer();
         }
     }
 }

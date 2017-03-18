@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using UnityEngine.UI;
 
     using Utils.Unity;

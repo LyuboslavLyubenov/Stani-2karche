@@ -1,12 +1,13 @@
-﻿using System.Linq;
+﻿using KinveyWrapper = Network.KinveyWrapper;
 
-using UnityEngine;
-
-namespace Assets.Tests.Test_Kinvey_Wrapper.Update_Entity
+namespace Tests.Test_Kinvey_Wrapper.Update_Entity
 {
 
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Network;
+    using System.Linq;
+
+    using DTOs;
+
+    using UnityEngine;
 
     public class TEST_UpdateEntity : MonoBehaviour
     {

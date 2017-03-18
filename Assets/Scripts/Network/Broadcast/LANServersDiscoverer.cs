@@ -1,13 +1,15 @@
-﻿namespace Assets.Scripts.Network.Broadcast
+﻿namespace Network.Broadcast
 {
+
     using System;
 
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Services;
+    using EventArgs;
+
+    using Extensions;
+
+    using Interfaces.Services;
 
     using Utils;
-    using EventArgs;
 
     public class LANServersDiscoverer : LANBroadcastService, ILANServersDiscoverer
     {

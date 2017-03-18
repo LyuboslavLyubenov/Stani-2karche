@@ -1,6 +1,6 @@
 #if !(UNITY_WSA && ENABLE_DOTNET)
 
-namespace Assets.Zenject.Source.Binding.Binders.Conventions
+namespace Zenject.Source.Binding.Binders.Conventions
 {
     public class ConventionSelectTypesBinder
     {

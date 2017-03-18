@@ -1,18 +1,17 @@
+using HelpFromFriendJoker = Jokers.HelpFromFriendJoker;
 using IAskClientQuestionResultRetriever = Interfaces.Network.Jokers.IAskClientQuestionResultRetriever;
 
-namespace Assets.Scripts.Commands.Jokers.Add
+namespace Commands.Jokers.Add
 {
+
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Controllers;
+
+    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
-
-    using Controllers;
-    using Interfaces;
-    using Scripts.Jokers;
-    using Network.NetworkManagers;
 
     public class AddHelpFromFriendJokerCommand : AddJokerAbstractCommand
     {

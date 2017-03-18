@@ -1,15 +1,15 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders
+namespace Zenject.Source.Providers.ComponentProviders.AddToGameObjectComponentProviders
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Main;
-
     using UnityEngine;
+
+    using Zenject.Source.Injection;
+    using Zenject.Source.Main;
 
     public class AddToExistingGameObjectComponentProvider : AddToGameObjectComponentProviderBase
     {

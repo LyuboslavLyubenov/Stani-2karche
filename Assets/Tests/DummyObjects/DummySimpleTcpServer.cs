@@ -1,11 +1,12 @@
-﻿namespace Assets.Tests.DummyObjects
+﻿namespace Tests.DummyObjects
 {
 
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network;
+    using EventArgs;
+
+    using Interfaces.Network;
 
     public class DummySimpleTcpServer : ISimpleTcpServer
     {        

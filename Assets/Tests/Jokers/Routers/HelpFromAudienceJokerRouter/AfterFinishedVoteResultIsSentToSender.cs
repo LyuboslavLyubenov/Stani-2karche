@@ -1,22 +1,25 @@
-﻿namespace Assets.Tests.Jokers.Routers.HelpFromAudienceJokerRouter
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+using StringExtensions = Extensions.StringExtensions;
+
+namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 {
+
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Extensions;
-    using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.Tests.Extensions;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.NetworkManager;
 
-    using UnityEngine;
+    using Tests.DummyObjects;
+    using Tests.Extensions;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class AfterFinishedVoteResultIsSentToSender : ExtendedMonoBehaviour
     {
@@ -58,7 +61,7 @@
                 var command = NetworkCommandData.Parse(args.Message);
                 if (command.Name == "AudienceAnswerPollResult")
                 {
-                    var areVotesInSameState = command.Options.All(o => votes[o.Key] == o.Value.ConvertTo<int>());
+                    var areVotesInSameState = command.Options.All(o => votes[o.Key] == StringExtensions.ConvertTo<int>(o.Value));
                     
                     if (args.ConnectionId == senderId && areVotesInSameState)
                     {

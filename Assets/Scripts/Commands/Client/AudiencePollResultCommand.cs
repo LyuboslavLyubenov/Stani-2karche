@@ -1,12 +1,11 @@
-namespace Assets.Scripts.Commands.Client
+namespace Commands.Client
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     using EventArgs = System.EventArgs;
 

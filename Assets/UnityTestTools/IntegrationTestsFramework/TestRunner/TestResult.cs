@@ -1,11 +1,11 @@
-namespace Assets.UnityTestTools.IntegrationTestsFramework.TestRunner
+namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
     using System;
 
-    using Assets.UnityTestTools.Common;
-
     using UnityEngine;
+
+    using UnityTestTools.Common;
 
     [Serializable]
     public class TestResult : ITestResult, IComparable<TestResult>

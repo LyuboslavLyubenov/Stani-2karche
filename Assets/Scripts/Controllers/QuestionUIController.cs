@@ -1,14 +1,17 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
     using System;
     using System.Collections;
     using System.Linq;
 
+    using EventArgs;
+
+    using Interfaces;
+
     using UnityEngine;
     using UnityEngine.UI;
 
-    using EventArgs;
-    using Interfaces;
     using Utils.Unity;
 
     public class QuestionUIController : ExtendedMonoBehaviour, IQuestionUIController

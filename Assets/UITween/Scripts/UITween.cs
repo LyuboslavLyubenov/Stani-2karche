@@ -1,4 +1,4 @@
-﻿namespace Assets.UITween.Scripts
+﻿namespace UITween.Scripts
 {
 
     using UnityEngine;

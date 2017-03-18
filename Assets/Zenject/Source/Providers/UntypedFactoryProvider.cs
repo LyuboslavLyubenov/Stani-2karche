@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Providers
+namespace Zenject.Source.Providers
 {
 
     using System;
@@ -6,11 +6,11 @@ namespace Assets.Zenject.Source.Providers
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Validation;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Validation;
 
     public class UntypedFactoryProvider : IProvider
     {

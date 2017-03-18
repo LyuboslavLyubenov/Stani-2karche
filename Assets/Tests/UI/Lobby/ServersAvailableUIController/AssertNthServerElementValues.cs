@@ -1,12 +1,14 @@
-﻿namespace Assets.Tests.UI.Lobby.ServersAvailableUIController
+﻿namespace Tests.UI.Lobby.ServersAvailableUIController
 {
 
-    using Assets.Scripts.Controllers;
-    using Assets.Scripts.Controllers.Lobby;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
+    using Controllers;
+    using Controllers.Lobby;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
 
     public class AssertNthServerElementValues : ExtendedMonoBehaviour
     {
@@ -21,7 +23,7 @@
         // Use this for initialization
         void Start ()
         {
-		    this.CoroutineUtils.WaitForSeconds(this.AfterTimeInSeconds, Validate);
+		    this.CoroutineUtils.WaitForSeconds(this.AfterTimeInSeconds, this.Validate);
         }
 
         private void Validate()

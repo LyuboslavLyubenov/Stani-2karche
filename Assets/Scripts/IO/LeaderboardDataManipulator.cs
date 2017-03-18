@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.IO
+﻿namespace IO
 {
+
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -7,11 +8,11 @@
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Interfaces;
+    using DTOs;
+
+    using Interfaces;
 
     using Utils;
-
-    using DTOs;
 
     public class LeaderboardDataManipulator : ILeaderboardDataManipulator
     {

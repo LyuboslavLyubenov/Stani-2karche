@@ -1,9 +1,9 @@
-namespace Assets.Zenject.Source.Editor.Editors
+namespace Zenject.Source.Editor.Editors
 {
 
-    using Assets.Zenject.Source.Install.Contexts;
-
     using UnityEditor;
+
+    using Zenject.Source.Install.Contexts;
 
     [CustomEditor(typeof(SceneDecoratorContext))]
     public class SceneDecoratorContextEditor : ContextEditor

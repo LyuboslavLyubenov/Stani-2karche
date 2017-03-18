@@ -1,4 +1,4 @@
-namespace Assets.Zenject.Source.Factories
+namespace Zenject.Source.Factories
 {
     public interface IFactory
     {

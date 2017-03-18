@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Exceptions
+﻿namespace Exceptions
 {
+
+    using System;
 
     public class NoMoreQuestionsException : Exception
     {

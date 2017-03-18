@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Network.TcpSockets
+namespace Network.TcpSockets
 {
 
     using System.Net.Sockets;

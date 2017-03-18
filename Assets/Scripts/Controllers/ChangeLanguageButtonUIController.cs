@@ -1,10 +1,12 @@
-﻿namespace Assets.Scripts.Controllers
+﻿namespace Controllers
 {
+
+    using Localization;
+
     using UnityEngine;
     using UnityEngine.Events;
     using UnityEngine.UI;
 
-    using Localization;
     using Utils.Unity;
 
     public class ChangeLanguageButtonUIController : ExtendedMonoBehaviour

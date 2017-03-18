@@ -1,11 +1,10 @@
-namespace Assets.Scripts.Commands.Jokers
+namespace Commands.Jokers.Settings
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-
-    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     using EventArgs = System.EventArgs;
 
@@ -42,7 +41,7 @@ namespace Assets.Scripts.Commands.Jokers
             var timeToAnswer = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
             this.onReceivedSettings(timeToAnswer);
 
-            FinishedExecution = true;
+            this.FinishedExecution = true;
 
             if (this.OnFinishedExecution != null)
             {

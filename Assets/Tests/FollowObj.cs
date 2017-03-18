@@ -1,7 +1,7 @@
-using UnityEngine;
-
-namespace Assets.Tests
+namespace Tests
 {
+
+    using UnityEngine;
 
     public class FollowObj : MonoBehaviour
     {

@@ -1,11 +1,11 @@
-namespace Assets.Zenject.Source.Providers.SubContainerCreators
+namespace Zenject.Source.Providers.SubContainerCreators
 {
 
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
 
     public class SubContainerCreatorCached : ISubContainerCreator
     {

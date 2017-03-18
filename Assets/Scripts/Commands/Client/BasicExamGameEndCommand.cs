@@ -1,19 +1,18 @@
-﻿namespace Assets.Scripts.Commands.Client
+﻿namespace Commands.Client
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.EventArgs;
-    using Assets.Scripts.Interfaces.Network.Leaderboard;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Controllers;
+
+    using EventArgs;
+
+    using Interfaces.Network.Leaderboard;
+    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
-
-    using Controllers;
-    using Interfaces;
-
-    using Network.Leaderboard;
 
     using Debug = UnityEngine.Debug;
 
@@ -46,7 +45,7 @@
             this.leaderboardReceiver = leaderboardReceiver;
 
             this.leaderboardReceiver.OnReceived += this.OnReceivedLeaderboardData;
-            this.leaderboardReceiver.OnError += OnReceiveLeaderboardDataError;
+            this.leaderboardReceiver.OnError += this.OnReceiveLeaderboardDataError;
         }
 
         private void OnReceivedLeaderboardData(object sender, LeaderboardDataEventArgs args)

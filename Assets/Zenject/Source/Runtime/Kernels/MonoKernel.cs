@@ -1,12 +1,12 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Runtime.Kernels
+namespace Zenject.Source.Runtime.Kernels
 {
 
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Usage;
-
     using UnityEngine;
+
+    using Zenject.Source.Internal;
+    using Zenject.Source.Usage;
 
     public abstract class MonoKernel : MonoBehaviour
     {

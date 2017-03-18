@@ -1,13 +1,18 @@
-﻿namespace Assets.Scripts.Controllers.GameController
+﻿namespace Controllers.GameController
 {
-    using Assets.Scripts.Commands;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+
+    using Commands;
+
+    using Interfaces.Network.Jokers;
+    using Interfaces.Network.NetworkManager;
+
+    using Tests.DummyObjects;
 
     using UnityEngine;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Zenject.Source.Usage;
 
     public class SendingSelectAudienceAnswerPoll : MonoBehaviour
     {

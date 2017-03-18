@@ -1,16 +1,16 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Providers.SubContainerCreators
+namespace Zenject.Source.Providers.SubContainerCreators
 {
 
     using System.Collections.Generic;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Install.Contexts;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Providers.PrefabProviders;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Injection;
+    using Zenject.Source.Install.Contexts;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Providers.PrefabProviders;
 
     public class SubContainerCreatorByPrefab : ISubContainerCreator
     {

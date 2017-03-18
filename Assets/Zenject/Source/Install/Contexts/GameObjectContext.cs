@@ -3,22 +3,22 @@
 
 #pragma warning disable 649
 
-namespace Assets.Zenject.Source.Install.Contexts
+namespace Zenject.Source.Install.Contexts
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Zenject.Source.Injection;
-    using Assets.Zenject.Source.Internal;
-    using Assets.Zenject.Source.Main;
-    using Assets.Zenject.Source.Runtime.Kernels;
-    using Assets.Zenject.Source.Usage;
-    using Assets.Zenject.Source.Util;
-
     using UnityEngine;
     using UnityEngine.Serialization;
+
+    using Zenject.Source.Injection;
+    using Zenject.Source.Internal;
+    using Zenject.Source.Main;
+    using Zenject.Source.Runtime.Kernels;
+    using Zenject.Source.Usage;
+    using Zenject.Source.Util;
 
     public class GameObjectContext : Context
     {

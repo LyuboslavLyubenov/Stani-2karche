@@ -1,29 +1,33 @@
 ﻿using IAskClientQuestionResultRetriever = Interfaces.Network.Jokers.IAskClientQuestionResultRetriever;
 
-namespace Assets.Scripts.Jokers
+namespace Jokers
 {
+
     using System;
     using System.Linq;
 
-    using UnityEngine;
-
     using Commands;
     using Commands.Client;
-    using Controllers;
-    using EventArgs;
-    using Interfaces;
+    using Commands.Server;
 
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
+    using Controllers;
 
     using DTOs;
+
+    using EventArgs;
+
     using Exceptions;
-    using Network.NetworkManagers;
-    using Utils.Unity;
+
+    using Interfaces;
+    using Interfaces.Network.NetworkManager;
 
     using Localization;
+
     using Notifications;
+
+    using UnityEngine;
+
+    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
@@ -153,9 +157,9 @@ namespace Assets.Scripts.Jokers
 
             this.Activated = false;
 
-            if (OnError != null)
+            if (this.OnError != null)
             {
-                OnError(this, new UnhandledExceptionEventArgs(new JokerSettingsTimeoutException(), true));
+                this.OnError(this, new UnhandledExceptionEventArgs(new JokerSettingsTimeoutException(), true));
             }
         }
 
@@ -170,9 +174,9 @@ namespace Assets.Scripts.Jokers
             
             this.OnFriendAnswered(this, new AnswerEventArgs(args.Answer, null));
 
-            if (OnFinishedExecution != null)
+            if (this.OnFinishedExecution != null)
             {
-                OnFinishedExecution(this, EventArgs.Empty);
+                this.OnFinishedExecution(this, EventArgs.Empty);
             }
         }
 
@@ -185,9 +189,9 @@ namespace Assets.Scripts.Jokers
 
             this.Activated = false;
 
-            if (OnError != null)
+            if (this.OnError != null)
             {
-                OnError(this, new UnhandledExceptionEventArgs(new TimeoutException(), true));
+                this.OnError(this, new UnhandledExceptionEventArgs(new TimeoutException(), true));
             }
         }
 

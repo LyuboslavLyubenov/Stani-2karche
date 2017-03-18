@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Assets.Scripts.Interfaces
+﻿namespace Interfaces
 {
+
+    using System;
 
     public interface IAvailableCategoriesReader
     {

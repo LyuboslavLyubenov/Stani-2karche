@@ -1,42 +1,46 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
 
-using MainPlayerData = Network.MainPlayerData;
-using SelectedHelpFromAudienceJokerCommand = Commands.Jokers.Selected.SelectedHelpFromAudienceJokerCommand;
-
-namespace Assets.Scripts.Network.Servers
+namespace Network.Servers
 {
+
     using System;
-
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    using Assets.Scripts.Interfaces.Network.Leaderboard;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.Interfaces.Statistics;
-    using Assets.Scripts.Jokers.Routers;
-
-    using Leaderboard;
-    using TcpSockets;
 
     using Commands;
     using Commands.Client;
-    using Commands.Jokers;
+    using Commands.Jokers.Selected;
     using Commands.Server;
-    using Controllers;
-    using DTOs;
-    using EventArgs;
-    using Interfaces;
-    using IO;
-    using Jokers;
 
-    using NetworkManagers;
+    using Controllers;
+
+    using DTOs;
+
+    using EventArgs;
+
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
+    using Interfaces.Network.Leaderboard;
+    using Interfaces.Network.NetworkManager;
+    using Interfaces.Statistics;
+
+    using IO;
+
+    using Jokers;
+    using Jokers.Routers;
+
+    using Network.GameInfo;
+    using Network.Leaderboard;
+    using Network.NetworkManagers;
+    using Network.TcpSockets;
+
     using Statistics;
-    using Utils;
-    using Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using Utils;
+    using Utils.Unity;
 
     using EventArgs = System.EventArgs;
 
@@ -131,8 +135,8 @@ namespace Assets.Scripts.Network.Servers
             this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
 
             this.leaderboardDataManipulator = new LeaderboardDataManipulator();
-            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, MainPlayerData);
-            this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, MainPlayerData.JokersData);
+            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, this.MainPlayerData);
+            this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, this.MainPlayerData.JokersData);
            
             this.askPlayerQuestionRouter = new AskPlayerQuestionJokerRouter(serverNetworkManager, this.GameDataIterator, new AskClientQuestionRouter(serverNetworkManager));
 
@@ -164,7 +168,7 @@ namespace Assets.Scripts.Network.Servers
                     this.UpdateRemainingTime();
                 });
 
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
 
         void OnApplicationQuit()
@@ -302,7 +306,7 @@ namespace Assets.Scripts.Network.Servers
 
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
             this.Dispose();
         }
 

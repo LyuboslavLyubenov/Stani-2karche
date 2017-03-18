@@ -1,15 +1,16 @@
-namespace Assets.Scripts.Commands.Jokers.Add
+using AskAudienceJoker = Jokers.AskAudienceJoker;
+
+namespace Commands.Jokers.Add
 {
+
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
+    using Controllers;
+
+    using Interfaces;
+    using Interfaces.Network.Jokers;
 
     using UnityEngine;
-
-    using Controllers;
-    using Interfaces;
-    using Scripts.Jokers;
-    using Network.NetworkManagers;
 
     public class AddAskAudienceJokerCommand : AddJokerAbstractCommand
     {

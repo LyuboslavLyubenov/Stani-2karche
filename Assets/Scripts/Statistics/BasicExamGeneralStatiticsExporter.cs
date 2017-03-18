@@ -1,17 +1,17 @@
-namespace Assets.Scripts.Statistics
+﻿namespace Statistics
 {
+
     using System;
     using System.IO;
     using System.Linq;
     using System.Reflection;
 
-    using Assets.Scripts.Interfaces.Statistics;
-
     using CSharpJExcel.Jxl;
     using CSharpJExcel.Jxl.Write;
 
+    using Interfaces.Statistics;
+
     using UnityEngine;
-    using Interfaces;
 
     public class BasicExamGeneralStatiticsExporter : IStatisticsExporter
     {

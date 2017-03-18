@@ -1,12 +1,12 @@
 #if !NOT_UNITY3D
 
-namespace Assets.Zenject.Source.Install
+namespace Zenject.Source.Install
 {
-
-    using Assets.Zenject.Source.Install.Contexts;
 
     using UnityEngine;
     using UnityEngine.Serialization;
+
+    using Zenject.Source.Install.Contexts;
 
     public class ZenjectBinding : MonoBehaviour
     {

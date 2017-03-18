@@ -1,7 +1,7 @@
-namespace Assets.Scripts.Interfaces
+namespace Interfaces
 {
 
-    using Assets.Scripts.DTOs;
+    using DTOs;
 
     public interface ISimpleQuestion
     {

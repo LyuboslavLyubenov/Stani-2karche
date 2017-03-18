@@ -3,20 +3,19 @@
 #warning Assertion component is not supported on Windows Store apps
 #endif
 
-namespace Assets.UnityTestTools.Assertions.Editor
+namespace UnityTestTools.Assertions.Editor
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.UnityTestTools.Assertions;
-    using Assets.UnityTestTools.Assertions.Comparers;
-    using Assets.UnityTestTools.Common.Editor;
-
     using UnityEditor;
 
     using UnityEngine;
+
+    using UnityTestTools.Assertions.Comparers;
+    using UnityTestTools.Common.Editor;
 
     [Serializable]
     public class AssertionExplorerWindow : EditorWindow

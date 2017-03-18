@@ -1,39 +1,43 @@
 ﻿using AskPlayerQuestionResultRetriever = Jokers.Retrievers.AskPlayerQuestionResultRetriever;
-using IAskClientQuestionResultRetriever = Interfaces.Network.Jokers.IAskClientQuestionResultRetriever;
+using AudienceAnswerPollResultRetriever = Jokers.Retrievers.AudienceAnswerPollResultRetriever;
+using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
 
-namespace Assets.Scripts.Controllers.GameController
+namespace Controllers.GameController
 {
+
     using System;
     using System.Collections;
-
-    using Assets.Scripts.Interfaces.GameData;
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Interfaces.Network.Leaderboard;
-    using Assets.Scripts.Jokers.Retrievers;
-
-    using Utils;
-
-    using Network.Leaderboard;
 
     using Commands;
     using Commands.Client;
     using Commands.GameData;
     using Commands.Jokers.Add;
     using Commands.Server;
-    using Jokers;
+
+    using Controllers.Jokers;
+
     using DialogSwitchers;
+
     using EventArgs;
+
     using Interfaces;
-    using Scripts.Jokers;
+    using Interfaces.GameData;
+    using Interfaces.Network.Jokers;
+    using Interfaces.Network.Leaderboard;
 
     using Localization;
+
     using Network;
+    using Network.Leaderboard;
     using Network.NetworkManagers;
+
     using Notifications;
-    using Utils.Unity;
 
     using UnityEngine;
     using UnityEngine.SceneManagement;
+
+    using Utils;
+    using Utils.Unity;
 
     using Debug = UnityEngine.Debug;
     using EventArgs = System.EventArgs;
@@ -93,9 +97,9 @@ namespace Assets.Scripts.Controllers.GameController
                 PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
 
                 //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-                this.CoroutineUtils.WaitForSeconds(9f, () => ConnectToServer("127.0.0.1"));
+                this.CoroutineUtils.WaitForSeconds(9f, () => this.ConnectToServer("127.0.0.1"));
 
-                StartServer();
+                this.StartServer();
             }
             else
             {
@@ -107,7 +111,7 @@ namespace Assets.Scripts.Controllers.GameController
 
         private void OnFoundServerIP(string ip)
         {
-            ConnectToServer(ip);
+            this.ConnectToServer(ip);
         }
 
         private void OnFoundServerIPError()
@@ -128,7 +132,7 @@ namespace Assets.Scripts.Controllers.GameController
         
         private void OnActiveSceneChanged(Scene oldScene, Scene newScene)
         {
-            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
 
             var networkManager = ClientNetworkManager.Instance;
 
@@ -309,7 +313,7 @@ namespace Assets.Scripts.Controllers.GameController
             this.AvailableJokersUIController.OnAddedJoker += this.OnAddedJoker;
             this.AvailableJokersUIController.OnUsedJoker += this.OnUsedJoker;
 
-            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
 
         private void ShowNotification(Color color, string message)

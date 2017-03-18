@@ -4,16 +4,17 @@ namespace Network.Servers
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Commands.Server;
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.States.Server;
-    using Assets.Scripts.DTOs;
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Interfaces.Network.NetworkManager;
-    using Assets.Scripts.StateMachine;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Zenject.Source.Usage;
+    using Commands.Server;
 
+    using Interfaces.Network;
+    using Interfaces.Network.NetworkManager;
+
+    using StateMachine;
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IEveryBodyVsTheTeacherServer
     {

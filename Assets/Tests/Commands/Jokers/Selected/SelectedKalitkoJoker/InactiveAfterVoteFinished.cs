@@ -6,11 +6,15 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Utils.Unity;
-    using Assets.Tests.DummyObjects;
-    using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Assets.Zenject.Source.Usage;
+    using Interfaces.Network;
+
+    using Tests.DummyObjects;
+
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
+    using Utils.Unity;
+
+    using Zenject.Source.Usage;
 
     public class InactiveAfterVoteFinished : ExtendedMonoBehaviour
     {

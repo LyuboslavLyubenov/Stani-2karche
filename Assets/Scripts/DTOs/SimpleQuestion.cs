@@ -1,5 +1,6 @@
-﻿namespace Assets.Scripts.DTOs
+﻿namespace DTOs
 {
+
     using System;
 
     using Interfaces;

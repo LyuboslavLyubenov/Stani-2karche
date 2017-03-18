@@ -1,12 +1,12 @@
-namespace Assets.Zenject.Source.Binding.Binders.FromBinders
+namespace Zenject.Source.Binding.Binders.FromBinders
 {
 
     using System;
 
-    using Assets.Zenject.Source.Binding.BindInfo;
-    using Assets.Zenject.Source.Binding.Finalizers;
-    using Assets.Zenject.Source.Factories;
-    using Assets.Zenject.Source.Injection;
+    using Zenject.Source.Binding.BindInfo;
+    using Zenject.Source.Binding.Finalizers;
+    using Zenject.Source.Factories;
+    using Zenject.Source.Injection;
 
     public class FromBinderGeneric<TContract> : FromBinder
     {

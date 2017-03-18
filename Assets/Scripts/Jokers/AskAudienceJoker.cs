@@ -1,20 +1,24 @@
-﻿namespace Assets.Scripts.Jokers
+﻿namespace Jokers
 {
+
     using System;
 
-    using Assets.Scripts.Interfaces.Network.Jokers;
-    using Assets.Scripts.Notifications;
+    using Controllers;
+
+    using EventArgs;
+
+    using Exceptions;
+
+    using Interfaces;
+    using Interfaces.Network.Jokers;
+
+    using Localization;
+
+    using Notifications;
 
     using UnityEngine;
 
-    using Exceptions;
     using Utils.Unity;
-
-    using Controllers;
-    using EventArgs;
-    using Interfaces;
-
-    using Localization;
 
     using EventArgs = System.EventArgs;
 
@@ -100,9 +104,9 @@
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
             NotificationsesController.Instance.AddNotification(Color.red, message);
 
-            if (OnError != null)
+            if (this.OnError != null)
             {
-                OnError(this, new UnhandledExceptionEventArgs(new JokerSettingsTimeoutException(), true));
+                this.OnError(this, new UnhandledExceptionEventArgs(new JokerSettingsTimeoutException(), true));
             }
         }
 
@@ -127,9 +131,9 @@
                 this.OnAudienceVoted(this, args);
             }
 
-            if (OnFinishedExecution != null)
+            if (this.OnFinishedExecution != null)
             {
-                OnFinishedExecution(this, EventArgs.Empty);
+                this.OnFinishedExecution(this, EventArgs.Empty);
             }
         }
 
@@ -140,9 +144,9 @@
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
             NotificationsesController.Instance.AddNotification(Color.red, message);
 
-            if (OnError != null)
+            if (this.OnError != null)
             {
-                OnError(this, new UnhandledExceptionEventArgs(new TimeoutException(), true));
+                this.OnError(this, new UnhandledExceptionEventArgs(new TimeoutException(), true));
             }
         }
 
