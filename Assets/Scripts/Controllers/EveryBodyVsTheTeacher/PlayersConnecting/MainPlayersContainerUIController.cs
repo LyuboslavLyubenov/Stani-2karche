@@ -1,3 +1,5 @@
+using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
+
 namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 

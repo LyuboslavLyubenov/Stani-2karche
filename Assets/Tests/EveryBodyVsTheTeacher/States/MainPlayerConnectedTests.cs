@@ -12,6 +12,8 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;
 
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     using UnityEngine;
 
     public class MainPlayerConnectedTests : MonoBehaviour

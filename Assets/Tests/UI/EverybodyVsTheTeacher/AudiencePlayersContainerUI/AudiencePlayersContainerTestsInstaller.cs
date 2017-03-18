@@ -8,6 +8,8 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
     using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Install;
 
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class AudiencePlayersContainerTestsInstaller : Installer<AudiencePlayersContainerTestsInstaller>
     {
         public override void InstallBindings()

@@ -4,7 +4,9 @@
     using Assets.Scripts.Utils.Unity;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;
-    
+
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class WhenNotEnteredIntoStateTests : ExtendedMonoBehaviour
     {
         [Inject]

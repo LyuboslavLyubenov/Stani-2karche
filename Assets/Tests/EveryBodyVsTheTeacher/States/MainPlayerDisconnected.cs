@@ -13,6 +13,8 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;
 
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class MainPlayerDisconnected : ExtendedMonoBehaviour
     {
         private StateMachine stateMachine = new StateMachine();

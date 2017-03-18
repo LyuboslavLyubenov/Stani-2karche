@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
+﻿using PlayersConnectingToTheServerState = StateMachine.EveryBodyVsTheTeacher.States.Server.PlayersConnectingToTheServerState;
+
+namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
 
     using System.Collections.Generic;

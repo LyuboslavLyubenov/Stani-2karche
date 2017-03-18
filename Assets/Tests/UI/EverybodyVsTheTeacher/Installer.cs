@@ -6,6 +6,8 @@
     using Assets.Tests.DummyObjects;
     using Assets.Zenject.Source.Install;
 
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class Installer : MonoInstaller {
     
         public override void InstallBindings()

@@ -13,6 +13,8 @@ namespace Network.Servers
     using Assets.Scripts.Utils.Unity;
     using Assets.Zenject.Source.Usage;
 
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IEveryBodyVsTheTeacherServer
     {
         public const int MinMainPlayersNeededToStartGame = 6;

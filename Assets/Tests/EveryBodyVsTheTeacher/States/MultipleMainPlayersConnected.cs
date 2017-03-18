@@ -14,7 +14,9 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
     using Assets.Tests.Extensions;
     using Assets.UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Assets.Zenject.Source.Usage;
-    
+
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class MultipleMainPlayersConnected : ExtendedMonoBehaviour
     {
         private StateMachine stateMachine = new StateMachine();

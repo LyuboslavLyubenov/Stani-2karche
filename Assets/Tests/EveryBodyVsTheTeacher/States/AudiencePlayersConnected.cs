@@ -17,6 +17,8 @@ namespace Assets.Tests.EveryBodyVsTheTeacher.States
 
     using Network.Servers;
 
+    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+
     public class AudiencePlayersConnected : ExtendedMonoBehaviour
     {
         private StateMachine stateMachine = new StateMachine();
