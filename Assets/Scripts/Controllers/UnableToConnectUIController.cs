@@ -4,6 +4,8 @@ namespace Controllers
 
     using System;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using Interfaces.Network.NetworkManager;
 
     using Network.NetworkManagers;
@@ -13,7 +15,7 @@ namespace Controllers
 
     using EventArgs = System.EventArgs;
 
-    public class UnableToConnectUIController : MonoBehaviour
+    public class UnableToConnectUIController : MonoBehaviour, IUnableToConnectUIController
     {
         public EventHandler OnTryingAgainToConnectToServer = delegate
             {
