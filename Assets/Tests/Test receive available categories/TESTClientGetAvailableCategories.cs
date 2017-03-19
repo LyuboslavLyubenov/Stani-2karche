@@ -17,7 +17,7 @@ namespace Tests.Test_receive_available_categories
     public class TESTClientGetAvailableCategories : MonoBehaviour
     {
         public ClientNetworkManager NetworkManager;
-        public NotificationsesController Notificationses;
+        public NotificationsController Notifications;
 
         private IAvailableCategoriesReader categoriesReader;
 
@@ -36,7 +36,7 @@ namespace Tests.Test_receive_available_categories
         {
             var errorMsg = LanguagesManager.Instance.GetValue("Errors/LoadCategoriesTimeout");
             Debug.LogWarning(errorMsg);
-            this.Notificationses.AddNotification(new Color(255, 255, 140), errorMsg);
+            this.Notifications.AddNotification(new Color(255, 255, 140), errorMsg);
         }
 
         private void OnGetAllCategories(string[] categories)

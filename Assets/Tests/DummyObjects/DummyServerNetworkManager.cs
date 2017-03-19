@@ -18,7 +18,7 @@ namespace Tests.DummyObjects
 
     public class DummyServerNetworkManager : IServerNetworkManager
     {
-        public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnClientConnected = delegate
             {
             };
 
@@ -30,7 +30,7 @@ namespace Tests.DummyObjects
             {
             };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnClientDisconnected = delegate
             {
             };
 
@@ -190,7 +190,7 @@ namespace Tests.DummyObjects
         public void FakeConnectPlayer(int connectionId)
         {
             this.connectedClientsConnectionIds.Add(connectionId);            
-            this.OnClientConnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void FakeSetUsernameToPlayer(int connectionId, string username)
@@ -203,7 +203,7 @@ namespace Tests.DummyObjects
             this.connectedClientsConnectionIds.Remove(connectionId);
             this.clientsConnectionIdsNames.Remove(connectionId);
 
-            this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnClientDisconnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void FakeReceiveMessage(int fromConnectionId, string message)

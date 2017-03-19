@@ -12,17 +12,17 @@
 
     public class DummyPlayersConnectingToTheServerState : IPlayersConnectingToTheServerState
     {
-        public event EventHandler<ClientConnectionDataEventArgs> OnMainPlayerConnected = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerConnected = delegate { };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnMainPlayerDisconnected = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerDisconnected = delegate { };
 
         public event EventHandler OnEveryBodyRequestedGameStart = delegate { };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnMainPlayerRequestedGameStart = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerRequestedGameStart = delegate { };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnAudiencePlayerConnected = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnAudiencePlayerConnected = delegate { };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnAudiencePlayerDisconnected = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnAudiencePlayerDisconnected = delegate { };
 
         public ReadOnlyCollection<int> MainPlayersConnectionIds
         {
@@ -46,27 +46,27 @@
 
         public void SimulateMainPlayerConnected(int connectionId)
         {
-            this.OnMainPlayerConnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnMainPlayerConnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void SimulateMainPlayerDisconnected(int connectionId)
         {
-            this.OnMainPlayerDisconnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnMainPlayerDisconnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void SimulateAudiencePlayerConnected(int connectionId)
         {
-            this.OnAudiencePlayerConnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnAudiencePlayerConnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void SimulateAudiencePlayerDisconnected(int connectionId)
         {
-            this.OnAudiencePlayerDisconnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnAudiencePlayerDisconnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void SimulateMainPlayerRequestedGameStart(int connectionId)
         {
-            this.OnMainPlayerRequestedGameStart(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnMainPlayerRequestedGameStart(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
         public void SimulateAllMainPlayersRequestedGameStart()
