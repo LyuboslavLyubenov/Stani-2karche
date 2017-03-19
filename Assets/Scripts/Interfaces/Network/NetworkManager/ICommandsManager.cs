@@ -9,6 +9,8 @@
 
         void AddCommand(string commandName, INetworkManagerCommand commandToExecute);
 
+        bool Exists(INetworkManagerCommand command);
+
         bool Exists<T>();
 
         bool Exists(string commandName);

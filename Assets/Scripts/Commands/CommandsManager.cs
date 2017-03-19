@@ -48,6 +48,23 @@
             commands.ToList().ForEach(this.AddCommand);
         }
 
+        public bool Exists(INetworkManagerCommand command)
+        {
+            var commandsKeyValuePairs = this.commands.ToList();
+
+            for (int i = 0; i < commandsKeyValuePairs.Count; i++)
+            {
+                var commands = commandsKeyValuePairs[i].Value;
+                
+                if (commands.Contains(command))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool Exists<T>()
         {
             var commandName = typeof(T).Name.Replace("Command", "");
