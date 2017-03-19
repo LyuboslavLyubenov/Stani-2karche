@@ -1,19 +1,17 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
     using System;
-    using System.Linq;
+
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Shared;
 
     using Controllers;
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
-
-    using Notifications;
-
+    
     using StateMachine;
-    using States.EveryBodyVsTheTeacher.Presenter;
     using UnityEngine;
-    using UnityEngine.UI;
 
     using Utils.Unity;
 
@@ -21,17 +19,20 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
     public class EveryBodyVsTheTeacherPresenterController : MonoBehaviour
     {
-        private readonly StateMachine stateMachine = new StateMachine();
+        public GameObject LoadingUI;
 
         public MainPlayersContainerUIController MainPlayersContainerUIController;
         public AudiencePlayersContainerUIController AudiencePlayersContainerUIController;
         public UnableToConnectUIController UnableToConnectUIController;
-
-        private PlayersConnectingState playersConnectingState;
-
+        
         [Inject]
         private IClientNetworkManager clientNetworkManager;
 
+        private PlayersConnectingState playersConnectingState;
+        private NotConnectedToServerState notConnectedToServerState;
+
+        private readonly StateMachine stateMachine = new StateMachine();
+        
         void Start()
         {
             this.playersConnectingState = new PlayersConnectingState(
@@ -40,26 +41,18 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
                 this.clientNetworkManager,
                 this.OnEveryBodyRequestedGameStart);
 
-            this.clientNetworkManager.OnConnectedEvent += OnConnectedToServer;
+            this.notConnectedToServerState = 
+                new NotConnectedToServerState(
+                    this.LoadingUI, 
+                    this.UnableToConnectUIController, 
+                    this.clientNetworkManager);
+
+            this.clientNetworkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.clientNetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
-
-            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
         }
-
-        private void OnFoundServerIP(string ip)
-        {
-            this.UnableToConnectUIController.ServerIP = ip;
-            this.clientNetworkManager.ConnectToHost(ip);
-        }
-
-        private void OnFoundServerIPError()
-        {
-            //TODO:
-        }
-
         private void OnConnectedToServer(object sender, EventArgs args)
         {
-            if (this.stateMachine.CurrentState == this.playersConnectingState)
+            if (this.stateMachine.CurrentState == this.notConnectedToServerState)
             {
                 return;
             }
@@ -70,9 +63,14 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
             //TODO:
-            this.UnableToConnectUIController.gameObject.SetActive(true);
-        }
+            if (this.stateMachine.CurrentState == this.notConnectedToServerState)
+            {
+                return;
+            }
 
+            this.stateMachine.SetCurrentState(this.notConnectedToServerState);
+        }
+        
         private void OnEveryBodyRequestedGameStart()
         {
             //TODO: Change state
