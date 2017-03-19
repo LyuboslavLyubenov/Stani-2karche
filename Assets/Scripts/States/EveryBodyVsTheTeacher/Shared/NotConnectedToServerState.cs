@@ -5,6 +5,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
 {
     using System;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using Commands;
     using Commands.Server;
 
@@ -28,8 +30,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
     public class NotConnectedToServerState : IState
     {
         private GameObject loadingUI;
-        
-        private UnableToConnectUIController unableToConnectUIController;
+        private GameObject unableToConnectToUI;
+
+        private IUnableToConnectUIController unableToConnectUIController;
 
         private IClientNetworkManager networkManager;
         
@@ -37,7 +40,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
 
         public NotConnectedToServerState(
             GameObject loadingUI,
-            UnableToConnectUIController unableToConnectUIController,
+            IUnableToConnectUIController unableToConnectUIController,
             IClientNetworkManager networkManager)
         {
             if (loadingUI == null)
@@ -58,6 +61,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
             this.loadingUI = loadingUI;
             this.unableToConnectUIController = unableToConnectUIController;
             this.networkManager = networkManager;
+
+            this.unableToConnectToUI = ((UnableToConnectUIController)this.unableToConnectUIController).gameObject;
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
@@ -74,7 +79,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
-            this.unableToConnectUIController.gameObject.SetActive(true);
+            this.unableToConnectToUI.SetActive(true);
         }
 
         private void OnFoundServerIP(string ip)
@@ -115,7 +120,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
         public void OnStateEnter(StateMachine stateMachine)
         {
             this.loadingUI.SetActive(true);
-            this.unableToConnectUIController.gameObject.SetActive(false);
+            this.unableToConnectToUI.SetActive(false);
 
             this.ConfigureNotFoundServerIPTimer();
             this.AttachEventHandlers();
