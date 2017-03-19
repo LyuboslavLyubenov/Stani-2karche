@@ -153,7 +153,7 @@ namespace Jokers
             this.loadingUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Errors/NetworkErrors/Timeout");
-            NotificationsesController.Instance.AddNotification(Color.red, message);
+            NotificationsController.Instance.AddNotification(Color.red, message);
 
             this.Activated = false;
 
@@ -185,7 +185,7 @@ namespace Jokers
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Errors/NetworkErrors/Timeout");
-            NotificationsesController.Instance.AddNotification(Color.red, message);
+            NotificationsController.Instance.AddNotification(Color.red, message);
 
             this.Activated = false;
 

@@ -42,11 +42,11 @@ namespace Tests.EveryBodyVsTheTeacher.States
             this.CoroutineUtils.WaitForFrames(1, this.SimulateAudiencePlayerConnected);
         }
 
-        private void OnAudiencePlayerConnected(object sender, ClientConnectionDataEventArgs clientConnectionDataEventArgs)
+        private void OnAudiencePlayerConnected(object sender, ClientConnectionIdEventArgs clientConnectionIdEventArgs)
         {
-            if (this.connectedClientsIds.Contains(clientConnectionDataEventArgs.ConnectionId))
+            if (this.connectedClientsIds.Contains(clientConnectionIdEventArgs.ConnectionId))
             {
-                this.connectedClientsIds.Remove(clientConnectionDataEventArgs.ConnectionId);
+                this.connectedClientsIds.Remove(clientConnectionIdEventArgs.ConnectionId);
             }
 
             if (this.connectedClientsIds.Count == 0)

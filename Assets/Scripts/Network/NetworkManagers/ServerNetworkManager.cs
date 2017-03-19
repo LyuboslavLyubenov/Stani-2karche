@@ -44,7 +44,7 @@
             set;
         }
         
-        public event EventHandler<ClientConnectionDataEventArgs> OnClientConnected = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnClientConnected = delegate
             {
             };
 
@@ -52,7 +52,7 @@
             {
             };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnClientDisconnected = delegate
             {
             };
 
@@ -253,7 +253,7 @@
 
                 if (this.OnClientDisconnected != null)
                 {
-                    this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(deadClientConnectionId));
+                    this.OnClientDisconnected(this, new ClientConnectionIdEventArgs(deadClientConnectionId));
                 }
             }
 
@@ -281,7 +281,7 @@
 
             if (this.OnClientConnected != null)
             {
-                this.OnClientConnected(this, new ClientConnectionDataEventArgs(connectionId));    
+                this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));    
             }
         }
 
@@ -299,7 +299,7 @@
             {
                 if (this.OnClientDisconnected != null)
                 {
-                    this.OnClientDisconnected(this, new ClientConnectionDataEventArgs(connectionId));
+                    this.OnClientDisconnected(this, new ClientConnectionIdEventArgs(connectionId));
                 }
             }
         }

@@ -85,7 +85,7 @@ namespace Controllers.GameController
 
         private void LoadCommands()
         {
-            var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, NotificationsesController.Instance);
+            var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, NotificationsController.Instance);
             var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
             var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver);
 
@@ -160,14 +160,14 @@ namespace Controllers.GameController
 
             var status = ClientNetworkManager.Instance.ConnectToHost(ip);
             var statusMessage = NetworkErrorUtils.GetMessage(status);
-            NotificationsesController.Instance.AddNotification(Color.red, statusMessage);
+            NotificationsController.Instance.AddNotification(Color.red, statusMessage);
         }
 
         public void Disconnect()
         {
             var status = ClientNetworkManager.Instance.Disconnect();
             var statusMessage = NetworkErrorUtils.GetMessage(status);
-            NotificationsesController.Instance.AddNotification(Color.red, statusMessage);
+            NotificationsController.Instance.AddNotification(Color.red, statusMessage);
         }
     }
 

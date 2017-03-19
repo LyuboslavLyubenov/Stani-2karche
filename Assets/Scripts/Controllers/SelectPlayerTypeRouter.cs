@@ -46,7 +46,7 @@ namespace Controllers
 
             if (method == null)
             {
-                NotificationsesController.Instance.AddNotification(Color.red, "Неподържан вид игра", 10);
+                NotificationsController.Instance.AddNotification(Color.red, "Неподържан вид игра", 10);
                 return;
             }
 

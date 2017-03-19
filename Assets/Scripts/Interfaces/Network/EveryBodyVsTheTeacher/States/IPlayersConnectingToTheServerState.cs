@@ -18,14 +18,14 @@
             get;
         }
 
-        event EventHandler<ClientConnectionDataEventArgs> OnMainPlayerConnected;
-        event EventHandler<ClientConnectionDataEventArgs> OnMainPlayerDisconnected;
+        event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerConnected;
+        event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerDisconnected;
 
         event EventHandler OnEveryBodyRequestedGameStart;
 
-        event EventHandler<ClientConnectionDataEventArgs> OnMainPlayerRequestedGameStart;
+        event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerRequestedGameStart;
 
-        event EventHandler<ClientConnectionDataEventArgs> OnAudiencePlayerConnected;
-        event EventHandler<ClientConnectionDataEventArgs> OnAudiencePlayerDisconnected;
+        event EventHandler<ClientConnectionIdEventArgs> OnAudiencePlayerConnected;
+        event EventHandler<ClientConnectionIdEventArgs> OnAudiencePlayerDisconnected;
     }
 }

@@ -22,7 +22,7 @@
 
         private const int DistanceBetweenElements = 5;
 
-        public EventHandler<ClientConnectionDataEventArgs> OnSelectedPlayer = delegate
+        public EventHandler<ClientConnectionIdEventArgs> OnSelectedPlayer = delegate
             {
             };
 
@@ -51,7 +51,7 @@
             ServerNetworkManager.Instance.OnClientSetUsername += this.OnClientSetUsername;
         }
 
-        private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientConnected(object sender, ClientConnectionIdEventArgs args)
         {
             var connectionId = args.ConnectionId;
 
@@ -62,7 +62,7 @@
             }
         }
 
-        private void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             if (this.connectionIdClientElement.ContainsKey(args.ConnectionId))
             {
@@ -114,7 +114,7 @@
         {
             var obj = EventSystem.current.currentSelectedGameObject;
             var controller = obj.GetComponent<ConnectedClientDataElementUIController>();
-            this.OnSelectedPlayer(this, new ClientConnectionDataEventArgs(controller.ConnectionId));
+            this.OnSelectedPlayer(this, new ClientConnectionIdEventArgs(controller.ConnectionId));
         }
 
         private void UpdateContainerSize()

@@ -43,7 +43,7 @@ namespace Tests.EveryBodyVsTheTeacher.States
             this.StartCoroutine(this.SimulateMainPlayersConnectedToServer());
         }
 
-        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.playersIdsNeededToConnect.Remove(args.ConnectionId);
         }

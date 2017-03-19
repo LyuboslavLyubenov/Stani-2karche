@@ -102,7 +102,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
-            NotificationsesController.Instance.AddNotification(Color.red, message);
+            NotificationsController.Instance.AddNotification(Color.red, message);
 
             if (this.OnError != null)
             {
@@ -142,7 +142,7 @@
             this.waitingToAnswerUI.SetActive(false);
 
             var message = LanguagesManager.Instance.GetValue("Error/NetworkMessages/Timeout");
-            NotificationsesController.Instance.AddNotification(Color.red, message);
+            NotificationsController.Instance.AddNotification(Color.red, message);
 
             if (this.OnError != null)
             {

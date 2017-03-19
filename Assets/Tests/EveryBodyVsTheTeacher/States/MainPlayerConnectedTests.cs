@@ -52,9 +52,9 @@ namespace Tests.EveryBodyVsTheTeacher.States
             dummyServerNetworkManager.FakeReceiveMessage(1, mainPlayerConnectingCommand.ToString());
         }
 
-        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs clientConnectionDataEventArgs)
+        private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs clientConnectionIdEventArgs)
         {
-            if (clientConnectionDataEventArgs.ConnectionId != 1)
+            if (clientConnectionIdEventArgs.ConnectionId != 1)
             {
                 IntegrationTest.Fail("MainPlayer connected but with different connection id");
                 return;

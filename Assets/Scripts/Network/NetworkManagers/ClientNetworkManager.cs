@@ -180,7 +180,7 @@
 
         private void ConfigureCommands()
         {
-            this.commandsManager.AddCommand("ShowNotification", new NotificationFromServerCommand(NotificationsesController.Instance));
+            this.commandsManager.AddCommand("ShowNotification", new NotificationFromServerCommand(NotificationsController.Instance));
 
             var allowedToConnect = new DummyCommand();
             allowedToConnect.OnExecuted += (sender, args) =>

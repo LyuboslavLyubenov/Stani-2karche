@@ -34,9 +34,9 @@ namespace Tests.EveryBodyVsTheTeacher.States
             this.CoroutineUtils.WaitForFrames(1, this.SimulateAudiencePlayerConnected);
         }
 
-        private void OnAudiencePlayerDisconnected(object sender, ClientConnectionDataEventArgs clientConnectionDataEventArgs)
+        private void OnAudiencePlayerDisconnected(object sender, ClientConnectionIdEventArgs clientConnectionIdEventArgs)
         {
-            if (clientConnectionDataEventArgs.ConnectionId == 1)
+            if (clientConnectionIdEventArgs.ConnectionId == 1)
             {
                 IntegrationTest.Pass();
             }

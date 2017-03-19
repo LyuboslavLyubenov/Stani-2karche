@@ -4,6 +4,8 @@ namespace Controllers
 
     using System;
 
+    using Interfaces.Network.NetworkManager;
+
     using Network.NetworkManagers;
 
     using UnityEngine;
@@ -23,9 +25,9 @@ namespace Controllers
             set;
         }
         
-        public void TryAgainToConnectToServer()
+        public void TryAgainToConnectToServer(IClientNetworkManager networkManager)
         {
-            ClientNetworkManager.Instance.ConnectToHost(this.ServerIP);
+            networkManager.ConnectToHost(this.ServerIP);
             this.OnTryingAgainToConnectToServer(this, new EventArgs());
             this.gameObject.SetActive(false);
         }

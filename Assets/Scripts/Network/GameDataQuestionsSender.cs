@@ -45,10 +45,10 @@
             this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
             this.gameDataIterator.OnLoaded += this.OnGameDataLoaded;
 
-            this.IntializeCommands();
+            this.InitializeCommands();
         }
 
-        private void IntializeCommands()
+        private void InitializeCommands()
         {
             var getCurrentQuestionCommand = new GetCurrentQuestionCommand(this.gameDataIterator, this.networkManager);
             var getNextQuestionCommand = new GetNextQuestionCommand(this.gameDataIterator, this.networkManager);
@@ -77,7 +77,7 @@
             }
         }
 
-        private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientConnected(object sender, ClientConnectionIdEventArgs args)
         {
             if (this.gameDataIterator.Loaded)
             {

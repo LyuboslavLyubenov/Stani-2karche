@@ -8,15 +8,15 @@
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class NotificationsesController : MonoBehaviour, INotificationsController
+    public class NotificationsController : MonoBehaviour, INotificationsController
     {
-        private static NotificationsesController instance;
+        private static NotificationsController instance;
 
-        public static NotificationsesController Instance
+        public static NotificationsController Instance
         {
             get
             {
-                var existingInstance = GameObject.FindObjectOfType<NotificationsesController>();
+                var existingInstance = GameObject.FindObjectOfType<NotificationsController>();
 
                 if (existingInstance != null)
                 {
@@ -27,7 +27,7 @@
                     var prefab = Resources.Load<GameObject>("Prefabs/Notifications");
                     var canvas = GameObject.FindObjectOfType<Canvas>().transform;
                     var obj = (GameObject)Instantiate(prefab, canvas, false);
-                    instance = obj.GetComponent<NotificationsesController>();
+                    instance = obj.GetComponent<NotificationsController>();
                 }
                 
                 return instance;

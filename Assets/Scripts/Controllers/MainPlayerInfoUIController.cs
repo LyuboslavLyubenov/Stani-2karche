@@ -26,13 +26,13 @@
             this.Server.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
         }
 
-        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.connectionIdField.Value = this.Server.MainPlayerData.ConnectionId.ToString();
             this.isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/Yes");
         }
 
-        private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.connectionIdField.Value = "-1";
             this.isConnectedField.Value = LanguagesManager.Instance.GetValue("MainPlayerInfo/No");

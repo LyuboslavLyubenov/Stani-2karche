@@ -5,7 +5,7 @@
 
     using EventArgs = System.EventArgs;
 
-    public class ClientConnectionDataEventArgs : EventArgs
+    public class ClientConnectionIdEventArgs : EventArgs
     {
         public int ConnectionId
         {
@@ -13,7 +13,7 @@
             private set;
         }
 
-        public ClientConnectionDataEventArgs(int connectionId)
+        public ClientConnectionIdEventArgs(int connectionId)
         {
             if (connectionId <= 0)
             {

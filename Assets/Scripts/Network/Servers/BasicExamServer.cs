@@ -200,7 +200,7 @@ namespace Network.Servers
             this.EndGame();
         }
 
-        private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.askPlayerQuestionRouter.Deactivate();
             this.audiencePollRouter.Deactivate();
@@ -291,7 +291,7 @@ namespace Network.Servers
             this.lastQuestion = args.Question;
         }
 
-        private void OnClientConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientConnected(object sender, ClientConnectionIdEventArgs args)
         {
             if (this.IsGameOver)
             {

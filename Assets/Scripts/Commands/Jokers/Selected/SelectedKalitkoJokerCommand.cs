@@ -22,7 +22,7 @@
         {
         };
 
-        public event EventHandler<ClientConnectionDataEventArgs> OnPlayerSelected = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelected = delegate
             { };
 
         public event EventHandler OnSelectTimeout = delegate
@@ -83,7 +83,7 @@
             }
 
             this.playersSelectedJoker.Add(connectionId);
-            this.OnPlayerSelected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnPlayerSelected(this, new ClientConnectionIdEventArgs(connectionId));
             
             if (!this.startedSelecting)
             {

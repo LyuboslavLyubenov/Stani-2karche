@@ -9,9 +9,9 @@ namespace Interfaces.Network.NetworkManager
 
     public interface IServerNetworkManager
     {
-        event EventHandler<ClientConnectionDataEventArgs> OnClientConnected;
+        event EventHandler<ClientConnectionIdEventArgs> OnClientConnected;
         event EventHandler<DataSentEventArgs> OnReceivedData;
-        event EventHandler<ClientConnectionDataEventArgs> OnClientDisconnected;
+        event EventHandler<ClientConnectionIdEventArgs> OnClientDisconnected;
         event EventHandler<ConnectedClientDataEventArgs> OnClientSetUsername;//TODO Connectedclientdataeventargs is BULLSHIT
 
         ICommandsManager CommandsManager

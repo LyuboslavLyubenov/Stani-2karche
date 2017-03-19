@@ -318,7 +318,7 @@ namespace Controllers.GameController
 
         private void ShowNotification(Color color, string message)
         {
-            NotificationsesController.Instance.AddNotification(color, message);
+            NotificationsController.Instance.AddNotification(color, message);
         }
 
         private void StartLoadingCategories()

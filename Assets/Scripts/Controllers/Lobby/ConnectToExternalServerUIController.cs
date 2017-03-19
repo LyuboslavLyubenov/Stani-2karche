@@ -51,7 +51,7 @@
             this.connecting = false;
             this.LoadingUI.SetActive(false);
 
-            NotificationsesController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
+            NotificationsController.Instance.AddNotification(Color.red, "Няма връзка със сървъра");
 
             this.gameInfoReceiver.StopReceivingFrom(this.ip);
         }

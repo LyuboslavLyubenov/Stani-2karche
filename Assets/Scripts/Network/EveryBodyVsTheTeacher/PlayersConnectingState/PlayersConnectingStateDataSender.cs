@@ -58,29 +58,29 @@
             this.networkManager.SendClientCommand(this.server.PresenterId, everyBodyRequestedGameStart);
         }
 
-        private void OnMainPlayerRequestedGameStart(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerRequestedGameStart(object sender, ClientConnectionIdEventArgs args)
         {
             var mainPlayerRequestedCommand = NetworkCommandData.From<MainPlayerRequestedGameStartCommand>();
             mainPlayerRequestedCommand.AddOption("ConnectionId", args.ConnectionId.ToString());
             this.networkManager.SendClientCommand(this.server.PresenterId, mainPlayerRequestedCommand);
         }
 
-        private void OnAudiencePlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnAudiencePlayerDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendToPresenterClientDisconnected(args.ConnectionId, false);
         }
 
-        private void OnAudiencePlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnAudiencePlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendToPresenterClientConnected(args.ConnectionId, false);
         }
 
-        private void OnMainPlayerDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendToPresenterClientDisconnected(args.ConnectionId, true);
         }
 
-        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendToPresenterClientConnected(args.ConnectionId, true);
         }

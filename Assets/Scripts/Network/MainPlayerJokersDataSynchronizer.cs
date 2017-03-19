@@ -35,7 +35,7 @@ namespace Network
             mainPlayerData.JokersData.OnAddedJoker += this.OnAddedJoker;
         }
 
-        private void OnMainPlayerConnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendAvailableJokersToMainPlayer(args.ConnectionId);
         }

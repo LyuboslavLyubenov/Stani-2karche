@@ -12,8 +12,8 @@ namespace Network
 
     public class MainPlayerData : IPlayerData
     {
-        public event EventHandler<ClientConnectionDataEventArgs> OnConnected = delegate { };
-        public event EventHandler<ClientConnectionDataEventArgs> OnDisconnected = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnConnected = delegate { };
+        public event EventHandler<ClientConnectionIdEventArgs> OnDisconnected = delegate { };
 
         private IServerNetworkManager networkManager;
 
@@ -68,7 +68,7 @@ namespace Network
             this.IsConnected = false;
         }
 
-        private void OnClientDisconnected(object sender, ClientConnectionDataEventArgs args)
+        private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             if (this.ConnectionId != args.ConnectionId)
             {
@@ -86,7 +86,7 @@ namespace Network
             this.ConnectionId = connectionId;
             this.IsConnected = true;
 
-            this.OnConnected(this, new ClientConnectionDataEventArgs(connectionId));
+            this.OnConnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
     }
 
