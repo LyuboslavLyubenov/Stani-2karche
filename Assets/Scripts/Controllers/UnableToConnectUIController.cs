@@ -25,6 +25,9 @@ namespace Controllers
             set;
         }
         
+        /// <summary>
+        /// connects to the server with ServerIP
+        /// </summary>
         public void TryAgainToConnectToServer(IClientNetworkManager networkManager)
         {
             networkManager.ConnectToHost(this.ServerIP);
