@@ -24,7 +24,7 @@
         private void OnTimeout()
         {
             var clientNetworkManager = ClientNetworkManager.Instance;
-            var notificationsController = GameObject.FindObjectOfType<NotificationsesController>();
+            var notificationsController = GameObject.FindObjectOfType<NotificationsController>();
             var errorMsg = LanguagesManager.Instance.GetValue("Errors/LoadCategoriesTimeout");
             notificationsController.AddNotification(Color.red, errorMsg);
             clientNetworkManager.Disconnect();

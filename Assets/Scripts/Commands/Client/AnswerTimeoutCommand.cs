@@ -16,13 +16,13 @@
 
         private GameObject questionPanelUI;
 
-        private NotificationsesController notificationse;
+        private NotificationsController notification;
 
-        public AnswerTimeoutCommand(GameObject questionPanelUI, NotificationsesController notificationse)
+        public AnswerTimeoutCommand(GameObject questionPanelUI, NotificationsController notification)
         {
-            if (notificationse == null)
+            if (notification == null)
             {
-                throw new ArgumentNullException("notificationse");
+                throw new ArgumentNullException("notification");
             }
             
             if (questionPanelUI == null)
@@ -31,13 +31,13 @@
             }
             
             this.questionPanelUI = questionPanelUI;
-            this.notificationse = notificationse;
+            this.notification = notification;
         }
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             this.questionPanelUI.SetActive(false);
-            this.notificationse.AddNotification(Color.blue, AnsweTimeoutMessage);
+            this.notification.AddNotification(Color.blue, AnsweTimeoutMessage);
         }
     }
 }
