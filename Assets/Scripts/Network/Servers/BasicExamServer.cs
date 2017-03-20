@@ -340,7 +340,11 @@ namespace Network.Servers
         
         private void InitializeCommands()
         {
-            AvailableCategoriesCommandsInitializator.Initialize(ServerNetworkManager.Instance, this.gameDataExtractor, this.leaderboardDataManipulator);
+            AvailableCategoriesCommandsInitializer.Initialize(
+                ServerNetworkManager.Instance, 
+                this.gameDataExtractor, 
+                this.leaderboardDataManipulator,
+                new LocalCategoriesReader());
 
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);

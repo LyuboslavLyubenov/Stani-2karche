@@ -1,15 +1,14 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using IState = Interfaces.IState;
+using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
+using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
 {
     using System;
 
     using Assets.Scripts.Interfaces.Controllers;
-
-    using Commands;
-    using Commands.Server;
-
+    
     using Controllers;
 
     using Extensions;
@@ -30,7 +29,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
     public class NotConnectedToServerState : IState
     {
         private GameObject loadingUI;
-        private GameObject unableToConnectToUI;
+        private GameObject unableToConnectUI;
 
         private IUnableToConnectUIController unableToConnectUIController;
 
@@ -62,13 +61,13 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
             this.unableToConnectUIController = unableToConnectUIController;
             this.networkManager = networkManager;
 
-            this.unableToConnectToUI = ((UnableToConnectUIController)this.unableToConnectUIController).gameObject;
+            this.unableToConnectUI = ((UnableToConnectUIController)this.unableToConnectUIController).gameObject;
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
         {
             this.loadingUI.SetActive(false);
-            this.unableToConnectUIController.gameObject.SetActive(false);
+            this.unableToConnectUI.gameObject.SetActive(false);
 
             var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
             this.networkManager.SendServerCommand(commandData);
@@ -79,7 +78,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
-            this.unableToConnectToUI.SetActive(true);
+            this.unableToConnectUI.SetActive(true);
         }
 
         private void OnFoundServerIP(string ip)
@@ -120,7 +119,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
         public void OnStateEnter(StateMachine stateMachine)
         {
             this.loadingUI.SetActive(true);
-            this.unableToConnectToUI.SetActive(false);
+            this.unableToConnectUI.SetActive(false);
 
             this.ConfigureNotFoundServerIPTimer();
             this.AttachEventHandlers();

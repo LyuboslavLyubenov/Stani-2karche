@@ -12,9 +12,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
     
     using StateMachine;
     using UnityEngine;
-
-    using Utils.Unity;
-
+    
     using Zenject.Source.Usage;
 
     public class EveryBodyVsTheTeacherPresenterController : MonoBehaviour
@@ -52,7 +50,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         }
         private void OnConnectedToServer(object sender, EventArgs args)
         {
-            if (this.stateMachine.CurrentState == this.notConnectedToServerState)
+            if (this.stateMachine.CurrentState == this.playersConnectingState)
             {
                 return;
             }
@@ -62,7 +60,6 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
-            //TODO:
             if (this.stateMachine.CurrentState == this.notConnectedToServerState)
             {
                 return;

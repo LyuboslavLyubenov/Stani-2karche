@@ -2,6 +2,8 @@ namespace Network
 {
 
     using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
 
     using Commands;
@@ -27,7 +29,7 @@ namespace Network
             {
                 throw new ArgumentNullException("mainPlayerData");
             }
-            
+
             this.networkManager = networkManager;
             this.mainPlayerData = mainPlayerData;
 
@@ -71,7 +73,7 @@ namespace Network
             var jokerName = jokerType.Name;
             var addJokerCommand = new NetworkCommandData("Add" + jokerName);
 
-            this.networkManager.SendClientCommand(connectionId, addJokerCommand);   
+            this.networkManager.SendClientCommand(connectionId, addJokerCommand);
         }
     }
 
