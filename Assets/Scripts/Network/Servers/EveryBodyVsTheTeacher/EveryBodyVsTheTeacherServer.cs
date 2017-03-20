@@ -12,6 +12,8 @@ namespace Network.Servers
     using StateMachine;
     using StateMachine.EveryBodyVsTheTeacher.States.Server;
 
+    using States.EveryBodyVsTheTeacher.Server;
+
     using Utils.Unity;
 
     using Zenject.Source.Usage;

@@ -1,6 +1,8 @@
 ﻿namespace Interfaces.Network.NetworkManager
 {
 
+    using System.Collections.Generic;
+
     using Commands;
 
     public interface ICommandsManager
@@ -8,6 +10,8 @@
         void AddCommand(INetworkManagerCommand commandToExecute);
 
         void AddCommand(string commandName, INetworkManagerCommand commandToExecute);
+
+        void AddCommands(IEnumerable<INetworkManagerCommand> commands);
 
         bool Exists(INetworkManagerCommand command);
 

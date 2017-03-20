@@ -1,3 +1,5 @@
+using FirstRoundState = States.EveryBodyVsTheTeacher.Server.FirstRoundState;
+
 namespace Tests.EveryBodyVsTheTeacher.States
 {
 

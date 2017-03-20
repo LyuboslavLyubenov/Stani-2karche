@@ -1,9 +1,11 @@
-﻿namespace Assets.Scripts.Interfaces.Commands.Jokers.Selected
+﻿using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+
+namespace Assets.Scripts.Interfaces.Commands.Jokers.Selected
 {
     using System;
     using EventArgs;
 
-    public interface IElectionJokerCommand
+    public interface IElectionJokerCommand : INetworkManagerCommand
     {
         event EventHandler OnAllPlayersSelected;
 

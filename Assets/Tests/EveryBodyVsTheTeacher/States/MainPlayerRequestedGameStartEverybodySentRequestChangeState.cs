@@ -1,4 +1,5 @@
 using EveryBodyVsTheTeacherServer = Network.Servers.EveryBodyVsTheTeacherServer;
+using FirstRoundState = States.EveryBodyVsTheTeacher.Server.FirstRoundState;
 using NetworkCommandData = Commands.NetworkCommandData;
 using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestCommand;
 
