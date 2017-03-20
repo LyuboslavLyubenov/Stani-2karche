@@ -1,72 +1,32 @@
 namespace Network
 {
-
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
-
-    using Commands;
 
     using EventArgs;
 
     using Interfaces;
-    using Interfaces.Network.NetworkManager;
 
     using Utils;
 
-    /// <summary>
-    /// Tracks player jokers
-    /// </summary>
     public class JokersData
     {
         public event EventHandler<JokerTypeEventArgs> OnAddedJoker = delegate
-            {
-            };
-
-        public event EventHandler<JokerTypeEventArgs> OnUsedJoker = delegate
-            {
-            };
+        {
+        };
 
         public event EventHandler<JokerTypeEventArgs> OnRemovedJoker = delegate
-            {
-            };
+        {
+        };
 
-        private List<Type> availableJokers = new List<Type>();
+        private readonly List<Type> availableJokers = new List<Type>();
 
         public ICollection<Type> AvailableJokers
         {
             get
             {
-                return this.availableJokers;
+                return this.availableJokers.ToArray();
             }
-        }
-
-        public JokersData(IServerNetworkManager networkManager)
-        {
-            var jokerTypes = Assembly.GetExecutingAssembly()
-                .GetTypes()
-                .Where(t =>
-                    {
-                        var jokerInterfaceType = typeof(IJoker);
-                        var isJoker = t.GetInterfaces().Contains(jokerInterfaceType);
-                        return isJoker;
-                    })
-                .ToArray();
-
-            for (int i = 0; i < jokerTypes.Length; i++)
-            {
-                var jokerType = jokerTypes[i];
-                var jokerName = jokerType.Name;
-                var executedJokerCommand = new DummyCommand();
-                executedJokerCommand.OnExecuted += (sender, args) => this.UsedJoker(jokerType);
-                networkManager.CommandsManager.AddCommand("Selected" + jokerName, executedJokerCommand);
-            }
-        }
-
-        private void UsedJoker(Type jokerType)
-        {
-            this.OnUsedJoker(this, new JokerTypeEventArgs(jokerType));
         }
 
         private void _AddJoker(Type joker)
