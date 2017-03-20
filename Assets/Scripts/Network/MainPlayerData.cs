@@ -25,6 +25,12 @@ namespace Network
             private set;
         }
 
+        public JokersUsedNotifier JokersUsedNotifier
+        {
+            get;
+            private set;
+        }
+
         public bool IsConnected
         {
             get;
@@ -60,7 +66,8 @@ namespace Network
             this.networkManager = networkManager;
 
             this.mainPlayerConnecting = new MainPlayerConnectingCommand(this.OnMainPlayerConnecting);
-            this.JokersData = new JokersData(networkManager);
+            this.JokersData = new JokersData();
+            this.JokersUsedNotifier = new JokersUsedNotifier(this.networkManager, this.JokersData);
 
             networkManager.OnClientDisconnected += this.OnClientDisconnected;
             networkManager.CommandsManager.AddCommand(this.mainPlayerConnecting);

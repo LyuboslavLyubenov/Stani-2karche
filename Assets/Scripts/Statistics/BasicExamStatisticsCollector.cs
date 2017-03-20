@@ -125,10 +125,9 @@
 
             this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedAnswer));
 
-            var jokersData = this.server.MainPlayerData.JokersData;
-
-            jokersData.OnUsedJoker += this.OnUsedJoker;
-
+            var jokersNotifier = this.server.MainPlayerData.JokersUsedNotifier;
+            jokersNotifier.OnUsedJoker += this.OnUsedJoker;
+            
             this.gameDataIterator.OnLoaded += this.OnGameDataLoaded;
             this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
 
