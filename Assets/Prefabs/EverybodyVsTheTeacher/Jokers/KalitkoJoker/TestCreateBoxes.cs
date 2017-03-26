@@ -9,7 +9,7 @@
     public class TestCreateBoxes : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField]
-        private int BoxesCount = 5;
+        private int BoxesCount = 7;
 
         [SerializeField]
         private KalitkoJokerContainerUIController KalitkoJokerContainerUIController;
