@@ -10,9 +10,7 @@ namespace Controllers.Jokers
     using System;
     using System.Collections;
     using System.Linq;
-
-    using Assets.Scripts.Extensions.Unity;
-
+    
     using Extensions;
     using Extensions.Unity;
 
