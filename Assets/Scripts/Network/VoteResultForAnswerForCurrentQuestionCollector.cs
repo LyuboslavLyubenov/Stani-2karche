@@ -1,4 +1,5 @@
-﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
+using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;

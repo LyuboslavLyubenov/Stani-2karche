@@ -3,12 +3,13 @@ using IState = Interfaces.IState;
 using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 
-namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
+namespace States.EveryBodyVsTheTeacher.Shared
 {
+
     using System;
 
     using Assets.Scripts.Interfaces.Controllers;
-    
+
     using Controllers;
 
     using Extensions;

@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Interfaces.Network
+﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
+
+namespace Assets.Scripts.Interfaces.Network
 {
 
     using System;

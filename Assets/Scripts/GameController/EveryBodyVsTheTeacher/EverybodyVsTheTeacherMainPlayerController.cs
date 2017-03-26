@@ -3,11 +3,11 @@
 
     using System;
 
-    using Assets.Scripts.States.EveryBodyVsTheTeacher.Shared;
-
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
+
+    using States.EveryBodyVsTheTeacher.Shared;
 
     using UnityEngine;
 

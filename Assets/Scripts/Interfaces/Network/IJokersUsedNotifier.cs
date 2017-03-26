@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Interfaces.Network
+﻿using JokerTypeEventArgs = EventArgs.JokerTypeEventArgs;
+
+namespace Assets.Scripts.Interfaces.Network
 {
 
     using System;

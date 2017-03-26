@@ -5,12 +5,13 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
     using System;
 
-    using Assets.Scripts.States.EveryBodyVsTheTeacher.Shared;
-
     using Controllers;
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
     
     using StateMachine;
+
+    using States.EveryBodyVsTheTeacher.Shared;
+
     using UnityEngine;
     
     using Zenject.Source.Usage;

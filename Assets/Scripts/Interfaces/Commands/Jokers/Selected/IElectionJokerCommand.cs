@@ -1,4 +1,5 @@
-﻿using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+﻿using ClientConnectionIdEventArgs = EventArgs.ClientConnectionIdEventArgs;
+using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
 namespace Assets.Scripts.Interfaces.Commands.Jokers.Selected
 {

@@ -15,9 +15,9 @@ namespace Tests.Test_receive_available_categories
         public GameDataExtractor GameData;
         public LeaderboardDataManipulator Leaderboard;
 
-        private void Start()
-        {
-            this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new GetAvailableCategoriesCommand(this.NetworkManager));
+        void Start()
+        {        
+            this.NetworkManager.CommandsManager.AddCommand("GetAvailableCategories", new GetAvailableCategoriesCommand(this.NetworkManager, new LocalCategoriesReader()));
             this.NetworkManager.CommandsManager.AddCommand("SelectedCategory", new SelectedCategoryCommand(this.GameData, this.Leaderboard));
         }
     }
