@@ -20,7 +20,8 @@ namespace Controllers.Jokers
     
     public class KalitkoJokerContainerUIController : MonoBehaviour
     {
-        private const int AnswerYOffset = 10;
+        private const int AnswerYOffset = 60;
+        private const int ConfettiYOffset = 2;
 
         public int DistanceBetweenBox = 10;
         public int MaxBoxesOnRow = 5;
@@ -35,7 +36,7 @@ namespace Controllers.Jokers
         private Transform ConfettiPrefab;
         
         private RectTransform rectTransform;
-
+        
         public bool AnswerSelected
         {
             get;
@@ -61,7 +62,7 @@ namespace Controllers.Jokers
                 for (int j = 0; j < MaxBoxesOnRow && createdBoxesCount < boxCount; j++)
                 {
                     yield return new WaitForSeconds(0.2f);
-                    this.CreateBox(boxSideLength, j, i, createdBoxesCount, containerWidth);
+                    this.CreateBox(boxSideLength, j, i, createdBoxesCount);
 
                     createdBoxesCount++;
                 }
@@ -70,41 +71,41 @@ namespace Controllers.Jokers
             var containerHeight = rows * (boxSideLength + this.DistanceBetweenBox);
             this.rectTransform.sizeDelta = new Vector2(containerWidth, containerHeight);
 
-            yield return null;
+            this.transform.GetAllChildren().Select(c => c.GetComponent<Button>())
+                .ToList()
+                .ForEach(b => b.interactable = true);
 
             onCreatedBoxes();
         }
 
-        private void CreateBox(int boxSideLength, int j, int i, int createdBoxesCount, float containerWidth)
+        private void CreateBox(int boxSideLength, int j, int i, int createdBoxesCount)
         {
             var boxInstance = Instantiate(this.BoxPrefab, Vector3.zero, Quaternion.identity, this.transform);
             var boxRectTransform = boxInstance.GetComponent<RectTransform>();
+
+            boxInstance.name = createdBoxesCount.ToString();
 
             boxRectTransform.sizeDelta = new Vector2(boxSideLength, boxSideLength);
 
             var x = this.DistanceBetweenBox + (boxSideLength / 2) + (j * (this.DistanceBetweenBox + boxSideLength));
             var y = this.DistanceBetweenBox + (boxSideLength / 2) + (i * (this.DistanceBetweenBox + boxSideLength));
             boxRectTransform.anchoredPosition = new Vector2(x, -y);
-
-            boxInstance.GetComponentInChildren<Text>().text = createdBoxesCount.ToString();
-
-            boxInstance.GetComponent<Button>()
-                .onClick
-                .AddListener(this.ClickedOnBox);
+            
+            var button = boxInstance.GetComponent<Button>();
+            button.interactable = false;
+            button.onClick.AddListener(this.ClickedOnBox);
         }
 
         private IEnumerator DestroyNotSelectedBoxes(int selectedBoxNumber)
         {
-            var boxesCount = this.transform.childCount;
+            var boxes = this.transform.GetAllChildren();
 
-            for (int i = 0; i < boxesCount; i++)
+            for (int i = 0; i < boxes.Length; i++)
             {
                 yield return new WaitForSeconds(0.2f);
 
-                var box = this.transform.GetChild(i);
-                var boxNumber = box.GetComponentInChildren<Text>()
-                    .text
-                    .ConvertTo<int>();
+                var box = boxes[i];
+                var boxNumber = box.name.ConvertTo<int>();
 
                 if (boxNumber != selectedBoxNumber)
                 {
@@ -119,7 +120,7 @@ namespace Controllers.Jokers
         {
             var boxRectTransform = boxObj.GetComponent<RectTransform>();
             var beginPosition = new Vector3(boxRectTransform.anchoredPosition.x, boxRectTransform.anchoredPosition.y, 0);
-            var endPosition = new Vector3(0, -(boxRectTransform.sizeDelta.y / 2f), 0);
+            var endPosition = new Vector3(this.rectTransform.sizeDelta.x / 2, -(this.rectTransform.sizeDelta.y / 2), 0);
 
             for (float i = 0; i <= 1f; i += 0.1f)
             {
@@ -135,9 +136,11 @@ namespace Controllers.Jokers
         private IEnumerator ClickedOnBoxCoroutine()
         {
             var boxObj = EventSystem.current.currentSelectedGameObject;
-            var number = boxObj.GetComponentInChildren<Text>()
-                .text
-                .ConvertTo<int>();
+            var number = boxObj.name.ConvertTo<int>();
+           
+            this.transform.GetAllChildren().Select(c => c.GetComponent<Button>())
+                .ToList()
+                .ForEach(b => b.interactable = false);
 
             yield return StartCoroutine(this.DestroyNotSelectedBoxes(number));
             yield return StartCoroutine(this.ShowBoxOnCenter(boxObj));
@@ -153,10 +156,11 @@ namespace Controllers.Jokers
         private IEnumerator ShowAnswerCoroutine(string answer)
         {
             yield return this.StartCoroutine(this.OpenCurrentlySelectedBox());
-            
+            yield return new WaitForSeconds(2f);
+
             var confettiObj = Instantiate(this.ConfettiPrefab, this.transform, false);
             confettiObj.localScale = new Vector3(1, 1, 1);
-            confettiObj.transform.position = new Vector3();
+            confettiObj.transform.position = new Vector3(0, ConfettiYOffset);
 
             var answerObj = Instantiate(this.AnswerPrefab, this.transform, false);
 
@@ -166,7 +170,7 @@ namespace Controllers.Jokers
             answerObj.GetComponentInChildren<Text>()
                 .text = answer;
 
-            yield return new WaitForSeconds(7f);
+            yield return new WaitForSeconds(7.5f);
 
             this.Clean();
             this.gameObject.SetActive(false);
@@ -188,8 +192,6 @@ namespace Controllers.Jokers
             var boxAnimator = boxObj.GetComponent<Animator>();
 
             boxAnimator.SetTrigger("open");
-
-            yield return new WaitForSeconds(3f);
         }
 
         private void Clean()
