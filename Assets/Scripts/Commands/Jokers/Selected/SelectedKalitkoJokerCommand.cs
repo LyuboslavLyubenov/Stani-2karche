@@ -5,22 +5,24 @@
     using System.Linq;
     using System.Timers;
 
+    using Assets.Scripts.Interfaces.Commands.Jokers.Selected;
+
     using EventArgs;
 
     using Extensions;
 
     using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
 
     using Utils;
 
-    public class SelectedKalitkoJokerCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
+    public class SelectedKalitkoJokerCommand : IElectionJokerCommand
     {
-        public const int MinTimeTimeoutInSeconds = 5;
+        public const int MinTimeTimeoutInSeconds = 10;
 
         public event EventHandler OnAllPlayersSelected = delegate
-        {
-        };
+            { };
 
         public event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelected = delegate
             { };
@@ -29,31 +31,36 @@
             { };
 
         private readonly IEveryBodyVsTheTeacherServer server;
-        private readonly int selectThisJokerTimeoutInSeconds;
+
+        private readonly IKalitkoJokerRouter kalitkoJokerRouter;
+
         private readonly IList<int> playersSelectedJoker = new List<int>();
         private readonly Timer selectThisJokerTimeoutTimer;
+
         private bool startedSelecting = false;
 
-        public EventHandler OnExecuted
-        {
-            get; set;
-        }
-        
         public SelectedKalitkoJokerCommand(
-            IEveryBodyVsTheTeacherServer server, 
+            IEveryBodyVsTheTeacherServer server,
+            IKalitkoJokerRouter kalitkoJokerRouter,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
         {
             if (server == null)
             {
                 throw new ArgumentNullException("server");
             }
-            
+
+            if (kalitkoJokerRouter == null)
+            {
+                throw new ArgumentNullException("kalitkoJokerRouter");
+            }
+
             if (selectThisJokerTimeoutInSeconds < MinTimeTimeoutInSeconds)
             {
                 throw new ArgumentOutOfRangeException("selectThisJokerTimeoutInSeconds");
             }
 
             this.server = server;
+            this.kalitkoJokerRouter = kalitkoJokerRouter;
             this.selectThisJokerTimeoutTimer = TimerUtils.ExecuteAfter(selectThisJokerTimeoutInSeconds, this.SelectThisJokerTimeout);
 
             ((IExtendedTimer)this.selectThisJokerTimeoutTimer).RunOnUnityThread = true;
@@ -64,6 +71,7 @@
         {
             this.selectThisJokerTimeoutTimer.Stop();
             this.startedSelecting = false;
+            this.playersSelectedJoker.Clear();
             this.OnSelectTimeout(this, EventArgs.Empty);
         }
 
@@ -76,7 +84,7 @@
 
             var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
 
-            if (!this.server.MainPlayersConnectionIds.Contains(connectionId) || 
+            if (!this.server.MainPlayersConnectionIds.Contains(connectionId) ||
                 this.playersSelectedJoker.Contains(connectionId))
             {
                 return;
@@ -84,7 +92,7 @@
 
             this.playersSelectedJoker.Add(connectionId);
             this.OnPlayerSelected(this, new ClientConnectionIdEventArgs(connectionId));
-            
+
             if (!this.startedSelecting)
             {
                 this.selectThisJokerTimeoutTimer.Start();
@@ -96,10 +104,12 @@
             {
                 this.selectThisJokerTimeoutTimer.Stop();
                 this.startedSelecting = false;
-                
+
+                this.kalitkoJokerRouter.Activate();
+
                 this.OnAllPlayersSelected(this, EventArgs.Empty);
                 return;
-            }   
+            }
         }
     }
 }
