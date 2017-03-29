@@ -1,4 +1,4 @@
-﻿namespace Extensions.Unity
+﻿namespace Assets.Scripts.Extensions.Unity
 {
     using System.Collections.Generic;
     using UnityEngine;

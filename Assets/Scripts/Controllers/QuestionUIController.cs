@@ -4,6 +4,7 @@
     using System;
     using System.Collections;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using EventArgs;
 
@@ -289,7 +290,7 @@
             }
         }
 
-        private int GetAnswerIndex(string answer)
+        protected int GetAnswerIndex(string answer)
         {        
             for (int i = 0; i < this.AnswersCount; i++)
             {
@@ -304,6 +305,16 @@
             return -1;
         }
 
+        protected GameObject GetAnswerObj(int index)
+        {
+            if (index < 0 || index >= this.answersTexts.Length)
+            {
+                throw new ArgumentOutOfRangeException("index");
+            }
+
+            return this.answersTexts[index].transform.parent.gameObject;
+        }
+        
         public void ChangeAnswersCount(int count)
         {
             if (this.answersButtons.Length == count)
