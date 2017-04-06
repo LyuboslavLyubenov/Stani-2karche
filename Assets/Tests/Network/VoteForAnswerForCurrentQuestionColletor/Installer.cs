@@ -1,9 +1,10 @@
-﻿namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
+﻿using VoteResultForAnswerForCurrentQuestionCollector = Network.VoteResultForAnswerForCurrentQuestionCollector;
+
+namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
 {
     using System.Linq;
 
     using Assets.Scripts.Interfaces.Network;
-    using Assets.Scripts.Network;
 
     using DTOs;
 
