@@ -135,7 +135,7 @@ namespace Network.Servers
             this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
 
             this.leaderboardDataManipulator = new LeaderboardDataManipulator();
-            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, this.MainPlayerData);
+            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, this.MainPlayerData.ConnectionId);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, this.MainPlayerData.JokersData);
            
             this.askPlayerQuestionRouter = new AskPlayerQuestionJokerRouter(serverNetworkManager, this.GameDataIterator, new AskClientQuestionRouter(serverNetworkManager));
