@@ -1,5 +1,4 @@
-﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
-using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
@@ -7,8 +6,9 @@ using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 using SelectedAnswerCommand = Commands.Server.SelectedAnswerCommand;
 
-namespace Assets.Scripts.Network
+namespace Network
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -23,9 +23,8 @@ namespace Assets.Scripts.Network
 
     public class VoteResultForAnswerForCurrentQuestionCollector : ICollectVoteResultForAnswerForCurrentQuestion
     {
-        public const int MinTimeToAnswerInSeconds = 5;
-
         public event EventHandler<AnswerEventArgs> OnCollectedVote = delegate { };
+        public event EventHandler OnNoVotesCollected = delegate { };
         public event EventHandler<UnhandledExceptionEventArgs> OnLoadingCurrentQuestionError = delegate {};
 
         private IEveryBodyVsTheTeacherServer server;
@@ -47,6 +46,9 @@ namespace Assets.Scripts.Network
             private set;
         }
 
+        /// <summary>
+        /// Collects answers from main players for current question. When collected all answers or time was over -> raise OnCollectedVote() with highest voted answer
+        /// </summary>
         public VoteResultForAnswerForCurrentQuestionCollector(
             IEveryBodyVsTheTeacherServer server,
             IServerNetworkManager networkManager,
@@ -102,11 +104,17 @@ namespace Assets.Scripts.Network
 
         private void RaiseOnCollectedVoteEvent()
         {
-            var highestVotedAnswer = this.answersVotesCount.OrderByDescending(
-                answerVotesCount => answerVotesCount.Value)
+            if (this.answersVotesCount.Count == 0)
+            {
+                this.OnNoVotesCollected(this, EventArgs.Empty);
+            }
+            else
+            {
+                var highestVotedAnswer = this.answersVotesCount.OrderByDescending(answerVotesCount => answerVotesCount.Value)
                 .First()
                 .Key;
-            this.OnCollectedVote(this, new AnswerEventArgs(highestVotedAnswer, null));
+                this.OnCollectedVote(this, new AnswerEventArgs(highestVotedAnswer, null));
+            }
         }
 
         private void SendQuestionToMainPlayers(ISimpleQuestion question, int timeToAnswerInSeconds)
@@ -116,11 +124,9 @@ namespace Assets.Scripts.Network
 
             loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
             loadQuestionCommand.AddOption("TimeToAnswer", timeToAnswerInSeconds.ToString());
-
+            
             this.server.MainPlayersConnectionIds.ToList()
-                .ForEach(
-                    connectionId => this.networkManager.SendClientCommand(connectionId, loadQuestionCommand)
-                    );
+                .ForEach(connectionId => this.networkManager.SendClientCommand(connectionId, loadQuestionCommand));
         }
 
         public void StartCollecting()
@@ -146,7 +152,7 @@ namespace Assets.Scripts.Network
                         this.ConfigureTimer(this.gameDataIterator.SecondsForAnswerQuestion);
                         this.SendQuestionToMainPlayers(question, this.gameDataIterator.SecondsForAnswerQuestion);
                         this.voteTimeoutTimer.Start();
-                        networkManager.CommandsManager.AddCommand("AnswerSelected", answerSelectedCommand);
+                        this.networkManager.CommandsManager.AddCommand("AnswerSelected", this.answerSelectedCommand);
 
                         this.Collecting = true;
                     },
