@@ -94,19 +94,19 @@
 
         public void RemoveCommand(INetworkManagerCommand command)
         {
-            var commandName = command.GetType()
-                .Name.Replace("Command", "");
-
-            if (!this.Exists(commandName))
+            if (!this.Exists(command))
             {
-                throw new ArgumentException("Command doesnt exists");
+                throw new ArgumentException("Command not added");
             }
 
-            this.commands[commandName].Remove(command);
+            var commandKey = this.commands.First(c => c.Value.Contains(command))
+                .Key;
+            
+            this.commands[commandKey].Remove(command);
 
-            if (this.commands[commandName].Count == 0)
+            if (this.commands[commandKey].Count == 0)
             {
-                this.commands.Remove(commandName);
+                this.commands.Remove(commandKey);
             }
         }
 
