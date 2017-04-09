@@ -2,15 +2,12 @@
 
 namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
-
     using System.Linq;
 
     using Interfaces.Network;
 
     using Tests.DummyObjects;
-
-    using UnityEngine;
-
+    
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Utils.Unity;
@@ -30,9 +27,9 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.MainPlayersConnectionIds = Enumerable.Range(1, 10);
 
-            this.command.OnAllPlayersSelected += (sender, args) => IntegrationTest.Fail();
-            this.command.OnPlayerSelected += (sender, args) => IntegrationTest.Fail();
-            this.command.OnSelectTimeout += (sender, args) => IntegrationTest.Fail();
+            this.command.OnElectionResult += (sender, args) => IntegrationTest.Fail();
+            this.command.OnPlayerSelectedFor += (sender, args) => IntegrationTest.Fail();
+            this.command.OnPlayerSelectedAgainst += (sender, args) => IntegrationTest.Fail();
 
             //5 seconds is default time before command timeout
             this.CoroutineUtils.WaitForSeconds(5.2f, IntegrationTest.Pass);

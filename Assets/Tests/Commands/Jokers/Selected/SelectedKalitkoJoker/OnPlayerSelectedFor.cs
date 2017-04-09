@@ -5,6 +5,8 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
     using System.Collections.Generic;
     using System.Linq;
 
+    using EventArgs.Jokers;
+
     using Interfaces.Network;
 
     using Tests.DummyObjects;
@@ -15,7 +17,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
     using Zenject.Source.Usage;
 
-    public class OnPlayerSelected : ExtendedMonoBehaviour
+    public class OnPlayerSelectedFor : ExtendedMonoBehaviour
     {
         [Inject]
         private IEveryBodyVsTheTeacherServer server;
@@ -30,7 +32,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
             var connectionId = 1;
 
-            this.command.OnPlayerSelected += (sender, args) =>
+            this.command.OnPlayerSelectedFor += (sender, args) =>
                 {
                     if (args.ConnectionId == connectionId)
                     {
@@ -43,7 +45,12 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
                     {
                         var optionValues = new Dictionary<string, string>()
                                            {
-                                               { "ConnectionId", connectionId.ToString() }
+                                               {
+                                                   "ConnectionId", connectionId.ToString()
+                                               },
+                                               {
+                                                   "Decision", ElectionDecision.For.ToString()
+                                               }
                                            };
                         this.command.Execute(optionValues);
                     });

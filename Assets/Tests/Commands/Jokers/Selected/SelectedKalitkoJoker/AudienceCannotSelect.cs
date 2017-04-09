@@ -31,7 +31,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.MainPlayersConnectionIds = Enumerable.Range(1, 10);
 
-            this.command.OnPlayerSelected += (sender, args) =>
+            this.command.OnPlayerSelectedFor += (sender, args) =>
                 {
                     IntegrationTest.Fail();
                 };

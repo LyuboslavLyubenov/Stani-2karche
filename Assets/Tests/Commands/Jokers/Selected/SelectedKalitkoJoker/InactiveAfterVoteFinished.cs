@@ -42,9 +42,9 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
                             () =>
                                 {
                                     //callback hell
-                                    this.command.OnAllPlayersSelected += (sender, args) => IntegrationTest.Fail();
-                                    this.command.OnPlayerSelected += (sender, args) => IntegrationTest.Fail();
-                                    this.command.OnSelectTimeout += (sender, args) => IntegrationTest.Fail();
+                                    this.command.OnElectionResult += (sender, args) => IntegrationTest.Fail();
+                                    this.command.OnPlayerSelectedFor += (sender, args) => IntegrationTest.Fail();
+                                    this.command.OnPlayerSelectedAgainst += (sender, args) => IntegrationTest.Fail();
 
                                     //5 seconds is default time before command timeout
                                     this.CoroutineUtils.WaitForSeconds(4.2f, IntegrationTest.Pass);

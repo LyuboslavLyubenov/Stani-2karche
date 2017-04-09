@@ -1,17 +1,21 @@
 ﻿using ClientConnectionIdEventArgs = EventArgs.ClientConnectionIdEventArgs;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
-namespace Assets.Scripts.Interfaces.Commands.Jokers.Selected
+namespace Interfaces.Commands.Jokers.Selected
 {
+
     using System;
-    using EventArgs;
+
+    using EventArgs.Jokers;
 
     public interface IElectionJokerCommand : INetworkManagerCommand
     {
-        event EventHandler OnAllPlayersSelected;
+        event EventHandler OnElectionStarted;
 
-        event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelected;
+        event EventHandler<ElectionJokerResultEventArgs> OnElectionResult;
 
-        event EventHandler OnSelectTimeout;
+        event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelectedFor;
+
+        event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelectedAgainst; 
     }
 }

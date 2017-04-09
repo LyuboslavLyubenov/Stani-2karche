@@ -1,7 +1,7 @@
-﻿namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
+﻿namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
 
-    using Assets.Scripts.Interfaces.Network;
+    using Interfaces.Network;
 
     using UnityEngine;
 

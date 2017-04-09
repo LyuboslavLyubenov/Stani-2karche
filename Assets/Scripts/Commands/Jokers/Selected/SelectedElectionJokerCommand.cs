@@ -6,34 +6,39 @@
     using System.Linq;
     using System.Timers;
 
-    using Assets.Scripts.Interfaces.Commands.Jokers.Selected;
-
     using EventArgs;
+    using EventArgs.Jokers;
 
     using Extensions;
 
+    using Interfaces.Commands.Jokers.Selected;
     using Interfaces.Network;
 
     using Utils;
 
     public abstract class SelectedElectionJokerCommand : IElectionJokerCommand
     {
-        protected const int MinTimeTimeoutInSeconds = 10;
+        protected const int MinTimeTimeoutInSeconds = 5;
 
-        public event EventHandler OnAllPlayersSelected = delegate
+        public event EventHandler OnElectionStarted = delegate
+            {
+            }; 
+
+        public event EventHandler<ElectionJokerResultEventArgs> OnElectionResult = delegate
             {
             };
 
-        public event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelected = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelectedFor = delegate
             {
             };
 
-        public event EventHandler OnSelectTimeout = delegate
+        public event EventHandler<ClientConnectionIdEventArgs> OnPlayerSelectedAgainst = delegate
             {
             };
 
         private readonly IEveryBodyVsTheTeacherServer server;
-        private readonly IList<int> playersSelectedJoker = new List<int>();
+        private readonly IList<int> playersVotedFor = new List<int>();
+        private readonly IList<int> playersVotedAgainst = new List<int>();
         private readonly Timer selectThisJokerTimeoutTimer;
 
         private bool startedSelecting = false;
@@ -61,14 +66,34 @@
 
         private void SelectThisJokerTimeout()
         {
+            this.FinishElection();    
+        }
+
+        private void FinishElection()
+        {
+            var decision = 
+                this.playersVotedFor.Count > this.playersVotedAgainst.Count
+                               ? 
+                               ElectionDecision.For 
+                               :
+                               ElectionDecision.Against;
+            this.FinishElection(decision);
+        }
+
+        private void FinishElection(ElectionDecision decision)
+        {
             this.selectThisJokerTimeoutTimer.Stop();
+            this.playersVotedFor.Clear();
+            this.playersVotedAgainst.Clear();
             this.startedSelecting = false;
-            this.playersSelectedJoker.Clear();
-            this.OnSelectTimeout(this, EventArgs.Empty);
+
+            this.OnElectionResult(this, new ElectionJokerResultEventArgs(decision));
+
+            this.ActivateRouter();
         }
 
         /// <summary>
-        /// Executed when all mainplayers are voted for this joker
+        /// Executed when mainplayers voted for this joker
         /// </summary>
         protected abstract void ActivateRouter();
 
@@ -80,34 +105,49 @@
             }
 
             var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
-
+            
             if (!this.server.MainPlayersConnectionIds.Contains(connectionId) ||
-                this.playersSelectedJoker.Contains(connectionId))
+                this.playersVotedFor.Contains(connectionId) ||
+                this.playersVotedAgainst.Contains(connectionId) || 
+                !commandsOptionsValues.ContainsKey("Decision"))
             {
                 return;
             }
 
-            this.playersSelectedJoker.Add(connectionId);
-            this.OnPlayerSelected(this, new ClientConnectionIdEventArgs(connectionId));
+            var voteDecision = commandsOptionsValues["Decision"];
 
+            if (voteDecision == ElectionDecision.For.ToString())
+            {
+                this.playersVotedFor.Add(connectionId);
+                this.OnPlayerSelectedFor(this, new ClientConnectionIdEventArgs(connectionId));
+            }
+            else if (voteDecision == ElectionDecision.Against.ToString())
+            {
+                this.playersVotedAgainst.Add(connectionId);
+                this.OnPlayerSelectedAgainst(this, new ClientConnectionIdEventArgs(connectionId));
+            }
+            else
+            {
+                return;
+            }
+            
             if (!this.startedSelecting)
             {
-                this.selectThisJokerTimeoutTimer.Start();
+                this.selectThisJokerTimeoutTimer.Reset();
                 this.startedSelecting = true;
+                this.OnElectionStarted(this, EventArgs.Empty);
                 return;
             }
 
-            if (this.server.MainPlayersConnectionIds.All(this.playersSelectedJoker.Contains))
+            var areAllVoted = !this.server.MainPlayersConnectionIds.Except(this.playersVotedFor)
+                .Except(this.playersVotedAgainst)
+                .Any();
+
+            if (areAllVoted)
             {
-                this.selectThisJokerTimeoutTimer.Stop();
-                this.startedSelecting = false;
-
-                this.ActivateRouter();
-
-                this.OnAllPlayersSelected(this, EventArgs.Empty);
+                this.FinishElection();
                 return;
             }
         }
     }
-
 }

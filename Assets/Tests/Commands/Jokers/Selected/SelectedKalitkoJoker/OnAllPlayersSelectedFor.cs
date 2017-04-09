@@ -7,6 +7,8 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
     using System.Collections.Generic;
     using System.Linq;
 
+    using EventArgs.Jokers;
+
     using Interfaces.Network;
 
     using Tests.DummyObjects;
@@ -17,23 +19,24 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
     using Zenject.Source.Usage;
 
-    public class OnAllPlayersSelected : MonoBehaviour
+    public class OnAllPlayersSelectedFor : MonoBehaviour
     {
         [Inject]
         private IEveryBodyVsTheTeacherServer server;
 
         [Inject]
         private SelectedKalitkoJokerCommand command;
-
-        private readonly List<int> clientsSelectedKalitko = new List<int>();
-
+        
         void Start()
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.MainPlayersConnectionIds = Enumerable.Range(1, 10);
-            this.command.OnAllPlayersSelected += (sender, args) =>
+            this.command.OnElectionResult += (sender, args) =>
                 {
-                    IntegrationTest.Pass();
+                    if (args.ElectionDecision == ElectionDecision.For)
+                    {
+                        IntegrationTest.Pass();
+                    }
                 };
 
             this.StartCoroutine(this.SimulateAllMainPlayersSelectedKalitkoJoker());
@@ -44,15 +47,22 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
             yield return null;
 
             var optionValues = new Dictionary<string, string>()
-            {
-                { "ConnectionId", "0" }
-            };
+                               {
+                                   {
+                                       "ConnectionId", "0"
+                                   },
+                                   {
+                                       "Decision", ""
+                                   }
+                               };
 
             for (int i = 0; i < server.MainPlayersConnectionIds.Count(); i++)
             {
                 var mainPlayerConnectionId = server.MainPlayersConnectionIds.Skip(i)
                     .First();
                 optionValues["ConnectionId"] = mainPlayerConnectionId.ToString();
+                optionValues["Decision"] = ElectionDecision.For.ToString();
+
                 this.command.Execute(optionValues);
 
                 yield return null;
