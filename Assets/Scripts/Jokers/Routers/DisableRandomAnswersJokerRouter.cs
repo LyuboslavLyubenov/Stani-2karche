@@ -12,7 +12,7 @@ namespace Jokers.Routers
     public class DisableRandomAnswersJokerRouter : IDisableRandomAnswersRouter
     {
         private readonly IServerNetworkManager networkManager;
-        private readonly int connectioId;
+        private readonly int connectionId;
 
         public event EventHandler OnActivated = delegate
             {
@@ -22,20 +22,20 @@ namespace Jokers.Routers
             {
             };
 
-        public DisableRandomAnswersJokerRouter(IServerNetworkManager networkManager, int connectioId)
+        public DisableRandomAnswersJokerRouter(IServerNetworkManager networkManager, int connectionId)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
 
-            if (connectioId <= 0)
+            if (connectionId <= 0)
             {
-                throw new ArgumentOutOfRangeException("connectioId");
+                throw new ArgumentOutOfRangeException("connectionId");
             }
             
             this.networkManager = networkManager;
-            this.connectioId = connectioId;
+            this.connectionId = connectionId;
         }
 
         public void Activate(int answersToDisableCount)
@@ -47,7 +47,7 @@ namespace Jokers.Routers
 
             var settingsCommand = new NetworkCommandData("DisableRandomAnswersJokerSettings");
             settingsCommand.AddOption("AnswersToDisableCount", answersToDisableCount.ToString());
-            this.networkManager.SendClientCommand(this.connectioId, settingsCommand);
+            this.networkManager.SendClientCommand(this.connectionId, settingsCommand);
 
             this.OnActivated(this, EventArgs.Empty);
         }

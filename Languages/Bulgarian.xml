@@ -30,6 +30,16 @@
         <QuestionWithoutAnswers>Във файл {0}, въпрос номер {1} няма отговори</QuestionWithoutAnswers>
     </Errors>
     
+    <Settings>
+        <Text>Настройки</Text>
+        <Username>Потребителско име</Username>
+        <Language>Език</Language>
+    </Settings>
+
+    <KickMessages>
+        <UsernameContainsBannedWords>Потребителското име съдържа забранени дума</UsernameContainsBannedWords>
+    </KickMessages>
+    
     <UnableToConnect>
         <Text>Неуспешно свързване към сървъра.</Text>
         <TryAgainToConnect>Опитай да се свържеш пак</TryAgainToConnect>
@@ -183,14 +193,5 @@
     </CallAFriend>
     
     <Computer>Компютър</Computer>
-    
-    <Settings>
-        <Text>Настройки</Text>
-        <Username>Потребителско име</Username>
-        <Language>Език</Language>
-    </Settings>
 
-    <KickMessages>
-        <UsernameContainsBannedWords>Потребителското име съдържа забранени дума</UsernameContainsBannedWords>
-    </KickMessages>
 </Stani2karche>

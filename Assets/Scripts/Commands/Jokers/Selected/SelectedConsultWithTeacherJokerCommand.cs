@@ -3,19 +3,15 @@ using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherSe
 
 namespace Commands.Jokers.Selected
 {
-
     using System;
 
     public class SelectedConsultWithTeacherJokerCommand : SelectedElectionJokerCommand
     {
         private readonly IDisableRandomAnswersRouter jokerRouter;
-
-        private readonly int disableAnswersCount;
-
+        
         public SelectedConsultWithTeacherJokerCommand(
             IEveryBodyVsTheTeacherServer server,
-            IDisableRandomAnswersRouter jokerRouter, 
-            int disableAnswersCount,
+            IDisableRandomAnswersRouter jokerRouter,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
             : base(server, selectThisJokerTimeoutInSeconds)
         {
@@ -24,18 +20,13 @@ namespace Commands.Jokers.Selected
                 throw new ArgumentNullException();
             }
 
-            if (disableAnswersCount <= 0)
-            {
-                throw new ArgumentNullException();
-            }
-
             this.jokerRouter = jokerRouter;
-            this.disableAnswersCount = disableAnswersCount;
         }
 
         protected override void ActivateRouter()
         {
-            this.jokerRouter.Activate(this.disableAnswersCount);
+            this.jokerRouter.Activate(2);
         }
     }
+
 }
