@@ -10,6 +10,8 @@ namespace Network.EveryBodyVsTheTeacher
     using System.Collections.Generic;
     using System.Linq;
 
+    using EventArgs.Jokers;
+
     using Interfaces.Commands.Jokers.Selected;
 
     public class ElectionJokersActionNotifier
@@ -53,8 +55,7 @@ namespace Network.EveryBodyVsTheTeacher
                 electionJokerCommand.OnPlayerSelectedAgainst += this.OnPlayerSelectedAgainst;
             }
         }
-
-
+        
         private void SendToMainPlayersAndPresenter(NetworkCommandData command)
         {
             var clientsToSendTo = new List<int>();
@@ -75,28 +76,27 @@ namespace Network.EveryBodyVsTheTeacher
                 .Name.Replace("Command", "")
                 .Replace("Selected", "");
         }
-
-        private void OnElectionResultJoker(object sender, System.EventArgs args)
+        
+        private void OnElectionResultJoker(object sender, ElectionJokerResultEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
-            var allPlayersSelectedCommand = new NetworkCommandData("ElectionResultFor" + jokerName);
-            this.SendToMainPlayersAndPresenter(allPlayersSelectedCommand);
+            var command = new NetworkCommandData("ElectionResultFor" + jokerName);
+            command.AddOption("Decision", args.ElectionDecision.ToString());
+            this.SendToMainPlayersAndPresenter(command);
         }
         
         private void OnPlayerSelectedFor(object sender, ClientConnectionIdEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
-            var playerSelectedForCommand = new NetworkCommandData("PlayerSelectedFor" + jokerName);
-            playerSelectedForCommand.AddOption("ConnectionId", args.ConnectionId.ToString());
-            this.networkManager.SendClientCommand(this.server.PresenterId, playerSelectedForCommand);
+            var command = new NetworkCommandData("PlayerSelectedFor" + jokerName);
+            this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
         
         private void OnPlayerSelectedAgainst(object sender, ClientConnectionIdEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
-            var playerSelectedAgainstCommand = new NetworkCommandData("PlayerSelectedAgainst" + jokerName);
-            playerSelectedAgainstCommand.AddOption("ConnectionId", args.ConnectionId.ToString());
-            this.networkManager.SendClientCommand(this.server.PresenterId, playerSelectedAgainstCommand);
+            var command = new NetworkCommandData("PlayerSelectedAgainst" + jokerName);
+            this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
     }
 }
