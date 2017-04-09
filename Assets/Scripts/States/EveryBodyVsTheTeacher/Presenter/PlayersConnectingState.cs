@@ -5,9 +5,9 @@ namespace States.EveryBodyVsTheTeacher.Presenter
 {
     using System;
 
-    using Assets.Scripts.Interfaces.Controllers;
-
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
+
+    using Interfaces.Controllers;
 
     using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
 

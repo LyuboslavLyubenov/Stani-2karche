@@ -1,9 +1,10 @@
 namespace UnityTestTools.Assertions.Editor
 {
-
     using UnityEditor.Callbacks;
 
     using UnityEngine;
+
+    using Object = UnityEngine.Object;
 
     public class AssertionStripper
     {

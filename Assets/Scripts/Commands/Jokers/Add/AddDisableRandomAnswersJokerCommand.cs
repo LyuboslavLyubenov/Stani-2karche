@@ -8,6 +8,7 @@ namespace Commands.Jokers.Add
     using Controllers;
 
     using Interfaces;
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
     public class AddDisableRandomAnswersJokerCommand : AddJokerAbstractCommand

@@ -5,19 +5,18 @@
 //Чака се да се извика ShowAnswer/ShowNothing
 //Маха се кутията и отговора (ако има)
 
-namespace Controllers.Jokers
+namespace Controllers.EveryBodyVsTheTeacher.Jokers
 {
+
     using System;
     using System.Collections;
     using System.Linq;
-
-    using Assets.Scripts.Extensions.Unity;
 
     using Extensions.Unity;
 
     using UnityEngine;
     using UnityEngine.UI;
-    
+
     public class KalitkoJokerContainerUIController : MonoBehaviour
     {
         private const int AnswerYOffset = 60;

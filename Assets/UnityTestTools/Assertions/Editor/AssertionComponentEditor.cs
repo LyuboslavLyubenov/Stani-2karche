@@ -1,3 +1,5 @@
+
+
 namespace UnityTestTools.Assertions.Editor
 {
 
@@ -11,6 +13,7 @@ namespace UnityTestTools.Assertions.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.Assertions;
     using UnityTestTools.Assertions.Comparers;
 
     [CustomEditor(typeof(AssertionComponent))]

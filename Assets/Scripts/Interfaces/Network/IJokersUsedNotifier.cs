@@ -1,11 +1,9 @@
 ﻿using JokerTypeEventArgs = EventArgs.JokerTypeEventArgs;
 
-namespace Assets.Scripts.Interfaces.Network
+namespace Interfaces.Network
 {
 
     using System;
-
-    using EventArgs;
 
     public interface IJokersUsedNotifier : IDisposable
     {

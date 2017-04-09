@@ -1,19 +1,20 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
 
-namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
+namespace GameController.EveryBodyVsTheTeacher
 {
+
     using System;
 
     using Controllers;
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
-    
+
     using StateMachine;
 
     using States.EveryBodyVsTheTeacher.Shared;
 
     using UnityEngine;
-    
+
     using Zenject.Source.Usage;
 
     public class EveryBodyVsTheTeacherPresenterController : MonoBehaviour

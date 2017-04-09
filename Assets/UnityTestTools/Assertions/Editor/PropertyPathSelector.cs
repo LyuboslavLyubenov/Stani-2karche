@@ -10,6 +10,7 @@ namespace UnityTestTools.Assertions.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.Assertions;
     using UnityTestTools.Assertions.Comparers;
 
     public class PropertyPathSelector

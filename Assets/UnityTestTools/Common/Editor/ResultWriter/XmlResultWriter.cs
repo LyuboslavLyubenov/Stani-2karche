@@ -10,6 +10,8 @@ namespace UnityTestTools.Common.Editor.ResultWriter
 
     using UnityEngine;
 
+    using UnityTestTools.Common;
+
     public class XmlResultWriter
     {
         private readonly StringBuilder m_ResultWriter = new StringBuilder();

@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Assets.Scripts.Interfaces.Controllers.Jokers;
-
     using Extensions;
 
     using UnityEngine;

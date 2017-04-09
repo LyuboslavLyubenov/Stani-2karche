@@ -1,13 +1,14 @@
-﻿namespace Assets.Tests.DummyObjects
+﻿namespace Tests.DummyObjects
 {
+
     using System;
     using System.Collections.Generic;
-
-    using Assets.Scripts.Interfaces.Controllers;
 
     using DTOs;
 
     using EventArgs;
+
+    using Interfaces.Controllers;
 
     public class DummyAudiencePlayersContainerUIController : IAudiencePlayersContainerUIController
     {

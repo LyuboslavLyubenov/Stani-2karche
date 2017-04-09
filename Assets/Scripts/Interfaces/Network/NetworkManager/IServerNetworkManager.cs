@@ -1,3 +1,5 @@
+using NetworkCommandData = Commands.NetworkCommandData;
+
 namespace Interfaces.Network.NetworkManager
 {
 

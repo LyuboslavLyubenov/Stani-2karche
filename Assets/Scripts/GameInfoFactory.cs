@@ -10,6 +10,7 @@ using Interfaces;
 using Interfaces.Network.NetworkManager;
 
 using Network.Servers;
+using Network.Servers.EveryBodyVsTheTeacher;
 
 using Utils.Unity;
 

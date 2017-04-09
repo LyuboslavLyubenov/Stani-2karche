@@ -1,12 +1,13 @@
 ﻿using IOneTimeExecuteCommand = Interfaces.Network.NetworkManager.IOneTimeExecuteCommand;
 
-namespace Assets.Scripts.Commands.Jokers
+namespace Commands.Jokers
 {
+
     using System;
     using System.Collections.Generic;
-    
-    using Controllers.Jokers;
-    
+
+    using Controllers.EveryBodyVsTheTeacher.Jokers;
+
     public class KalitkoJokerResultCommand : IOneTimeExecuteCommand
     {
         private readonly KalitkoJokerContainerUIController kalitkoJokerContainerUiController;

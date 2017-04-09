@@ -1,10 +1,10 @@
+using System.Collections.Generic;
+using System.Linq;
+
+using UnityEngine;
+
 namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
-
-    using System.Collections.Generic;
-    using System.Linq;
-
-    using UnityEngine;
 
     using UnityTestTools.Common;
 

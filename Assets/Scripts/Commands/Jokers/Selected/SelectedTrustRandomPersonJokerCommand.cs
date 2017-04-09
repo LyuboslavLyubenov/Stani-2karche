@@ -1,11 +1,12 @@
 ﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
-using SelectedElectionJokerCommand = Commands.Jokers.Selected.SelectedElectionJokerCommand;
 
-namespace Assets.Scripts.Commands.Jokers.Selected
+namespace Commands.Jokers.Selected
 {
+
     using System;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-    
+
+    using Interfaces.Network.Jokers.Routers;
+
     public class SelectedTrustRandomPersonJokerCommand : SelectedElectionJokerCommand
     {
         private readonly ITrustRandomPersonJokerRouter jokerRouter;

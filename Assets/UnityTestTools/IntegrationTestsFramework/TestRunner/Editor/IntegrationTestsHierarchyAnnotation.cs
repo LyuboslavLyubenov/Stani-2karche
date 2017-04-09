@@ -6,6 +6,7 @@
     using UnityEngine;
 
     using UnityTestTools.Common.Editor;
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
     using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
 
     [InitializeOnLoad]

@@ -1,12 +1,12 @@
-﻿namespace Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
+﻿namespace Commands.EveryBodyVsTheTeacher.PlayersConnectingState
 {
+
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Controllers;
-    
     using Extensions;
 
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
     public class MainPlayerConnectedCommand : INetworkManagerCommand

@@ -3,9 +3,8 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Tests.Network.Jokers.JokersUsedNotifier
 {
-    using Assets.Scripts.Interfaces.Network;
-    using Assets.Tests.DummyObjects;
 
+    using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;

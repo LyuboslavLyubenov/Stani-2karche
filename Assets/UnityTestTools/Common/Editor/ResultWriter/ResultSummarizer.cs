@@ -8,6 +8,8 @@ namespace UnityTestTools.Common.Editor.ResultWriter
     using System;
     using System.Collections.Generic;
 
+    using UnityTestTools.Common;
+
     /// <summary>
     /// Summary description for ResultSummarizer.
     /// </summary>

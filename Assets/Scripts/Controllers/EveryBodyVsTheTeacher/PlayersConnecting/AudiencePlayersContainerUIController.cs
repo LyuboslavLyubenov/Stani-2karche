@@ -3,10 +3,9 @@
 
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces.Controllers;
-
     using EventArgs;
 
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
     using UnityEngine;

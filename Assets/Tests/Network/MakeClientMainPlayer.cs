@@ -1,7 +1,7 @@
 ﻿using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 
-namespace Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
+namespace Tests.Network
 {
 
     using Interfaces.Network.NetworkManager;

@@ -1,6 +1,4 @@
-﻿using IQuestionUIController = Interfaces.IQuestionUIController;
-
-namespace Assets.Scripts.Interfaces.Controllers
+﻿namespace Interfaces.Controllers
 {
     public interface IElectionQuestionUIController : IQuestionUIController
     {

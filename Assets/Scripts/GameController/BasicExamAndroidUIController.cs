@@ -1,10 +1,12 @@
 ﻿//Mediator
 // ReSharper disable ArrangeTypeMemberModifiers
-namespace Controllers.GameController
+namespace GameController
 {
 
     using Commands;
     using Commands.Client;
+
+    using Controllers;
 
     using EventArgs;
 

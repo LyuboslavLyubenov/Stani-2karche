@@ -1,5 +1,6 @@
-﻿namespace Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender
+﻿namespace Commands.EveryBodyVsTheTeacher.PlayersConnectingState
 {
+
     using System;
     using System.Collections.Generic;
 

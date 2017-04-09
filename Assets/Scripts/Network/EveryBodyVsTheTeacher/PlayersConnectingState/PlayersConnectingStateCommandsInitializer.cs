@@ -3,12 +3,11 @@
 
     using System;
 
-    using Assets.Scripts.Interfaces.Controllers;
-
-    using Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender;
+    using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
 
     using EventArgs;
-    
+
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
     
     public class PlayersConnectingStateCommandsInitializer

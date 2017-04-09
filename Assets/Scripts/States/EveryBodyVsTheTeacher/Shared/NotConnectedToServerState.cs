@@ -8,11 +8,11 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
     using System;
 
-    using Assets.Scripts.Interfaces.Controllers;
-
     using Controllers;
 
     using Extensions;
+
+    using Interfaces.Controllers;
 
     using Localization;
 

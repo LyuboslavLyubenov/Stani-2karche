@@ -16,6 +16,7 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRun
 
     using UnityTestTools.Common;
     using UnityTestTools.Common.Editor.ResultWriter;
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     [Serializable]
     public class NetworkResultsReceiver : EditorWindow

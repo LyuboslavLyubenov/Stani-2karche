@@ -1,6 +1,8 @@
 ﻿namespace Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
 {
-    using Assets.Scripts.Interfaces.Controllers;
+
+    using Interfaces.Controllers;
+
     using UnityEngine;
     using Zenject.Source.Usage;
 

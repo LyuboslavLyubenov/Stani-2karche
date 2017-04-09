@@ -6,10 +6,9 @@ namespace Tests.Network.Jokers.JokersUsedNotifier
 
     using System;
 
-    using Assets.Scripts.Interfaces.Network;
-
     using EventArgs;
 
+    using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;

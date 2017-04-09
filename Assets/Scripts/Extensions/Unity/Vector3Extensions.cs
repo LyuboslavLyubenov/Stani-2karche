@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Extensions.Unity
+﻿namespace Extensions.Unity
 {
 
     using UnityEngine;

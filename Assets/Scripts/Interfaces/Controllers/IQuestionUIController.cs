@@ -1,4 +1,4 @@
-namespace Interfaces
+namespace Interfaces.Controllers
 {
 
     using System;

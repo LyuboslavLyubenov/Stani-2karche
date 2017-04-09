@@ -1,11 +1,9 @@
-﻿using IJokerRouter = Interfaces.Network.Jokers.Routers.IJokerRouter;
+﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
 
-namespace Assets.Scripts.Interfaces.Network.Jokers.Routers
+namespace Interfaces.Network.Jokers.Routers
 {
 
     using System;
-
-    using EventArgs;
 
     public interface ITrustRandomPersonJokerRouter : IJokerRouter
     {

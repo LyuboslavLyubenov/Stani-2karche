@@ -5,6 +5,8 @@ namespace UnityTestTools.Assertions.Editor
     using System.Collections.Generic;
     using System.Linq;
 
+    using UnityTestTools.Assertions;
+
     public class GroupByComparerRenderer : AssertionListRenderer<Type>
     {
         protected override IEnumerable<IGrouping<Type, AssertionComponent>> GroupResult(IEnumerable<AssertionComponent> assertionComponents)

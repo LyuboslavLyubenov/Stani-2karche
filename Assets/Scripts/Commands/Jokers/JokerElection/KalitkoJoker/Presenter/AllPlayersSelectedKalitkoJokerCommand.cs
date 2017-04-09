@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
 
+    using Controllers.EveryBodyVsTheTeacher.Jokers;
     using Controllers.Jokers;
 
     using Interfaces.Network.NetworkManager;

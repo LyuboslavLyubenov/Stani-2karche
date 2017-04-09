@@ -1,6 +1,5 @@
 namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner
 {
-
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -10,7 +9,6 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRun
 
     using UnityEditor;
 
-    using UnityEngine;
     using UnityEngine.SceneManagement;
 
     [Serializable]
@@ -77,7 +75,7 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRun
             }
             catch (SocketException e)
             {
-                Debug.LogException(e);
+                UnityEngine.Debug.LogException(e);
             }
             return port;
         }

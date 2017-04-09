@@ -1,5 +1,5 @@
 ﻿using JokersUsedNotifier = Network.JokersUsedNotifier;
-using PlayersConnectingStateDataSender = Network.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender;
+using PlayersConnectingStateDataSender = Network.EveryBodyVsTheTeacher.PlayersConnectingState.PlayersConnectingStateDataSender;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {

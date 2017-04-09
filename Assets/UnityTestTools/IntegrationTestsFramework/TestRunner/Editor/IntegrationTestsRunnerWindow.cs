@@ -13,6 +13,7 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 
     using UnityTestTools.Common;
     using UnityTestTools.Common.Editor;
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
     using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
 
     [Serializable]

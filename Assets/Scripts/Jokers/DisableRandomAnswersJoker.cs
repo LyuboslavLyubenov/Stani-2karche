@@ -11,6 +11,7 @@
     using Exceptions;
 
     using Interfaces;
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
     using UnityEngine;

@@ -3,18 +3,18 @@
     using System;
     using System.Linq;
 
-    using Assets.Scripts.Exceptions.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
-
     using Commands;
     using Commands.Client;
     using Commands.Server;
 
     using EventArgs;
 
+    using Exceptions.Jokers;
+
     using Interfaces;
     using Interfaces.GameData;
     using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
     
     using UnityEngine;

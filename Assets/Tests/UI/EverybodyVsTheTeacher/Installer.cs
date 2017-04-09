@@ -4,7 +4,7 @@
     using Interfaces;
     using Interfaces.Network.NetworkManager;
 
-    using StateMachine.EveryBodyVsTheTeacher.States.Server;
+    using States.EveryBodyVsTheTeacher.Server;
 
     using Tests.DummyObjects;
 

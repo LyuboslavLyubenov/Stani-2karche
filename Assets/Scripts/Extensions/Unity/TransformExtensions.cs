@@ -1,6 +1,8 @@
-﻿namespace Assets.Scripts.Extensions.Unity
+﻿namespace Extensions.Unity
 {
+
     using System.Collections.Generic;
+
     using UnityEngine;
 
     public static class TransformExtensions

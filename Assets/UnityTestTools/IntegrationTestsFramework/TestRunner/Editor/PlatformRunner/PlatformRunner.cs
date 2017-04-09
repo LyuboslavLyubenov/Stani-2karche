@@ -12,6 +12,8 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRun
 
     using UnityEngine;
 
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     public class PlatformRunner
     {
         public static BuildTarget defaultBuildTarget

@@ -1,8 +1,9 @@
 namespace Tests.UI.ElectionQuestionUIController
 {
 
-    using Assets.Scripts.Interfaces.Controllers;
     using Interfaces;
+    using Interfaces.Controllers;
+
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Utils.Unity;
     using Zenject.Source.Usage;

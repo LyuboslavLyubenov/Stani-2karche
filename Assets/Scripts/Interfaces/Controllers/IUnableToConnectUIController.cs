@@ -1,6 +1,6 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 
-namespace Assets.Scripts.Interfaces.Controllers
+namespace Interfaces.Controllers
 {
     public interface IUnableToConnectUIController
     {

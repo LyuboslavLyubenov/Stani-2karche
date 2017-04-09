@@ -1,4 +1,4 @@
-namespace Network.Servers
+namespace Network.Servers.EveryBodyVsTheTeacher
 {
 
     using System;
@@ -10,7 +10,6 @@ namespace Network.Servers
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
-    using StateMachine.EveryBodyVsTheTeacher.States.Server;
 
     using States.EveryBodyVsTheTeacher.Server;
 

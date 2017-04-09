@@ -1,7 +1,9 @@
-﻿namespace Controllers.GameController
+﻿namespace GameController.EveryBodyVsTheTeacher
 {
 
     using System;
+
+    using Controllers;
 
     using Interfaces.Network.NetworkManager;
 
@@ -35,8 +37,8 @@
                     this.UnableToConnectUIController, 
                     this.networkManager);
 
-            this.networkManager.OnConnectedEvent += OnConnectedToServer;
-            this.networkManager.OnDisconnectedEvent += OnDisconnectedFromServer;
+            this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
+            this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
 
             this.stateMachine.SetCurrentState(this.notConnectedToServerState);
         }

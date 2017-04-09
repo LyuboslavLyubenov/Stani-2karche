@@ -13,6 +13,7 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
     using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRunner;
 
     public static partial class Batch

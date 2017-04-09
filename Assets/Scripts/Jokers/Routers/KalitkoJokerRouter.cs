@@ -12,7 +12,7 @@ namespace Jokers.Routers
     using System;
     using System.Linq;
 
-    using Assets.Scripts.Commands.Jokers;
+    using Commands.Jokers;
 
     using Utils;
 

@@ -1,6 +1,8 @@
 ﻿namespace Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
 {
-    using Assets.Scripts.Interfaces.Controllers;
+
+    using Interfaces.Controllers;
+
     using UnityEngine;
 
     using Utils.Unity;

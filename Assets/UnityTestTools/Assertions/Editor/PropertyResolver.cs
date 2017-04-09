@@ -9,6 +9,8 @@ namespace UnityTestTools.Assertions.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.Assertions;
+
     [Serializable]
     public class PropertyResolver
     {

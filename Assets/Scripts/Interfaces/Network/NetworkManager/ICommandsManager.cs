@@ -1,4 +1,6 @@
-﻿namespace Interfaces.Network.NetworkManager
+﻿using NetworkCommandData = Commands.NetworkCommandData;
+
+namespace Interfaces.Network.NetworkManager
 {
 
     using System.Collections.Generic;

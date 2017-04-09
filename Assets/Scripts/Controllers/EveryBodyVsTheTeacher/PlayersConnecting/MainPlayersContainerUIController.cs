@@ -5,7 +5,7 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Controllers;
+    using Interfaces.Controllers;
 
     using UnityEngine;
 

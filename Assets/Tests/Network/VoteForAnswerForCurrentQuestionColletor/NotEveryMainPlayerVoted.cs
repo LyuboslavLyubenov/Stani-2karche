@@ -1,12 +1,10 @@
 ﻿using NetworkCommandData = Commands.NetworkCommandData;
 
-namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
+namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
 
     using System.Collections;
     using System.Linq;
-
-    using Assets.Scripts.Interfaces.Network;
 
     using Interfaces;
     using Interfaces.Network;

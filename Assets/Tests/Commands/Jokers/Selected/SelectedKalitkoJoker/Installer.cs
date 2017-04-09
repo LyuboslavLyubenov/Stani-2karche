@@ -4,6 +4,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
 
     using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
 
     using Tests.DummyObjects;
 
@@ -11,22 +12,27 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
     public class Installer : MonoInstaller
     {
-
         public override void InstallBindings()
         {
-            var server = new DummyEveryBodyVsTheTeacherServer();
-            server.StartedGame = true;
+            var server = new DummyEveryBodyVsTheTeacherServer
+                         {
+                             StartedGame = true
+                         };
 
             Container.Bind<IEveryBodyVsTheTeacherServer>()
                 .FromInstance(server)
                 .AsSingle();
-
-            Container.Bind<int>()
-                .FromInstance(5)
-                .WhenInjectedInto<SelectedKalitkoJokerCommand>();
-
+            
             Container.Bind<SelectedKalitkoJokerCommand>()
-                .ToSelf();
+                .FromMethod(
+                    (context) =>
+                        {
+                            var command =
+                                new SelectedKalitkoJokerCommand(
+                                    context.Container.Resolve<IEveryBodyVsTheTeacherServer>(),
+                                    new DummyKalitkoJokerRouter());
+                            return command;
+                        });
         }
     }
 }

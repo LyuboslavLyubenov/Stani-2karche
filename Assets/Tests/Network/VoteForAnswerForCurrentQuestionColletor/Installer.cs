@@ -1,10 +1,9 @@
 ﻿using VoteResultForAnswerForCurrentQuestionCollector = Network.VoteResultForAnswerForCurrentQuestionCollector;
 
-namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
+namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
-    using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network;
+    using System.Linq;
 
     using DTOs;
 
@@ -23,7 +22,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
         {
             var question = new SimpleQuestion("QuestionText", new[] { "answer1", "answer2", "answer3", "answer4" }, 0);
 
-            Container.Bind<ISimpleQuestion>()
+            this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);
 
             var gameDataIterator = new DummyGameDataIterator()
@@ -34,7 +33,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
                                        Loaded = true
                                    };
             
-            Container.Bind<IGameDataIterator>()
+            this.Container.Bind<IGameDataIterator>()
                 .FromInstance(gameDataIterator)
                 .AsSingle();
 
@@ -45,15 +44,15 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionCollector
                              StartedGame = true
                          };
             
-            Container.Bind<IEveryBodyVsTheTeacherServer>()
+            this.Container.Bind<IEveryBodyVsTheTeacherServer>()
                 .FromInstance(server)
                 .AsSingle();
 
-            Container.Bind<IServerNetworkManager>()
+            this.Container.Bind<IServerNetworkManager>()
                 .To<DummyServerNetworkManager>()
                 .AsSingle();
             
-            Container.Bind<ICollectVoteResultForAnswerForCurrentQuestion>()
+            this.Container.Bind<ICollectVoteResultForAnswerForCurrentQuestion>()
                 .To<VoteResultForAnswerForCurrentQuestionCollector>();
         }
     }

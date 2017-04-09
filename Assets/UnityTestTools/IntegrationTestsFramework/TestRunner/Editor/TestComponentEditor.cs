@@ -10,6 +10,8 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     using Object = UnityEngine.Object;
 
     [CanEditMultipleObjects]

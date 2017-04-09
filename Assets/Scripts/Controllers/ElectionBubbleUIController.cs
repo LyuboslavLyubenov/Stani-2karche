@@ -3,9 +3,9 @@ namespace Controllers
 
     using System;
 
-    using Assets.Scripts.Interfaces.Controllers;
-
     using Extensions;
+
+    using Interfaces.Controllers;
 
     using UnityEngine;
     using UnityEngine.UI;

@@ -1,17 +1,10 @@
-﻿using ClientConnectionIdEventArgs = EventArgs.ClientConnectionIdEventArgs;
-using IDisableRandomAnswersRouter = Interfaces.Network.Jokers.Routers.IDisableRandomAnswersRouter;
+﻿using IDisableRandomAnswersRouter = Interfaces.Network.Jokers.Routers.IDisableRandomAnswersRouter;
 using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
-using SelectedElectionJokerCommand = Commands.Jokers.Selected.SelectedElectionJokerCommand;
 
-namespace Assets.Scripts.Commands.Jokers.Selected
+namespace Commands.Jokers.Selected
 {
 
     using System;
-    using System.Collections.Generic;
-
-    using Assets.Scripts.Interfaces.Commands.Jokers.Selected;
-
-    using EventArgs;
 
     public class SelectedConsultWithTeacherJokerCommand : SelectedElectionJokerCommand
     {

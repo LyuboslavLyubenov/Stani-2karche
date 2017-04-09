@@ -1,12 +1,12 @@
 namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
 {
 
-    using Assets.Scripts.Exceptions.Jokers;
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
+    using Exceptions.Jokers;
 
     using Interfaces;
     using Interfaces.GameData;
     using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;

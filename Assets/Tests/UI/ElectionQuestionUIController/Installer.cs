@@ -2,13 +2,12 @@
 namespace Tests.UI.ElectionQuestionUIController
 {
 
-    using Assets.Scripts.Interfaces.Controllers;
-
     using Controllers;
 
     using DTOs;
 
     using Interfaces;
+    using Interfaces.Controllers;
 
     using UnityEngine;
 

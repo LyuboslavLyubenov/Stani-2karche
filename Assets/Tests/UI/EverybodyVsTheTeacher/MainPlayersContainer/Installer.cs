@@ -1,9 +1,9 @@
 ﻿namespace Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
 {
 
-    using Assets.Scripts.Interfaces.Controllers;
-
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
+
+    using Interfaces.Controllers;
 
     using Zenject.Source.Install;
 

@@ -1,11 +1,9 @@
 ﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
 
-namespace Assets.Scripts.Interfaces.Network
+namespace Interfaces.Network
 {
 
     using System;
-
-    using EventArgs;
 
     /// <summary>
     /// Used to collect answers from main players in EveryBodyVsTheTeacher

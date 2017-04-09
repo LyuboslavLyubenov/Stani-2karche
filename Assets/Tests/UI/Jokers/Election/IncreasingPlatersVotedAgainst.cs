@@ -1,7 +1,7 @@
 ﻿namespace Tests.UI.Jokers.Election
 {
 
-    using Assets.Scripts.Interfaces.Controllers.Jokers;
+    using Controllers.EveryBodyVsTheTeacher.Jokers.Election;
 
     using UnityEngine;
     using UnityEngine.UI;

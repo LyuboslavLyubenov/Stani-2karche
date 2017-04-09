@@ -4,8 +4,7 @@ namespace Controllers
 
     using System;
 
-    using Assets.Scripts.Interfaces.Controllers;
-
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
     using Network.NetworkManagers;

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Exceptions.Jokers
+﻿namespace Exceptions.Jokers
 {
 
     using System;

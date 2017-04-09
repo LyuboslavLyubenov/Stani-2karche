@@ -2,7 +2,7 @@
 using AudienceAnswerPollResultRetriever = Jokers.Retrievers.AudienceAnswerPollResultRetriever;
 using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
 
-namespace Controllers.GameController
+namespace GameController
 {
 
     using System;
@@ -14,6 +14,7 @@ namespace Controllers.GameController
     using Commands.Jokers.Add;
     using Commands.Server;
 
+    using Controllers;
     using Controllers.Jokers;
 
     using DialogSwitchers;

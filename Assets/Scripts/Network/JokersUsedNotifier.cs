@@ -4,13 +4,12 @@ namespace Network
     using System.Collections.Generic;
     using System.Linq;
 
-    using Assets.Scripts.Interfaces.Network;
-
     using Commands;
 
     using EventArgs;
 
     using Interfaces;
+    using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
     class SelectedJokerCommand : INetworkManagerCommand
@@ -43,7 +42,7 @@ namespace Network
         private readonly IServerNetworkManager networkManager;
         private readonly JokersData jokersData;
 
-        private Dictionary<Type, INetworkManagerCommand> trackedJokersUsedCommands = new Dictionary<Type, INetworkManagerCommand>();
+        private readonly Dictionary<Type, INetworkManagerCommand> trackedJokersUsedCommands = new Dictionary<Type, INetworkManagerCommand>();
 
         public JokersUsedNotifier(IServerNetworkManager networkManager, JokersData jokersData)
         {

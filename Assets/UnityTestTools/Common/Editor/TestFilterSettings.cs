@@ -8,6 +8,7 @@ namespace UnityTestTools.Common.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.Common;
     using UnityTestTools.Common.Editor.ResultWriter;
     using UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.Renderer;
 

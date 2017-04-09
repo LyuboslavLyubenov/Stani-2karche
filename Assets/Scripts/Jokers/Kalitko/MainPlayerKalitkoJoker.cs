@@ -2,9 +2,8 @@
 {
     using System;
 
-    using Assets.Scripts.Commands.Jokers.JokerElection;
-
     using Commands;
+    using Commands.Jokers.JokerElection;
     using Commands.Jokers.JokerElection.KalitkoJoker;
     using Commands.Jokers.Selected;
 

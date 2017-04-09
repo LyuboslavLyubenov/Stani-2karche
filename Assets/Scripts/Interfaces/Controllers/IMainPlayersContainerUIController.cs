@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Interfaces.Controllers
+﻿namespace Interfaces.Controllers
 {
     public interface IMainPlayersContainerUIController
     {

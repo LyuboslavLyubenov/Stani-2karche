@@ -2,10 +2,10 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
 {
-    using Assets.Scripts.Interfaces.Network.Jokers.Routers;
 
     using Interfaces;
     using Interfaces.Network;
+    using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;

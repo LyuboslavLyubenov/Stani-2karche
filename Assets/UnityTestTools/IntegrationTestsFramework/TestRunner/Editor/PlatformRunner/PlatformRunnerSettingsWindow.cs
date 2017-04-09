@@ -13,6 +13,7 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner.Editor.PlatformRun
     using UnityEngine.SceneManagement;
 
     using UnityTestTools.Common.Editor;
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Object = UnityEngine.Object;
 

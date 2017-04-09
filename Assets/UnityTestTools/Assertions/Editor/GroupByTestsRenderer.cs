@@ -6,6 +6,8 @@ namespace UnityTestTools.Assertions.Editor
 
     using UnityEngine;
 
+    using UnityTestTools.Assertions;
+
     public class GroupByTestsRenderer : AssertionListRenderer<GameObject>
     {
         protected override IEnumerable<IGrouping<GameObject, AssertionComponent>> GroupResult(IEnumerable<AssertionComponent> assertionComponents)

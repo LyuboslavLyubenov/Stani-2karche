@@ -15,7 +15,7 @@
             int selectThisJokerTimeoutInSeconds = SelectedElectionJokerCommand.MinTimeTimeoutInSeconds)
             : base(server, selectThisJokerTimeoutInSeconds)
         {
-            if (this.kalitkoJokerRouter == null)
+            if (kalitkoJokerRouter == null)
             {
                 throw new ArgumentNullException("kalitkoJokerRouter");
             }

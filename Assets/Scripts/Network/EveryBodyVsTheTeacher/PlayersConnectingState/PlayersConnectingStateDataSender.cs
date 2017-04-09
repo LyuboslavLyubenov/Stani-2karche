@@ -1,10 +1,10 @@
-﻿namespace Network.EveryBodyVsTheTeacher
+﻿namespace Network.EveryBodyVsTheTeacher.PlayersConnectingState
 {
 
     using System;
 
     using Commands;
-    using Commands.EveryBodyVsTheTeacher.PlayersConnectingStateDataSender;
+    using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
 
     using EventArgs;
 
