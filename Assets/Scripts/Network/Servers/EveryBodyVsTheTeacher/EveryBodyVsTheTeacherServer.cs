@@ -4,14 +4,24 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using System;
     using System.Collections.Generic;
 
+    using Commands;
     using Commands.Server;
 
+    using EventArgs;
+
+    using Interfaces.GameData;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
+
+    using Localization;
+
+    using Notifications;
 
     using StateMachine;
 
     using States.EveryBodyVsTheTeacher.Server;
+
+    using UnityEngine;
 
     using Utils.Unity;
 
@@ -30,13 +40,21 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private ICreatedGameInfoSender sender;
 
         [Inject]
-        private IServerNetworkManager serverNetworkManager;
+        private IServerNetworkManager networkManager;
+
+        [Inject]
+        private IGameDataIterator gameDataIterator;
+
+        [Inject]
+        private ICollectVoteResultForAnswerForCurrentQuestion currentQuestionVoteResultCollector;
 
         [Inject]
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
 
         [Inject]
         private FirstRoundState firstRoundState;
+
+
 
         private JokersData jokers;
 
@@ -72,8 +90,12 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         void Start()
         {
-            this.serverNetworkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
+            
+            this.currentQuestionVoteResultCollector.OnCollectedVote += this.OnCollectedVoteForCurrentQuestion;
+            this.currentQuestionVoteResultCollector.OnNoVotesCollected += this.OnNoVotesCollected;
+            this.currentQuestionVoteResultCollector.OnLoadingCurrentQuestionError += this.OnLoadingQuestionError;
         }
 
         private void OnMainPlayerConnecting(int connectionId)
@@ -84,17 +106,67 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 return;
             }
 
-            this.serverNetworkManager.KickPlayer(connectionId);
+            this.networkManager.KickPlayer(connectionId);
         }
 
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
         {
             this.stateMachine.SetCurrentState(this.firstRoundState);
+
+            this.currentQuestionVoteResultCollector.StartCollecting();
+        }
+        
+        private void OnNoVotesCollected(object sender, EventArgs args)
+        {
+            this.EndGame();
+        }
+
+        private void OnCollectedVoteForCurrentQuestion(object sender, AnswerEventArgs args)
+        {
+            this.gameDataIterator.GetCurrentQuestion(
+                (question) =>
+                {
+                    if (args.Answer == question.CorrectAnswer)
+                    {
+                        this.LoadNextQuestion();
+                    }
+                    else
+                    {
+                        this.EndGame();
+                    }
+                },
+                (error) =>
+                {
+                    this.OnLoadingQuestionError(this, new UnhandledExceptionEventArgs(error, true));
+                });
+        }
+
+        private void OnLoadingQuestionError(object sender, UnhandledExceptionEventArgs args)
+        {
+            var message = LanguagesManager.Instance.GetValue("GameDataIterator/CantLoadCurrentQuestion");
+            NotificationsController.Instance.AddNotification(Color.red, message);
+
+            var command = new NetworkCommandData("CantLoadQuestion");
+            this.networkManager.SendClientCommand(this.PresenterId, command);
+        }
+
+        private void LoadNextQuestion()
+        {
+            //HACK: set current question = next question. 
+            this.gameDataIterator.GetNextQuestion(
+                (question) =>
+                {
+                    this.currentQuestionVoteResultCollector.StartCollecting();
+                },
+                (error) =>
+                {
+                    OnLoadingQuestionError(this, new UnhandledExceptionEventArgs(error, true));
+                });
         }
 
         public void EndGame()
         {
-
+            throw new NotImplementedException();
         }
     }
 }
