@@ -36,12 +36,13 @@
             {
             };
 
-        private readonly IEveryBodyVsTheTeacherServer server;
         private readonly IList<int> playersVotedFor = new List<int>();
         private readonly IList<int> playersVotedAgainst = new List<int>();
         private readonly Timer selectThisJokerTimeoutTimer;
 
         private bool startedSelecting = false;
+        
+        protected readonly IEveryBodyVsTheTeacherServer server;
 
         protected SelectedElectionJokerCommand(
             IEveryBodyVsTheTeacherServer server,
