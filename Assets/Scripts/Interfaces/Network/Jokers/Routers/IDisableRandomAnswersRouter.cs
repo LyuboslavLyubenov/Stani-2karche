@@ -3,6 +3,6 @@
 
     public interface IDisableRandomAnswersRouter : IJokerRouter
     {
-        void Activate(int answersToDisableCount);
+        void Activate(int answersToDisableCount, int connectionId);
     }
 }

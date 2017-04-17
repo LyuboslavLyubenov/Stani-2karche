@@ -25,7 +25,7 @@ namespace Commands.Jokers.Selected
 
         protected override void ActivateRouter()
         {
-            this.jokerRouter.Activate(2);
+            this.jokerRouter.Activate(2, this.server.PresenterId);
         }
     }
 

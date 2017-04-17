@@ -24,6 +24,8 @@ namespace Commands.Jokers.Selected
 
         private IDisableRandomAnswersRouter jokerRouter;
 
+        private readonly int connectionId;
+
         private int answersToDisableCount;
 
         private Type jokerType;
@@ -31,6 +33,7 @@ namespace Commands.Jokers.Selected
         public SelectedDisableRandomAnswersJokerCommand(
             MainPlayerData mainPlayerData,
             IDisableRandomAnswersRouter jokerRouter,
+            int connectionId,
             int answersToDisableCount
             )
         {
@@ -43,10 +46,15 @@ namespace Commands.Jokers.Selected
             {
                 throw new ArgumentNullException("jokerRouter");
             }
-            
-            
+
+            if (connectionId <= 0)
+            {
+                throw new ArgumentOutOfRangeException("connectionId");
+            }
+
             this.mainPlayerData = mainPlayerData;
             this.jokerRouter = jokerRouter;
+            this.connectionId = connectionId;
             this.answersToDisableCount = answersToDisableCount;
             this.jokerType = typeof(DisableRandomAnswersJoker);
         }
@@ -59,7 +67,7 @@ namespace Commands.Jokers.Selected
             }
 
             this.mainPlayerData.JokersData.RemoveJoker(this.jokerType);
-            this.jokerRouter.Activate(this.answersToDisableCount);
+            this.jokerRouter.Activate(this.answersToDisableCount, this.connectionId);
 
             if (this.OnExecuted != null)
             {

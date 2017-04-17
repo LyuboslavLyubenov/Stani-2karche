@@ -135,7 +135,7 @@ namespace Network.Servers
             this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
 
             this.leaderboardDataManipulator = new LeaderboardDataManipulator();
-            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, this.MainPlayerData.ConnectionId);
+            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, this.MainPlayerData.JokersData);
            
             this.askPlayerQuestionRouter = new AskPlayerQuestionJokerRouter(serverNetworkManager, this.GameDataIterator, new AskClientQuestionRouter(serverNetworkManager));
@@ -349,7 +349,7 @@ namespace Network.Servers
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
             var selectedAudiencePollCommand = new SelectedHelpFromAudienceJokerCommand(this.MainPlayerData, this.audiencePollRouter, 60);
-            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, 2);
+            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, this.MainPlayerData.ConnectionId, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };
 

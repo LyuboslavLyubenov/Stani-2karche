@@ -26,7 +26,7 @@
 
         protected override void ActivateRouter()
         {
-            this.disableRandomAnswersRouter.Activate(1);
+            this.disableRandomAnswersRouter.Activate(1, this.server.PresenterId);
         }
     }
 
