@@ -1,4 +1,4 @@
-﻿using JokersUsedNotifier = Network.JokersUsedNotifier;
+﻿using JokersUsedNotifier = Assets.Scripts.Network.JokersUsedNotifier;
 using PlayersConnectingStateDataSender = Network.EveryBodyVsTheTeacher.PlayersConnectingState.PlayersConnectingStateDataSender;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender

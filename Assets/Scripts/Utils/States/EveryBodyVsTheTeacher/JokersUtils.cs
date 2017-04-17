@@ -1,12 +1,10 @@
-﻿namespace Assets.Scripts.Utils.States.EveryBodyVsTheTeacher
+﻿using IElectionJokerCommand = Interfaces.Commands.Jokers.Selected.IElectionJokerCommand;
+using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
+using JokersData = Network.JokersData;
+
+namespace Assets.Scripts.Utils.States.EveryBodyVsTheTeacher
 {
-
     using System;
-
-    using Interfaces.Commands.Jokers.Selected;
-    using Interfaces.Network.NetworkManager;
-
-    using Network;
 
     public class JokersUtils
     {

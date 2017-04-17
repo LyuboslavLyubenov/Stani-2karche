@@ -3,6 +3,8 @@ namespace Network
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces;
+
     using EventArgs;
 
     using Interfaces;

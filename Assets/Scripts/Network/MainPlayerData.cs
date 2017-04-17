@@ -3,6 +3,8 @@ namespace Network
 
     using System;
 
+    using Assets.Scripts.Network;
+
     using Commands.Server;
 
     using EventArgs;

@@ -3,6 +3,8 @@ namespace EventArgs
 
     using System;
 
+    using Assets.Scripts.Interfaces;
+
     using Interfaces;
 
     public class JokerEventArgs : System.EventArgs

@@ -3,12 +3,10 @@ namespace States.EveryBodyVsTheTeacher.Server
 
     using System;
 
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 
-    using Commands;
     using Commands.Jokers.Selected;
-
-    using EventArgs;
 
     using Interfaces;
     using Interfaces.Commands.Jokers.Selected;
@@ -20,15 +18,9 @@ namespace States.EveryBodyVsTheTeacher.Server
     using Jokers;
     using Jokers.Kalitko;
 
-    using Localization;
-
     using Network;
 
-    using Notifications;
-
     using StateMachine;
-
-    using UnityEngine;
 
     using Zenject.Source.Usage;
 
@@ -81,8 +73,7 @@ namespace States.EveryBodyVsTheTeacher.Server
                                       };
             commandsManager.AddCommands(this.selectJokerCommands);
         }
-
-
+        
         public void OnStateEnter(StateMachine stateMachine)
         {
             this.gameDataExtractor.ExtractDataSync();

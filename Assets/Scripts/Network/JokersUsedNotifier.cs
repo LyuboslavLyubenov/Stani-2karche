@@ -1,16 +1,18 @@
-namespace Network
+using IJokersUsedNotifier = Interfaces.Network.IJokersUsedNotifier;
+using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
+using JokersData = Network.JokersData;
+
+namespace Assets.Scripts.Network
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Commands;
+    using Assets.Scripts.Interfaces;
 
     using EventArgs;
-
-    using Interfaces;
-    using Interfaces.Network;
-    using Interfaces.Network.NetworkManager;
 
     class SelectedJokerCommand : INetworkManagerCommand
     {
@@ -106,8 +108,8 @@ namespace Network
 
         public void Dispose()
         {
-            jokersData.OnAddedJoker -= this.OnAddedJoker;
-            jokersData.OnRemovedJoker -= this.OnRemovedJoker;
+            this.jokersData.OnAddedJoker -= this.OnAddedJoker;
+            this.jokersData.OnRemovedJoker -= this.OnRemovedJoker;
         }
     }
 }

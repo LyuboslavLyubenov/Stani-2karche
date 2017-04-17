@@ -1,4 +1,4 @@
-namespace Interfaces
+namespace Assets.Scripts.Interfaces
 {
 
     using StateMachine;

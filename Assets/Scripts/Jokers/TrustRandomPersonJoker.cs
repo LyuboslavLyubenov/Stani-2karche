@@ -1,9 +1,11 @@
-﻿using IJoker = Interfaces.IJoker;
+﻿using IJoker = Assets.Scripts.Interfaces.IJoker;
 
 namespace Jokers
 {
 
     using System;
+
+    using Assets.Scripts.Interfaces;
 
     using UnityEngine;
 

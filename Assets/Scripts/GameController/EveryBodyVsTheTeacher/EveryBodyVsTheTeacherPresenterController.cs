@@ -1,17 +1,18 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
 using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
 
-namespace GameController.EveryBodyVsTheTeacher
+namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
 
     using System;
+
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
 
     using Controllers;
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
 
     using StateMachine;
-
-    using States.EveryBodyVsTheTeacher.Shared;
 
     using UnityEngine;
 
@@ -19,17 +20,27 @@ namespace GameController.EveryBodyVsTheTeacher
 
     public class EveryBodyVsTheTeacherPresenterController : MonoBehaviour
     {
-        public GameObject LoadingUI;
+        [SerializeField]
+        private GameObject LoadingUI;
 
-        public MainPlayersContainerUIController MainPlayersContainerUIController;
-        public AudiencePlayersContainerUIController AudiencePlayersContainerUIController;
-        public UnableToConnectUIController UnableToConnectUIController;
-        
+        [SerializeField]
+        private MainPlayersContainerUIController MainPlayersContainerUIController;
+
+        [SerializeField]
+        private AudiencePlayersContainerUIController AudiencePlayersContainerUIController;
+
+        [SerializeField]
+        private UnableToConnectUIController UnableToConnectUIController;
+
+        [SerializeField]
+        private ElectionQuestionUIController ElectionQuestionUIController;
+
         [Inject]
         private IClientNetworkManager clientNetworkManager;
-
+        
         private PlayersConnectingState playersConnectingState;
         private NotConnectedToServerState notConnectedToServerState;
+        private PlayingState playingState;
 
         private readonly StateMachine stateMachine = new StateMachine();
         
@@ -72,7 +83,7 @@ namespace GameController.EveryBodyVsTheTeacher
         
         private void OnEveryBodyRequestedGameStart()
         {
-            //TODO: Change state
+            this.stateMachine.SetCurrentState(this.playingState);
         }
     }
 }

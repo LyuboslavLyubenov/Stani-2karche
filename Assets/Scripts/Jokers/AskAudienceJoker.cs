@@ -3,6 +3,8 @@
 
     using System;
 
+    using Assets.Scripts.Interfaces;
+
     using Controllers;
 
     using EventArgs;

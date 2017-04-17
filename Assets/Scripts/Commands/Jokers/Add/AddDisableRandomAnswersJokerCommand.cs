@@ -5,6 +5,8 @@ namespace Commands.Jokers.Add
 
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces;
+
     using Controllers;
 
     using Interfaces;

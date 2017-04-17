@@ -8,6 +8,8 @@ namespace GameController
     using System;
     using System.Collections;
 
+    using Assets.Scripts.Interfaces;
+
     using Commands;
     using Commands.Client;
     using Commands.GameData;

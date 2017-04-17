@@ -1,6 +1,8 @@
 ﻿namespace Tests
 {
 
+    using Assets.Scripts.Interfaces;
+
     using Interfaces;
 
     using StateMachine;

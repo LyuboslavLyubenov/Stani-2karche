@@ -1,4 +1,4 @@
-﻿namespace Utils
+﻿namespace Assets.Scripts.Utils
 {
 
     using System;

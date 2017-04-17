@@ -1,6 +1,8 @@
 ﻿namespace Tests.UI.EverybodyVsTheTeacher
 {
 
+    using Assets.Scripts.Interfaces;
+
     using Interfaces;
     using Interfaces.Network.NetworkManager;
 

@@ -1,13 +1,11 @@
-﻿using SelectedElectionJokerCommand = Commands.Jokers.Selected.SelectedElectionJokerCommand;
+﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
+using IHelpFromAudienceJokerRouter = Interfaces.Network.Jokers.Routers.IHelpFromAudienceJokerRouter;
+using SelectedElectionJokerCommand = Commands.Jokers.Selected.SelectedElectionJokerCommand;
 
 namespace Assets.Scripts.Commands.Jokers.Selected
 {
-
     using System;
-
-    using Interfaces.GameData;
-    using Interfaces.Network;
-    using Interfaces.Network.Jokers.Routers;
 
     public class SelectedHelpFromAudienceElectionJokerCommand : SelectedElectionJokerCommand
     {

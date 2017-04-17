@@ -4,6 +4,8 @@
     using System;
     using System.Collections.ObjectModel;
 
+    using Assets.Scripts.Interfaces;
+
     using EventArgs;
 
     public interface IPlayersConnectingToTheServerState : IState

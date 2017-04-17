@@ -1,4 +1,4 @@
-using Network_JokersUsedNotifier = Network.JokersUsedNotifier;
+using Network_JokersUsedNotifier = Assets.Scripts.Network.JokersUsedNotifier;
 
 namespace Tests.Network.Jokers.JokersUsedNotifier
 {

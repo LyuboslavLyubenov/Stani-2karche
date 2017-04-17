@@ -1,5 +1,13 @@
 ﻿using AskAudienceJoker = Jokers.AskAudienceJoker;
 using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
+using IDisableRandomAnswersRouter = Interfaces.Network.Jokers.Routers.IDisableRandomAnswersRouter;
+using IElectionJokerCommand = Interfaces.Commands.Jokers.Selected.IElectionJokerCommand;
+using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
+using IHelpFromAudienceJokerRouter = Interfaces.Network.Jokers.Routers.IHelpFromAudienceJokerRouter;
+using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
+using JokersData = Network.JokersData;
+using JokersDataSender = Network.JokersDataSender;
 using SelectedLittleIsBetterThanNothingJokerCommand = Commands.Jokers.Selected.SelectedLittleIsBetterThanNothingJokerCommand;
 
 
@@ -8,18 +16,10 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
     using System;
 
     using Assets.Scripts.Commands.Jokers.Selected;
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 
-    using Interfaces;
-    using Interfaces.Commands.Jokers.Selected;
-    using Interfaces.GameData;
-    using Interfaces.Network;
-    using Interfaces.Network.Jokers.Routers;
-    using Interfaces.Network.NetworkManager;
-
     using Jokers;
-
-    using Network;
 
     using StateMachine;
 

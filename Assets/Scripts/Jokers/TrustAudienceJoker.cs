@@ -1,10 +1,10 @@
-﻿namespace Assets.Scripts.Jokers
+﻿using IAnswerPollRouter = Interfaces.Network.Jokers.Routers.IAnswerPollRouter;
+using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
+
+namespace Assets.Scripts.Jokers
 {
     using System;
     using Interfaces;
-    using Interfaces.GameData;
-    using Interfaces.Network.Jokers.Routers;
-
     using UnityEngine;
 
     public class TrustAudienceJoker : IJoker

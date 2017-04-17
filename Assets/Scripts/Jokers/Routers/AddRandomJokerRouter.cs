@@ -5,6 +5,8 @@ namespace Jokers.Routers
     using System;
     using System.Linq;
 
+    using Assets.Scripts.Interfaces;
+
     using Commands;
     using Commands.Jokers.Add;
 

@@ -1,6 +1,8 @@
 namespace StateMachine
 {
 
+    using Assets.Scripts.Interfaces;
+
     using Interfaces;
 
     public class StateMachine

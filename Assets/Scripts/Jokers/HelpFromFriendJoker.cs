@@ -6,6 +6,8 @@ namespace Jokers
     using System;
     using System.Linq;
 
+    using Assets.Scripts.Interfaces;
+
     using Commands;
     using Commands.Client;
     using Commands.Server;

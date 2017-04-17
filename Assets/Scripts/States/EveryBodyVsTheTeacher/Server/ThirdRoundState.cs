@@ -1,6 +1,11 @@
 ﻿using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
 using HelpFromFriendJoker = Jokers.HelpFromFriendJoker;
-using SelectedLittleIsBetterThanNothingJokerCommand = Commands.Jokers.Selected.SelectedLittleIsBetterThanNothingJokerCommand;
+using IElectionJokerCommand = Interfaces.Commands.Jokers.Selected.IElectionJokerCommand;
+using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
+using ITrustRandomPersonJokerRouter = Interfaces.Network.Jokers.Routers.ITrustRandomPersonJokerRouter;
+using JokersData = Network.JokersData;
+using JokersDataSender = Network.JokersDataSender;
 using SelectedTrustRandomPersonJokerCommand = Commands.Jokers.Selected.SelectedTrustRandomPersonJokerCommand;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
@@ -12,12 +17,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 
     using Interfaces;
-    using Interfaces.Commands.Jokers.Selected;
-    using Interfaces.Network;
-    using Interfaces.Network.Jokers.Routers;
-    using Interfaces.Network.NetworkManager;
-
-    using Network;
 
     using StateMachine;
 

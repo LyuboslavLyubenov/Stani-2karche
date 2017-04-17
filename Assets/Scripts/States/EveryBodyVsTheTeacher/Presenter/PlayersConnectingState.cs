@@ -1,9 +1,11 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using IState = Interfaces.IState;
+using IState = Assets.Scripts.Interfaces.IState;
 
 namespace States.EveryBodyVsTheTeacher.Presenter
 {
     using System;
+
+    using Assets.Scripts.Interfaces;
 
     using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
 

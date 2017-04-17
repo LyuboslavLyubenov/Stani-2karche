@@ -4,6 +4,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
+
     using Commands;
     using Commands.Server;
 
@@ -50,12 +52,17 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
-
+    
         [Inject]
         private FirstRoundState firstRoundState;
+        
+        [Inject]
+        private SecondRoundState secondRoundState;
 
-
-
+        [Inject]
+        private ThirdRoundState thirdRoundState;
+            
+        [Inject]
         private JokersData jokers;
 
         private readonly StateMachine stateMachine = new StateMachine();
@@ -130,6 +137,14 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                     {
                         this.LoadNextQuestion();
                     }
+                    else if (this.stateMachine.CurrentState == this.firstRoundState)
+                    {
+                        this.stateMachine.SetCurrentState(this.secondRoundState);
+                    }
+                    else if (this.stateMachine.CurrentState == this.secondRoundState)
+                    {
+                        this.stateMachine.SetCurrentState(this.thirdRoundState);
+                    }
                     else
                     {
                         this.EndGame();
@@ -169,4 +184,5 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             throw new NotImplementedException();
         }
     }
+
 }
