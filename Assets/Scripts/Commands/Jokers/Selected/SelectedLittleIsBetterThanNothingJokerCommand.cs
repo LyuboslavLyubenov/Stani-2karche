@@ -29,5 +29,4 @@
             this.disableRandomAnswersRouter.Activate(1, this.server.PresenterId);
         }
     }
-
 }

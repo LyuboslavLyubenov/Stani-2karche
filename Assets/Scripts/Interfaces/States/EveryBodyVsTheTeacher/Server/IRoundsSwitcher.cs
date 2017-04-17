@@ -7,5 +7,7 @@
         event EventHandler OnSwitchedToNextRound;
         event EventHandler OnTooManyWrongAnswers;
         event EventHandler OnNoMoreRounds;
+
+        void SwitchToNextRound();
     }
 }

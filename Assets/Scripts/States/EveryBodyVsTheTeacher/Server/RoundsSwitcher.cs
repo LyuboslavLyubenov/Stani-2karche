@@ -81,6 +81,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.stateMachine = stateMachine;
             this.SwitchToNextRound();
         }
+
         private void OnMustGoOnNextRound(object sender, EventArgs args)
         {
             this.SwitchToNextRound();
@@ -91,7 +92,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.OnTooManyWrongAnswers(this, args);
         }
 
-        private void SwitchToNextRound()
+        public void SwitchToNextRound()
         {
             var nextRoundIndex = this.index + 1;
 
