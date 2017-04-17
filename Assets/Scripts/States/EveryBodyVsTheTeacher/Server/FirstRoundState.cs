@@ -1,18 +1,18 @@
 namespace States.EveryBodyVsTheTeacher.Server
 {
-
     using System;
 
-    using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 
-    using Commands.Jokers.Selected;
+    using Commands;
 
-    using Interfaces;
+    using EventArgs;
+    
     using Interfaces.Commands.Jokers.Selected;
     using Interfaces.GameData;
     using Interfaces.Network;
-    using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
 
     using Jokers;
@@ -24,8 +24,10 @@ namespace States.EveryBodyVsTheTeacher.Server
 
     using Zenject.Source.Usage;
 
-    public class FirstRoundState : IState
+    public class FirstRoundState : IRoundState
     {
+        private const int MaxIncorrectAnswersAllowed = 3;
+
         private readonly Type[] jokersForThisRound = new []
                                                             {
                                                                 typeof(MainPlayerKalitkoJoker),
@@ -33,44 +35,36 @@ namespace States.EveryBodyVsTheTeacher.Server
                                                                 typeof(ConsultWithTheTeacherJoker)
                                                             };
 
+        
+        public event EventHandler OnMustGoOnNextRound = delegate {};
+        public event EventHandler OnTooManyWrongAnswers = delegate {};
+
         [Inject]
         private IEveryBodyVsTheTeacherServer server;
-
-        [Inject]
-        private IServerNetworkManager networkManager;
-
-        [Inject]
-        private IGameDataExtractor gameDataExtractor;
-        
-        [Inject]
-        private IAvailableCategoriesReader availableCategoriesReader;
 
         [Inject]
         private JokersData jokersData;
 
         [Inject]
-        private JokersDataSender jokersDataSender;
-        
-        [Inject]
-        private IKalitkoJokerRouter kalitkoJokerRouter;
-        
-        [Inject]
-        private ITrustRandomPersonJokerRouter trustRandomPersonJokerRouter;
+        private IGameDataExtractor gameDataExtractor;
 
         [Inject]
-        private IDisableRandomAnswersRouter disableRandomAnswersRouter;
+        private IGameDataIterator gameDataIterator;
 
+        [Inject]
+        private IServerNetworkManager networkManager;
+        
+        [Inject]
+        private ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector;
+
+        [Inject]
         private IElectionJokerCommand[] selectJokerCommands;
+
+        private int incorrectAnswersCount = 0;
         
         private void InitializeSelectJokerCommands()
         {
             var commandsManager = this.networkManager.CommandsManager;
-            this.selectJokerCommands = new IElectionJokerCommand[]
-                                      {
-                                          new SelectedKalitkoJokerCommand(this.server, this.kalitkoJokerRouter), 
-                                          new SelectedTrustRandomPersonJokerCommand(this.server, this.trustRandomPersonJokerRouter), 
-                                          new SelectedConsultWithTeacherJokerCommand(this.server, this.disableRandomAnswersRouter)
-                                      };
             commandsManager.AddCommands(this.selectJokerCommands);
         }
         
@@ -85,6 +79,59 @@ namespace States.EveryBodyVsTheTeacher.Server
             }
             
             this.InitializeSelectJokerCommands();
+            this.currentQuestionAnswersCollector.StartCollecting();
+            this.currentQuestionAnswersCollector.OnCollectedVote += this.OnCollectedVoteForAnswerForCurrentQuestion;
+        }
+ 
+        private void OnGetQuestionError(object sender, UnhandledExceptionEventArgs args)
+        {
+            //TODO:
+        }
+
+        private void UseNextQuestion()
+        {
+           this.gameDataIterator.GetNextQuestion(
+               (question) =>
+                   {
+                       this.currentQuestionAnswersCollector.StartCollecting();   
+                   },
+               (error) =>
+                   {
+                       this.OnGetQuestionError(this, new UnhandledExceptionEventArgs(error, false));    
+                   });
+        }
+
+        private void OnIncorrectAnswer()
+        {
+            this.incorrectAnswersCount++;
+
+            var incorrectAnswerCommand = NetworkCommandData.From<InCorrectAnswerCommand>();
+            this.networkManager.SendClientCommand(this.server.PresenterId, incorrectAnswerCommand);
+            
+            if (this.incorrectAnswersCount > MaxIncorrectAnswersAllowed)
+            {
+                this.OnTooManyWrongAnswers(this, EventArgs.Empty);
+            }
+        }
+
+        private void OnCollectedVoteForAnswerForCurrentQuestion(object sender, AnswerEventArgs args)
+        {
+            this.gameDataIterator.GetCurrentQuestion(
+                (question) =>
+                    {
+                        if (question.CorrectAnswer == args.Answer)
+                        {
+                            this.UseNextQuestion();
+                        }
+                        else
+                        {
+                            this.OnIncorrectAnswer();
+                        }
+                    },
+                (error) =>
+                    {
+                        this.OnGetQuestionError(sender, new UnhandledExceptionEventArgs(error, false));
+                    });
         }
 
         public void OnStateExit(StateMachine stateMachine)
