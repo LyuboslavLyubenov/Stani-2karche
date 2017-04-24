@@ -1,4 +1,5 @@
 ﻿using ICollectVoteResultForAnswerForCurrentQuestion = Interfaces.Network.ICollectVoteResultForAnswerForCurrentQuestion;
+using IElectionJokerCommand = Interfaces.Commands.Jokers.Selected.IElectionJokerCommand;
 using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
@@ -7,11 +8,11 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
 {
-
     using System;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 
     using EventArgs;
 
@@ -34,8 +35,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
         protected readonly JokersData jokersData;
 
         private readonly int maxInCorrectAnswersAllowed;
-
         private int inCorrectAnswersCount = 0;
+
+        private readonly IElectionJokerCommand[] selectedJokerCommands;
 
         protected RoundStateAbstract(
             IServerNetworkManager networkManager,
@@ -43,6 +45,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             IGameDataIterator gameDataIterator, 
             ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector,
             JokersData jokersData,
+            IElectionJokerCommand[] selectedJokerCommands,
             int maxInCorrectAnswersAllowed)
         {
             if (networkManager == null)
@@ -70,6 +73,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
                 throw new ArgumentNullException("jokersData");
             }
 
+            if (selectedJokerCommands == null)
+            {
+                throw new ArgumentNullException("selectedJokerCommands");
+            }
+
             if (maxInCorrectAnswersAllowed < 0)
             {
                 throw new ArgumentOutOfRangeException("maxInCorrectAnswersAllowed");
@@ -80,6 +88,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.gameDataIterator = gameDataIterator;
             this.currentQuestionAnswersCollector = currentQuestionAnswersCollector;
             this.jokersData = jokersData;
+            this.selectedJokerCommands = selectedJokerCommands;
             this.maxInCorrectAnswersAllowed = maxInCorrectAnswersAllowed;
         }
 
@@ -143,14 +152,25 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             }
         }
 
-        public virtual void OnStateEnter(StateMachine stateMachine)
+        private void InitializeSelectJokerCommands()
         {
-            this.currentQuestionAnswersCollector.StartCollecting();
-            this.currentQuestionAnswersCollector.OnCollectedVote += this.OnCollectedVoteForAnswerForCurrentQuestion;
-            this.gameDataIterator.OnMarkIncrease += OnMarkIncrease;
+            var commandsManager = this.networkManager.CommandsManager;
+            commandsManager.AddCommands(this.selectedJokerCommands);
         }
 
+        public virtual void OnStateEnter(StateMachine stateMachine)
+        {
+            this.gameDataIterator.OnMarkIncrease += OnMarkIncrease;
+            this.currentQuestionAnswersCollector.OnCollectedVote += this.OnCollectedVoteForAnswerForCurrentQuestion;
 
-        public abstract void OnStateExit(StateMachine stateMachine);
+            this.currentQuestionAnswersCollector.StartCollecting();
+            
+            this.InitializeSelectJokerCommands();
+        }
+
+        public virtual void OnStateExit(StateMachine stateMachine)
+        {
+            JokersUtils.RemoveSelectJokerCommands(this.networkManager, this.selectedJokerCommands);
+        }
     }
 }
