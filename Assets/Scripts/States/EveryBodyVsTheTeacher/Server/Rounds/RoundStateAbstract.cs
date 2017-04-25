@@ -13,6 +13,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 
     using EventArgs;
@@ -23,7 +24,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
     using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
     using UnhandledExceptionEventArgs = System.UnhandledExceptionEventArgs;
 
-    public abstract class RoundStateAbstract : IState
+    public abstract class RoundStateAbstract : IRoundState
     {
         public event EventHandler OnMustGoOnNextRound = delegate { };
         public event EventHandler OnTooManyWrongAnswers = delegate { };
