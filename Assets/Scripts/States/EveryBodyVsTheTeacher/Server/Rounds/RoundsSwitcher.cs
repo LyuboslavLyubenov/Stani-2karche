@@ -1,10 +1,11 @@
-namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
+namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 {
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
 
     using StateMachine;
 
@@ -71,7 +72,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
                     throw new InvalidOperationException("Must have at least one round");
                 }
 
-                return new RoundsSwitcher(rounds.ToArray(), this.stateMachine);
+                return new RoundsSwitcher(this.rounds.ToArray(), this.stateMachine);
             }
         }
 
@@ -116,6 +117,5 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.index = nextRoundIndex;
             this.OnSwitchedToNextRound(this, EventArgs.Empty);
         }
-
     }
 }

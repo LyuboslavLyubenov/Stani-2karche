@@ -2,6 +2,7 @@
 {
 
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
     using Assets.Tests.DummyObjects.States.EveryBodyVsTheTeacher;
 
     using StateMachine;

@@ -6,8 +6,9 @@ using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkMa
 using JokersData = Network.JokersData;
 using NetworkCommandData = Commands.NetworkCommandData;
 
-namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
+namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 {
+
     using System;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
@@ -169,7 +170,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
 
         public virtual void OnStateEnter(StateMachine stateMachine)
         {
-            this.gameDataIterator.OnMarkIncrease += OnMarkIncrease;
+            this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
             this.currentQuestionAnswersCollector.OnCollectedVote += this.OnCollectedVoteForAnswerForCurrentQuestion;
 
             this.currentQuestionAnswersCollector.StartCollecting();
