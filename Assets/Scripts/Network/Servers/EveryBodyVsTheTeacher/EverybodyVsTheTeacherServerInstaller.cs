@@ -3,15 +3,34 @@
 namespace Network.Servers.EveryBodyVsTheTeacher
 {
 
+    using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
+
+    using Interfaces;
+    using Interfaces.GameData;
+    using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
+    using IO;
+
+    using Network.GameInfo;
     using Network.NetworkManagers;
+    using Network.TcpSockets;
+
+    using StateMachine;
+
+    using UnityEngine;
 
     using Zenject.Source.Install;
 
     public class EverybodyVsTheTeacherServerInstaller : MonoInstaller
     {
-        public override void InstallBindings()
+        private const int ServerPort = 7772;
+
+        [SerializeField]
+        private EveryBodyVsTheTeacherServer Server;
+        
+        private void InstallServerNetworkManager()
         {
             var serverNetworkManager = ServerNetworkManager.Instance;
 
@@ -19,10 +38,180 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 .To<ServerNetworkManager>()
                 .FromInstance(serverNetworkManager)
                 .AsSingle();
+        }
 
-            this.Container.Bind<PlayersConnectingToTheServerState>()
+        private void InstallServer()
+        {
+            this.Container.Bind<IEveryBodyVsTheTeacherServer>()
+                .FromInstance(Server);
+        }
+
+        private void InstallGameDataExtractor()
+        {
+            this.Container.Bind<IGameDataExtractor>()
+                .To<GameDataExtractor>()
                 .AsSingle();
         }
-    }
 
+        private void InstallGameDataIterator()
+        {
+            this.Container.Bind<IGameDataIterator>()
+                .To<GameDataIterator>()
+                .AsSingle();
+        }
+
+        private void InstallAnswersCollector()
+        {
+            this.Container.Bind<ICollectVoteResultForAnswerForCurrentQuestion>()
+                .To<VoteResultForAnswerForCurrentQuestionCollector>()
+                .AsSingle();
+        }
+      
+        private void InstallStateMachine()
+        {
+            this.Container.Bind<StateMachine>()
+                .AsSingle();
+        }
+
+        private void InstallCreatedGameInfoSender(IServerNetworkManager networkManager, IGameServer gameServer)
+        {
+            var tcpClient = new SimpleTcpClient();
+            var tcpServer = new SimpleTcpServer(ServerPort);
+            var gameInfoFactory = GameInfoFactory.Instance;
+
+            var createdGameInfoSender =
+                new CreatedGameInfoSender(
+                    tcpClient,
+                    tcpServer,
+                    gameInfoFactory,
+                    networkManager,
+                    gameServer);
+
+            this.Container.Bind<ICreatedGameInfoSender>()
+                .FromInstance(createdGameInfoSender)
+                .AsSingle();
+        }
+
+        private void InstallFirstRound(
+            IServerNetworkManager networkManager, 
+            IEveryBodyVsTheTeacherServer server, 
+            IGameDataIterator gameDataIterator, 
+            IGameDataExtractor gameDataExtractor, 
+            ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector, 
+            JokersData jokersData)
+        {
+            var firstRoundBuilder = new FirstRoundState.Builder
+                                    {
+                                        GameDataExtractor = gameDataExtractor,
+                                        Server = server,
+                                        CurrentQuestionAnswersCollector = currentQuestionAnswersCollector,
+                                        GameDataIterator = gameDataIterator,
+                                        JokersData = jokersData,
+                                        ServerNetworkManager = networkManager
+                                    };
+            var firstRound = firstRoundBuilder.Build();
+
+            this.Container.Bind<FirstRoundState>()
+                .FromInstance(firstRound)
+                .AsSingle();
+        }
+
+        public void InstallSecondRound(
+            IServerNetworkManager networkManager,
+            IEveryBodyVsTheTeacherServer server,
+            IGameDataIterator gameDataIterator,
+            ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector,
+            JokersData jokersData)
+        {
+            var secondRoundBuilder = new SecondRoundState.Builder()
+                                     {
+                                         CurrentQuestionAnswersCollector = currentQuestionAnswersCollector,
+                                         GameDataIterator = gameDataIterator,
+                                         JokersData = jokersData,
+                                         Server = server,
+                                         ServerNetworkManager = networkManager
+                                     };
+            var secondRound = secondRoundBuilder.Build();
+            this.Container.Bind<SecondRoundState>()
+                .FromInstance(secondRound)
+                .AsSingle();
+        }
+
+        private void InstallThirdRound(
+            IServerNetworkManager networkManager,
+            IEveryBodyVsTheTeacherServer server,
+            IGameDataIterator gameDataIterator,
+            ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector,
+            JokersData jokersData)
+        {
+            var thirdRoundBuilder = new ThirdRoundState.Builder()
+                                    {
+                                        CurrentQuestionAnswersCollector = currentQuestionAnswersCollector,
+                                        GameDataIterator = gameDataIterator,
+                                        JokersData = jokersData,
+                                        Server = server,
+                                        ServerNetworkManager = networkManager
+                                    };
+            var thirdRound = thirdRoundBuilder.Build();
+            this.Container.Bind<ThirdRoundState>()
+                .FromInstance(thirdRound)
+                .AsSingle();
+        }
+
+        private void InstallRoundsSwitcher(StateMachine stateMachine, IRoundState[] rounds)
+        {
+            var roundsSwitcherBuilder = new RoundsSwitcher.Builder(stateMachine);
+
+            for (int i = 0; i < rounds.Length; i++)
+            {
+                var round = rounds[i];
+                roundsSwitcherBuilder.AddRound(round);
+            }
+
+            var roundsSwitcher = roundsSwitcherBuilder.Build();
+
+            this.Container.Bind<IRoundsSwitcher>()
+                .FromInstance(roundsSwitcher)
+                .AsSingle();
+        }
+
+        public override void InstallBindings()
+        {
+            this.InstallServerNetworkManager();
+            this.InstallServer();
+            this.InstallGameDataExtractor();
+            this.InstallGameDataIterator();
+            this.InstallAnswersCollector();
+            
+            this.Container.Bind<JokersData>()
+                .AsSingle();
+        
+            this.Container.Bind<PlayersConnectingToTheServerState>()
+                .AsSingle();
+        
+            this.InstallStateMachine();
+
+            var networkManager = this.Container.Resolve<IServerNetworkManager>();
+            var iterator = this.Container.Resolve<IGameDataIterator>();
+            var extractor = this.Container.Resolve<IGameDataExtractor>();
+            var answersCollector = this.Container.Resolve<ICollectVoteResultForAnswerForCurrentQuestion>();
+            var jokersData = this.Container.Resolve<JokersData>();
+
+            this.InstallCreatedGameInfoSender(networkManager, this.Server);
+
+            this.InstallFirstRound(networkManager, this.Server, iterator, extractor, answersCollector, jokersData);
+            this.InstallSecondRound(networkManager, this.Server, iterator, answersCollector, jokersData);
+            this.InstallThirdRound(networkManager, this.Server, iterator, answersCollector, jokersData);
+
+            var stateMachine = this.Container.Resolve<StateMachine>();
+            var rounds = new IRoundState[]
+                         {
+                             this.Container.Resolve<FirstRoundState>(),
+                             this.Container.Resolve<SecondRoundState>(),
+                             this.Container.Resolve<ThirdRoundState>()
+                         };
+
+            this.InstallRoundsSwitcher(stateMachine, rounds);
+        }
+    }
 }
