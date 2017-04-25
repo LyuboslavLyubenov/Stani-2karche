@@ -34,6 +34,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
         protected readonly ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector;
         protected readonly JokersData jokersData;
 
+        private readonly Type[] jokersForThisRound;
+
         private readonly int maxInCorrectAnswersAllowed;
         private int inCorrectAnswersCount = 0;
 
@@ -45,6 +47,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             IGameDataIterator gameDataIterator, 
             ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector,
             JokersData jokersData,
+            Type[] jokersForThisRound,
             IElectionJokerCommand[] selectedJokerCommands,
             int maxInCorrectAnswersAllowed)
         {
@@ -73,6 +76,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
                 throw new ArgumentNullException("jokersData");
             }
 
+            if (jokersForThisRound == null)
+            {
+                throw new ArgumentNullException("jokersForThisRound");
+            }
+
             if (selectedJokerCommands == null)
             {
                 throw new ArgumentNullException("selectedJokerCommands");
@@ -88,6 +96,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.gameDataIterator = gameDataIterator;
             this.currentQuestionAnswersCollector = currentQuestionAnswersCollector;
             this.jokersData = jokersData;
+            this.jokersForThisRound = jokersForThisRound;
             this.selectedJokerCommands = selectedJokerCommands;
             this.maxInCorrectAnswersAllowed = maxInCorrectAnswersAllowed;
         }
@@ -143,11 +152,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.OnMustGoOnNextRound(this, EventArgs.Empty);
         }
 
-        protected void AddJokersForThisRound(Type[] jokersTypes)
+        private void AddJokersForThisRound()
         {
-            for (int i = 0; i < jokersTypes.Length; i++)
+            for (int i = 0; i < this.jokersForThisRound.Length; i++)
             {
-                var jokerToAdd = jokersTypes[i];
+                var jokerToAdd = this.jokersForThisRound[i];
                 this.jokersData.AddJoker(jokerToAdd);
             }
         }
@@ -166,10 +175,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
             this.currentQuestionAnswersCollector.StartCollecting();
             
             this.InitializeSelectJokerCommands();
+            this.AddJokersForThisRound();
         }
 
         public virtual void OnStateExit(StateMachine stateMachine)
         {
+            JokersUtils.RemoveRemainingJokers(this.jokersForThisRound, this.jokersData);
             JokersUtils.RemoveSelectJokerCommands(this.networkManager, this.selectedJokerCommands);
         }
     }
