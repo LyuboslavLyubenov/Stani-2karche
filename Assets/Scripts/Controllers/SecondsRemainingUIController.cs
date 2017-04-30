@@ -2,12 +2,13 @@
 {
 
     using System;
+    using System.Timers;
 
     using UnityEngine.UI;
 
     using Utils.Unity;
 
-    public class SecondsRemainingUIController : ExtendedMonoBehaviour
+    public class SecondsRemainingUIController : UnityTimer
     {
         public Text SecondsText;
 
@@ -17,38 +18,22 @@
             private set;
         }
 
-        public bool Paused
+        private void OnSecondPassed(object sender, EventArgs eventArgs)
         {
-            get;
-            set;
+            this.RemainingSecondsToAnswer--;
+            this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
         }
-
-        // ReSharper disable once ArrangeTypeMemberModifiers
-        void Start()
+        
+        protected override void Initiaze()
         {
-            this.Paused = false;
-
-            this.CoroutineUtils.RepeatEverySeconds(1, () =>
-                {
-                    if (this.RemainingSecondsToAnswer > 0 && !this.Paused)
-                    {
-                        this.RemainingSecondsToAnswer--;
-                    }
-
-                    this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
-                });
+            base.OnSecondPassed += OnSecondPassed;
         }
+        
+        public override void StartTimer()
+        {            
+            base.StartTimer();
 
-        public void SetSeconds(int seconds)
-        {
-            if (seconds <= 0)
-            {
-                throw new ArgumentOutOfRangeException("seconds");
-            }
-
-            this.Paused = false;
-
-            this.RemainingSecondsToAnswer = seconds;
+            this.RemainingSecondsToAnswer = this.InvervalInSeconds;
             this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
         }
     }

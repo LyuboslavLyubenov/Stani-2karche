@@ -47,6 +47,13 @@
             this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
         }
 
+        /// <summary>
+        /// Use it for intiializations (when inheriting)
+        /// </summary>
+        protected virtual void Initiaze()
+        {
+        }
+
         private void UpdateTimer()
         {
             if (this.Paused || !this.Running)
@@ -66,7 +73,7 @@
             }
         }
 
-        public void StartTimer()
+        public virtual void StartTimer()
         {
             if (this.Running)
             {
@@ -78,7 +85,7 @@
             this.elapsedSeconds = 0;
         }
 
-        public void StopTimer()
+        public virtual void StopTimer()
         {
             if (!this.Running)
             {
