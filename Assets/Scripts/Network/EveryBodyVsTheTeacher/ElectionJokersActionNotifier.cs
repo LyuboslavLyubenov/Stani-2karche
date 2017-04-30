@@ -14,10 +14,11 @@ namespace Network.EveryBodyVsTheTeacher
 
     using Interfaces.Commands.Jokers.Selected;
 
-    public class ElectionJokersActionNotifier
+    public class ElectionJokersActionNotifier : IDisposable
     {
         private readonly IServerNetworkManager networkManager;
         private readonly IEveryBodyVsTheTeacherServer server;
+        private readonly IElectionJokerCommand[] electionJokersCommands;
 
         /// <summary>
         /// Notifies main players and presenter when mainplayers started vote for joker or finished voting 
@@ -25,7 +26,7 @@ namespace Network.EveryBodyVsTheTeacher
         public ElectionJokersActionNotifier(
             IServerNetworkManager networkManager, 
             IEveryBodyVsTheTeacherServer server, 
-            IElectionJokerCommand[] electionJokerCommands)
+            IElectionJokerCommand[] electionJokersCommands)
         {
             if (networkManager == null)
             {
@@ -37,19 +38,20 @@ namespace Network.EveryBodyVsTheTeacher
                 throw new ArgumentNullException("server");
             }
 
-            if (electionJokerCommands == null || 
-                electionJokerCommands.Length == 0 ||
-                !electionJokerCommands.Select(c => c != null).Any())
+            if (electionJokersCommands == null || 
+                electionJokersCommands.Length == 0 ||
+                !electionJokersCommands.Select(c => c != null).Any())
             {
-                throw new ArgumentNullException("electionJokerCommands");
+                throw new ArgumentNullException("electionJokersCommands");
             }
             
             this.networkManager = networkManager;
             this.server = server;
+            this.electionJokersCommands = electionJokersCommands;
 
-            for (int i = 0; i < electionJokerCommands.Length; i++)
+            for (int i = 0; i < electionJokersCommands.Length; i++)
             {
-                var electionJokerCommand = electionJokerCommands[i];
+                var electionJokerCommand = electionJokersCommands[i];
                 electionJokerCommand.OnElectionResult += this.OnElectionResultJoker;
                 electionJokerCommand.OnPlayerSelectedFor += this.OnPlayerSelectedFor;
                 electionJokerCommand.OnPlayerSelectedAgainst += this.OnPlayerSelectedAgainst;
@@ -97,6 +99,17 @@ namespace Network.EveryBodyVsTheTeacher
             var jokerName = this.GetJokerName(sender);
             var command = new NetworkCommandData("PlayerSelectedAgainst" + jokerName);
             this.networkManager.SendClientCommand(this.server.PresenterId, command);
+        }
+
+        public void Dispose()
+        {
+            for (int i = 0; i < this.electionJokersCommands.Length; i++)
+            {
+                var electionJokerCommand = this.electionJokersCommands[i];
+                electionJokerCommand.OnElectionResult -= this.OnElectionResultJoker;
+                electionJokerCommand.OnPlayerSelectedFor -= this.OnPlayerSelectedFor;
+                electionJokerCommand.OnPlayerSelectedAgainst -= this.OnPlayerSelectedAgainst;
+            }
         }
     }
 }
