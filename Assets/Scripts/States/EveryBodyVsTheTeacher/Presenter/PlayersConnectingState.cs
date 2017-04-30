@@ -1,5 +1,4 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using IState = Assets.Scripts.Interfaces.IState;
 
 namespace States.EveryBodyVsTheTeacher.Presenter
 {
