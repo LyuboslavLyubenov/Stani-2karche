@@ -47,7 +47,7 @@ namespace Commands.Jokers.Settings
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var timeToAnswerInSeconds = int.Parse(commandsOptionsValues["TimeToAnswerInSeconds"]);
-            this.disableAfterDelay.DelayInSeconds = timeToAnswerInSeconds;
+            this.disableAfterDelay.InvervalInSeconds = timeToAnswerInSeconds;
             this.onAppliedSettings();
             this.FinishedExecution = true;
 

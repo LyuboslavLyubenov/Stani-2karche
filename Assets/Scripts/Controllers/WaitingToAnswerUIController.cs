@@ -3,6 +3,8 @@
 
     using System;
 
+    using Assets.Scripts.Interfaces.Utils;
+
     using EventArgs;
 
     using UnityEngine;
@@ -40,15 +42,15 @@
                 throw new Exception("RemainingSecondsObject obj is null or doesnt have Text component");
             }
 
-            this.UpdateTimer(this.disableAfterDelay.DelayInSeconds);
+            this.UpdateTimer(this.disableAfterDelay.InvervalInSeconds);
 
-            this.disableAfterDelay.OnTimePass += this.OnTimePass;
+            this.disableAfterDelay.OnSecondPassed += this.OnTimePass;
         }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
-            this.disableAfterDelay.OnTimePass -= this.OnTimePass;
+            this.disableAfterDelay.OnSecondPassed -= this.OnTimePass;
         }
 
         private void UpdateTimer(int remainingSeconds)
@@ -56,10 +58,9 @@
             this.remainingSecondsText.text = remainingSeconds + " секунди";
         }
 
-        private void OnTimePass(object sender, TimeInSecondsEventArgs args)
+        private void OnTimePass(object sender, EventArgs args)
         {
-            this.UpdateTimer(args.Seconds);
+            this.UpdateTimer(((IUnityTimer)sender).InvervalInSeconds);
         }
     }
-
 }

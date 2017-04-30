@@ -147,7 +147,7 @@ namespace Jokers
         {
             this.loadingUI.SetActive(false);
             this.waitingToAnswerUI.SetActive(true);
-            this.waitingToAnswerUI.GetComponent<DisableAfterDelay>().DelayInSeconds = args.TimeToAnswerInSeconds;
+            this.waitingToAnswerUI.GetComponent<DisableAfterDelay>().InvervalInSeconds = args.TimeToAnswerInSeconds;
         }
 
         private void OnReceiveSettingsTimeout(object sender, EventArgs args)

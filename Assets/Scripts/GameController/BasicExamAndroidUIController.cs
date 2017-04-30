@@ -152,7 +152,8 @@ namespace GameController
             this.questionUIController.LoadQuestion(question);
 
             this.SecondsRemainingUI.SetActive(true);
-            this.SecondsRemainingUIController.SetSeconds(timeToAnswer);
+            this.SecondsRemainingUIController.InvervalInSeconds = timeToAnswer;
+            this.SecondsRemainingUIController.StartTimer();
             this.SecondsRemainingUIController.Paused = false;
         }
 

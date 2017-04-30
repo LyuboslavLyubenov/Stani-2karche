@@ -1,12 +1,8 @@
 ﻿namespace Controllers
 {
-
     using System;
-    using System.Timers;
 
     using UnityEngine.UI;
-
-    using Utils.Unity;
 
     public class SecondsRemainingUIController : UnityTimer
     {
