@@ -9,6 +9,7 @@ using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkMa
 using JokersData = Network.JokersData;
 using KalitkoJokerRouter = Jokers.Routers.KalitkoJokerRouter;
 using MainPlayerKalitkoJoker = Jokers.Kalitko.MainPlayerKalitkoJoker;
+using PlayerPrefsEncryptionUtils = Utils.Unity.PlayerPrefsEncryptionUtils;
 using SelectedConsultWithTeacherJokerCommand = Commands.Jokers.Selected.SelectedConsultWithTeacherJokerCommand;
 using SelectedKalitkoJokerCommand = Commands.Jokers.Selected.SelectedKalitkoJokerCommand;
 using SelectedTrustRandomPersonJokerCommand = Commands.Jokers.Selected.SelectedTrustRandomPersonJokerCommand;
@@ -26,13 +27,13 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
     {
         private const int MaxIncorrectAnswersAllowed = 4;
 
-        private static readonly Type[] JokersForThisRound = new []
+        private static readonly Type[] JokersForThisRound = new[]
                                                             {
                                                                 typeof(MainPlayerKalitkoJoker),
                                                                 typeof(TrustRandomPersonJoker),
                                                                 typeof(ConsultWithTheTeacherJoker)
                                                             };
-       
+
         private readonly IGameDataExtractor gameDataExtractor;
 
         public class Builder : RoundBuilder
@@ -43,7 +44,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                 get;
                 set;
             }
-            
+
             public FirstRoundState Build()
             {
                 var kalitkoJokerRouter = new KalitkoJokerRouter(base.ServerNetworkManager, base.Server, base.GameDataIterator);
@@ -61,7 +62,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                                    selectedConsultWithTeacherJokerCommand
                                };
 
-                return 
+                return
                     new FirstRoundState(
                         base.ServerNetworkManager,
                         base.Server,
@@ -74,18 +75,18 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         }
 
         private FirstRoundState(
-            IServerNetworkManager networkManager, 
-            IEveryBodyVsTheTeacherServer server, 
-            IGameDataIterator gameDataIterator, 
+            IServerNetworkManager networkManager,
+            IEveryBodyVsTheTeacherServer server,
+            IGameDataIterator gameDataIterator,
             IGameDataExtractor gameDataExtractor,
-            ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector, 
+            ICollectVoteResultForAnswerForCurrentQuestion currentQuestionAnswersCollector,
             JokersData jokersData,
             IElectionJokerCommand[] electionJokersCommands)
             : base(
-                  networkManager, 
-                  server, 
-                  gameDataIterator, 
-                  currentQuestionAnswersCollector, 
+                  networkManager,
+                  server,
+                  gameDataIterator,
+                  currentQuestionAnswersCollector,
                   jokersData,
                   JokersForThisRound,
                   electionJokersCommands,
@@ -95,17 +96,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             {
                 throw new ArgumentNullException("gameDataExtractor");
             }
-            
+
             this.gameDataExtractor = gameDataExtractor;
         }
-        
+
         public override void OnStateEnter(StateMachine stateMachine)
         {
-            if (!this.gameDataExtractor.Loaded)
-            {
-                this.gameDataExtractor.ExtractDataSync();
-            }
-            
+            this.gameDataExtractor.LevelCategory = PlayerPrefsEncryptionUtils.GetString("LevelCategory");
+            this.gameDataExtractor.ExtractDataSync();
+
             base.OnStateEnter(stateMachine);
         }
     }

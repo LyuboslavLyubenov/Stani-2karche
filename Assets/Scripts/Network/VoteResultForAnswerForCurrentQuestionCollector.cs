@@ -1,5 +1,4 @@
-﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
-using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
+﻿using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;

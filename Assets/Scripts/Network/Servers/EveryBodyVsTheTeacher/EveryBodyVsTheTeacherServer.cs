@@ -1,6 +1,5 @@
 namespace Network.Servers.EveryBodyVsTheTeacher
 {
-
     using System;
     using System.Collections.Generic;
 
@@ -8,7 +7,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
 
     using Commands.Server;
-    
+
+    using Interfaces.GameData;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
     
@@ -31,6 +31,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private ICreatedGameInfoSender sender;
+
+        [Inject]
+        private IGameDataIterator gameDataIterator;
 
         [Inject]
         private IServerNetworkManager networkManager;
@@ -74,10 +77,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         void Start()
         {
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
-            
-            this.roundsSwitcher.OnNoMoreRounds += OnNoMoreRounds;
+            this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
+
+            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
         }
 
         private void OnNoMoreRounds(object sender, EventArgs args)
@@ -103,7 +106,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         
         public void EndGame()
         {
-            var endGameState = new EndGameState(this.networkManager);
+            var endGameState = new EndGameState(this.networkManager, this.gameDataIterator);
             this.stateMachine.SetCurrentState(endGameState);
         }
     }
