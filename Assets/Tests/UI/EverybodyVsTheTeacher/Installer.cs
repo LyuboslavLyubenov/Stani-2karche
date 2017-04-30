@@ -1,13 +1,11 @@
-﻿namespace Tests.UI.EverybodyVsTheTeacher
-{
+﻿using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.PlayersConnectingToTheServerState;
 
+namespace Tests.UI.EverybodyVsTheTeacher
+{
     using Assets.Scripts.Interfaces;
 
-    using Interfaces;
     using Interfaces.Network.NetworkManager;
-
-    using States.EveryBodyVsTheTeacher.Server;
-
+    
     using Tests.DummyObjects;
 
     using Zenject.Source.Install;

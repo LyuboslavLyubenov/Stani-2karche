@@ -84,7 +84,7 @@ namespace Tests.DummyObjects
         private HashSet<int> connectedClientsConnectionIds = new HashSet<int>();
         private Dictionary<int, string> clientsConnectionIdsNames = new Dictionary<int, string>();
 
-        public DummyServerNetworkManager()
+        private DummyServerNetworkManager()
         {
             this.CommandsManager = new CommandsManager();
         }

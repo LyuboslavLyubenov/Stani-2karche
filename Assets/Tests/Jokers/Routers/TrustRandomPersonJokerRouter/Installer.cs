@@ -20,7 +20,7 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
     {
         public override void InstallBindings()
         {
-            var networkManager = new DummyServerNetworkManager();
+            var networkManager = DummyServerNetworkManager.Instance;
             networkManager.SimulateClientConnected(1, "Ivan");
             networkManager.SimulateClientConnected(2, "Georgi");
 
