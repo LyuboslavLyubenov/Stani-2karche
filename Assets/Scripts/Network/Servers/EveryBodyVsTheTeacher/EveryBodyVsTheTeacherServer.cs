@@ -5,9 +5,13 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
-    
+
+    using Commands;
     using Commands.Server;
+
+    using EventArgs;
 
     using Interfaces.GameData;
     using Interfaces.Network;
@@ -47,6 +51,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private StateMachine stateMachine;
+
+        [Inject]
+        private RoundsSwitcherEventsNotifier roundsSwitcherEventsNotifier;
         
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
@@ -78,11 +85,21 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         void Start()
         {
-            this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
+            this.networkManager.OnClientConnected += this.OnClientConnectedToServer;
+            this.roundsSwitcher.OnTooManyWrongAnswers += this.OnTooManyWrongAnswers;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
+            this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
 
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));            
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
+        }
+
+        private void OnClientConnectedToServer(object sender, ClientConnectionIdEventArgs args)
+        {
+            if (this.PresenterId <= 0)
+            {
+                this.networkManager.KickPlayer(args.ConnectionId, "Must connect presenter first");//TODO: translate
+            }
         }
 
         private void OnPresenterConnecting(int connectionId)
@@ -106,11 +123,6 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.PresenterId = connectionId;
         }
 
-        private void OnNoMoreRounds(object sender, EventArgs args)
-        {
-            this.EndGame();
-        }
-
         private void OnMainPlayerConnecting(int connectionId)
         {
             if (this.stateMachine.CurrentState == this.playersConnectingToTheServerState ||
@@ -122,9 +134,20 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.networkManager.KickPlayer(connectionId);
         }
 
-        private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
+        private void OnTooManyWrongAnswers(object sender, EventArgs args)
+        {
+            this.EndGame();
+        }
+
+        private void OnNoMoreRounds(object sender, EventArgs args)
+        {
+            this.EndGame();
+        }
+        
+        private void OnEveryBodyRequestedGameStart(object sender, EventArgs args)
         {
             this.roundsSwitcher.SwitchToNextRound();
+            this.networkManager.SendClientCommand(this.PresenterId, new NetworkCommandData("GameStarted"));
             this.StartedGame = true;
         }
         
