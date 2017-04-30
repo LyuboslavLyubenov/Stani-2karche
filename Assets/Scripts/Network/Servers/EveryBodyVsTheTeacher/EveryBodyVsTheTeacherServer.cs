@@ -5,7 +5,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
-    
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
+
     using Commands.Server;
     
     using Interfaces.Network;
@@ -38,12 +39,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
     
         [Inject]
-        private JokersData jokers;
-
-        [Inject]
         private IRoundsSwitcher roundsSwitcher;
 
-        private readonly StateMachine stateMachine = new StateMachine();
+        [Inject]
+        private StateMachine stateMachine;
         
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
@@ -104,7 +103,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         
         public void EndGame()
         {
-            throw new NotImplementedException();
+            var endGameState = new EndGameState(this.networkManager);
+            this.stateMachine.SetCurrentState(endGameState);
         }
     }
 }
