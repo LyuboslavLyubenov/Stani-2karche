@@ -3,9 +3,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
-
+    
     using Commands.Server;
 
     using Interfaces.GameData;
@@ -30,7 +31,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             };
 
         [Inject]
-        private ICreatedGameInfoSender sender;
+        private ICreatedGameInfoSender gameInfoSender;
 
         [Inject]
         private IGameDataIterator gameDataIterator;
@@ -80,7 +81,29 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
 
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));            
+            this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
+        }
+
+        private void OnPresenterConnecting(int connectionId)
+        {
+            if (this.StartedGame)
+            {
+                if (this.PresenterId != connectionId)
+                {
+                    this.networkManager.KickPlayer(connectionId, "You are not presenter");//TODO: Translate
+                }
+
+                return;
+            }
+
+            if (this.PresenterId > 0)
+            {
+                this.networkManager.KickPlayer(connectionId, "Presenter already connected");//TODO: Transate
+                return;
+            }
+            
+            this.PresenterId = connectionId;
         }
 
         private void OnNoMoreRounds(object sender, EventArgs args)
@@ -102,12 +125,15 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
         {
             this.roundsSwitcher.SwitchToNextRound();
+            this.StartedGame = true;
         }
         
         public void EndGame()
         {
             var endGameState = new EndGameState(this.networkManager, this.gameDataIterator);
             this.stateMachine.SetCurrentState(endGameState);
+
+            this.IsGameOver = true;
         }
     }
 }
