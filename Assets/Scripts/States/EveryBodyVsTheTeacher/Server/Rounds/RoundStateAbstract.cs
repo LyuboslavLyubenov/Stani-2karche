@@ -12,7 +12,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
     using System;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
 

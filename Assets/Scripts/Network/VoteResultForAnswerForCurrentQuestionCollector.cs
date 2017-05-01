@@ -116,16 +116,22 @@ namespace Network
             }
         }
 
-        private void SendQuestionToMainPlayers(ISimpleQuestion question, int timeToAnswerInSeconds)
+        private void SendQuestionToMainPlayersAndPresenter(ISimpleQuestion question, int timeToAnswerInSeconds)
         {
             var loadQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             var questionJSON = JsonUtility.ToJson(question.Serialize());
 
             loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
             loadQuestionCommand.AddOption("TimeToAnswer", timeToAnswerInSeconds.ToString());
-            
-            this.server.MainPlayersConnectionIds.ToList()
-                .ForEach(connectionId => this.networkManager.SendClientCommand(connectionId, loadQuestionCommand));
+
+            var connectionIds = this.server.MainPlayersConnectionIds.ToList();
+            connectionIds.Add(this.server.PresenterId);
+
+            for (int i = 0; i < connectionIds.Count; i++)
+            {
+                var mainPlayerConnectionId = connectionIds[i];
+                this.networkManager.SendClientCommand(mainPlayerConnectionId, loadQuestionCommand);
+            }
         }
 
         public void StartCollecting()
@@ -149,7 +155,7 @@ namespace Network
                         this.possibleAnswers = question.Answers;
 
                         this.ConfigureTimer(this.gameDataIterator.SecondsForAnswerQuestion);
-                        this.SendQuestionToMainPlayers(question, this.gameDataIterator.SecondsForAnswerQuestion);
+                        this.SendQuestionToMainPlayersAndPresenter(question, this.gameDataIterator.SecondsForAnswerQuestion);
                         this.voteTimeoutTimer.Start();
                         this.networkManager.CommandsManager.AddCommand("AnswerSelected", this.answerSelectedCommand);
 
