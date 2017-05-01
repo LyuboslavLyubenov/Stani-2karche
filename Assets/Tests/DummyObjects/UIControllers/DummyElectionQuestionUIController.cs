@@ -1,9 +1,13 @@
-﻿namespace Assets.Tests.DummyObjects.UIControllers
+﻿using IExtendedTimer = Utils.IExtendedTimer;
+using TimerUtils = Utils.TimerUtils;
+
+namespace Assets.Tests.DummyObjects.UIControllers
 {
 
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Timers;
 
     using EventArgs;
 
@@ -20,7 +24,7 @@
         {
             get; set;
         }
-        
+
         private Dictionary<string, int> answersVotes = new Dictionary<string, int>();
 
         public ISimpleQuestion CurrentlyLoadedQuestion
@@ -64,7 +68,7 @@
             this.CurrentlyLoadedQuestion = question;
             this.OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));
         }
-        
+
         public void AddVoteFor(string answer)
         {
             if (!this.answersVotes.ContainsKey(answer))
@@ -75,4 +79,5 @@
             this.answersVotes[answer]++;
         }
     }
+
 }
