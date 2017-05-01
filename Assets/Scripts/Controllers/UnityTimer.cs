@@ -50,7 +50,7 @@
         /// <summary>
         /// Use it for intiializations (when inheriting)
         /// </summary>
-        protected virtual void Initiaze()
+        protected virtual void Initialize()
         {
         }
 

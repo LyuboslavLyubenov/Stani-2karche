@@ -22,7 +22,7 @@
             this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
         }
         
-        protected override void Initiaze()
+        protected override void Initialize()
         {
             base.OnSecondPassed += _OnSecondPassed;
         }
