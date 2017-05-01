@@ -1,6 +1,10 @@
-﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+﻿using AudiencePlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.PlayersConnecting.AudiencePlayersContainerUIController;
+using ElectionQuestionUIController = Controllers.ElectionQuestionUIController;
+using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using MainPlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.PlayersConnecting.MainPlayersContainerUIController;
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
 using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
+using UnableToConnectUIController = Controllers.UnableToConnectUIController;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
@@ -8,10 +12,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
     using System;
 
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
-
-    using Controllers;
-    using Controllers.EveryBodyVsTheTeacher.PlayersConnecting;
-
+    
     using StateMachine;
 
     using UnityEngine;

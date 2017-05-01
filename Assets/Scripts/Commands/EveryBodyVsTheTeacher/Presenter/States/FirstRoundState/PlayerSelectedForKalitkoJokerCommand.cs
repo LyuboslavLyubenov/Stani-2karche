@@ -1,12 +1,12 @@
-﻿using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+﻿using IJokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.IJokerElectionUIController;
+using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
 namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher.Presenter.States.FirstRoundState
 {
 
     using System;
     using System.Collections.Generic;
-
-    using Controllers.EveryBodyVsTheTeacher.Jokers.Election;
+    
     
     public class PlayerSelectedForKalitkoJokerCommand : INetworkManagerCommand
     {
