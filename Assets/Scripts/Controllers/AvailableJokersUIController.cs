@@ -5,6 +5,7 @@
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using EventArgs;
 
@@ -14,15 +15,15 @@
     using UnityEngine.Events;
     using UnityEngine.UI;
 
-    public class AvailableJokersUIController : MonoBehaviour
+    public class AvailableJokersUIController : MonoBehaviour, IAvailableJokersUIController
     {
         private const int SpawnOffset = 10;
 
-        public EventHandler<JokerEventArgs> OnAddedJoker = delegate
+        public event EventHandler<JokerEventArgs> OnAddedJoker = delegate
             {
             };
 
-        public EventHandler<JokerEventArgs> OnUsedJoker = delegate
+        public event EventHandler<JokerEventArgs> OnUsedJoker = delegate
             {
             };
 
