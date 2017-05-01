@@ -11,8 +11,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
     public class RoundsSwitcher : IRoundsSwitcher
     {
-        public event EventHandler OnSwitchedToNextRound = delegate {};
-        public event EventHandler OnTooManyWrongAnswers = delegate {};
+        public event EventHandler OnSwitchedToNextRound = delegate { };
+        public event EventHandler OnMustEndGame = delegate { };
         public event EventHandler OnNoMoreRounds = delegate { };
 
         private readonly IRoundState[] rounds;
@@ -88,11 +88,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             this.SwitchToNextRound();
         }
 
-        private void OnMustEndGame(object sender, EventArgs args)
-        {
-            this.OnTooManyWrongAnswers(this, args);
-        }
-
         public void SwitchToNextRound()
         {
             var nextRoundIndex = this.index + 1;
@@ -109,11 +104,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                 this.rounds[this.index].OnMustGoOnNextRound -= this.OnMustGoOnNextRound;
                 this.rounds[this.index].OnMustEndGame -= this.OnMustEndGame;
             }
-            
+
             this.rounds[nextRoundIndex].OnStateEnter(this.stateMachine);
             this.rounds[nextRoundIndex].OnMustGoOnNextRound += this.OnMustGoOnNextRound;
             this.rounds[nextRoundIndex].OnMustEndGame += this.OnMustEndGame;
-            
+
             this.index = nextRoundIndex;
             this.OnSwitchedToNextRound(this, EventArgs.Empty);
         }

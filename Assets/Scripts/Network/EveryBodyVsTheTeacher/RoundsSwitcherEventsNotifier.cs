@@ -39,7 +39,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.sendtoConnectionId = sendToConnectionId;
 
             roundsSwitcher.OnSwitchedToNextRound += OnSwitchedToNextRound;
-            roundsSwitcher.OnTooManyWrongAnswers += OnTooManyWrongAnswers;
+            roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
             roundsSwitcher.OnNoMoreRounds += OnNoMoreRounds;
         }
 
@@ -48,7 +48,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.networkManager.SendClientCommand(this.sendtoConnectionId, new NetworkCommandData("SwitchedToNextRound"));
         }
 
-        private void OnTooManyWrongAnswers(object sender, EventArgs args)
+        private void OnMustEndGame(object sender, EventArgs args)
         {
             this.networkManager.SendClientCommand(this.sendtoConnectionId, new NetworkCommandData("TooManyWrongAnswers"));
         }
@@ -60,9 +60,9 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
         public void Dispose()
         {
-            roundsSwitcher.OnSwitchedToNextRound -= OnSwitchedToNextRound;
-            roundsSwitcher.OnTooManyWrongAnswers -= OnTooManyWrongAnswers;
-            roundsSwitcher.OnNoMoreRounds -= OnNoMoreRounds;
+            roundsSwitcher.OnSwitchedToNextRound -= this.OnSwitchedToNextRound;
+            roundsSwitcher.OnMustEndGame -= this.OnMustEndGame;
+            roundsSwitcher.OnNoMoreRounds -= this.OnNoMoreRounds;
         }
     }
 }

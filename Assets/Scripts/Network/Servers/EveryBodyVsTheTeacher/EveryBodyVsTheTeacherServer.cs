@@ -86,7 +86,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         void Start()
         {
             this.networkManager.OnClientConnected += this.OnClientConnectedToServer;
-            this.roundsSwitcher.OnTooManyWrongAnswers += this.OnTooManyWrongAnswers;
+            this.roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
 
@@ -134,7 +134,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.networkManager.KickPlayer(connectionId);
         }
 
-        private void OnTooManyWrongAnswers(object sender, EventArgs args)
+        private void OnMustEndGame(object sender, EventArgs args)
         {
             this.EndGame();
         }

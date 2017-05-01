@@ -5,7 +5,7 @@
     public interface IRoundsSwitcher
     {
         event EventHandler OnSwitchedToNextRound;
-        event EventHandler OnTooManyWrongAnswers;
+        event EventHandler OnMustEndGame;
         event EventHandler OnNoMoreRounds;
 
         void SwitchToNextRound();
