@@ -26,7 +26,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
     public abstract class RoundStateAbstract : IRoundState
     {
         public event EventHandler OnMustGoOnNextRound = delegate { };
-        public event EventHandler OnTooManyWrongAnswers = delegate { };
+        public event EventHandler OnMustEndGame = delegate { };
         public event EventHandler<UnhandledExceptionEventArgs> OnLoadQuestionError = delegate { };
 
         protected readonly IGameDataIterator gameDataIterator;
@@ -101,20 +101,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             this.selectedJokerCommands = selectedJokerCommands;
             this.maxInCorrectAnswersAllowed = maxInCorrectAnswersAllowed;
         }
-
-        private void UseNextQuestion()
-        {
-            this.gameDataIterator.GetNextQuestion(
-                (question) =>
-                    {
-                        this.currentQuestionAnswersCollector.StartCollecting();
-                    },
-                (error) =>
-                    {
-                        this.OnLoadQuestionError(this, new UnhandledExceptionEventArgs(error, false));
-                    });
-        }
-
+        
         private void OnIncorrectAnswer()
         {
             this.inCorrectAnswersCount++;
@@ -124,7 +111,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
             if (this.inCorrectAnswersCount > this.maxInCorrectAnswersAllowed)
             {
-                this.OnTooManyWrongAnswers(this, System.EventArgs.Empty);
+                this.OnMustEndGame(this, System.EventArgs.Empty);
             }
         }
 
@@ -148,9 +135,27 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                     });
         }
 
+        private void OnNoVotesCollected(object sender, EventArgs args)
+        {
+            this.OnMustEndGame(this, EventArgs.Empty);
+        }
+
         private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
             this.OnMustGoOnNextRound(this, EventArgs.Empty);
+        }
+
+        private void UseNextQuestion()
+        {
+            this.gameDataIterator.GetNextQuestion(
+                (question) =>
+                    {
+                        this.currentQuestionAnswersCollector.StartCollecting();
+                    },
+                (error) =>
+                    {
+                        this.OnLoadQuestionError(this, new UnhandledExceptionEventArgs(error, false));
+                    });
         }
 
         private void AddJokersForThisRound()
@@ -171,6 +176,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         public virtual void OnStateEnter(StateMachine stateMachine)
         {
             this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
+            this.currentQuestionAnswersCollector.OnNoVotesCollected += this.OnNoVotesCollected;
             this.currentQuestionAnswersCollector.OnCollectedVote += this.OnCollectedVoteForAnswerForCurrentQuestion;
 
             this.currentQuestionAnswersCollector.StartCollecting();
@@ -178,7 +184,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             this.InitializeSelectJokerCommands();
             this.AddJokersForThisRound();
         }
-
+        
         public virtual void OnStateExit(StateMachine stateMachine)
         {
             JokersUtils.RemoveRemainingJokers(this.jokersForThisRound, this.jokersData);

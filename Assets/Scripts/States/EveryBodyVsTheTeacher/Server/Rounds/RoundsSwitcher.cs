@@ -88,7 +88,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             this.SwitchToNextRound();
         }
 
-        private void _OnTooManyWrongAnswers(object sender, EventArgs args)
+        private void OnMustEndGame(object sender, EventArgs args)
         {
             this.OnTooManyWrongAnswers(this, args);
         }
@@ -107,12 +107,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             {
                 this.rounds[this.index].OnStateExit(this.stateMachine);
                 this.rounds[this.index].OnMustGoOnNextRound -= this.OnMustGoOnNextRound;
-                this.rounds[this.index].OnTooManyWrongAnswers -= this._OnTooManyWrongAnswers;
+                this.rounds[this.index].OnMustEndGame -= this.OnMustEndGame;
             }
             
             this.rounds[nextRoundIndex].OnStateEnter(this.stateMachine);
             this.rounds[nextRoundIndex].OnMustGoOnNextRound += this.OnMustGoOnNextRound;
-            this.rounds[nextRoundIndex].OnTooManyWrongAnswers += this._OnTooManyWrongAnswers;
+            this.rounds[nextRoundIndex].OnMustEndGame += this.OnMustEndGame;
             
             this.index = nextRoundIndex;
             this.OnSwitchedToNextRound(this, EventArgs.Empty);

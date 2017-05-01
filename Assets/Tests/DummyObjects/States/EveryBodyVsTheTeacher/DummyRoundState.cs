@@ -9,7 +9,7 @@
     public class DummyRoundState : IRoundState
     {
         public event EventHandler OnMustGoOnNextRound = delegate { };
-        public event EventHandler OnTooManyWrongAnswers = delegate {};
+        public event EventHandler OnMustEndGame = delegate {};
         public event EventHandler OnEnter = delegate { };
         public event EventHandler OnExit = delegate { };
 
@@ -30,7 +30,7 @@
 
         public void FireOnTooManyWrongAnswers()
         {
-            this.OnTooManyWrongAnswers(this, EventArgs.Empty);
+            this.OnMustEndGame(this, EventArgs.Empty);
         }
     }
 }

@@ -5,6 +5,6 @@
     public interface IRoundState : IState
     {
         event EventHandler OnMustGoOnNextRound;
-        event EventHandler OnTooManyWrongAnswers;
+        event EventHandler OnMustEndGame;
     }
 }
