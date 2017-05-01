@@ -22,7 +22,7 @@
                 .AddRound(new DummyRoundState())
                 .Build();
 
-            roundsSwitcher.OnTooManyWrongAnswers += (sender, args) => IntegrationTest.Pass();
+            roundsSwitcher.OnMustEndGame += (sender, args) => IntegrationTest.Pass();
             firstRound.FireOnTooManyWrongAnswers();
         }
     }

@@ -1,6 +1,5 @@
 namespace Network
 {
-
     using System;
 
     using Commands;
