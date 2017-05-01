@@ -2,9 +2,11 @@
 {
     using System;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using UnityEngine.UI;
 
-    public class SecondsRemainingUIController : UnityTimer
+    public class SecondsRemainingUIController : UnityTimer, ISecondsRemainingUIController
     {
         public Text SecondsText;
 
@@ -14,7 +16,7 @@
             private set;
         }
 
-        private void OnSecondPassed(object sender, EventArgs eventArgs)
+        private void _OnSecondPassed(object sender, EventArgs eventArgs)
         {
             this.RemainingSecondsToAnswer--;
             this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
@@ -22,7 +24,7 @@
         
         protected override void Initiaze()
         {
-            base.OnSecondPassed += OnSecondPassed;
+            base.OnSecondPassed += _OnSecondPassed;
         }
         
         public override void StartTimer()
@@ -33,5 +35,4 @@
             this.SecondsText.text = this.RemainingSecondsToAnswer.ToString();
         }
     }
-
 }
