@@ -9,7 +9,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
     using System;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces.Controllers;
 
     using Interfaces;

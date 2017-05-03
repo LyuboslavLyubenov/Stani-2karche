@@ -2,8 +2,9 @@
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using JokersData = Network.JokersData;
 
-namespace Assets.Scripts.Utils.States.EveryBodyVsTheTeacher
+namespace Assets.Scripts.Utils.States.EveryBodyVsTheTeacher.Server
 {
+
     using System;
 
     public class JokersUtils
