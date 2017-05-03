@@ -15,6 +15,8 @@ namespace Assets.Tests.States.Presenter.Playing
 
     using StateMachine;
 
+    using UnityEngine;
+
     using Zenject.Source.Install;
 
     public class Installer : MonoInstaller
@@ -54,6 +56,10 @@ namespace Assets.Tests.States.Presenter.Playing
             Container.Bind<IChangedRoundUIController>()
                 .To<DummyChangedRoundUIController>()
                 .AsSingle();
+
+            Container.Bind<GameObject>()
+                .FromInstance(new GameObject())
+                .WhenInjectedInto<PlayingState>();
 
             Container.Bind<PlayingState>()
                 .ToSelf();
