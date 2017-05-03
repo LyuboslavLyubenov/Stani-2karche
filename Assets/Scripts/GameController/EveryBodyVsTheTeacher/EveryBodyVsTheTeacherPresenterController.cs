@@ -8,7 +8,6 @@ using UnableToConnectUIController = Controllers.UnableToConnectUIController;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
-
     using System;
 
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
