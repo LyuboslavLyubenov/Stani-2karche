@@ -51,5 +51,4 @@
             this.OnUsedJoker(this, new JokerEventArgs(joker));
         }
     }
-
 }

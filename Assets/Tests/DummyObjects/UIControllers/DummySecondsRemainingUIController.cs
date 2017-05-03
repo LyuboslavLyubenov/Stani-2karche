@@ -33,15 +33,12 @@
 
         public void StartTimer()
         {
-            throw new NotImplementedException();
         }
 
         public void StopTimer()
         {
-            throw new NotImplementedException();
         }
-
-
+        
         public void FakeSecondPassed()
         {
             this.OnSecondPassed(this, EventArgs.Empty);

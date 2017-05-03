@@ -1,7 +1,4 @@
-﻿using IExtendedTimer = Utils.IExtendedTimer;
-using TimerUtils = Utils.TimerUtils;
-
-namespace Assets.Tests.DummyObjects.UIControllers
+﻿namespace Assets.Tests.DummyObjects.UIControllers
 {
 
     using System;
@@ -44,17 +41,20 @@ namespace Assets.Tests.DummyObjects.UIControllers
 
         public void HideAnswer(int index)
         {
-            throw new NotImplementedException();
+        }
+
+        public DummyElectionQuestionUIController()
+        {
+            this.OnAnswerClick = delegate { };
+            this.OnQuestionLoaded = delegate { };
         }
 
         public void HideAllAnswers()
         {
-            throw new NotImplementedException();
         }
 
         public void ShowAllAnswers()
         {
-            throw new NotImplementedException();
         }
 
         public void LoadQuestion(ISimpleQuestion question)
