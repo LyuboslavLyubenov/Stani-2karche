@@ -52,6 +52,7 @@ namespace Network.EveryBodyVsTheTeacher
             for (int i = 0; i < electionJokersCommands.Length; i++)
             {
                 var electionJokerCommand = electionJokersCommands[i];
+                electionJokerCommand.OnElectionStarted += this.OnElectionStarted;
                 electionJokerCommand.OnElectionResult += this.OnElectionResultJoker;
                 electionJokerCommand.OnPlayerSelectedFor += this.OnPlayerSelectedFor;
                 electionJokerCommand.OnPlayerSelectedAgainst += this.OnPlayerSelectedAgainst;
@@ -78,7 +79,14 @@ namespace Network.EveryBodyVsTheTeacher
                 .Name.Replace("Command", "")
                 .Replace("Selected", "");
         }
-        
+
+        private void OnElectionStarted(object sender, EventArgs args)
+        {
+            var jokerName = this.GetJokerName(sender);
+            var command = new NetworkCommandData("ElectionStartedFor" + jokerName);
+            this.SendToMainPlayersAndPresenter(command);
+        }
+
         private void OnElectionResultJoker(object sender, ElectionJokerResultEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
@@ -106,6 +114,7 @@ namespace Network.EveryBodyVsTheTeacher
             for (int i = 0; i < this.electionJokersCommands.Length; i++)
             {
                 var electionJokerCommand = this.electionJokersCommands[i];
+                electionJokerCommand.OnElectionStarted -= this.OnElectionStarted;
                 electionJokerCommand.OnElectionResult -= this.OnElectionResultJoker;
                 electionJokerCommand.OnPlayerSelectedFor -= this.OnPlayerSelectedFor;
                 electionJokerCommand.OnPlayerSelectedAgainst -= this.OnPlayerSelectedAgainst;
