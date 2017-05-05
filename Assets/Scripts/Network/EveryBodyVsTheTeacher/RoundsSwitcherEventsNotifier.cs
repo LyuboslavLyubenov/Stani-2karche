@@ -38,9 +38,9 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.roundsSwitcher = roundsSwitcher;
             this.sendtoConnectionId = sendToConnectionId;
 
-            roundsSwitcher.OnSwitchedToNextRound += OnSwitchedToNextRound;
+            roundsSwitcher.OnSwitchedToNextRound += this.OnSwitchedToNextRound;
             roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
-            roundsSwitcher.OnNoMoreRounds += OnNoMoreRounds;
+            roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
         }
 
         private void OnSwitchedToNextRound(object sender, EventArgs args)

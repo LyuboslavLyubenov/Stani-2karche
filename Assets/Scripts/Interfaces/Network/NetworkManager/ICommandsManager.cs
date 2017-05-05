@@ -29,7 +29,7 @@ namespace Interfaces.Network.NetworkManager
 
         void RemoveAllCommands();
 
-        void Execute(NetworkCommandData command);
+        void Execute(NetworkCommandData commandData);
     }
 
 }

@@ -1,6 +1,5 @@
 ﻿using IJokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.IJokerElectionUIController;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
-using JokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.JokerElectionUIController;
 
 namespace Assets.Scripts.Commands.Jokers.Election
 {

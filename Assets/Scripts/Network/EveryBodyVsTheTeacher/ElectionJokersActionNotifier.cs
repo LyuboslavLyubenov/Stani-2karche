@@ -98,14 +98,14 @@ namespace Network.EveryBodyVsTheTeacher
         private void OnPlayerSelectedFor(object sender, ClientConnectionIdEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
-            var command = new NetworkCommandData("PlayerSelectedFor" + jokerName);
+            var command = new NetworkCommandData("PlayerVotedFor" + jokerName);
             this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
         
         private void OnPlayerSelectedAgainst(object sender, ClientConnectionIdEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
-            var command = new NetworkCommandData("PlayerSelectedAgainst" + jokerName);
+            var command = new NetworkCommandData("PlayerVotedAgainst" + jokerName);
             this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
 
