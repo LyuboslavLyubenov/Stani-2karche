@@ -5,6 +5,9 @@
 
     public interface IElectionJokersActionListener
     {
-        void ReceiveNotifications(IJoker joker);
+        void ReceiveNotifications(Type jokerType);
+
+        void ReceiveNotifications<T>() where T : IJoker;
     }
+
 }
