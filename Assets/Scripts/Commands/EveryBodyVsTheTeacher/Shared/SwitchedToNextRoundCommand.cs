@@ -1,12 +1,10 @@
 ﻿using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
-namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared
+namespace Scripts.Commands.EveryBodyVsTheTeacher.Shared
 {
-
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces.Controllers;
 
     using Extensions;

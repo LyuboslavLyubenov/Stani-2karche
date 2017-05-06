@@ -1,6 +1,6 @@
 ﻿using DisableAfterDelay = Utils.Unity.DisableAfterDelay;
 
-namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher
+namespace Scripts.Controllers.EveryBodyVsTheTeacher
 {
 
     using System;
