@@ -10,9 +10,13 @@ namespace Commands.Jokers
 
     using Controllers.EveryBodyVsTheTeacher.Jokers;
 
+    using UnityEngine;
+
     public class KalitkoJokerResultCommand : IOneTimeExecuteCommand
     {
         private readonly IKalitkoJokerUIController kalitkoJokerContainerUiController;
+
+        private readonly GameObject kalitkoJokerUi;
 
         public EventHandler OnFinishedExecution
         {
@@ -24,18 +28,26 @@ namespace Commands.Jokers
             get; private set;
         }
 
-        public KalitkoJokerResultCommand(IKalitkoJokerUIController kalitkoJokerContainerUiController)
+        public KalitkoJokerResultCommand(IKalitkoJokerUIController kalitkoJokerContainerUiController, GameObject kalitkoJokerUI)
         {
             if (kalitkoJokerContainerUiController == null)
             {
                 throw new ArgumentNullException("kalitkoJokerContainerUiController");
             }
 
+            if (kalitkoJokerUI == null)
+            {
+                throw new ArgumentNullException("kalitkoJokerUI");
+            }
+
             this.kalitkoJokerContainerUiController = kalitkoJokerContainerUiController;
+            this.kalitkoJokerUi = kalitkoJokerUI;
         }
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
+            this.kalitkoJokerUi.SetActive(true);
+
             if (!commandsOptionsValues.ContainsKey("Answer"))
             {
                 this.kalitkoJokerContainerUiController.ShowNothing();

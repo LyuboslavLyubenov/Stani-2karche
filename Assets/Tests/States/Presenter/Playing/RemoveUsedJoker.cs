@@ -1,6 +1,7 @@
 ﻿using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
+using HelpFromFriendJoker = Jokers.HelpFromFriendJoker;
 
 namespace Assets.Tests.States.Presenter.Playing
 {
