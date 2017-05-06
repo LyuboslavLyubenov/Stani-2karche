@@ -1,12 +1,12 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using IJokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.IJokerElectionUIController;
+using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
 namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-
+    `
     using Assets.Scripts.Commands.Jokers.Election;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
@@ -18,6 +18,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
         private readonly IClientNetworkManager networkManager;
         private readonly IJokerElectionUIController jokerElectionUiController;
         private readonly GameObject jokerElectionUi;
+
         private readonly GameObject successfullyActivatedJokerUi;
         private readonly GameObject unsuccessfullyActivatedJokerUi;
 
@@ -62,21 +63,9 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.unsuccessfullyActivatedJokerUi = unsuccessfullyActivatedJokerUI;
         }
 
-        public void ReceiveNotifications(Type jokerType)
+        public void ReceiveNotifications(IJoker joker)
         {
-            if (jokerType == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            var jokerInterfaceType = typeof(IJoker);
-
-            if (!jokerType.GetInterfaces().Contains(jokerInterfaceType))
-            {
-                throw new ArgumentException("Must be a joker");
-            }
-
-            var jokerName = jokerType.Name.Replace("Joker", "");
+            var jokerName = joker.GetType().Name.Replace("Joker", "");
 
             if (this.jokerNamesCurrentlyListening.Contains(jokerName))
             {
@@ -96,13 +85,9 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.jokerNamesCurrentlyListening.Add(jokerName);
         }
 
-        public void ReceiveNotifications<T>() where T : IJoker
-        {
-            this.ReceiveNotifications(typeof(T));
-        }
-
         public void Dispose()
         {
+
             for (int i = 0; i < this.jokerNamesCurrentlyListening.Count; i++)
             {
                 var jokerName = this.jokerNamesCurrentlyListening[i];
@@ -111,8 +96,6 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
                 this.networkManager.CommandsManager.RemoveCommand("PlayerVotedAgainst" + jokerName);
                 this.networkManager.CommandsManager.RemoveCommand("ElectionResultFor" + jokerName);
             }
-
-            this.jokerNamesCurrentlyListening.Clear();
         }
     }
 }
