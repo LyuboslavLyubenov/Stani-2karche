@@ -61,7 +61,7 @@
             this.distanceBetweenJokers = this.jokerStartPosition.y - this.jokerButtonSize.y;
         }
 
-        private void OnJokerClick(GameObject jokerObj, IJoker joker)
+        protected virtual void OnJokerClick(GameObject jokerObj, IJoker joker)
         {
             joker.Activate();
 
