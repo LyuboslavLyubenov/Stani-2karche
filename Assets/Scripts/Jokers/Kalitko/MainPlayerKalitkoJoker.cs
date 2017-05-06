@@ -6,7 +6,6 @@
 
     using Commands;
     using Commands.Jokers.JokerElection;
-    using Commands.Jokers.JokerElection.KalitkoJoker;
     using Commands.Jokers.Selected;
 
     using Interfaces;

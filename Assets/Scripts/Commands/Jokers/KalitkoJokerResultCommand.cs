@@ -6,11 +6,13 @@ namespace Commands.Jokers
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using Controllers.EveryBodyVsTheTeacher.Jokers;
 
     public class KalitkoJokerResultCommand : IOneTimeExecuteCommand
     {
-        private readonly KalitkoJokerContainerUIController kalitkoJokerContainerUiController;
+        private readonly IKalitkoJokerUIController kalitkoJokerContainerUiController;
 
         public EventHandler OnFinishedExecution
         {
@@ -22,7 +24,7 @@ namespace Commands.Jokers
             get; private set;
         }
 
-        public KalitkoJokerResultCommand(KalitkoJokerContainerUIController kalitkoJokerContainerUiController)
+        public KalitkoJokerResultCommand(IKalitkoJokerUIController kalitkoJokerContainerUiController)
         {
             if (kalitkoJokerContainerUiController == null)
             {

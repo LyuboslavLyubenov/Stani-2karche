@@ -1,12 +1,10 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using IJokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.IJokerElectionUIController;
-using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
 namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 {
     using System;
     using System.Collections.Generic;
-    `
     using Assets.Scripts.Commands.Jokers.Election;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
