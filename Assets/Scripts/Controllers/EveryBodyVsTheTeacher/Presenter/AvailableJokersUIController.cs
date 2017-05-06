@@ -5,24 +5,22 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter
     using System;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter;
     using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
 
     using EventArgs;
 
     using UnityEngine;
 
-    public class AvailableJokersUIController : Controllers_AvailableJokersUIController
+    using Zenject.Source.Usage;
+
+    public class AvailableJokersUIController : Controllers_AvailableJokersUIController, IAvailableJokersUIController
     {
+        [Inject]
         private IElectionForJokersBinder jokersBinder;
 
-        public AvailableJokersUIController(IElectionForJokersBinder jokersBinder)
+        public AvailableJokersUIController()
         {
-            if (jokersBinder == null)
-            {
-                throw new ArgumentNullException("jokersBinder");
-            }
-
-            this.jokersBinder = jokersBinder;
             this.OnAddedJoker += _OnAddedJoker;
         }
 
@@ -42,6 +40,11 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter
         protected override void OnJokerClick(GameObject jokerObj, IJoker joker)
         {
             //remove functionality for clicking
+        }
+
+        public void Dispose()
+        {
+            this.jokersBinder.Dispose();
         }
     }
 }
