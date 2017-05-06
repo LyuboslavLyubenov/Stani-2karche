@@ -11,7 +11,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
     using UnityEngine;
 
-    public class ElectionJokersActionListener : IElectionJokersActionListener, IDisposable
+    public class ElectionForJokersBinder : IElectionForJokersBinder, IDisposable
     {
         private readonly IClientNetworkManager networkManager;
         private readonly IJokerElectionUIController jokerElectionUiController;
@@ -22,7 +22,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
         private readonly List<string> jokerNamesCurrentlyListening = new List<string>();
         
-        public ElectionJokersActionListener(
+        public ElectionForJokersBinder(
             IClientNetworkManager networkManager,
             IJokerElectionUIController jokerElectionUIController, 
             GameObject jokerElectionUI,
@@ -61,7 +61,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.unsuccessfullyActivatedJokerUi = unsuccessfullyActivatedJokerUI;
         }
 
-        public void ReceiveNotifications(IJoker joker)
+        public void Bind(IJoker joker)
         {
             var jokerName = joker.GetType().Name.Replace("Joker", "");
 

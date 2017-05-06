@@ -1,10 +1,9 @@
 ﻿namespace Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher
 {
-
     using System;
-
-    public interface IElectionJokersActionListener
+    
+    public interface IElectionForJokersBinder : IDisposable
     {
-        void ReceiveNotifications(IJoker joker);
+        void Bind(IJoker joker);
     }
 }
