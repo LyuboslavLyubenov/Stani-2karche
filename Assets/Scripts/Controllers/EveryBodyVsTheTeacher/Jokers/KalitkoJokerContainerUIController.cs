@@ -12,12 +12,14 @@ namespace Controllers.EveryBodyVsTheTeacher.Jokers
     using System.Collections;
     using System.Linq;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using Extensions.Unity;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class KalitkoJokerContainerUIController : MonoBehaviour
+    public class KalitkoJokerContainerUIController : MonoBehaviour, IKalitkoJokerUIController
     {
         private const int AnswerYOffset = 60;
         private const int ConfettiYOffset = 2;
