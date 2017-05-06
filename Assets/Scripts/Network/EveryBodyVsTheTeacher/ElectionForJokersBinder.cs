@@ -1,5 +1,5 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using IJokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.IJokerElectionUIController;
+using IJokerElectionUIController = Assets.Scripts.Interfaces.Controllers.IJokerElectionUIController;
 
 namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 {

@@ -3,6 +3,8 @@
 namespace Tests.UI.Jokers.Election
 {
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using Controllers.EveryBodyVsTheTeacher.Jokers.Election;
 
     using UnityEngine.UI;

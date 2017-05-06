@@ -1,4 +1,4 @@
-using IJokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.IJokerElectionUIController;
+using IJokerElectionUIController = Assets.Scripts.Interfaces.Controllers.IJokerElectionUIController;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
 namespace Assets.Scripts.Commands.Jokers.Election

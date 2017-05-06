@@ -1,4 +1,4 @@
-namespace Controllers.EveryBodyVsTheTeacher.Jokers.Election
+namespace Assets.Scripts.Interfaces.Controllers
 {
 
     using UnityEngine;
