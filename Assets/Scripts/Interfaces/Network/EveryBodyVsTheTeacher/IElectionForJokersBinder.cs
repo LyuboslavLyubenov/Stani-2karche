@@ -5,5 +5,7 @@
     public interface IElectionForJokersBinder : IDisposable
     {
         void Bind(IJoker joker);
+
+        void Unbind(IJoker joker);
     }
 }

@@ -6,6 +6,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
     using System;
     using System.Collections.Generic;
     using Assets.Scripts.Commands.Jokers.Election;
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
 
@@ -61,9 +62,17 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.unsuccessfullyActivatedJokerUi = unsuccessfullyActivatedJokerUI;
         }
 
+        private void RemoveCommandsBindedToJoker(string jokerName)
+        {
+            this.networkManager.CommandsManager.RemoveCommand("ElectionStartedFor" + jokerName);
+            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedFor" + jokerName);
+            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedAgainst" + jokerName);
+            this.networkManager.CommandsManager.RemoveCommand("ElectionResultFor" + jokerName);
+        }
+        
         public void Bind(IJoker joker)
         {
-            var jokerName = joker.GetType().Name.Replace("Joker", "");
+            var jokerName = joker.GetName();
 
             if (this.jokerNamesCurrentlyListening.Contains(jokerName))
             {
@@ -83,17 +92,28 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.jokerNamesCurrentlyListening.Add(jokerName);
         }
 
+        public void Unbind(IJoker joker)
+        {
+            var jokerName = joker.GetName();
+
+            if (this.jokerNamesCurrentlyListening.Contains(jokerName))
+            {
+                throw new InvalidOperationException("Already listening for " + jokerName + " joker");
+            }
+            
+            this.RemoveCommandsBindedToJoker(jokerName);
+            this.jokerNamesCurrentlyListening.Remove(jokerName);
+        }
+
         public void Dispose()
         {
-
             for (int i = 0; i < this.jokerNamesCurrentlyListening.Count; i++)
             {
                 var jokerName = this.jokerNamesCurrentlyListening[i];
-                this.networkManager.CommandsManager.RemoveCommand("ElectionStartedFor" + jokerName);
-                this.networkManager.CommandsManager.RemoveCommand("PlayerVotedFor" + jokerName);
-                this.networkManager.CommandsManager.RemoveCommand("PlayerVotedAgainst" + jokerName);
-                this.networkManager.CommandsManager.RemoveCommand("ElectionResultFor" + jokerName);
+                this.RemoveCommandsBindedToJoker(jokerName);
             }
+            
+            this.jokerNamesCurrentlyListening.Clear();
         }
     }
 }
