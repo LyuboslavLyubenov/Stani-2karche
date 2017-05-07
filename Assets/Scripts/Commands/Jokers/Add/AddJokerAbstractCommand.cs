@@ -5,6 +5,7 @@ namespace Commands.Jokers.Add
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using Controllers;
 
@@ -13,9 +14,9 @@ namespace Commands.Jokers.Add
 
     public abstract class AddJokerAbstractCommand : INetworkManagerCommand
     {
-        private AvailableJokersUIController jokersUIController;
+        private IAvailableJokersUIController jokersUIController;
 
-        protected AddJokerAbstractCommand(AvailableJokersUIController jokersUIController)
+        protected AddJokerAbstractCommand(IAvailableJokersUIController jokersUIController)
         {
             if (jokersUIController == null)
             {
