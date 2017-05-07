@@ -86,17 +86,4 @@
             this.CoroutineUtils.WaitForFrames(0, () => this._SetResponse(username, answer));
         }
     }
-
-    public class PlayerAnswerResponse
-    {
-        public string Username
-        {
-            get; set;
-        }
-
-        public string Answer
-        {
-            get; set;
-        }
-    }
 }
