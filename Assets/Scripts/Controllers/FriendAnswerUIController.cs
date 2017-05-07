@@ -1,6 +1,8 @@
 ﻿namespace Controllers
 {
 
+    using System;
+
     using UnityEngine;
     using UnityEngine.UI;
 
@@ -25,6 +27,40 @@
                                                     "Доналт Тръмп", "Мики Маус"
                                                 };
 
+        public string Username
+        {
+            get
+            {
+                return this.usernameText.text;
+            }
+            private set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.usernameText.text = value;
+            }
+        }
+
+        public string Answer
+        {
+            get
+            {
+                return this.answerText.text;
+            }
+            private set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException();
+                }
+
+                this.answerText.text = value;
+            }
+        }
+
         void Awake()
         {
             this.usernameText = this.FriendUsername.GetComponent<Text>();
@@ -42,12 +78,25 @@
             var usernameIndex = UnityEngine.Random.Range(0, this.offlineFriendNames.Length);
             var username = this.offlineFriendNames[usernameIndex];
 
-            this.CoroutineUtils.WaitForFrames(1, () => this._SetResponse(username, answer));
+            this.CoroutineUtils.WaitForFrames(0, () => this._SetResponse(username, answer));
         }
 
         public void SetResponse(string username, string answer)
         {
-            this.CoroutineUtils.WaitForFrames(1, () => this._SetResponse(username, answer));
+            this.CoroutineUtils.WaitForFrames(0, () => this._SetResponse(username, answer));
+        }
+    }
+
+    public class PlayerAnswerResponse
+    {
+        public string Username
+        {
+            get; set;
+        }
+
+        public string Answer
+        {
+            get; set;
         }
     }
 }
