@@ -8,7 +8,7 @@ namespace Assets.Scripts.Commands.Jokers.Add.EveryBodyVsTheTeacher.Presenter
 
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
-    using Assets.Scripts.Jokers.Kalitko;
+    using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter;
 
     using UnityEngine;
 

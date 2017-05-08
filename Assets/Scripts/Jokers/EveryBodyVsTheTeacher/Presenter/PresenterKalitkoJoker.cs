@@ -2,8 +2,9 @@
 using JokerUtils = Utils.JokerUtils;
 using KalitkoJokerResultCommand = Assets.Scripts.Commands.Jokers.Result.KalitkoJokerResultCommand;
 
-namespace Assets.Scripts.Jokers.Kalitko
+namespace Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter
 {
+
     using System;
 
     using Assets.Scripts.Interfaces;
@@ -69,11 +70,10 @@ namespace Assets.Scripts.Jokers.Kalitko
         {
             this.kalitkoJokerUI.SetActive(true);
             var kalitkoJokerResultCommand = new KalitkoJokerResultCommand(this.kalitkoJokerUIController, this.kalitkoJokerUI);
-            kalitkoJokerResultCommand.OnFinishedExecution += OnReceivedResultCommand;
+            kalitkoJokerResultCommand.OnFinishedExecution += this.OnReceivedResultCommand;
             this.networkManager.CommandsManager.AddCommand(kalitkoJokerResultCommand);
             this.Activated = true;
             this.OnActivated(this, EventArgs.Empty);
         }
-
     }
 }

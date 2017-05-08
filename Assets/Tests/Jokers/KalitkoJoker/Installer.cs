@@ -4,7 +4,7 @@ namespace Assets.Tests.Jokers.KalitkoJoker
 {
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
-    using Assets.Scripts.Jokers.Kalitko;
+    using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter;
     using Assets.Tests.DummyObjects.UIControllers;
 
     using Interfaces.Network.NetworkManager;
