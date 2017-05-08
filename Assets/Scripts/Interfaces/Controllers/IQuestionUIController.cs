@@ -24,6 +24,10 @@ namespace Interfaces.Controllers
             get;
         }
 
+        void ChangeAnswersCount(int count);
+
+        void HideAnswer(string answer);
+
         void HideAnswer(int index);
 
         void HideAllAnswers();
@@ -32,6 +36,10 @@ namespace Interfaces.Controllers
 
         void LoadQuestion(ISimpleQuestion question);
 
-    }
+        void DisableAnswerInteractivity(string answer);
 
+        void DisableAnswerInteractivity(int answerIndex);
+
+        void DisableAllAnswersInteractivity();
+    }
 }
