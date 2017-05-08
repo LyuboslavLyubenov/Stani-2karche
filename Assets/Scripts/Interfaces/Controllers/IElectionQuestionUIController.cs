@@ -7,12 +7,4 @@
         void AddVoteFor(string answer);
     }
 
-    public interface IElectionBubbleUIController
-    {
-        int VoteCount { get; }
-
-        void AddVote();
-
-        void ResetVotesToZero();
-    }
 }
