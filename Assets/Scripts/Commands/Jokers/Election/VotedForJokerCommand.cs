@@ -26,5 +26,4 @@ namespace Assets.Scripts.Commands.Jokers.Election
             this.jokerElectionUIController.AddThumbsUp();
         }
     }
-
 }

@@ -3,12 +3,14 @@
 
     using System;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using UnityEngine;
     using UnityEngine.UI;
 
     using Utils.Unity;
 
-    public class FriendAnswerUIController : ExtendedMonoBehaviour
+    public class FriendAnswerUIController : ExtendedMonoBehaviour, IPlayerAnswerUIController
     {
         public GameObject FriendUsername;
         public GameObject FriendAnswer;

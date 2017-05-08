@@ -53,5 +53,4 @@ namespace Assets.Scripts.Commands.Jokers.Election
             this.jokerElectionUiController.SetJokerImage(this.joker.Image);
         }
     }
-
 }
