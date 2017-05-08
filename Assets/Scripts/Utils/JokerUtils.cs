@@ -5,6 +5,8 @@ namespace Utils
     using System.Linq;
     using System.Reflection;
 
+    using UnityEngine;
+
     public class JokerUtils
     {
         public static Type[] AllJokersTypes
@@ -40,6 +42,11 @@ namespace Utils
         public static bool IsValidJokerType(Type joker)
         {
             return joker.GetInterface("IJoker") != null;
+        }
+
+        public static Sprite LoadSprite(string jokerName)
+        {
+            return Resources.Load<Sprite>("Images/Buttons/Jokers/" + jokerName);
         }
     }
 
