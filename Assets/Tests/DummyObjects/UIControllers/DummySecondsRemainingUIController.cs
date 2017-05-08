@@ -8,7 +8,6 @@
     public class DummySecondsRemainingUIController : ISecondsRemainingUIController
     {
         public event EventHandler OnSecondPassed = delegate { };
-
         public event EventHandler OnFinished = delegate { };
 
         public int RemainingSecondsToAnswer
@@ -33,10 +32,12 @@
 
         public void StartTimer()
         {
+            this.Running = true;
         }
 
         public void StopTimer()
         {
+            this.Running = false;
         }
         
         public void FakeSecondPassed()
@@ -49,5 +50,4 @@
             this.OnFinished(this, EventArgs.Empty);
         }
     }
-
 }
