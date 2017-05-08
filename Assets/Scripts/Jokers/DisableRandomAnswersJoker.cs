@@ -74,7 +74,7 @@
             this.networkManager = networkManager;
             this.questionUIController = questionUIController;
 
-            this.Image = JokerUtils.LoadSprite("DisableRandomAnswers")
+            this.Image = JokerUtils.LoadSprite("DisableRandomAnswers");
         }
         
         private void OnReceiveSettingsTimeout()
