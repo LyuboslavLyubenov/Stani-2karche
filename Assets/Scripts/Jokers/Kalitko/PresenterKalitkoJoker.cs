@@ -1,4 +1,5 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using JokerUtils = Utils.JokerUtils;
 using KalitkoJokerResultCommand = Commands.Jokers.KalitkoJokerResultCommand;
 
 namespace Assets.Scripts.Jokers.Kalitko
@@ -54,7 +55,7 @@ namespace Assets.Scripts.Jokers.Kalitko
             this.kalitkoJokerUIController = kalitkoJokerUIController;
             this.kalitkoJokerUI = kalitkoJokerUI;
 
-            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/KalitkoJoker");
+            this.Image = JokerUtils.LoadSprite("Kalitko");
         }
 
         private void OnReceivedResultCommand(object sender, EventArgs args)

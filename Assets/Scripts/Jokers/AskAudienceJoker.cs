@@ -20,6 +20,7 @@
 
     using UnityEngine;
 
+    using Utils;
     using Utils.Unity;
 
     using EventArgs = System.EventArgs;
@@ -90,7 +91,7 @@
             this.loadingUI = loadingUI;
             this.pollDataRetriever = pollDataRetriever;
 
-            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/AskAudience");
+            this.Image = JokerUtils.LoadSprite("AskAudience");
 
             this.pollDataRetriever.OnReceivedSettingsTimeout += this.OnReceiveSettingsTimeout;
             this.pollDataRetriever.OnReceivedSettings += this.OnReceivedJokerSettings;

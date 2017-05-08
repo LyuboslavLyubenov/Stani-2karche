@@ -29,6 +29,7 @@ namespace Jokers
 
     using UnityEngine;
 
+    using Utils;
     using Utils.Unity;
 
     using EventArgs = System.EventArgs;
@@ -115,7 +116,7 @@ namespace Jokers
 
             this.callAFriendUIController = callAFriendUI.GetComponent<CallAFriendUIController>();
 
-            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/HelpFromFriend");
+            this.Image = JokerUtils.LoadSprite("HelpFromFriend");
         }
 
         private void OnReceivedConnectedClientsIdsNames(OnlineClientsData_DTO connectedClientsData)

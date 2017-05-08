@@ -13,6 +13,8 @@
 
     using UnityEngine;
 
+    using Utils;
+
     public class MainPlayerKalitkoJoker : IJoker
     {
         public event EventHandler OnActivated = delegate {};
@@ -39,7 +41,7 @@
 
             throw new NotImplementedException();
 
-            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/Kalitko");
+            this.Image = JokerUtils.LoadSprite("Kalitko");
         }
         
         private void AddCommands()
