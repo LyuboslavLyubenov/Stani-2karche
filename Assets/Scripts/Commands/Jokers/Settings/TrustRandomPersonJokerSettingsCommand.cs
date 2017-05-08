@@ -1,13 +1,13 @@
 ﻿using IOneTimeExecuteCommand = Interfaces.Network.NetworkManager.IOneTimeExecuteCommand;
-using StringExtensions = Extensions.StringExtensions;
 
-namespace Assets.Scripts.Commands.Jokers.Settings
+namespace Scripts.Commands.Jokers.Settings
 {
-
     using System;
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces.Controllers;
+    
+    using Extensions;
 
     using UnityEngine;
 
@@ -26,7 +26,9 @@ namespace Assets.Scripts.Commands.Jokers.Settings
             get; private set;
         }
 
-        public TrustRandomPersonJokerSettingsCommand(ISecondsRemainingUIController secondsRemainingUIController, GameObject secondsRemainingUI)
+        public TrustRandomPersonJokerSettingsCommand(
+            ISecondsRemainingUIController secondsRemainingUIController, 
+            GameObject secondsRemainingUI)
         {
             if (secondsRemainingUIController == null)
             {
@@ -44,7 +46,7 @@ namespace Assets.Scripts.Commands.Jokers.Settings
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            var timeToAnswerInSeconds = StringExtensions.ConvertTo<int>(commandsOptionsValues["TimeToAnswerInSeconds"]);
+            var timeToAnswerInSeconds = commandsOptionsValues["TimeToAnswerInSeconds"].ConvertTo<int>();
 
             this.secondsRemainingUI.SetActive(true);
             this.secondsRemainingUIController.InvervalInSeconds = timeToAnswerInSeconds;

@@ -57,7 +57,11 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
             Container.Bind<GameObject>()
                 .FromInstance(playerAnswerUI)
                 .WhenInjectedInto<WhenReceivedAnswerShowPlayerAnswerUI>();
-            
+
+            Container.Bind<GameObject>()
+                .FromInstance(notReceivedAnswerUI)
+                .WhenInjectedInto<WhenReceivedAnswerTimeoutShowNotReceivedAnswerUI>();
+
             Container.Bind<IJoker>()
                 .To<TrustRandomPersonJoker>()
                 .FromMethod(

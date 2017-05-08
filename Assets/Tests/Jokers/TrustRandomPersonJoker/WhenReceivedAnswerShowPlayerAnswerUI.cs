@@ -45,10 +45,11 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
             
             var settingsCommand = new NetworkCommandData("TrustRandomPersonJokerSettings");
             settingsCommand.AddOption("TimeToAnswerInSeconds", this.seconds.ToString());
+            dummyClientNetworkManager.FakeReceiveMessage(settingsCommand.ToString());
 
             var username = "Ivan";
             var answer = this.question.CorrectAnswer;
-            var answerCommand = new NetworkCommandData("TrustRandomAnswerJokerResult");
+            var answerCommand = new NetworkCommandData("TrustRandomPersonJokerResult");
             answerCommand.AddOption("Username", username);
             answerCommand.AddOption("Answer", answer);
             dummyClientNetworkManager.FakeReceiveMessage(answerCommand.ToString());
