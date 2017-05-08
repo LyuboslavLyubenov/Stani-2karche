@@ -1,6 +1,7 @@
-﻿using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+﻿using IOneTimeExecuteCommand = Interfaces.Network.NetworkManager.IOneTimeExecuteCommand;
+using StringExtensions = Extensions.StringExtensions;
 
-namespace Scripts.Commands.Jokers.Settings
+namespace Assets.Scripts.Commands.Jokers.Settings
 {
 
     using System;
@@ -8,14 +9,22 @@ namespace Scripts.Commands.Jokers.Settings
 
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Extensions;
-
     using UnityEngine;
 
-    public class TrustRandomPersonJokerSettingsCommand : INetworkManagerCommand
+    public class TrustRandomPersonJokerSettingsCommand : IOneTimeExecuteCommand
     {
         private readonly ISecondsRemainingUIController secondsRemainingUIController;
         private readonly GameObject secondsRemainingUI;
+        
+        public EventHandler OnFinishedExecution
+        {
+            get; set;
+        }
+
+        public bool FinishedExecution
+        {
+            get; private set;
+        }
 
         public TrustRandomPersonJokerSettingsCommand(ISecondsRemainingUIController secondsRemainingUIController, GameObject secondsRemainingUI)
         {
@@ -35,12 +44,18 @@ namespace Scripts.Commands.Jokers.Settings
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            var timeToAnswerInSeconds = commandsOptionsValues["TimeToAnswerInSeconds"]
-                .ConvertTo<int>();
+            var timeToAnswerInSeconds = StringExtensions.ConvertTo<int>(commandsOptionsValues["TimeToAnswerInSeconds"]);
 
             this.secondsRemainingUI.SetActive(true);
             this.secondsRemainingUIController.InvervalInSeconds = timeToAnswerInSeconds;
             this.secondsRemainingUIController.StartTimer();
+
+            this.FinishedExecution = true;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);
+            }
         }
     }
 }
