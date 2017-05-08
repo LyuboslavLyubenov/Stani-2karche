@@ -30,7 +30,7 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
         private int seconds;
 
         [Inject]
-        private ISecondsRemainingUIController secondsRemainingUiController;
+        private ISecondsRemainingUIController secondsRemainingUIController;
 
         void Start()
         {
@@ -42,8 +42,8 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
             dummyClientNetworkManager.FakeReceiveMessage(settingsCommand.ToString());
 
             if (this.secondsRemainingUI.activeSelf &&
-                this.secondsRemainingUiController.Running && 
-                this.secondsRemainingUiController.InvervalInSeconds == this.seconds)
+                this.secondsRemainingUIController.Running && 
+                this.secondsRemainingUIController.InvervalInSeconds == this.seconds)
             {
                 IntegrationTest.Pass();
             }

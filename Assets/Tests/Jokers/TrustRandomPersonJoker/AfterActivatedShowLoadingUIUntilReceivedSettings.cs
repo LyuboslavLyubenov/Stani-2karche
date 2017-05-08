@@ -3,15 +3,10 @@ using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
 namespace Assets.Tests.Jokers.TrustRandomPersonJoker
 {
     using Assets.Scripts.Interfaces;
-
     using Commands;
-
     using Interfaces.Network.NetworkManager;
-
     using UnityEngine;
-
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
-
     using Zenject.Source.Usage;
 
     public class AfterActivatedShowLoadingUIUntilReceivedSettings : MonoBehaviour
@@ -42,7 +37,7 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
             }
 
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
-            var settingsCommand = new NetworkCommandData("TrustRandomPersonSettings");
+            var settingsCommand = new NetworkCommandData("TrustRandomPersonJokerSettings");
             settingsCommand.AddOption("TimeToAnswerInSeconds", this.seconds.ToString());
             dummyClientNetworkManager.FakeReceiveMessage(settingsCommand.ToString());
 
