@@ -3,6 +3,7 @@ using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
 namespace Assets.Tests.Jokers.KalitkoJoker
 {
 
+    using Assets.Scripts.Commands.Jokers.Result;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
     using Assets.Tests.DummyObjects.UIControllers;

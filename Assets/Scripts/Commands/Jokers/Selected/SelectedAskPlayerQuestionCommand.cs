@@ -21,13 +21,9 @@ namespace Commands.Jokers.Selected
         }
 
         private IServerNetworkManager networkManager;
-
         private MainPlayerData mainPlayerData;
-
         private IAskPlayerQuestionJokerRouter jokerServerRouter;
-
         private int timeToAnswerInSeconds;
-
         private Type helpFromFriendJokerType;
 
         public SelectedAskPlayerQuestionCommand(IServerNetworkManager networkManager, MainPlayerData mainPlayerData, IAskPlayerQuestionJokerRouter jokerServerRouter, int timeToAnswerInSeconds)

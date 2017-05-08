@@ -1,6 +1,6 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using JokerUtils = Utils.JokerUtils;
-using KalitkoJokerResultCommand = Commands.Jokers.KalitkoJokerResultCommand;
+using KalitkoJokerResultCommand = Assets.Scripts.Commands.Jokers.Result.KalitkoJokerResultCommand;
 
 namespace Assets.Scripts.Jokers.Kalitko
 {

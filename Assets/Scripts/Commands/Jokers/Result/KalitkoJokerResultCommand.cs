@@ -1,14 +1,12 @@
 ﻿using IOneTimeExecuteCommand = Interfaces.Network.NetworkManager.IOneTimeExecuteCommand;
 
-namespace Commands.Jokers
+namespace Assets.Scripts.Commands.Jokers.Result
 {
 
     using System;
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces.Controllers;
-
-    using Controllers.EveryBodyVsTheTeacher.Jokers;
 
     using UnityEngine;
 
