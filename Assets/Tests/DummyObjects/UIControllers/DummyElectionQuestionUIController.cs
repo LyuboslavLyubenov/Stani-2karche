@@ -59,7 +59,7 @@
 
         public void ChangeAnswersCount(int count)
         {
-            throw new NotImplementedException();
+            this.OnChangedAnswersCount(this, new ChangedAnswersCountEventArgs(count));
         }
 
         public void HideAnswer(string answer)

@@ -1,7 +1,11 @@
-﻿namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
+﻿using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
+
+namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
 {
 
     using Assets.Scripts.Interfaces;
+
+    using Commands;
 
     using Interfaces;
     using Interfaces.Network.NetworkManager;
@@ -20,7 +24,7 @@
         [Inject]
         private ISimpleQuestion question;
         
-        [Inject]
+        [Inject(Id = "LoadingUI")]
         private GameObject loadingUI;
 
         [Inject]
@@ -34,8 +38,24 @@
             {
                 IntegrationTest.Pass();
             }
+            else
+            {
+                IntegrationTest.Fail();
+            }
 
+            var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
+            var settingsCommand = new NetworkCommandData("ConsultWithTeacherJokerSettings");
+            settingsCommand.AddOption("AnswersToDisable", "Asd");
+            dummyClientNetworkManager.FakeReceiveMessage(settingsCommand.ToString());
+
+            if (this.loadingUI.activeSelf)
+            {
+                IntegrationTest.Fail();
+            }
+            else
+            {
+                IntegrationTest.Pass();
+            }
         }
     }
-
 }

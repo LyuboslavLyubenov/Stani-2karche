@@ -1,10 +1,13 @@
 using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
+using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
 {
+    using System.Collections.Generic;
     using System.Linq;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Tests.DummyObjects.UIControllers;
 
     using Commands;
 
@@ -14,9 +17,11 @@ namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
 
     using UnityEngine;
 
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     using Zenject.Source.Usage;
 
-    public class WhenReceivedSettingsDisableAnswersAndHideLoadingScreen : MonoBehaviour
+    public class WhenReceivedSettingsDisableAnswersAndHideLoadingScreen : ExtendedMonoBehaviour
     {
         [Inject]
         private IClientNetworkManager networkManager;
@@ -24,8 +29,11 @@ namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
         [Inject]
         private ISimpleQuestion question;
 
-        [Inject]
+        [Inject(Id = "LoadingUI")]
         private GameObject loadingUI;
+
+        [Inject(Id = "ElectionQuestionUI")]
+        private GameObject ElectionQuestionUI;
 
         [Inject]
         private IElectionQuestionUIController electionQuestionUIController;
@@ -37,6 +45,14 @@ namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
         {
             this.joker.Activate();
 
+            var hiddenAnswers = new List<string>();
+            var dummyElectionQuestionUIController =
+                (DummyElectionQuestionUIController)this.electionQuestionUIController;
+            dummyElectionQuestionUIController.OnHideAnswer += (sender, args) =>
+                {
+                    hiddenAnswers.Add(args.Answer);
+                };
+
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
             var settingsCommand = new NetworkCommandData("ConsultWithTeacherJokerSettings");
             var wrongAnswers = this.question.Answers.Where(a => a != this.question.CorrectAnswer)
@@ -45,11 +61,18 @@ namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
             settingsCommand.AddOption("AnswersToDisable", string.Join(", ", wrongAnswers));
             dummyClientNetworkManager.FakeReceiveMessage(settingsCommand.ToString());
 
-            for (int i = 0; i < wrongAnswers.Length; i++)
-            {
-                var answer = wrongAnswers[i];
-                this.electionQuestionUIController.HideAnswer(answer);
-            }
+            this.CoroutineUtils.WaitForFrames(1,
+                () =>
+                    {
+                        if (this.ElectionQuestionUI.activeSelf && !hiddenAnswers.Except(wrongAnswers).Any())
+                        {
+                            IntegrationTest.Pass();
+                        }
+                        else
+                        {
+                            IntegrationTest.Fail();
+                        }
+                    });
         }
     }
 }
