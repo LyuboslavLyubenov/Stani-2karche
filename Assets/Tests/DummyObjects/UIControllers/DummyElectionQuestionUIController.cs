@@ -10,8 +10,18 @@
 
     using Interfaces;
     using Interfaces.Controllers;
+
     public class DummyElectionQuestionUIController : IElectionQuestionUIController
     {
+        public event EventHandler<ChangedAnswersCountEventArgs> OnChangedAnswersCount = delegate { };
+        public event EventHandler<AnswerEventArgs> OnHideAnswer = delegate { };
+        public event EventHandler OnHideAllAnswers = delegate { };
+        public event EventHandler OnShowAllAnswers = delegate { };
+        public event EventHandler<AnswerEventArgs> OnDisabledAnswerInteractivity = delegate { };
+        public event EventHandler OnDisableAllAnswersInteractivity = delegate { };
+
+        private Dictionary<string, int> answersVotes = new Dictionary<string, int>();
+
         public EventHandler<AnswerEventArgs> OnAnswerClick
         {
             get; set;
@@ -21,8 +31,6 @@
         {
             get; set;
         }
-
-        private Dictionary<string, int> answersVotes = new Dictionary<string, int>();
 
         public ISimpleQuestion CurrentlyLoadedQuestion
         {
@@ -39,22 +47,41 @@
             }
         }
 
-        public void HideAnswer(int index)
-        {
-        }
-
         public DummyElectionQuestionUIController()
         {
-            this.OnAnswerClick = delegate { };
-            this.OnQuestionLoaded = delegate { };
+            this.OnAnswerClick = delegate
+                {
+                };
+            this.OnQuestionLoaded = delegate
+                {
+                };
         }
 
+        public void ChangeAnswersCount(int count)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void HideAnswer(string answer)
+        {
+            this.OnHideAnswer(this, new AnswerEventArgs(answer, null));
+        }
+
+        public void HideAnswer(int index)
+        {
+            var answer = this.answersVotes.ToArray()[index]
+                .Key;
+            this.HideAnswer(answer);
+        }
+        
         public void HideAllAnswers()
         {
+            this.OnHideAllAnswers(this, EventArgs.Empty);
         }
 
         public void ShowAllAnswers()
         {
+            this.OnShowAllAnswers(this, EventArgs.Empty);
         }
 
         public void LoadQuestion(ISimpleQuestion question)
@@ -66,18 +93,48 @@
 
             this.answersVotes.Clear();
             this.CurrentlyLoadedQuestion = question;
+
+            for (int i = 0; i < this.CurrentlyLoadedQuestion.Answers.Length; i++)
+            {
+                var answer = this.CurrentlyLoadedQuestion.Answers[i];
+                this.answersVotes.Add(answer, 0);
+            }
+
             this.OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));
+        }
+
+        public void DisableAnswerInteractivity(string answer)
+        {
+            this.OnDisabledAnswerInteractivity(this, new AnswerEventArgs(answer, null));
+        }
+
+        public void DisableAnswerInteractivity(int answerIndex)
+        {
+            var answer = this.answersVotes.ToArray()[answerIndex].Key;
+            this.DisableAnswerInteractivity(answer);
+        }
+
+        public void DisableAllAnswersInteractivity()
+        {
+            this.OnDisableAllAnswersInteractivity(this, EventArgs.Empty);
         }
 
         public void AddVoteFor(string answer)
         {
-            if (!this.answersVotes.ContainsKey(answer))
-            {
-                this.answersVotes.Add(answer, 0);
-            }
-
             this.answersVotes[answer]++;
         }
     }
 
+    public class ChangedAnswersCountEventArgs : EventArgs
+    {
+        public int Count
+        {
+            get; private set;
+        }
+
+        public ChangedAnswersCountEventArgs(int count)
+        {
+            this.Count = count;
+        }
+    }
 }

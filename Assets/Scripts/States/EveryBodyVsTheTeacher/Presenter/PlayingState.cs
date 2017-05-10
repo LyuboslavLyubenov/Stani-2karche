@@ -3,13 +3,14 @@ using IElectionQuestionUIController = Interfaces.Controllers.IElectionQuestionUI
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
 using SelectedAnswerCommand = Commands.Server.SelectedAnswerCommand;
+using IAvailableElectionJokersUIController = Assets.Scripts.Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter.IAvailableJokersUIController;
+using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared.SwitchedToNextRoundCommand;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
     using System;
-
-    using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
-    using Assets.Scripts.Interfaces.Controllers;
+    
+    using Interfaces.Controllers;
 
     using Interfaces;
     using StateMachine;
@@ -21,16 +22,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private readonly IClientNetworkManager networkManager;
         private readonly IElectionQuestionUIController electionQuestionUiController;
         private readonly ISecondsRemainingUIController secondsRemainingUiController;
-        private readonly IAvailableJokersUIController availableJokersUiController;
+        private readonly IAvailableElectionJokersUIController availableJokersUiController;
         private readonly IChangedRoundUIController changedRoundUiController;
-
         private readonly GameObject changedRoundUi;
 
         public PlayingState(
             IClientNetworkManager networkManager,
             IElectionQuestionUIController electionQuestionUiController,
             ISecondsRemainingUIController secondsRemainingUiController,
-            IAvailableJokersUIController availableJokersUiController,
+            IAvailableElectionJokersUIController availableJokersUiController,
             IChangedRoundUIController changedRoundUiController,
             GameObject changedRoundUi)
         {
@@ -63,7 +63,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             {
                 throw new ArgumentNullException("changedRoundUi");
             }
-
+            
             this.networkManager = networkManager;
             this.electionQuestionUiController = electionQuestionUiController;
             this.secondsRemainingUiController = secondsRemainingUiController;
@@ -75,10 +75,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private void OnReceivedQuestion(ISimpleQuestion question, int timeToAnswer)
         {
             this.electionQuestionUiController.LoadQuestion(question);
+
             this.secondsRemainingUiController.InvervalInSeconds = timeToAnswer;
             this.secondsRemainingUiController.StartTimer();
         }
-
+        
         private void OnReceivedAnswer(int connectionId, string answer)
         {
             this.electionQuestionUiController.AddVoteFor(answer);
@@ -95,12 +96,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             var switchedToRoundCommand =
                 new SwitchedToNextRoundCommand(this.changedRoundUi, this.changedRoundUiController);
             this.networkManager.CommandsManager.AddCommand(switchedToRoundCommand);
+            
 
         }
         
         public void OnStateExit(StateMachine stateMachine)
         {
             this.networkManager.CommandsManager.RemoveCommand<LoadQuestionCommand>();
+            this.networkManager.CommandsManager.RemoveCommand<SelectedAnswerCommand>();
+            this.availableJokersUiController.Dispose();
         }
     }
 }
