@@ -53,12 +53,7 @@
             get;
             private set;
         }
-
-        public DisableRandomAnswersJoker()
-        {
-            this.Image = Resources.Load<Sprite>("Images/Buttons/Jokers/DisableRandomAnswers");
-        }
-
+        
         public DisableRandomAnswersJoker(IClientNetworkManager networkManager, IQuestionUIController questionUIController)
         {
             if (networkManager == null)

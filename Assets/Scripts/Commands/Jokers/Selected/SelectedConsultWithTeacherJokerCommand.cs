@@ -28,5 +28,4 @@ namespace Commands.Jokers.Selected
             this.jokerRouter.Activate(2, this.server.PresenterId);
         }
     }
-
 }

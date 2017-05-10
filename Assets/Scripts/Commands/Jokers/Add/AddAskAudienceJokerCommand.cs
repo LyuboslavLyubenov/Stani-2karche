@@ -6,6 +6,7 @@ namespace Commands.Jokers.Add
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using Controllers;
 
@@ -19,7 +20,7 @@ namespace Commands.Jokers.Add
         private IJoker joker;
 
         public AddAskAudienceJokerCommand(
-            AvailableJokersUIController availableJokersUIController,
+            IAvailableJokersUIController availableJokersUIController,
             IAnswerPollResultRetriever pollResultRetriever,
             GameObject waitingToAnswerUI, 
             GameObject audienceAnswerUI, 

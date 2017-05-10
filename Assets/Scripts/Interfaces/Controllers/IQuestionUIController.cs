@@ -1,8 +1,6 @@
 namespace Interfaces.Controllers
 {
-
     using System;
-
     using EventArgs;
 
     public interface IQuestionUIController
