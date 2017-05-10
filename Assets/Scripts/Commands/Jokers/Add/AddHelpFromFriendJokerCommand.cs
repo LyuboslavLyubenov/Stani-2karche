@@ -7,6 +7,7 @@ namespace Commands.Jokers.Add
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using Controllers;
 
@@ -19,7 +20,7 @@ namespace Commands.Jokers.Add
     {
         private IJoker joker;
 
-        public AddHelpFromFriendJokerCommand(AvailableJokersUIController jokersUIController, 
+        public AddHelpFromFriendJokerCommand(IAvailableJokersUIController jokersUIController, 
                                              IClientNetworkManager networkManager,
                                              IAskClientQuestionResultRetriever resultRetriever,
                                              GameObject callAFriendUI, 
