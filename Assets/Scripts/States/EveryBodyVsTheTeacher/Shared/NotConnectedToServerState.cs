@@ -32,6 +32,7 @@ namespace States.EveryBodyVsTheTeacher.Shared
     public class NotConnectedToServerState : IState
     {
         private GameObject loadingUI;
+        
         private GameObject unableToConnectUI;
 
         private IUnableToConnectUIController unableToConnectUIController;
@@ -42,12 +43,18 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
         public NotConnectedToServerState(
             GameObject loadingUI,
+            GameObject unableToConnectUI,
             IUnableToConnectUIController unableToConnectUIController,
             IClientNetworkManager networkManager)
         {
             if (loadingUI == null)
             {
                 throw new ArgumentNullException("loadingUI");
+            }
+
+            if (unableToConnectUI == null)
+            {
+                throw new ArgumentNullException("unableToConnectUI");
             }
 
             if (unableToConnectUIController == null)
@@ -61,10 +68,9 @@ namespace States.EveryBodyVsTheTeacher.Shared
             }
 
             this.loadingUI = loadingUI;
+            this.unableToConnectUI = unableToConnectUI;
             this.unableToConnectUIController = unableToConnectUIController;
             this.networkManager = networkManager;
-
-            this.unableToConnectUI = ((UnableToConnectUIController)this.unableToConnectUIController).gameObject;
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)

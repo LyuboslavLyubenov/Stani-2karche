@@ -15,8 +15,7 @@ namespace Tests
         {
             this.CoroutineUtils.WaitForFrames(1, () =>
                 {
-                    var joker = new DisableRandomAnswersJoker();
-                    this.JokersUI.AddJoker(joker);
+                    //this.JokersUI.AddJoker(joker);
                 });
         }
 	
