@@ -1,10 +1,6 @@
-﻿using AudiencePlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.PlayersConnecting.AudiencePlayersContainerUIController;
-using ElectionQuestionUIController = Controllers.ElectionQuestionUIController;
-using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using MainPlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.PlayersConnecting.MainPlayersContainerUIController;
+﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
 using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
-using UnableToConnectUIController = Controllers.UnableToConnectUIController;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
@@ -20,47 +16,29 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
     public class EveryBodyVsTheTeacherPresenterController : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject LoadingUI;
-
-        [SerializeField]
-        private MainPlayersContainerUIController MainPlayersContainerUIController;
-
-        [SerializeField]
-        private AudiencePlayersContainerUIController AudiencePlayersContainerUIController;
-
-        [SerializeField]
-        private UnableToConnectUIController UnableToConnectUIController;
-
-        [SerializeField]
-        private ElectionQuestionUIController ElectionQuestionUIController;
+        [Inject]
+        private IClientNetworkManager networkManager;
 
         [Inject]
-        private IClientNetworkManager clientNetworkManager;
-        
         private PlayersConnectingState playersConnectingState;
+
+        [Inject]
         private NotConnectedToServerState notConnectedToServerState;
+
+        [Inject]
         private PlayingState playingState;
 
-        private readonly StateMachine stateMachine = new StateMachine();
+        [Inject]
+        private StateMachine stateMachine;
         
         void Start()
         {
-            this.playersConnectingState = new PlayersConnectingState(
-                this.MainPlayersContainerUIController, 
-                this.AudiencePlayersContainerUIController, 
-                this.clientNetworkManager,
-                this.OnEveryBodyRequestedGameStart);
+            this.stateMachine.SetCurrentState(this.notConnectedToServerState);
 
-            this.notConnectedToServerState = 
-                new NotConnectedToServerState(
-                    this.LoadingUI, 
-                    this.UnableToConnectUIController, 
-                    this.clientNetworkManager);
-
-            this.clientNetworkManager.OnConnectedEvent += this.OnConnectedToServer;
-            this.clientNetworkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+            this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
+            this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
         }
+
         private void OnConnectedToServer(object sender, EventArgs args)
         {
             if (this.stateMachine.CurrentState == this.playersConnectingState)
@@ -79,11 +57,6 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
             }
 
             this.stateMachine.SetCurrentState(this.notConnectedToServerState);
-        }
-        
-        private void OnEveryBodyRequestedGameStart()
-        {
-            this.stateMachine.SetCurrentState(this.playingState);
         }
     }
 }
