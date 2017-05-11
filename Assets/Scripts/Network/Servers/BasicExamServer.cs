@@ -383,7 +383,7 @@ namespace Network.Servers
 
         private void SendEndGameInfo()
         {
-            var commandData = NetworkCommandData.From<BasicExamGameEndCommand>();
+            var commandData = NetworkCommandData.From<GameEndCommand>();
             commandData.AddOption("Mark", this.GameDataIterator.CurrentMark.ToString());
             ServerNetworkManager.Instance.SendAllClientsCommand(commandData);
         }

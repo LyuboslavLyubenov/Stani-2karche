@@ -16,14 +16,14 @@
 
     using Debug = UnityEngine.Debug;
 
-    public class BasicExamGameEndCommand : INetworkManagerCommand
+    public class GameEndCommand : INetworkManagerCommand
     {
         private GameObject endGameUI;
         private GameObject leaderboardUI;
 
         private readonly ILeaderboardReceiver leaderboardReceiver;
         
-        public BasicExamGameEndCommand(GameObject endGameUI, GameObject leaderboardUI, ILeaderboardReceiver leaderboardReceiver)
+        public GameEndCommand(GameObject endGameUI, GameObject leaderboardUI, ILeaderboardReceiver leaderboardReceiver)
         {
             if (endGameUI == null)
             {

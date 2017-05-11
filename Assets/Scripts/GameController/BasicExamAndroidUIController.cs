@@ -89,7 +89,7 @@ namespace GameController
         {
             var answerTimeout = new AnswerTimeoutCommand(this.QuestionPanelUI, NotificationsController.Instance);
             var loadQuestion = new LoadQuestionCommand(this.LoadQuestion);
-            var basicExamGameEnd = new BasicExamGameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver);
+            var basicExamGameEnd = new GameEndCommand(this.EndGameUI, this.LeaderboardUI, this.leaderboardReceiver);
 
             ClientNetworkManager.Instance.CommandsManager.AddCommand(answerTimeout);
             ClientNetworkManager.Instance.CommandsManager.AddCommand(loadQuestion);
