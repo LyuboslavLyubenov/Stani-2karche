@@ -1,6 +1,6 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
-using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
+using PlayersConnectingState = Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {

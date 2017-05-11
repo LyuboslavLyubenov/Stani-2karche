@@ -1,12 +1,9 @@
 ﻿using AudiencePlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.PlayersConnecting.AudiencePlayersContainerUIController;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using MainPlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.PlayersConnecting.MainPlayersContainerUIController;
-using PlayersConnectingState = States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
 
-namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
+namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
-
-    using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
 
     using StateMachine;
 

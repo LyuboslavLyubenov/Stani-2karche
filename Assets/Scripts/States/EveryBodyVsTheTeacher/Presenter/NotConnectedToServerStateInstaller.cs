@@ -2,7 +2,7 @@
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
 using UnableToConnectUIController = Controllers.UnableToConnectUIController;
 
-namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
+namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
 
     using UnityEngine;

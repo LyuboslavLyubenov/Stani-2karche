@@ -1,14 +1,14 @@
-﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+﻿using IAudiencePlayersContainerUIController = Interfaces.Controllers.IAudiencePlayersContainerUIController;
+using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using IMainPlayersContainerUIController = Interfaces.Controllers.IMainPlayersContainerUIController;
+using PlayersConnectingStateCommandsInitializer = Network.EveryBodyVsTheTeacher.PlayersConnectingState.PlayersConnectingStateCommandsInitializer;
 
-namespace States.EveryBodyVsTheTeacher.Presenter
+namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
+
     using System;
 
     using Assets.Scripts.Interfaces;
-    
-    using Interfaces.Controllers;
-
-    using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
 
     using StateMachine;
 
