@@ -12,6 +12,7 @@
     using EventArgs;
 
     using Interfaces.Network.Leaderboard;
+    using Interfaces.Network.NetworkManager;
 
     using Network.NetworkManagers;
 
@@ -29,7 +30,7 @@
             {
             };
 
-        private readonly ClientNetworkManager networkManager;
+        private readonly IClientNetworkManager networkManager;
         private readonly List<PlayerScore> playersScores = new List<PlayerScore>();
 
         private readonly int timeoutInSeconds = 0;
@@ -40,7 +41,7 @@
             private set;
         }
 
-        public LeaderboardReceiver(ClientNetworkManager networkManager, int timeoutInSeconds)
+        public LeaderboardReceiver(IClientNetworkManager networkManager, int timeoutInSeconds)
         {
             if (networkManager == null)
             {
