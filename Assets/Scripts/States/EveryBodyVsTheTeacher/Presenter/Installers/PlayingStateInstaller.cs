@@ -1,13 +1,14 @@
 ﻿using AddAskAudienceJokerCommand = Commands.Jokers.Add.AddAskAudienceJokerCommand;
-using AnswerPollResultCommand = Commands.Client.AnswerPollResultCommand;
 using AudienceAnswerPollResultRetriever = Jokers.Retrievers.AudienceAnswerPollResultRetriever;
 using ChangedRoundUIController = Scripts.Controllers.EveryBodyVsTheTeacher.ChangedRoundUIController;
+using ElectionQuestionUIController = Controllers.ElectionQuestionUIController;
 using FriendAnswerUIController = Controllers.FriendAnswerUIController;
 using GameEndCommand = Commands.Client.GameEndCommand;
 using IAnswerPollResultRetriever = Interfaces.Network.Jokers.IAnswerPollResultRetriever;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using IElectionQuestionUIController = Interfaces.Controllers.IElectionQuestionUIController;
-using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+using ILeaderboardReceiver = Interfaces.Network.Leaderboard.ILeaderboardReceiver;
+using JokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.JokerElectionUIController;
 using KalitkoJokerContainerUIController = Controllers.EveryBodyVsTheTeacher.Jokers.KalitkoJokerContainerUIController;
 using LeaderboardReceiver = Network.Leaderboard.LeaderboardReceiver;
 using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
@@ -15,10 +16,12 @@ using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
-
     using Assets.Scripts.Commands.Jokers.Add.EveryBodyVsTheTeacher.Presenter;
     using Assets.Scripts.Commands.Jokers.Add.EveryBodyVsTheTeacher.Presenter.SecondRound;
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter;
     using Assets.Scripts.Interfaces.Controllers;
+    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
 
     using UnityEngine;
 
@@ -27,11 +30,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
     public class PlayingStateInstaller : MonoInstaller
     {
         [SerializeField]
-        private IAvailableJokersUIController availableJokersUIController;
+        private AvailableJokersUIController availableJokersUIController;
 
         [SerializeField]
-        private IElectionQuestionUIController electionQuestionUIController;
-
+        private ElectionQuestionUIController electionQuestionUIController;
+        
         [SerializeField]
         private GameObject kalitkoJokerUI;
 
@@ -61,6 +64,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         [SerializeField]
         private GameObject changedRoundUI;
+        
+        [SerializeField]
+        private GameObject jokerElectionUI;
+
+        [SerializeField]
+        private GameObject successfullyActivatedJokerUI;
+
+        [SerializeField]
+        private GameObject unsuccessfullyActivatedJokerUI;
 
         private void BindAddConsultWithTheTeacherJokerCommand(IClientNetworkManager networkManager)
         {
@@ -112,7 +124,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 .AsSingle();
         }
 
-        private void BindLittleIsBetterThanNothingJokerCommand(IClientNetworkManager networkManager)
+        private void BindAddLittleIsBetterThanNothingJokerCommand(IClientNetworkManager networkManager)
         {
             var addJokerCommand = 
                 new AddLittleIsBetterThanNothingJokerCommand(
@@ -160,21 +172,72 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 .AsSingle();
         }
 
-        public override void InstallBindings()
+        private void BindAddJokersCommands(IClientNetworkManager networkManager)
         {
-            this.Container.Bind<IClientNetworkManager>()
-                .FromResolve()
-                .AsSingle();
-
-            var networkManager = this.Container.Resolve<IClientNetworkManager>();
-
             this.BindAddConsultWithTheTeacherJokerCommand(networkManager);
             this.BindAddKalitkoJokerCommand(networkManager);
             this.BindAddTrustRandomPersonJokerCommand(networkManager);
-            this.BindLittleIsBetterThanNothingJokerCommand(networkManager);
+            this.BindAddLittleIsBetterThanNothingJokerCommand(networkManager);
             this.BindAddAskAudienceJokerCommand(networkManager);
+        }
+
+        private void BindAvailableJokersUIControllerDependencies(IClientNetworkManager networkManager)
+        {
+            var jokerElectionUIController = this.jokerElectionUI.GetComponent<JokerElectionUIController>();
+            var electionJokersBinder = 
+                new ElectionForJokersBinder(
+                    networkManager, 
+                    jokerElectionUIController, 
+                    this.jokerElectionUI,
+                    this.successfullyActivatedJokerUI,
+                    this.unsuccessfullyActivatedJokerUI);
+
+            this.Container.Bind<IElectionForJokersBinder>()
+                .FromInstance(electionJokersBinder)
+                .AsSingle();
+        }
+
+        private void BindPlayingStateDependencies()
+        {
+            this.Container.Bind<IElectionQuestionUIController>()
+                .FromInstance(this.electionQuestionUIController)
+                .AsSingle();
+
+            var secondsRemainingUIController = this.secondsRemainingUI.GetComponent<SecondsRemainingUIController>();
+            this.Container.Bind<ISecondsRemainingUIController>()
+                .FromInstance(secondsRemainingUIController)
+                .AsSingle();
+
+            this.Container.Bind<Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter.IAvailableJokersUIController>()
+                .FromInstance(this.availableJokersUIController)
+                .AsSingle();
+
+            this.Container.Bind<IAnswerPollResultRetriever>()
+                .To<AudienceAnswerPollResultRetriever>()
+                .AsSingle();
+
+            this.Container.Bind<int>()
+                .FromInstance(5)
+                .WhenInjectedInto<ILeaderboardReceiver>();
+
+            this.Container.Bind<ILeaderboardReceiver>()
+                .To<LeaderboardReceiver>()
+                .AsSingle();
+        }
+
+        public override void InstallBindings()
+        {
+            var networkManager = this.Container.Resolve<IClientNetworkManager>();
+
+            this.BindAddJokersCommands(networkManager);
             this.BindGameEndCommand(networkManager);
             this.BindSwitchedToNextRoundCommand();
+            this.BindAvailableJokersUIControllerDependencies(networkManager);
+            this.BindPlayingStateDependencies();
+            
+            this.Container.Bind<PlayingState>()
+                .ToSelf()
+                .AsSingle();
         }
     }
 }
