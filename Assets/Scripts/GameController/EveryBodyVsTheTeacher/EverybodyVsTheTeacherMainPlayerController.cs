@@ -22,8 +22,10 @@
         public GameObject LoadingUI;
         public UnableToConnectUIController UnableToConnectUIController;
 
-        private readonly StateMachine stateMachine = new StateMachine();
+        [Inject]
+        private StateMachine stateMachine;
         
+        [Inject]
         private NotConnectedToServerState notConnectedToServerState;
 
         [Inject]
@@ -31,11 +33,7 @@
 
         void Start()
         {
-            this.notConnectedToServerState = 
-                new NotConnectedToServerState(
-                    this.LoadingUI, 
-                    this.UnableToConnectUIController, 
-                    this.networkManager);
+            throw new NotImplementedException();
 
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;

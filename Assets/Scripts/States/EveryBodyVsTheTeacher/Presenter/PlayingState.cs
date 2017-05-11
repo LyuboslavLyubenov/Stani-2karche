@@ -26,14 +26,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private readonly ISecondsRemainingUIController secondsRemainingUIController;
         private readonly IAvailableElectionJokersUIController availableJokersUIController;
 
-        private readonly IChangedRoundUIController changedRoundUIController;
-        private readonly GameObject changedRoundUI;
+        private readonly SwitchedToNextRoundCommand switchedToNextRoundCommand;
 
         private readonly IAnswerPollResultRetriever pollResultRetriever;
 
-        private readonly GameObject endGameUI;
-
-        private readonly GameObject leaderboardUI;
+        private readonly GameEndCommand gameEndCommand;
 
         private readonly ILeaderboardReceiver leaderboardReceiver;
 
@@ -42,23 +39,18 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             IElectionQuestionUIController electionQuestionUIController,
             ISecondsRemainingUIController secondsRemainingUIController,
             IAvailableElectionJokersUIController availableJokersUIController,
-            IChangedRoundUIController changedRoundUIController,
-            GameObject changedRoundUI,
+            SwitchedToNextRoundCommand switchedToNextRoundCommand,
             IAnswerPollResultRetriever pollResultRetriever,
-            GameObject endGameUI,
-            GameObject leaderboardUI,
+            GameEndCommand gameEndCommand,
             ILeaderboardReceiver leaderboardReceiver)
         {
-            
             this.networkManager = networkManager;
             this.electionQuestionUIController = electionQuestionUIController;
             this.secondsRemainingUIController = secondsRemainingUIController;
             this.availableJokersUIController = availableJokersUIController;
-            this.changedRoundUIController = changedRoundUIController;
-            this.changedRoundUI = changedRoundUI;
+            this.switchedToNextRoundCommand = switchedToNextRoundCommand;
             this.pollResultRetriever = pollResultRetriever;
-            this.endGameUI = endGameUI;
-            this.leaderboardUI = leaderboardUI;
+            this.gameEndCommand = gameEndCommand;
             this.leaderboardReceiver = leaderboardReceiver;
         }
 
@@ -82,19 +74,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
             var answerSelectedCommand = new SelectedAnswerCommand(this.OnReceivedAnswer);
             this.networkManager.CommandsManager.AddCommand("AnswerSelected", answerSelectedCommand);
-
-            var switchedToRoundCommand =
-                new SwitchedToNextRoundCommand(this.changedRoundUI, this.changedRoundUIController);
-            this.networkManager.CommandsManager.AddCommand(switchedToRoundCommand);
             
-            var gameEndCommand = new GameEndCommand(this.endGameUI, this.leaderboardUI, this.leaderboardReceiver);
-            this.networkManager.CommandsManager.AddCommand(gameEndCommand);
+            this.networkManager.CommandsManager.AddCommand(this.switchedToNextRoundCommand);
+            this.networkManager.CommandsManager.AddCommand(this.gameEndCommand);
         }
         
         public void OnStateExit(StateMachine stateMachine)
         {
             this.networkManager.CommandsManager.RemoveCommand<LoadQuestionCommand>();
-            this.networkManager.CommandsManager.RemoveCommand<SelectedAnswerCommand>();
+            this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
             this.networkManager.CommandsManager.RemoveCommand<SwitchedToNextRoundCommand>();
             this.networkManager.CommandsManager.RemoveCommand<GameEndCommand>();
 

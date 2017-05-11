@@ -1,13 +1,17 @@
 ﻿using AddAskAudienceJokerCommand = Commands.Jokers.Add.AddAskAudienceJokerCommand;
 using AnswerPollResultCommand = Commands.Client.AnswerPollResultCommand;
 using AudienceAnswerPollResultRetriever = Jokers.Retrievers.AudienceAnswerPollResultRetriever;
+using ChangedRoundUIController = Scripts.Controllers.EveryBodyVsTheTeacher.ChangedRoundUIController;
 using FriendAnswerUIController = Controllers.FriendAnswerUIController;
+using GameEndCommand = Commands.Client.GameEndCommand;
 using IAnswerPollResultRetriever = Interfaces.Network.Jokers.IAnswerPollResultRetriever;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using IElectionQuestionUIController = Interfaces.Controllers.IElectionQuestionUIController;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 using KalitkoJokerContainerUIController = Controllers.EveryBodyVsTheTeacher.Jokers.KalitkoJokerContainerUIController;
+using LeaderboardReceiver = Network.Leaderboard.LeaderboardReceiver;
 using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
+using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared.SwitchedToNextRoundCommand;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
@@ -48,6 +52,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         [SerializeField]
         private GameObject audienceAnswerUI;
+        
+        [SerializeField]
+        private GameObject endGameUI;
+
+        [SerializeField]
+        private GameObject leaderboardUI;
+
+        [SerializeField]
+        private GameObject changedRoundUI;
 
         private void BindAddConsultWithTheTeacherJokerCommand(IClientNetworkManager networkManager)
         {
@@ -112,8 +125,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 .AsSingle();
         }
 
-        private void BindAddAskAudienceJokerCommand(IAnswerPollResultRetriever pollResultRetriever)
+        private void BindAddAskAudienceJokerCommand(IClientNetworkManager networkManager)
         {
+            var pollResultRetriever = new AudienceAnswerPollResultRetriever(networkManager);
             var addJokerCommand = new AddAskAudienceJokerCommand(
                 this.availableJokersUIController,
                 pollResultRetriever,
@@ -126,21 +140,41 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 .AsSingle();
         }
 
+        private void BindGameEndCommand(IClientNetworkManager networkManager)
+        {
+            var leaderboardReceiver = new LeaderboardReceiver(networkManager, 10);
+            var gameEndCommand = new GameEndCommand(this.endGameUI, this.leaderboardUI, leaderboardReceiver);
+
+            this.Container.Bind<GameEndCommand>()
+                .FromInstance(gameEndCommand)
+                .AsSingle();
+        }
+
+        private void BindSwitchedToNextRoundCommand()
+        {
+            var changedRoundUIController = this.changedRoundUI.GetComponent<ChangedRoundUIController>();
+            var switchedToRoundCommand = new SwitchedToNextRoundCommand(this.changedRoundUI, changedRoundUIController);
+
+            this.Container.Bind<SwitchedToNextRoundCommand>()
+                .FromInstance(switchedToRoundCommand)
+                .AsSingle();
+        }
+
         public override void InstallBindings()
         {
             this.Container.Bind<IClientNetworkManager>()
                 .FromResolve()
                 .AsSingle();
 
-            var clientNetworkManager = this.Container.Resolve<IClientNetworkManager>();
+            var networkManager = this.Container.Resolve<IClientNetworkManager>();
 
-            this.BindAddConsultWithTheTeacherJokerCommand(clientNetworkManager);
-            this.BindAddKalitkoJokerCommand(clientNetworkManager);
-            this.BindAddTrustRandomPersonJokerCommand(clientNetworkManager);
-            this.BindLittleIsBetterThanNothingJokerCommand(clientNetworkManager);
-
-            var pollResultRetriever = new AudienceAnswerPollResultRetriever(clientNetworkManager);
-            this.BindAddAskAudienceJokerCommand(pollResultRetriever);
+            this.BindAddConsultWithTheTeacherJokerCommand(networkManager);
+            this.BindAddKalitkoJokerCommand(networkManager);
+            this.BindAddTrustRandomPersonJokerCommand(networkManager);
+            this.BindLittleIsBetterThanNothingJokerCommand(networkManager);
+            this.BindAddAskAudienceJokerCommand(networkManager);
+            this.BindGameEndCommand(networkManager);
+            this.BindSwitchedToNextRoundCommand();
         }
     }
 }
