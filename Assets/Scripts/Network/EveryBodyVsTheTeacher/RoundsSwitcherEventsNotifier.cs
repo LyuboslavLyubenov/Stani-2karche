@@ -1,4 +1,5 @@
-﻿using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
+﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
@@ -11,12 +12,12 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
     public class RoundsSwitcherEventsNotifier : IDisposable
     {
         private readonly IServerNetworkManager networkManager;
+        private readonly IEveryBodyVsTheTeacherServer server;
         private readonly IRoundsSwitcher roundsSwitcher;
-        private readonly int sendtoConnectionId;
         
         public RoundsSwitcherEventsNotifier(
             IServerNetworkManager networkManager, 
-            int sendToConnectionId, 
+            IEveryBodyVsTheTeacherServer server, 
             IRoundsSwitcher roundsSwitcher)
         {
             if (networkManager == null)
@@ -24,9 +25,9 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
                 throw new ArgumentNullException("networkManager");
             }
 
-            if (sendToConnectionId <= 0 || !networkManager.ConnectedClientsConnectionId.Contains(sendToConnectionId))
+            if (server == null)
             {
-                throw new ArgumentException("Client with id " + sendToConnectionId + " is not connected");
+                throw new ArgumentNullException("server");
             }
 
             if (roundsSwitcher == null)
@@ -35,8 +36,8 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             }
 
             this.networkManager = networkManager;
+            this.server = server;
             this.roundsSwitcher = roundsSwitcher;
-            this.sendtoConnectionId = sendToConnectionId;
 
             roundsSwitcher.OnSwitchedToNextRound += this.OnSwitchedToNextRound;
             roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
@@ -45,17 +46,17 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
         private void OnSwitchedToNextRound(object sender, EventArgs args)
         {
-            this.networkManager.SendClientCommand(this.sendtoConnectionId, new NetworkCommandData("SwitchedToNextRound"));
+            this.networkManager.SendClientCommand(this.server.PresenterId, new NetworkCommandData("SwitchedToNextRound"));
         }
 
         private void OnMustEndGame(object sender, EventArgs args)
         {
-            this.networkManager.SendClientCommand(this.sendtoConnectionId, new NetworkCommandData("TooManyWrongAnswers"));
+            this.networkManager.SendClientCommand(this.server.PresenterId, new NetworkCommandData("TooManyWrongAnswers"));
         }
 
         private void OnNoMoreRounds(object sender, EventArgs args)
         {
-            this.networkManager.SendClientCommand(this.sendtoConnectionId, new NetworkCommandData("NoMoreRounds"));
+            this.networkManager.SendClientCommand(this.server.PresenterId, new NetworkCommandData("NoMoreRounds"));
         }
 
         public void Dispose()

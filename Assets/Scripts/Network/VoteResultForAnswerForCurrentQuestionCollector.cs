@@ -20,6 +20,8 @@ namespace Network
 
     using Utils;
 
+    using Zenject.Source.Usage;
+
     public class VoteResultForAnswerForCurrentQuestionCollector : ICollectVoteResultForAnswerForCurrentQuestion
     {
         public event EventHandler<AnswerEventArgs> OnCollectedVote = delegate { };
@@ -48,6 +50,7 @@ namespace Network
         /// <summary>
         /// Collects answers from main players for current question. When collected all answers or time was over -> raise OnCollectedVote() with highest voted answer
         /// </summary>
+        [Inject]
         public VoteResultForAnswerForCurrentQuestionCollector(
             IEveryBodyVsTheTeacherServer server,
             IServerNetworkManager networkManager,

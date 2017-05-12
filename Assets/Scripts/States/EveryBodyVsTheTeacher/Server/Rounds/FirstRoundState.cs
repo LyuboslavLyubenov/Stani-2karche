@@ -1,4 +1,4 @@
-using ConsultWithTheTeacherJoker = Jokers.ConsultWithTheTeacherJoker;
+﻿using ConsultWithTheTeacherJoker = Jokers.ConsultWithTheTeacherJoker;
 using DisableRandomAnswersJokerRouter = Jokers.Routers.DisableRandomAnswersJokerRouter;
 using ICollectVoteResultForAnswerForCurrentQuestion = Interfaces.Network.ICollectVoteResultForAnswerForCurrentQuestion;
 using IElectionJokerCommand = Interfaces.Commands.Jokers.Selected.IElectionJokerCommand;
@@ -102,6 +102,13 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
         public override void OnStateEnter(StateMachine stateMachine)
         {
+#if UNITY_EDITOR
+            if (!PlayerPrefsEncryptionUtils.HasKey("LevelCategory"))
+            {
+                PlayerPrefsEncryptionUtils.SetString("LevelCategory", "философия");
+            }
+#endif
+
             this.gameDataExtractor.LevelCategory = PlayerPrefsEncryptionUtils.GetString("LevelCategory");
             this.gameDataExtractor.ExtractDataSync();
 

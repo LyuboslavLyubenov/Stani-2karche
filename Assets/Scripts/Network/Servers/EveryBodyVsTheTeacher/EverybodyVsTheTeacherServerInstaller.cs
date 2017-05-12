@@ -4,6 +4,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 {
 
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
     using Interfaces;
@@ -43,7 +44,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private void InstallServer()
         {
             this.Container.Bind<IEveryBodyVsTheTeacherServer>()
-                .FromInstance(Server);
+                .FromInstance(Server)
+                .AsSingle();
         }
 
         private void InstallGameDataExtractor()
@@ -60,13 +62,18 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 .AsSingle();
         }
 
-        private void InstallAnswersCollector()
+        private void InstallAnswersCollector(
+            IEveryBodyVsTheTeacherServer server, 
+            IServerNetworkManager networkManager, 
+            IGameDataIterator gameDataIterator)
         {
+            var answersCollector = new VoteResultForAnswerForCurrentQuestionCollector(server, networkManager, gameDataIterator);
+
             this.Container.Bind<ICollectVoteResultForAnswerForCurrentQuestion>()
-                .To<VoteResultForAnswerForCurrentQuestionCollector>()
+                .FromInstance(answersCollector)
                 .AsSingle();
         }
-      
+        
         private void InstallStateMachine()
         {
             this.Container.Bind<StateMachine>()
@@ -175,13 +182,19 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 .AsSingle();
         }
 
+        private void InstallRoundsSwitcherEventsNotifier()
+        {
+            this.Container.Bind<RoundsSwitcherEventsNotifier>()
+                .ToSelf()
+                .AsSingle();
+        }
+
         public override void InstallBindings()
         {
             this.InstallServerNetworkManager();
             this.InstallServer();
             this.InstallGameDataExtractor();
             this.InstallGameDataIterator();
-            this.InstallAnswersCollector();
             
             this.Container.Bind<JokersData>()
                 .AsSingle();
@@ -193,11 +206,13 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             var networkManager = this.Container.Resolve<IServerNetworkManager>();
             var iterator = this.Container.Resolve<IGameDataIterator>();
+
+            this.InstallAnswersCollector(this.Server, networkManager, iterator);
+            this.InstallCreatedGameInfoSender(networkManager, this.Server);
+
             var extractor = this.Container.Resolve<IGameDataExtractor>();
             var answersCollector = this.Container.Resolve<ICollectVoteResultForAnswerForCurrentQuestion>();
             var jokersData = this.Container.Resolve<JokersData>();
-
-            this.InstallCreatedGameInfoSender(networkManager, this.Server);
 
             this.InstallFirstRound(networkManager, this.Server, iterator, extractor, answersCollector, jokersData);
             this.InstallSecondRound(networkManager, this.Server, iterator, answersCollector, jokersData);
@@ -212,6 +227,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                          };
 
             this.InstallRoundsSwitcher(stateMachine, rounds);
+            this.InstallRoundsSwitcherEventsNotifier();
         }
     }
 }
