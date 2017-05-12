@@ -19,7 +19,11 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner
     using System.IO;
     using System.Linq;
 
+#if UNITY_EDITOR
+
     using UnityEditorInternal;
+
+#endif
 
     using UnityEngine;
 
