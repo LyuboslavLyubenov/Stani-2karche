@@ -219,7 +219,7 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner
                     }
                     return networkResultSender;
                 }
-                Thread.Sleep(500);
+                System.Threading.Thread.Sleep(500);
             }
             Debug.LogError("Couldn't connect to the server: " + string.Join(", ", m_IPEndPointList.Select(ipep => ipep.Address + ":" + ipep.Port).ToArray()));
             sendResultsOverNetwork = false;

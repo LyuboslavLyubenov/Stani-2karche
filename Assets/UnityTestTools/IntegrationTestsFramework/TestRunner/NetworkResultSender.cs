@@ -10,6 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
+    using System;
     using System.Collections.Generic;
 
     public class NetworkResultSender : ITestRunnerCallback
@@ -58,12 +59,12 @@ namespace UnityTestTools.IntegrationTestsFramework.TestRunner
                     bf.Serialize(tcpClient.GetStream(), dto);
                     tcpClient.GetStream().Close();
                     tcpClient.Close();
-                    Debug.Log("Sent " + dto.messageType);
+                    UnityEngine.Debug.Log("Sent " + dto.messageType);
                 }
             }
             catch (SocketException e)
             {
-                Debug.LogException(e);
+                UnityEngine.Debug.LogException(e);
                 m_LostConnection = true;
                 return false;
             }
