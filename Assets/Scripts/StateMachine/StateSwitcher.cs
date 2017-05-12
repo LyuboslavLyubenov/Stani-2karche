@@ -5,6 +5,8 @@ namespace StateMachine
 
     using Interfaces;
 
+    using Zenject.Source.Usage;
+
     public class StateMachine
     {
         public IState CurrentState
@@ -17,6 +19,7 @@ namespace StateMachine
             get; private set;
         }
         
+        [Inject]
         public StateMachine() : this(null)
         {
         }
