@@ -1,6 +1,6 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
-using PlayersConnectingState = Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter.PlayersConnectingState;
+using PlayerPrefsEncryptionUtils = Utils.Unity.PlayerPrefsEncryptionUtils;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
@@ -33,10 +33,13 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         
         void Start()
         {
-            this.stateMachine.SetCurrentState(this.notConnectedToServerState);
-
+            PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "192.168.0.101");
+            PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
+            
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
+            
+            this.stateMachine.SetCurrentState(this.notConnectedToServerState);
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
