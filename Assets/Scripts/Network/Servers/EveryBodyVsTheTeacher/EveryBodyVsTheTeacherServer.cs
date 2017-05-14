@@ -16,11 +16,11 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Interfaces.GameData;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
-    
+
     using StateMachine;
 
     using States.EveryBodyVsTheTeacher.Server;
-    
+
     using Utils.Unity;
 
     using Zenject.Source.Usage;
@@ -42,10 +42,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private IServerNetworkManager networkManager;
-        
+
         [Inject]
         private PlayersConnectingToTheServerState playersConnectingToTheServerState;
-    
+
         [Inject]
         private IRoundsSwitcher roundsSwitcher;
 
@@ -54,7 +54,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private RoundsSwitcherEventsNotifier roundsSwitcherEventsNotifier;
-        
+
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
         public bool IsGameOver
@@ -85,25 +85,29 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         void Start()
         {
+            this.networkManager.OnClientDisconnected += this.OnClientDisconneted;
             this.roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
-            
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));            
+
+            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
 
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 
+        private void OnClientDisconneted(object sender, ClientConnectionIdEventArgs args)
+        {
+            if (args.ConnectionId == this.PresenterId)
+            {
+                this.PresenterId = 0;
+            }    
+        }
+
         private void OnPresenterConnecting(int connectionId)
         {
-            if (this.StartedGame)
+            if (this.PresenterId == connectionId)
             {
-                if (this.PresenterId != connectionId)
-                {
-                    this.networkManager.KickPlayer(connectionId, "You are not presenter");//TODO: Translate
-                }
-
                 return;
             }
 
@@ -112,7 +116,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 this.networkManager.KickPlayer(connectionId, "Presenter already connected");//TODO: Transate
                 return;
             }
-            
+
             this.PresenterId = connectionId;
         }
 
@@ -136,14 +140,14 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         {
             this.EndGame();
         }
-        
+
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs args)
         {
             this.roundsSwitcher.SwitchToNextRound();
             this.networkManager.SendClientCommand(this.PresenterId, new NetworkCommandData("GameStarted"));
             this.StartedGame = true;
         }
-        
+
         public void EndGame()
         {
             var endGameState = new EndGameState(this.networkManager, this.gameDataIterator);
