@@ -16,6 +16,7 @@
             var cloack = Instantiate(prefab);
 
             this.cloackImage = cloack.GetComponent<Image>();
+            this.cloackImage.sprite = null;
             this.cloackImage.color = new Color(this.cloackImage.color.r, this.cloackImage.color.g, this.cloackImage.color.b, this.Opacity);
 
             cloack.name = "Cloack " + this.transform.name;
