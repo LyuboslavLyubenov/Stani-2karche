@@ -157,6 +157,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.stateMachine.SetCurrentState(endGameState);
 
             this.IsGameOver = true;
+            this.OnGameOver(this, EventArgs.Empty);
         }
     }
 }

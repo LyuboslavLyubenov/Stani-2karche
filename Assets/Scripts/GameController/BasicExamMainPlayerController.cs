@@ -36,6 +36,8 @@ namespace GameController
 
     using Notifications;
 
+    using Scripts.Utils;
+
     using UnityEngine;
     using UnityEngine.SceneManagement;
 
@@ -101,8 +103,8 @@ namespace GameController
 
                 //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
                 this.CoroutineUtils.WaitForSeconds(9f, () => this.ConnectToServer("127.0.0.1"));
-
-                this.StartServer();
+                
+                GameServerUtils.StartServer("BasicExam");
             }
             else
             {
@@ -339,12 +341,6 @@ namespace GameController
 
             this.ChooseCategoryUIController.gameObject.SetActive(true);
             this.ChooseCategoryUIController.Initialize(remoteCategoriesReader);
-        }
-
-        private void StartServer()
-        {
-            var serverPath = string.Format("Server\\{0}.exe", ServerBinaryName);
-            System.Diagnostics.Process.Start(serverPath);
         }
 
         private void KillLocalServer()
