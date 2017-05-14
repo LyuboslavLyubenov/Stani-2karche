@@ -20,6 +20,8 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
     using Notifications;
 
+    using Scripts.Utils;
+
     using StateMachine;
 
     using UnityEngine;
@@ -32,13 +34,9 @@ namespace States.EveryBodyVsTheTeacher.Shared
     public class NotConnectedToServerState : IState
     {
         private GameObject loadingUI;
-        
         private GameObject unableToConnectUI;
-
         private IUnableToConnectUIController unableToConnectUIController;
-
         private IClientNetworkManager networkManager;
-        
         private Timer_ExecuteMethodAfterTime notFoundServerIPTimer;
 
         public NotConnectedToServerState(
@@ -132,6 +130,29 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
             this.ConfigureNotFoundServerIPTimer();
             this.AttachEventHandlers();
+
+            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+            {
+                PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
+
+                //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
+                var timer = TimerUtils.ExecuteAfter(9f, () => this.networkManager.ConnectToHost("127.0.0.1"));
+                timer.AutoDispose = true;
+                timer.RunOnUnityThread = true;
+
+                GameServerUtils.StartServer("EveryBodyVsTheTeacher");
+            }
+            else
+            {
+                this.FindServerIpAndConnectToServer();
+            }
+
+            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
+        }
+
+        private void FindServerIpAndConnectToServer()
+        {
+            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
         }
 
         public void OnStateExit(StateMachine stateMachine)
