@@ -14,6 +14,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
     public class PlayersConnectingStateInstaller : MonoInstaller
     {
         [SerializeField]
+        private GameObject playersConnectingUI;
+
+        [SerializeField]
         private GameObject mainPlayersContainerUI;
 
         [SerializeField]
@@ -35,9 +38,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 .GetComponent<AudiencePlayersContainerUIController>();
             var playersConnectingState = 
                 new PlayersConnectingState(
-                    this.mainPlayersContainerUI,
+                    this.playersConnectingUI,
                     mainPlayersContainerUIController,
-                    this.audiencePlayersContainerUI,
                     audiencePlayersContainerUIController,
                     clientNetworkManager,
                     this.OnEveryBodyRequestedGameStart);

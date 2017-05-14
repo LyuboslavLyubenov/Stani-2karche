@@ -1,4 +1,5 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using NetworkCommandData = Commands.NetworkCommandData;
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
 using PlayerPrefsEncryptionUtils = Utils.Unity.PlayerPrefsEncryptionUtils;
 
@@ -6,6 +7,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
     using System;
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
     
     using StateMachine;
@@ -33,6 +35,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         
         void Start()
         {
+            PlayerPrefsEncryptionUtils.SetString("Username", "Ivan");
             PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "192.168.0.101");
             PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
             
@@ -48,6 +51,9 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
             {
                 return;
             }
+
+            var presenterConnectingcommand = NetworkCommandData.From<PresenterConnectingCommand>();
+            this.networkManager.SendServerCommand(presenterConnectingcommand);
 
             this.stateMachine.SetCurrentState(this.playersConnectingState);
         }

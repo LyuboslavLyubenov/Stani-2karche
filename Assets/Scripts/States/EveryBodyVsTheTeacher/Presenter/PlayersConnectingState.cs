@@ -16,37 +16,24 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
     public class PlayersConnectingState : IState
     {
-        private readonly GameObject mainPlayersContainerUI;
-        private readonly IMainPlayersContainerUIController mainPlayersContainerUIController;
-
-        private readonly GameObject audiencePlayersContainerUI;
+        private readonly GameObject playersConnectingUI;
+        private readonly IMainPlayersContainerUIController mainPlayersContainerUIController;    
         private readonly IAudiencePlayersContainerUIController audiencePlayersContainerUiController;
-
         private readonly IClientNetworkManager networkManager;
 
         private readonly Action onEveryBodyRequestedGameStart;
 
+
         public PlayersConnectingState(
-            GameObject mainPlayersContainerUI,
+            GameObject playersConnectingUI,
             IMainPlayersContainerUIController mainPlayersContainerUIController,
-            GameObject audiencePlayersContainerUI,
             IAudiencePlayersContainerUIController audiencePlayersContainerUIController,
             IClientNetworkManager networkManager,
             Action onEveryBodyRequestedGameStart)
         {
-            if (mainPlayersContainerUI == null)
+            if (playersConnectingUI == null)
             {
-                throw new ArgumentNullException("mainPlayersContainerUI");
-            }
-            
-            if (mainPlayersContainerUIController == null)
-            {
-                throw new ArgumentNullException("mainPlayersContainerUIController");
-            }
-
-            if (audiencePlayersContainerUI == null)
-            {
-                throw new ArgumentNullException("audiencePlayersContainerUI");
+                throw new ArgumentNullException("playersConnectingUI");
             }
 
             if (audiencePlayersContainerUIController == null)
@@ -64,9 +51,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 throw new ArgumentNullException("onEveryBodyRequestedGameStart");
             }
 
-            this.mainPlayersContainerUI = mainPlayersContainerUI;
+            this.playersConnectingUI = playersConnectingUI;
             this.mainPlayersContainerUIController = mainPlayersContainerUIController;
-            this.audiencePlayersContainerUI = audiencePlayersContainerUI;
             this.audiencePlayersContainerUiController = audiencePlayersContainerUIController;
             this.networkManager = networkManager;
             this.onEveryBodyRequestedGameStart = onEveryBodyRequestedGameStart;
@@ -74,8 +60,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         
         public void OnStateEnter(StateMachine stateMachine)
         {
-            this.mainPlayersContainerUI.SetActive(true);
-            this.audiencePlayersContainerUI.SetActive(true);
+            this.playersConnectingUI.SetActive(true);
 
             PlayersConnectingStateCommandsInitializer.InitializeCommands(
                 this.networkManager,
@@ -86,6 +71,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         public void OnStateExit(StateMachine stateMachine)
         {
+            this.playersConnectingUI.SetActive(false);
+
             PlayersConnectingStateCommandsInitializer.CleanCommands(this.networkManager);
         }
     }

@@ -28,5 +28,4 @@
             this.onPlayerConnecting(connectionId);
         }
     }
-
 }
