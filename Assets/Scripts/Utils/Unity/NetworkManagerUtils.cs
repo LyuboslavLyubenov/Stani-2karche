@@ -1,6 +1,5 @@
 ﻿namespace Utils.Unity
 {
-
     using System;
     using System.Collections;
 
@@ -87,9 +86,7 @@
 
             byte error;
             var connectionId = NetworkTransport.Connect(genericHostId, ip, port, 0, out error);
-
-            var isUp = false;
-
+            
             yield return new WaitForSeconds(1f);
 
             int recvConnectionId;
@@ -99,7 +96,7 @@
             byte recError;
             var eventType = NetworkTransport.ReceiveFromHost(genericHostId, out recvConnectionId, out recvChannelId, buffer, buffer.Length, out recSize, out recError);
 
-            isUp = eventType == NetworkEventType.ConnectEvent;
+            var isUp = eventType == NetworkEventType.ConnectEvent || eventType == NetworkEventType.DisconnectEvent;
             
             yield return new WaitForSeconds(1f);
 

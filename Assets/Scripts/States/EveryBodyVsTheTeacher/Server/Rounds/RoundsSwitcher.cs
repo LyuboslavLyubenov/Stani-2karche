@@ -80,7 +80,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         {
             this.rounds = rounds;
             this.stateMachine = stateMachine;
-            this.SwitchToNextRound();
         }
 
         private void OnMustGoOnNextRound(object sender, EventArgs args)

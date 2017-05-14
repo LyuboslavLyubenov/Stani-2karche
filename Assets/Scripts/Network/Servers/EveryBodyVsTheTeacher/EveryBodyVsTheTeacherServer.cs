@@ -85,21 +85,14 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         void Start()
         {
-            this.networkManager.OnClientConnected += this.OnClientConnectedToServer;
             this.roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
-
+            
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));            
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
-        }
 
-        private void OnClientConnectedToServer(object sender, ClientConnectionIdEventArgs args)
-        {
-            if (this.PresenterId <= 0)
-            {
-                this.networkManager.KickPlayer(args.ConnectionId, "Must connect presenter first");//TODO: translate
-            }
+            this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 
         private void OnPresenterConnecting(int connectionId)

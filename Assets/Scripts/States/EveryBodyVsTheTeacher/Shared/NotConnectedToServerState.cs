@@ -85,6 +85,7 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
+            this.loadingUI.SetActive(false);
             this.unableToConnectUI.SetActive(true);
         }
 
@@ -118,9 +119,14 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
         private void ConfigureNotFoundServerIPTimer()
         {
-            this.notFoundServerIPTimer = TimerUtils.ExecuteAfter(1f, this.GetServerIpAndConnectToServer);
+            this.notFoundServerIPTimer = TimerUtils.ExecuteAfter(3f, this.GetServerIpAndConnectToServer);
             this.notFoundServerIPTimer.AutoDispose = false;
             this.notFoundServerIPTimer.RunOnUnityThread = true;
+        }
+        
+        private void FindServerIpAndConnectToServer()
+        {
+            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
         }
 
         public void OnStateEnter(StateMachine stateMachine)
@@ -146,13 +152,6 @@ namespace States.EveryBodyVsTheTeacher.Shared
             {
                 this.FindServerIpAndConnectToServer();
             }
-
-            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
-        }
-
-        private void FindServerIpAndConnectToServer()
-        {
-            NetworkManagerUtils.Instance.GetServerIp(this.OnFoundServerIP, this.OnFoundServerIPError);
         }
 
         public void OnStateExit(StateMachine stateMachine)
