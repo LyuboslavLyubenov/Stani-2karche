@@ -3,6 +3,9 @@
 
     using System;
 
+    using Commands;
+    using Commands.Server;
+
     using Controllers;
 
     using Interfaces.Network.NetworkManager;
@@ -33,8 +36,6 @@
 
         void Start()
         {
-            throw new NotImplementedException();
-
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
 
@@ -43,7 +44,8 @@
 
         private void OnConnectedToServer(object sender, EventArgs eventArgs)
         {
-            throw new NotImplementedException();
+            var mainPlayerConnectingCommand = NetworkCommandData.From<MainPlayerConnectingCommand>();
+            this.networkManager.SendServerCommand(mainPlayerConnectingCommand);
         }
 
         private void OnDisconnectedFromServer(object sender, EventArgs e)
