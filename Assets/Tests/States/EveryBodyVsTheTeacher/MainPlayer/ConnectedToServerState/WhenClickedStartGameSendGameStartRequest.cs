@@ -21,7 +21,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
         [Inject]
         private IClientNetworkManager networkManager;
 
-        [Inject]
+        [Inject(Id="GameStartButton")]
         private Button gameStartButton;
 
         void Start()

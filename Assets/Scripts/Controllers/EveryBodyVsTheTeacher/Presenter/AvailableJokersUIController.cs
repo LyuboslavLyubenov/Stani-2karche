@@ -1,4 +1,5 @@
 ﻿using Controllers_AvailableJokersUIController = Controllers.AvailableJokersUIController;
+using JokerEventArgs = EventArgs.JokerEventArgs;
 
 namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter
 {

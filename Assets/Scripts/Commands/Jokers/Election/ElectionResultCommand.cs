@@ -1,13 +1,12 @@
-﻿using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+﻿using ElectionDecision = EventArgs.Jokers.ElectionDecision;
+using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 
 namespace Assets.Scripts.Commands.Jokers.Election
 {
 
     using System;
     using System.Collections.Generic;
-
-    using EventArgs.Jokers;
-
+    
     using UnityEngine;
 
     public class ElectionResultCommand : INetworkManagerCommand

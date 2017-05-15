@@ -2,6 +2,7 @@ using IJokersUsedNotifier = Interfaces.Network.IJokersUsedNotifier;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using JokersData = Network.JokersData;
+using JokerTypeEventArgs = EventArgs.JokerTypeEventArgs;
 
 namespace Assets.Scripts.Network
 {

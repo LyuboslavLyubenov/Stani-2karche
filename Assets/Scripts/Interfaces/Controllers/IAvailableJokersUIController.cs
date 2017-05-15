@@ -1,4 +1,6 @@
-﻿namespace Assets.Scripts.Interfaces.Controllers
+﻿using JokerEventArgs = EventArgs.JokerEventArgs;
+
+namespace Assets.Scripts.Interfaces.Controllers
 {
 
     using System;
