@@ -52,6 +52,10 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
                 .WithId("QuestionUI")
                 .FromInstance(this.questionUI);
 
+            this.Container.Bind<GameObject>()
+                .FromInstance(this.questionUI)
+                .WhenInjectedInto<ConnectedToServerState>();
+
             var question = new QuestionGenerator().GenerateQuestion();
             this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);

@@ -18,7 +18,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
     using Zenject.Source.Usage;
 
-    public class WhenClickedOnAnswerSendToServerAndDontAllowToSendAgain : ExtendedMonoBehaviour
+    public class WhenClickedOnAnswerSendToServerAndHideQuestionUI : ExtendedMonoBehaviour
     {
         [Inject]
         private IClientNetworkManager networkManager;
