@@ -72,7 +72,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
             this.questionUI.SetActive(true);
             this.questionUIController.LoadQuestion(this.question);
 
-            this.CoroutineUtils.WaitForSeconds(0.5f, () => this.answerButton.SimulateClick());
+            this.CoroutineUtils.WaitForSeconds(2f, () => this.answerButton.SimulateClick());
         }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
+using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
-
     using Commands;
     using Commands.Client;
 
@@ -14,7 +14,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
     using Zenject.Source.Usage;
 
-    public class WhenReceivedTimeIsOverHideQuestionUI : MonoBehaviour
+    public class WhenReceivedTimeIsOverHideQuestionUI : ExtendedMonoBehaviour
     {
         [Inject]
         private IClientNetworkManager networkManager;
@@ -25,17 +25,24 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
         void Start()
         {
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
-            var timeoutCommand = NetworkCommandData.From<AnswerTimeoutCommand>();
-            dummyClientNetworkManager.FakeReceiveMessage(timeoutCommand.ToString());
 
-            if (!this.questionUI.activeSelf)
-            {
-                IntegrationTest.Pass();
-            }
-            else
-            {
-                IntegrationTest.Fail();
-            }
+            this.questionUI.SetActive(true);
+
+            this.CoroutineUtils.WaitForSeconds(0.5f,
+                () =>
+                    {
+                        var timeoutCommand = NetworkCommandData.From<AnswerTimeoutCommand>();
+                        dummyClientNetworkManager.FakeReceiveMessage(timeoutCommand.ToString());
+
+                        if (!this.questionUI.activeSelf)
+                        {
+                            IntegrationTest.Pass();
+                        }
+                        else
+                        {
+                            IntegrationTest.Fail();
+                        }
+                    });
         }
     }
 }
