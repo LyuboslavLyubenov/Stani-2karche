@@ -1,4 +1,5 @@
 ﻿using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
+using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
@@ -6,6 +7,8 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
     using Extensions.Unity.UI;
 
+    using Interfaces;
+    using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
@@ -15,19 +18,37 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
     using Zenject.Source.Usage;
 
-    public class WhenClickedOnAnswerSendToServerAndDontAllowToSendAgain : MonoBehaviour
+    public class WhenClickedOnAnswerSendToServerAndDontAllowToSendAgain : ExtendedMonoBehaviour
     {
         [Inject]
         private IClientNetworkManager networkManager;
-
-        [Inject(Id="AnswerButton")]
-        private Button answerButton;
+        
+        private Button answerButton
+        {
+            get
+            {
+                return this.questionUI.GetComponentInChildren<Button>();
+            }
+        }
     
-        [Inject(Id="SelectedAnswer")]
-        private string selectedAnswer;
+        private string selectedAnswer
+        {
+            get
+            {
+                return this.answerButton.GetComponentInChildren<Text>()
+                    .text;
+            }
+        }
 
         [Inject(Id="QuestionUI")]
         private GameObject questionUI;
+
+        [Inject]
+        private IQuestionUIController questionUIController;
+
+        [Inject]
+        private ISimpleQuestion question;
+
         void Start()
         {
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
@@ -48,7 +69,10 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
                     }
                 };
 
-            this.answerButton.SimulateClick();
+            this.questionUI.SetActive(true);
+            this.questionUIController.LoadQuestion(this.question);
+
+            this.CoroutineUtils.WaitForSeconds(0.5f, () => this.answerButton.SimulateClick());
         }
     }
 }
