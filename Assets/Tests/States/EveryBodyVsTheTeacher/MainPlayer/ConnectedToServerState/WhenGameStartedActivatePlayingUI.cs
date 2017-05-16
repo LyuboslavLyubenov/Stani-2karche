@@ -1,4 +1,5 @@
 ﻿using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
+using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
@@ -14,7 +15,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
     using Zenject.Source.Usage;
 
-    public class WhenGameStartedActivatePlayingUI : MonoBehaviour
+    public class WhenGameStartedActivatePlayingUI : ExtendedMonoBehaviour
     {
         [Inject]
         private IClientNetworkManager networkManager;
@@ -24,18 +25,24 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
         void Start()
         {
-            var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
-            var gameStartedCommand = NetworkCommandData.From<GameStartedCommand>();
-            dummyClientNetworkManager.FakeReceiveMessage(gameStartedCommand.ToString());
+            this.playingUI.SetActive(false);
 
-            if (this.playingUI.activeSelf)
-            {
-                IntegrationTest.Pass();
-            }
-            else
-            {
-                IntegrationTest.Fail();
-            }
+            this.CoroutineUtils.WaitForFrames(1,
+                () =>
+                    {
+                        var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
+                        var gameStartedCommand = NetworkCommandData.From<GameStartedCommand>();
+                        dummyClientNetworkManager.FakeReceiveMessage(gameStartedCommand.ToString());
+
+                        if (this.playingUI.activeSelf)
+                        {
+                            IntegrationTest.Pass();
+                        }
+                        else
+                        {
+                            IntegrationTest.Fail();
+                        }
+                    });
         }
     }
 }

@@ -65,7 +65,21 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
                 .FromInstance(questionUIController);
 
             this.Container.Bind<IState>()
-                .To<ConnectedToServerState>()
+                .FromMethod(
+                    (context) =>
+                        {
+                            var clientNetworkManager = context.Container.Resolve<IClientNetworkManager>();
+                            var gameStartButton = context.Container.Resolve<Button>("GameStartButton");
+                            var questionUI = context.Container.Resolve<GameObject>("QuestionUI");
+                            var playingUI = context.Container.Resolve<GameObject>("PlayingUI");
+
+                            return 
+                                new ConnectedToServerState(
+                                    clientNetworkManager, 
+                                    gameStartButton, 
+                                    questionUI,
+                                    playingUI);
+                        })
                 .AsSingle();
 
             this.Container.Bind<StateMachine>()

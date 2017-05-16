@@ -3,6 +3,7 @@
 
     using Commands;
     using Commands.EveryBodyVsTheTeacher;
+    using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
 
     using Interfaces.Network.NetworkManager;
 
@@ -24,7 +25,7 @@
 
         private void SendRequestToStartTheGame()
         {
-            var commandData = NetworkCommandData.From<StartGameRequestCommand>();
+            var commandData = NetworkCommandData.From<MainPlayerRequestedGameStartCommand>();
             this.networkManager.SendServerCommand(commandData);
         }
     }

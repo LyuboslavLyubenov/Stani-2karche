@@ -26,6 +26,8 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
         void Start()
         {
+            this.gameStartButton.gameObject.SetActive(true);
+
             var dummmyNetworkManager = (DummyClientNetworkManager)this.networkManager;
             dummmyNetworkManager.OnSentToServerMessage += (sender, args) =>
                 {
