@@ -15,7 +15,11 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     using Interfaces.GameData;
     using Interfaces.Network;
+    using Interfaces.Network.EveryBodyVsTheTeacher;
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
+
+    using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
 
     using StateMachine;
 
@@ -44,7 +48,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private IServerNetworkManager networkManager;
 
         [Inject]
-        private PlayersConnectingToTheServerState playersConnectingToTheServerState;
+        private IPlayersConnectingToTheServerState playersConnectingToTheServerState;
 
         [Inject]
         private IRoundsSwitcher roundsSwitcher;
@@ -54,6 +58,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private RoundsSwitcherEventsNotifier roundsSwitcherEventsNotifier;
+
+        [Inject]
+        private IPlayersConnectingStateDataSender playersConnectingStateDataSender;
 
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
@@ -101,7 +108,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             if (args.ConnectionId == this.PresenterId)
             {
                 this.PresenterId = 0;
-            }    
+            }
         }
 
         private void OnPresenterConnecting(int connectionId)
@@ -127,7 +134,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             {
                 return;
             }
-
+            
             this.networkManager.KickPlayer(connectionId);
         }
 

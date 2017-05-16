@@ -2,6 +2,7 @@
 using AnswerTimeoutCommand = Commands.Client.AnswerTimeoutCommand;
 using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPlayersToStartGameCommand;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using IQuestionUIController = Interfaces.Controllers.IQuestionUIController;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
 using MainPlayerRequestedGameStartCommand = Commands.EveryBodyVsTheTeacher.PlayersConnectingState.MainPlayerRequestedGameStartCommand;
@@ -31,7 +32,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
         private readonly Button gameStartButton;
         private readonly GameObject questionUI;
         private readonly GameObject playingUI;
-        private readonly QuestionUIController questionUIController;
+        private readonly IQuestionUIController questionUIController;
 
         public ConnectedToServerState(
             IClientNetworkManager networkManager, 

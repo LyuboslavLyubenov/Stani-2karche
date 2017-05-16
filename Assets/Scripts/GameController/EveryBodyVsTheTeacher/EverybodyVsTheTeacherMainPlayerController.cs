@@ -1,12 +1,11 @@
 ﻿namespace GameController.EveryBodyVsTheTeacher
 {
-
     using System;
+
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer;
 
     using Commands;
     using Commands.Server;
-
-    using Controllers;
 
     using Interfaces.Network.NetworkManager;
 
@@ -14,22 +13,20 @@
 
     using States.EveryBodyVsTheTeacher.Shared;
 
-    using UnityEngine;
-
     using Utils.Unity;
 
     using Zenject.Source.Usage;
 
     public class EverybodyVsTheTeacherMainPlayerController : ExtendedMonoBehaviour
     {
-        public GameObject LoadingUI;
-        public UnableToConnectUIController UnableToConnectUIController;
-
         [Inject]
         private StateMachine stateMachine;
         
         [Inject]
         private NotConnectedToServerState notConnectedToServerState;
+
+        [Inject]
+        private ConnectedToServerState connectedToServerState;
 
         [Inject]
         private IClientNetworkManager networkManager;
@@ -46,6 +43,8 @@
         {
             var mainPlayerConnectingCommand = NetworkCommandData.From<MainPlayerConnectingCommand>();
             this.networkManager.SendServerCommand(mainPlayerConnectingCommand);
+
+            this.stateMachine.SetCurrentState(this.connectedToServerState);
         }
 
         private void OnDisconnectedFromServer(object sender, EventArgs e)

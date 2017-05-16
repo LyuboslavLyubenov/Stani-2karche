@@ -10,10 +10,13 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Interfaces;
     using Interfaces.GameData;
     using Interfaces.Network;
+    using Interfaces.Network.EveryBodyVsTheTeacher;
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
     using IO;
 
+    using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
     using Network.GameInfo;
     using Network.NetworkManagers;
     using Network.TcpSockets;
@@ -199,9 +202,13 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.Container.Bind<JokersData>()
                 .AsSingle();
         
-            this.Container.Bind<PlayersConnectingToTheServerState>()
+            this.Container.Bind<IPlayersConnectingToTheServerState>()
+                .To<PlayersConnectingToTheServerState>()
                 .AsSingle();
-        
+
+            this.Container.Bind<IPlayersConnectingStateDataSender>()
+                .To<PlayersConnectingStateDataSender>();
+
             this.InstallStateMachine();
 
             var networkManager = this.Container.Resolve<IServerNetworkManager>();

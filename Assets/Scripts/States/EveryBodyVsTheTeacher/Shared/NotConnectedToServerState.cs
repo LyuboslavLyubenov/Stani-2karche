@@ -1,16 +1,12 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using IState = Assets.Scripts.Interfaces.IState;
 using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace States.EveryBodyVsTheTeacher.Shared
 {
-
     using System;
 
     using Assets.Scripts.Interfaces;
-
-    using Controllers;
 
     using Extensions;
 

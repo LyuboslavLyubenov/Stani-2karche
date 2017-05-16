@@ -1,12 +1,9 @@
 ﻿namespace Network.EveryBodyVsTheTeacher.PlayersConnectingState
 {
-
     using System;
 
     using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
-
-    using EventArgs;
-
+    
     using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
     
