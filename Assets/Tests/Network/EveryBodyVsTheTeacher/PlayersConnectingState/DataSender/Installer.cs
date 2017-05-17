@@ -21,6 +21,10 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
                 .To<DummyServerNetworkManager>()
                 .AsSingle();
 
+            this.Container.Bind<int>()
+                .FromInstance(6)
+                .WhenInjectedInto<IPlayersConnectingStateDataSender>();
+
             this.Container.Bind<IPlayersConnectingToTheServerState>()
                 .To<DummyPlayersConnectingToTheServerState>()
                 .AsSingle();
