@@ -44,7 +44,12 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
                 .AsSingle();
 
             this.Container.Bind<IState>()
-                .To<ConnectedToServerState>()
+                .FromMethod(
+                    (context) =>
+                        {
+                            var clientNetworkManager = context.Container.Resolve<IClientNetworkManager>();
+                            return new ConnectedToServerState(clientNetworkManager, this.questionUI);
+                        })
                 .AsSingle();
 
             this.Container.Bind<StateMachine>()

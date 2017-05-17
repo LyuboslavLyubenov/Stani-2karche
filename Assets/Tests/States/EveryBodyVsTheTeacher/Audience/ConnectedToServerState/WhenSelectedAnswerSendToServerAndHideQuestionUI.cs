@@ -3,6 +3,8 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerState
 {
+    using Assets.Scripts.Interfaces;
+
     using Commands;
     using Commands.Client;
 
@@ -28,6 +30,9 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
 
         [Inject(Id="QuestionUI")]
         private GameObject questionUI;
+
+        [Inject]
+        private IState state;
         
         void Start()
         {
@@ -35,13 +40,25 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
             var loadQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             var questionJSON = JsonUtility.ToJson(this.question.Serialize());
             loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
-            loadQuestionCommand.AddOption("TimeToAnswerInSeconds", "10");
+            loadQuestionCommand.AddOption("TimeToAnswer", "10");
             dummyClientNetworkManager.FakeReceiveMessage(loadQuestionCommand.ToString());
 
-            this.CoroutineUtils.WaitForFrames(1,
+            this.CoroutineUtils.WaitForSeconds(1f,
                 () =>
                     {
                         var answerButton = this.questionUI.GetComponentInChildren<Button>();
+                        var answerText = answerButton.GetComponentInChildren<Text>()
+                            .text;
+
+                        dummyClientNetworkManager.OnSentToServerMessage += (sender, args) =>
+                            {
+                                var command = NetworkCommandData.Parse(args.Message);
+                                if (command.Name == "AnswerSelected" && command.Options["Answer"] == answerText)
+                                {
+                                    IntegrationTest.Pass();
+                                }
+                            };
+
                         answerButton.SimulateClick();
 
                         this.CoroutineUtils.WaitForFrames(1,

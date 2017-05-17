@@ -39,7 +39,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
             var loadQuestionCommand = NetworkCommandData.From<LoadQuestion>();
             var questionJSON = JsonUtility.ToJson(this.question.Serialize());
             loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
-            loadQuestionCommand.AddOption("TimeToAnswerInSeconds", "10");
+            loadQuestionCommand.AddOption("TimeToAnswer", "10");
             dummyClientNetworkManager.FakeReceiveMessage(loadQuestionCommand.ToString());
         }
     }

@@ -22,7 +22,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Audience
     public class ConnectedToServerState : IState
     {
         private readonly IClientNetworkManager networkManager;
-
         private readonly GameObject questionUI;
         private readonly IQuestionUIController questionUIController;
 
@@ -36,8 +35,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Audience
             this.networkManager = networkManager;
             this.questionUI = questionUI;
             this.questionUIController = this.questionUI.GetComponent<QuestionUIController>();
-
-            this.questionUIController.OnAnswerClick += OnAnswerClick;
         }
 
         private void OnAnswerClick(object sender, AnswerEventArgs args)
@@ -57,6 +54,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Audience
 
         public void OnStateEnter(StateMachine stateMachine)
         {
+            this.questionUIController.OnAnswerClick += OnAnswerClick;
+
             var loadQuestionCommand = new LoadQuestionCommand(this.OnReceivedQuestion);
             this.networkManager.CommandsManager.AddCommand(loadQuestionCommand);
 

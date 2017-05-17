@@ -5,7 +5,6 @@ using UnableToConnectUIController = Controllers.UnableToConnectUIController;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
 {
-
     using UnityEngine;
 
     using Zenject.Source.Install;
