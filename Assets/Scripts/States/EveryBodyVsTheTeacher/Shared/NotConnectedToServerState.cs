@@ -35,7 +35,7 @@ namespace States.EveryBodyVsTheTeacher.Shared
         private readonly IUnableToConnectUIController unableToConnectUIController;
         private readonly IClientNetworkManager networkManager;
         private Timer_ExecuteMethodAfterTime notFoundServerIPTimer;
-        private readonly NetworkCommandData connectingCommand;
+        private readonly NetworkCommandData connectingCommand = null;
 
         public NotConnectedToServerState(
             GameObject loadingUI,
@@ -68,21 +68,27 @@ namespace States.EveryBodyVsTheTeacher.Shared
             this.unableToConnectUI = unableToConnectUI;
             this.unableToConnectUIController = unableToConnectUIController;
             this.networkManager = networkManager;
-            this.connectingCommand = 
-                clientType == ClientType.MainPlayer                         
-                ? 
-                NetworkCommandData.From<MainPlayerConnectingCommand>()                        
-                : 
-                NetworkCommandData.From<PresenterConnectingCommand>();
+
+            if (clientType == ClientType.MainPlayer)
+            {
+                this.connectingCommand = NetworkCommandData.From<MainPlayerConnectingCommand>();
+            }
+            else if (clientType == ClientType.Presenter)
+            {
+                this.connectingCommand = NetworkCommandData.From<PresenterConnectingCommand>();
+            }
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
         {
             this.loadingUI.SetActive(false);
             this.unableToConnectUI.gameObject.SetActive(false);
-            
-            this.networkManager.SendServerCommand(this.connectingCommand);
 
+            if (this.connectingCommand != null)
+            {
+                this.networkManager.SendServerCommand(this.connectingCommand);
+            }
+            
             var connectedMsg = LanguagesManager.Instance.GetValue("EveryBodyVsTheTeacher/ConnectedToServer");
             NotificationsController.Instance.AddNotification(Color.blue, connectedMsg);
         }
@@ -171,6 +177,7 @@ namespace States.EveryBodyVsTheTeacher.Shared
     public enum ClientType
     {
         MainPlayer,
-        Presenter
+        Presenter,
+        Audience
     }
 }

@@ -9,6 +9,7 @@ namespace States.EveryBodyVsTheTeacher.Server
     using System.Linq;
 
     using Commands.EveryBodyVsTheTeacher;
+    using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
     using Commands.Server;
 
     using EventArgs;
