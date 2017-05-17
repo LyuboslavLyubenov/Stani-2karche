@@ -6,6 +6,7 @@ namespace States.EveryBodyVsTheTeacher.Shared
 {
     using System;
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces;
 
     using Extensions;
@@ -29,17 +30,19 @@ namespace States.EveryBodyVsTheTeacher.Shared
 
     public class NotConnectedToServerState : IState
     {
-        private GameObject loadingUI;
-        private GameObject unableToConnectUI;
-        private IUnableToConnectUIController unableToConnectUIController;
-        private IClientNetworkManager networkManager;
+        private readonly GameObject loadingUI;
+        private readonly GameObject unableToConnectUI;
+        private readonly IUnableToConnectUIController unableToConnectUIController;
+        private readonly IClientNetworkManager networkManager;
         private Timer_ExecuteMethodAfterTime notFoundServerIPTimer;
+        private readonly NetworkCommandData connectingCommand;
 
         public NotConnectedToServerState(
             GameObject loadingUI,
             GameObject unableToConnectUI,
             IUnableToConnectUIController unableToConnectUIController,
-            IClientNetworkManager networkManager)
+            IClientNetworkManager networkManager,
+            ClientType clientType)
         {
             if (loadingUI == null)
             {
@@ -65,15 +68,20 @@ namespace States.EveryBodyVsTheTeacher.Shared
             this.unableToConnectUI = unableToConnectUI;
             this.unableToConnectUIController = unableToConnectUIController;
             this.networkManager = networkManager;
+            this.connectingCommand = 
+                clientType == ClientType.MainPlayer                         
+                ? 
+                NetworkCommandData.From<MainPlayerConnectingCommand>()                        
+                : 
+                NetworkCommandData.From<PresenterConnectingCommand>();
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
         {
             this.loadingUI.SetActive(false);
             this.unableToConnectUI.gameObject.SetActive(false);
-
-            var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
-            this.networkManager.SendServerCommand(commandData);
+            
+            this.networkManager.SendServerCommand(this.connectingCommand);
 
             var connectedMsg = LanguagesManager.Instance.GetValue("EveryBodyVsTheTeacher/ConnectedToServer");
             NotificationsController.Instance.AddNotification(Color.blue, connectedMsg);
@@ -158,5 +166,11 @@ namespace States.EveryBodyVsTheTeacher.Shared
             this.notFoundServerIPTimer.Dispose();
             this.notFoundServerIPTimer = null;
         }
+    }
+
+    public enum ClientType
+    {
+        MainPlayer,
+        Presenter
     }
 }

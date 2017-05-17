@@ -1,6 +1,5 @@
 ﻿namespace Network.EveryBodyVsTheTeacher.PlayersConnectingState
 {
-
     using System;
     using System.Linq;
 

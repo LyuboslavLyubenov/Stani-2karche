@@ -105,7 +105,7 @@ namespace States.EveryBodyVsTheTeacher.Server
         private void OnPlayerConnectedToServer(object sender, ClientConnectionIdEventArgs args)
         {
             var connectionId = args.ConnectionId;
-            var timer = TimerUtils.ExecuteAfter(1f, () => this.CheckIsClientJoinedAudienceOrMainPlayers(connectionId));
+            var timer = TimerUtils.ExecuteAfter(0.5f, () => this.CheckIsClientJoinedAudienceOrMainPlayers(connectionId));
             timer.RunOnUnityThread = true;
             timer.AutoDispose = true;
             timer.Start();

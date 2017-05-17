@@ -206,6 +206,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 .To<PlayersConnectingToTheServerState>()
                 .AsSingle();
 
+            this.Container.Bind<int>()
+                .FromInstance(6)
+                .WhenInjectedInto<IPlayersConnectingStateDataSender>();
+
             this.Container.Bind<IPlayersConnectingStateDataSender>()
                 .To<PlayersConnectingStateDataSender>();
 

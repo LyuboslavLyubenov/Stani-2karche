@@ -19,11 +19,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
-    using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
-
     using StateMachine;
-
-    using States.EveryBodyVsTheTeacher.Server;
 
     using Utils.Unity;
 

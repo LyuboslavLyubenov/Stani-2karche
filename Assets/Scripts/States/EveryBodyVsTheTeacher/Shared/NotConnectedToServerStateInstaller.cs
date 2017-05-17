@@ -1,4 +1,5 @@
-﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+﻿using ClientType = States.EveryBodyVsTheTeacher.Shared.ClientType;
+using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using NotConnectedToServerState = States.EveryBodyVsTheTeacher.Shared.NotConnectedToServerState;
 using UnableToConnectUIController = Controllers.UnableToConnectUIController;
 
@@ -17,6 +18,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
         [SerializeField]
         private GameObject unableToConnectUI;
 
+        [SerializeField]
+        private ClientType clientType;
+
         public override void InstallBindings()
         {
             var clientNetworkManager = this.Container.Resolve<IClientNetworkManager>();
@@ -27,7 +31,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Shared
                     this.loadingUI,
                     this.unableToConnectUI,
                     unableToConnectUIController,
-                    clientNetworkManager);
+                    clientNetworkManager, 
+                    this.clientType);
 
             this.Container.Bind<NotConnectedToServerState>()
                 .FromInstance(notConnectedToServerState)
