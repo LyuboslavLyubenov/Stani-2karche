@@ -2,8 +2,10 @@
 {
 
     using System;
+    using System.Linq;
 
     using Commands;
+    using Commands.EveryBodyVsTheTeacher;
     using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
 
     using EventArgs;
@@ -15,14 +17,19 @@
 
     public class PlayersConnectingStateDataSender : IPlayersConnectingStateDataSender
     {
-        private readonly IServerNetworkManager networkManager;
+        private readonly IPlayersConnectingToTheServerState playersConnectingState;
 
+        private readonly IServerNetworkManager networkManager;
         private readonly IEveryBodyVsTheTeacherServer server;
+        private readonly int playersRequiredForGameStart;
+
+        private bool mustSentNotEnoughPlayersCommand = false;
 
         public PlayersConnectingStateDataSender(
             IPlayersConnectingToTheServerState playersConnectingState, 
             IServerNetworkManager networkManager,
-            IEveryBodyVsTheTeacherServer server)
+            IEveryBodyVsTheTeacherServer server,
+            int playersRequiredForGameStart)
         {
             if (playersConnectingState == null)
             {
@@ -39,9 +46,12 @@
                 throw new ArgumentNullException("server");
             }
 
+            this.playersConnectingState = playersConnectingState;
             this.networkManager = networkManager;
             this.server = server;
-
+           
+            this.playersRequiredForGameStart = playersRequiredForGameStart;
+            
             playersConnectingState.OnMainPlayerConnected += this.OnMainPlayerConnected;
             playersConnectingState.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
 
@@ -78,11 +88,36 @@
         private void OnMainPlayerDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendToPresenterClientDisconnected(args.ConnectionId, true);
+
+            if (this.playersConnectingState.MainPlayersConnectionIds.Count < this.playersRequiredForGameStart && 
+                this.mustSentNotEnoughPlayersCommand)
+            {
+                var notEnoughPlayersCommand = NetworkCommandData.From<NotEnoughPlayersToStartGameCommand>();
+                this.SendToMainPlayers(notEnoughPlayersCommand);
+            }
         }
 
         private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
             this.SendToPresenterClientConnected(args.ConnectionId, true);
+
+            if (this.playersConnectingState.MainPlayersConnectionIds.Count() >= this.playersRequiredForGameStart)
+            {
+                var enoughPlayersCommand = NetworkCommandData.From<EnoughPlayersToStartGameCommand>();
+                this.SendToMainPlayers(enoughPlayersCommand);
+                this.mustSentNotEnoughPlayersCommand = true;
+            }
+        }
+
+        private void SendToMainPlayers(NetworkCommandData command)
+        {
+            var mainPlayersConnectionIds = this.playersConnectingState.MainPlayersConnectionIds.ToList();
+
+            for (int i = 0; i < mainPlayersConnectionIds.Count; i++)
+            {
+                var connectionId = mainPlayersConnectionIds[i];
+                this.networkManager.SendClientCommand(connectionId, command);
+            }
         }
 
         private void SendToPresenterClientDisconnected(int connectionId, bool isMainPlayer)
