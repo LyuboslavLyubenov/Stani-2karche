@@ -8,6 +8,8 @@ namespace States.EveryBodyVsTheTeacher.Server
     using System.Collections.ObjectModel;
     using System.Linq;
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+
     using Commands.EveryBodyVsTheTeacher;
     using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
     using Commands.Server;
@@ -46,6 +48,7 @@ namespace States.EveryBodyVsTheTeacher.Server
         public event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerConnected = delegate
             {
             };
+
         public event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerDisconnected = delegate
             {
             };
@@ -53,6 +56,7 @@ namespace States.EveryBodyVsTheTeacher.Server
         public event EventHandler OnEveryBodyRequestedGameStart = delegate
             {
             };
+
         public event EventHandler<ClientConnectionIdEventArgs> OnMainPlayerRequestedGameStart = delegate
             {   
             };
@@ -60,6 +64,7 @@ namespace States.EveryBodyVsTheTeacher.Server
         public event EventHandler<ClientConnectionIdEventArgs> OnAudiencePlayerConnected = delegate
             {
             };
+
         public event EventHandler<ClientConnectionIdEventArgs> OnAudiencePlayerDisconnected = delegate
             {
             };
@@ -68,13 +73,23 @@ namespace States.EveryBodyVsTheTeacher.Server
         private readonly HashSet<int> mainPlayersConnectionsIds = new HashSet<int>();
         private readonly HashSet<int> playersRequestingGameStartIds = new HashSet<int>();
 
+        private readonly MainPlayerConnectingCommand mainPlayerConnectingCommand;
+        private readonly StartGameRequestCommand startGameRequestCommand = new StartGameRequestCommand();
+        private readonly PresenterConnectingCommand presenterConnectingCommand;
+
+        private int presenterConnectionId = 0;
+
         //---
         [Inject]
         private IServerNetworkManager networkManager;
         //---
 
-        private readonly StartGameRequestCommand startGameRequestCommand = new StartGameRequestCommand();
-
+        public PlayersConnectingToTheServerState()
+        {
+            this.mainPlayerConnectingCommand = new MainPlayerConnectingCommand(this.OnMainPlayerConnecting);
+            this.presenterConnectingCommand = new PresenterConnectingCommand(this.OnPresenterConnecting);
+        }
+        
         private void OnPlayerDisconnectedFromServer(object sender, ClientConnectionIdEventArgs args)
         {
             if (this.mainPlayersConnectionsIds.Count < EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame &&
@@ -134,7 +149,7 @@ namespace States.EveryBodyVsTheTeacher.Server
 
         private void CheckIsClientJoinedAudienceOrMainPlayers(int connectionId)
         {
-            if (this.mainPlayersConnectionsIds.Contains(connectionId))
+            if (this.mainPlayersConnectionsIds.Contains(connectionId) || this.presenterConnectionId == connectionId)
             {
                 return;
             }
@@ -160,6 +175,11 @@ namespace States.EveryBodyVsTheTeacher.Server
             {
                 this.OnEveryBodyRequestedGameStart(this, EventArgs.Empty);
             }
+        }
+
+        private void OnPresenterConnecting(int connectionId)
+        {
+            this.presenterConnectionId = connectionId;
         }
 
         private void AttachEventHandlers()
@@ -196,7 +216,8 @@ namespace States.EveryBodyVsTheTeacher.Server
         public void OnStateEnter(StateMachine stateMachine)
         {
             this.AttachEventHandlers();
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+            this.networkManager.CommandsManager.AddCommand(this.mainPlayerConnectingCommand);
+            this.networkManager.CommandsManager.AddCommand(this.presenterConnectingCommand);
         }
 
         public void OnStateExit(StateMachine stateMachine)
@@ -204,12 +225,14 @@ namespace States.EveryBodyVsTheTeacher.Server
             this.DetachEventHandlers();
             this.ClearSubscriptions();
 
-            this.networkManager.CommandsManager.RemoveCommand<MainPlayerConnectingCommand>();
+            this.networkManager.CommandsManager.RemoveCommand(this.mainPlayerConnectingCommand);
 
-            if (this.networkManager.CommandsManager.Exists<StartGameRequestCommand>())
+            if (this.networkManager.CommandsManager.Exists(this.startGameRequestCommand))
             {
-                this.networkManager.CommandsManager.RemoveCommand<StartGameRequestCommand>();
+                this.networkManager.CommandsManager.RemoveCommand(this.startGameRequestCommand);
             }
+
+            this.networkManager.CommandsManager.RemoveCommand(this.presenterConnectingCommand);
 
             this.mainPlayersConnectionsIds.Clear();
             this.audiencePlayersConnectionIds.Clear();

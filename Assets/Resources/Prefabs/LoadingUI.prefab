@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5934247260c3c8f4c83f387b406d2de6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Opacity: 0.9
+  Opacity: 0.5
 --- !u!222 &22291072
 CanvasRenderer:
   m_ObjectHideFlags: 1
