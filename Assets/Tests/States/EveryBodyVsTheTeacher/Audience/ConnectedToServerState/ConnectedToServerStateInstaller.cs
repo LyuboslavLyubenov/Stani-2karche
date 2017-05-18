@@ -25,10 +25,6 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
         
         public override void InstallBindings()
         {
-            this.Container.Bind<IClientNetworkManager>()
-                .To<DummyClientNetworkManager>()
-                .AsSingle();
-
             var question = new QuestionGenerator().GenerateQuestion();
             this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question)
@@ -43,7 +39,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
                 .FromInstance(questionUIController)
                 .AsSingle();
 
-            this.Container.Bind<IState>()
+            this.Container.Bind<ConnectedToServerState>()
                 .FromMethod(
                     (context) =>
                         {
@@ -51,14 +47,6 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
                             return new ConnectedToServerState(clientNetworkManager, this.questionUI);
                         })
                 .AsSingle();
-
-            this.Container.Bind<StateMachine>()
-                .ToSelf()
-                .AsSingle();
-
-            var stateMachine = this.Container.Resolve<StateMachine>();
-            var state = this.Container.Resolve<IState>();
-            stateMachine.SetCurrentState(state);
         }
     }
 }
