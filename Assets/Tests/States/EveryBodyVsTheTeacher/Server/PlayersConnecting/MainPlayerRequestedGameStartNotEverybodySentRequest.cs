@@ -1,15 +1,10 @@
 using EveryBodyVsTheTeacherServer = Network.Servers.EveryBodyVsTheTeacher.EveryBodyVsTheTeacherServer;
-using FirstRoundState = Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds.FirstRoundState;
 using NetworkCommandData = Commands.NetworkCommandData;
 using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.PlayersConnectingToTheServerState;
 using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestCommand;
 
 namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 {
-
-    using System;
-    using System.Collections;
-
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
@@ -23,15 +18,12 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 
     using Zenject.Source.Usage;
 
-    public class MainPlayerRequestedGameStartEverybodySentRequestChangeState : ExtendedMonoBehaviour
+    public class MainPlayerRequestedGameStartNotEverybodySentRequest : ExtendedMonoBehaviour
     {
         private StateMachine stateMachine = new StateMachine();
 
         [Inject]
         private PlayersConnectingToTheServerState state;
-
-        [Inject]
-        private FirstRoundState firstRoundState;
 
         [Inject]
         private IServerNetworkManager networkManager;
@@ -40,41 +32,40 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
         {
             this.stateMachine.SetCurrentState(this.state);
 
-            this.state.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
-
-            this.StartCoroutine(this.SimulateMainPlayerConnection());
+            this.CoroutineUtils.WaitForFrames(1, this.SimulateMainPlayerConnection);
         }
 
-        private void OnEveryBodyRequestedGameStart(object sender, EventArgs eventArgs)
-        {
-            IntegrationTest.Pass();
-        }
-
-        private IEnumerator SimulateMainPlayerConnection()
+        private void SimulateMainPlayerConnection()
         {
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
 
-            for (int i = 1; i <= EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame; i++)
+            for (int i = 1; i <= EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame + 1; i++)
             {
                 dummyServerNetworkManager.SimulateMainPlayerConnected(i, "Ivan");
-                yield return null;
             }
             
-            yield return this.SimulateGameRequestStart();
+            this.CoroutineUtils.WaitForFrames(1, this.SimulateGameRequestStart);
         }
 
-        private IEnumerator SimulateGameRequestStart()
+        private void SimulateGameRequestStart()
         {
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
             var gameRequestCommand = NetworkCommandData.From<StartGameRequestCommand>();
+            dummyServerNetworkManager.FakeReceiveMessage(1, gameRequestCommand.ToString());
 
-            for (int i = 1; i <= EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame; i++)
+            this.CoroutineUtils.WaitForFrames(1, this.AssertNotChangedState);
+        }
+
+        private void AssertNotChangedState()
+        {
+            if (this.stateMachine.CurrentState == this.state)
             {
-                dummyServerNetworkManager.FakeReceiveMessage(i, gameRequestCommand.ToString());
-                yield return null;
+                IntegrationTest.Pass();
+            }
+            else
+            {
+                IntegrationTest.Fail();
             }
         }
-        
     }
-
 }

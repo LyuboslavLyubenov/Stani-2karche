@@ -1,12 +1,9 @@
-using FirstRoundState = Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds.FirstRoundState;
 using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.PlayersConnectingToTheServerState;
 
 namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 {
-
+    using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
-
-    using StateMachine;
 
     using Tests.DummyObjects;
 
@@ -16,15 +13,13 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
     {
         public override void InstallBindings()
         {
-            this.Container.Bind<StateMachine>()
-                .FromInstance(new StateMachine());
+            this.Container.Bind<IEveryBodyVsTheTeacherServer>()
+                .To<DummyEveryBodyVsTheTeacherServer>()
+                .AsSingle();
 
             this.Container.Bind<PlayersConnectingToTheServerState>()
                 .ToSelf();
-
-            this.Container.Bind<FirstRoundState>()
-                .ToSelf();
-
+            
             this.Container.Bind<IServerNetworkManager>()
                 .To<DummyServerNetworkManager>()
                 .AsSingle();
