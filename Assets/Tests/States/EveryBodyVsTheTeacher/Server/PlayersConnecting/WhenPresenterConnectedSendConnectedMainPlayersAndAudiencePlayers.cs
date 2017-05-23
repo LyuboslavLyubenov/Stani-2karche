@@ -1,4 +1,5 @@
-﻿using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
+﻿using AudiencePlayerConnectedCommand = Commands.EveryBodyVsTheTeacher.PlayersConnectingState.AudiencePlayerConnectedCommand;
+using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 using MainPlayerConnectedCommand = Commands.EveryBodyVsTheTeacher.PlayersConnectingState.MainPlayerConnectedCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.PlayersConnectingToTheServerState;
@@ -9,11 +10,15 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+
     using Extensions;
 
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
+
+    using Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
@@ -42,7 +47,13 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
                         dummyServerNetworkManager.SimulateMainPlayerConnected(10, "Ivan");
                         dummyServerNetworkManager.SimulateMainPlayerConnected(20, "Georgi");
 
+                        for (int i = 0; i < 2; i++)
+                        {
+                            dummyServerNetworkManager.SimulateClientConnected(21 + i, "Audience player" + i);
+                        }
+
                         var actualMainPlayerConnectionIds = new List<int>();
+                        var actualAudienceConnectionIds = new List<int>();
 
                         dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>
                             {
@@ -52,12 +63,23 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
                                     var connectionId = int.Parse(command.Options["ConnectionId"]);
                                     actualMainPlayerConnectionIds.Add(connectionId);
                                 }
-                            };
 
-                        this.CoroutineUtils.WaitForSeconds(2f,
+                                if (command.Name == typeof(AudiencePlayerConnectedCommand).Name.Replace("Command", ""))
+                                {
+                                    var connectionId = int.Parse(command.Options["ConnectionId"]);
+                                    actualAudienceConnectionIds.Add(connectionId);
+                                }
+                            };
+                        
+                        this.CoroutineUtils.WaitForFrames(1,
                             () =>
                                 {
-                                    if (!this.state.MainPlayersConnectionIds.Except(actualMainPlayerConnectionIds).Any())
+                                    var presenterConnectingCommand =
+                                        NetworkCommandData.From<PresenterConnectingCommand>();
+                                    dummyServerNetworkManager.FakeReceiveMessage(1, presenterConnectingCommand.ToString());
+
+                                    if (!this.state.MainPlayersConnectionIds.Except(actualMainPlayerConnectionIds).Any() &&
+                                        !this.state.AudiencePlayersConnectionIds.Except(actualAudienceConnectionIds).Any())
                                     {
                                         IntegrationTest.Pass();
                                     }

@@ -10,6 +10,7 @@ namespace States.EveryBodyVsTheTeacher.Server
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
 
+    using Commands;
     using Commands.EveryBodyVsTheTeacher;
     using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
     using Commands.Server;
@@ -22,6 +23,8 @@ namespace States.EveryBodyVsTheTeacher.Server
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
+
+    using States.EveryBodyVsTheTeacher.Shared;
 
     using Utils;
 
@@ -121,7 +124,7 @@ namespace States.EveryBodyVsTheTeacher.Server
         private void OnPlayerConnectedToServer(object sender, ClientConnectionIdEventArgs args)
         {
             var connectionId = args.ConnectionId;
-            var timer = TimerUtils.ExecuteAfter(0.5f, () => this.CheckIsClientJoinedAudienceOrMainPlayers(connectionId));
+            var timer = TimerUtils.ExecuteAfter(1f, () => this.CheckIsClientJoinedAudienceOrMainPlayers(connectionId));
             timer.RunOnUnityThread = true;
             timer.AutoDispose = true;
             timer.Start();
@@ -180,6 +183,53 @@ namespace States.EveryBodyVsTheTeacher.Server
         private void OnPresenterConnecting(int connectionId)
         {
             this.presenterConnectionId = connectionId;
+            this.SendAllConnectedMainPlayersToPresenter();
+            this.SendAllConnectedAudiencePlayersToPresenter();
+            this.SendAllRequestsForGameStartToPresenter();
+        }
+
+        private void SendAllConnectedMainPlayersToPresenter()
+        {
+            this.SendAllConnectedPlayersOfTypeToPresenter(ClientType.MainPlayer, this.mainPlayersConnectionsIds.ToList());
+        }
+
+        private void SendAllConnectedAudiencePlayersToPresenter()
+        {
+            this.SendAllConnectedPlayersOfTypeToPresenter(ClientType.Audience, this.audiencePlayersConnectionIds.ToList());
+        }
+
+        private void SendAllConnectedPlayersOfTypeToPresenter(ClientType clientType, IList<int> connectionIds)
+        {
+            if (clientType == ClientType.Presenter)
+            {
+                throw new InvalidOperationException();
+            }
+
+            var commandType = clientType == ClientType.MainPlayer
+                                  ? typeof(MainPlayerConnectedCommand)
+                                  : typeof(AudiencePlayerConnectedCommand);
+            var commandName = commandType.Name.Replace("Command", "");
+
+            for (int i = 0; i < connectionIds.Count; i++)
+            {
+                var connectionId = connectionIds[i];
+                var username = this.networkManager.GetClientUsername(connectionId);
+                var command = new NetworkCommandData(commandName);
+                command.AddOption("ConnectionId", connectionId.ToString());
+                command.AddOption("Username", username);
+                this.networkManager.SendClientCommand(this.presenterConnectionId, command);
+            }
+        }
+
+        private void SendAllRequestsForGameStartToPresenter()
+        {
+            for (int i = 0; i < this.playersRequestingGameStartIds.Count; i++)
+            {
+                var connectionId = this.playersRequestingGameStartIds.Skip(i).First();
+                var command = NetworkCommandData.From<StartGameRequestCommand>();
+                command.AddOption("ConnectionId", connectionId.ToString());
+                this.networkManager.SendClientCommand(this.presenterConnectionId, command);
+            }
         }
 
         private void AttachEventHandlers()

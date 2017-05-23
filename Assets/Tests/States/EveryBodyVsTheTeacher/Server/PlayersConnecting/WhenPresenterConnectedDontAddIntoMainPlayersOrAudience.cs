@@ -7,7 +7,10 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
 {
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
 
+    using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
+
+    using StateMachine;
 
     using Tests.Extensions;
 
@@ -22,10 +25,12 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
 
         [Inject]
         private PlayersConnectingToTheServerState state;
-
-
+        
         void Start()
         {
+            var stateMachine = new StateMachine();
+            stateMachine.SetCurrentState(this.state);
+
             this.state.OnMainPlayerConnected += (sender, args) => IntegrationTest.Fail();
             this.state.OnAudiencePlayerConnected += (sender, args) => IntegrationTest.Fail();
 

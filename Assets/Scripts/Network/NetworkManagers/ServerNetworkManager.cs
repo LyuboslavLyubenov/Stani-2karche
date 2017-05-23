@@ -1,6 +1,5 @@
 ﻿namespace Network.NetworkManagers
 {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -580,6 +579,5 @@
         }
 
         #endregion
-    }
-    
+    }   
 }
