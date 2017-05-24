@@ -9,6 +9,7 @@ using MainPlayerRequestedGameStartCommand = Commands.EveryBodyVsTheTeacher.Playe
 using NetworkCommandData = Commands.NetworkCommandData;
 using NotEnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.NotEnoughPlayersToStartGameCommand;
 using QuestionUIController = Controllers.QuestionUIController;
+using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestCommand;
 using TimerUtils = Utils.TimerUtils;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
@@ -71,7 +72,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
 
         private void OnRequestedGameStart()
         {
-            var requestStartGameCommand = NetworkCommandData.From<MainPlayerRequestedGameStartCommand>();
+            var requestStartGameCommand = NetworkCommandData.From<StartGameRequestCommand>();
             this.networkManager.SendServerCommand(requestStartGameCommand);
         }
 
