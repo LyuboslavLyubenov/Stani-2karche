@@ -10,7 +10,7 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
         private const float OpacityLower = 0.25f;
         private const float OpacityHigh = 1f;
 
-        private readonly Color OutlineColor = new Color(255, 200, 255, 0.5f);
+        private readonly Color OutlineColor = new Color(0, 200, 200, 0.5f);
 
         public string Username
         {
@@ -42,11 +42,12 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 
         private Image image;
         private Text usernameText;
-        private NicerOutline outline;
+        private Outline outline;
 
         void Start()
         {
-            this.outline = this.gameObject.AddComponent<NicerOutline>();
+            this.outline = this.gameObject.AddComponent<Outline>();
+            this.outline.effectDistance = new Vector2(5, 5);
             this.outline.effectColor = this.OutlineColor;
             this.outline.enabled = false;
 
