@@ -34,7 +34,10 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         [SerializeField]
         private ElectionQuestionUIController electionQuestionUIController;
-        
+
+        [SerializeField]
+        private GameObject playingUI;
+
         [SerializeField]
         private GameObject kalitkoJokerUI;
 
@@ -199,6 +202,10 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         private void BindPlayingStateDependencies()
         {
+            this.Container.Bind<GameObject>()
+                .FromInstance(this.playingUI)
+                .WhenInjectedInto<PlayingState>();
+
             this.Container.Bind<IElectionQuestionUIController>()
                 .FromInstance(this.electionQuestionUIController)
                 .AsSingle();
