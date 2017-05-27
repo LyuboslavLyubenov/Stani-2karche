@@ -5,6 +5,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
@@ -145,12 +146,25 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.EndGame();
         }
 
+        private void SendMainPlayersCommand(NetworkCommandData command)
+        {
+            for (int i = 0; i < this.mainPlayersConnectionIds.Count; i++)
+            {
+                var connectionId = this.mainPlayersConnectionIds.Skip(i).First();
+                this.networkManager.SendClientCommand(connectionId, command);
+            }
+        }
+
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs args)
         {
             this.mainPlayersConnectionIds =
                 new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
+
             this.roundsSwitcher.SwitchToNextRound();
-            this.networkManager.SendClientCommand(this.PresenterId, new NetworkCommandData("GameStarted"));
+
+            var startedGameCommand = NetworkCommandData.From<GameStartedCommand>();
+            this.SendMainPlayersCommand(startedGameCommand);
+
             this.StartedGame = true;
         }
 
