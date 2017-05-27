@@ -46,7 +46,9 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
         private void OnSwitchedToNextRound(object sender, EventArgs args)
         {
-            this.networkManager.SendClientCommand(this.server.PresenterId, new NetworkCommandData("SwitchedToNextRound"));
+            var command = new NetworkCommandData("SwitchedToNextRound");
+            command.AddOption("Round", this.roundsSwitcher.CurrentRoundNumber.ToString());
+            this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
 
         private void OnMustEndGame(object sender, EventArgs args)
