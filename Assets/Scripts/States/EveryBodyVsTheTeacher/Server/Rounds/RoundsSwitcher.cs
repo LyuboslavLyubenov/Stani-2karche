@@ -21,6 +21,14 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
         private int index = -1;
 
+        public int CurrentRoundNumber
+        {
+            get
+            {
+                return this.index + 1;
+            }
+        }
+
         public class Builder
         {
             private readonly StateMachine stateMachine;

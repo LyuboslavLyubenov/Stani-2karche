@@ -8,6 +8,8 @@
         event EventHandler OnMustEndGame;
         event EventHandler OnNoMoreRounds;
 
+        int CurrentRoundNumber { get; }
+
         void SwitchToNextRound();
     }
 }
