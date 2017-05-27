@@ -5,7 +5,6 @@ using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkMa
 using IQuestionUIController = Interfaces.Controllers.IQuestionUIController;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
-using MainPlayerRequestedGameStartCommand = Commands.EveryBodyVsTheTeacher.PlayersConnectingState.MainPlayerRequestedGameStartCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 using NotEnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.NotEnoughPlayersToStartGameCommand;
 using QuestionUIController = Controllers.QuestionUIController;
