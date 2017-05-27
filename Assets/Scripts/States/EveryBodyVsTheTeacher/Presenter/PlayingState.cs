@@ -11,6 +11,9 @@ using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
+
+    using System;
+
     using Interfaces.Controllers;
 
     using Interfaces;
@@ -19,7 +22,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
     using UnityEngine;
 
     public class PlayingState : IState
-    {        
+    {
+        private readonly GameObject playingUI;
+
         private readonly IClientNetworkManager networkManager;
 
         private readonly IElectionQuestionUIController electionQuestionUIController;
@@ -35,6 +40,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private readonly ILeaderboardReceiver leaderboardReceiver;
 
         public PlayingState(
+            GameObject playingUI,
             IClientNetworkManager networkManager,
             IElectionQuestionUIController electionQuestionUIController,
             ISecondsRemainingUIController secondsRemainingUIController,
@@ -44,6 +50,52 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             GameEndCommand gameEndCommand,
             ILeaderboardReceiver leaderboardReceiver)
         {
+            if (playingUI == null)
+            {
+                throw new ArgumentNullException("playingUI");
+            }
+
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            if (electionQuestionUIController == null)
+            {
+                throw new ArgumentNullException("electionQuestionUIController");
+            }
+
+            if (secondsRemainingUIController == null)
+            {
+                throw new ArgumentNullException("secondsRemainingUIController");
+            }
+
+            if (availableJokersUIController == null)
+            {
+                throw new ArgumentNullException("availableJokersUIController");
+            }
+
+            if (switchedToNextRoundCommand == null)
+            {
+                throw new ArgumentNullException("switchedToNextRoundCommand");
+            }
+
+            if (pollResultRetriever == null)
+            {
+                throw new ArgumentNullException("pollResultRetriever");
+            }
+
+            if (gameEndCommand == null)
+            {
+                throw new ArgumentNullException("gameEndCommand");
+            }
+
+            if (leaderboardReceiver == null)
+            {
+                throw new ArgumentNullException("leaderboardReceiver");
+            }
+
+            this.playingUI = playingUI;
             this.networkManager = networkManager;
             this.electionQuestionUIController = electionQuestionUIController;
             this.secondsRemainingUIController = secondsRemainingUIController;
@@ -77,6 +129,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             
             this.networkManager.CommandsManager.AddCommand(this.switchedToNextRoundCommand);
             this.networkManager.CommandsManager.AddCommand(this.gameEndCommand);
+
+            this.playingUI.SetActive(true);
         }
         
         public void OnStateExit(StateMachine stateMachine)
@@ -88,7 +142,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
             this.availableJokersUIController.Dispose();
             this.pollResultRetriever.Dispose();
-            this.leaderboardReceiver.Dispose(); 
+            this.leaderboardReceiver.Dispose();
+
+            this.playingUI.SetActive(false);
         }
     }
 }
