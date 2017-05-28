@@ -2,6 +2,7 @@
 {
 
     using System.Collections.Generic;
+    using System.Linq;
 
     using EventArgs;
 
@@ -87,6 +88,17 @@
 
             this.connectionIdAudienceObj.Remove(connectionId);
             this.HideDotsIfNoMoreThanFourPlayersAreConnected();
+        }
+
+        public void HideAll()
+        {
+            var audienceConnectionIds = this.connectionIdAudienceObj.Select(c => c.Key).ToArray();
+
+            for (int i = 0; i < audienceConnectionIds.Length; i++)
+            {
+                var connectionId = audienceConnectionIds[i];
+                this.HideAudiencePlayer(connectionId);
+            }
         }
 
         public bool IsOnScreen(int connectionId)

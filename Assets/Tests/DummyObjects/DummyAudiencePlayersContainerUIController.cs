@@ -42,6 +42,15 @@
             this.OnHideAudiencePlayer(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
+        public void HideAll()
+        {
+            for (int i = 0; i < this.audiencePlayers.Count; i++)
+            {
+                var connectionId = this.audiencePlayers[i];
+                this.HideAudiencePlayer(connectionId);
+            }
+        }
+
         public bool IsOnScreen(int connectionId)
         {
             return this.audiencePlayers.Contains(connectionId);

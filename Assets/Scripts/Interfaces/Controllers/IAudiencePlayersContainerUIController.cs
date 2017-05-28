@@ -7,6 +7,8 @@ namespace Interfaces.Controllers
 
         void HideAudiencePlayer(int connectionId);
 
+        void HideAll();
+
         bool IsOnScreen(int connectionId);
     }
 
