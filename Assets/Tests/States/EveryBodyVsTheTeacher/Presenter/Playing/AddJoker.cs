@@ -3,9 +3,10 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Tests.States.Presenter.Playing
 {
-    using Assets.Scripts.Interfaces.Controllers;
+
+    using Assets.Scripts.Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
-    
+
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;

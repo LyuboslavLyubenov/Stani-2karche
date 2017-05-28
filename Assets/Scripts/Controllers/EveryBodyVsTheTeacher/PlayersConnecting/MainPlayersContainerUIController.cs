@@ -58,7 +58,18 @@ namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
             this.connectedMainPlayersControllers[connectionId].ClearUsername();
             this.connectedMainPlayersControllers.Remove(connectionId);
         }
-        
+
+        public void HideAll()
+        {
+            var mainPlayersConnectionIds = this.connectedMainPlayersControllers.Select(c => c.Key).ToArray();
+
+            for (int i = 0; i < mainPlayersConnectionIds.Length; i++)
+            {
+                var connectionId = mainPlayersConnectionIds[i];
+                this.HideMainPlayer(connectionId);
+            }
+        }
+
         private MainPlayerUIController GetFirstNotUsedMainPlayerObject()
         {
             var controller = this.mainPlayerUIControllers.FirstOrDefault(m => !this.connectedMainPlayersControllers.ContainsValue(m));

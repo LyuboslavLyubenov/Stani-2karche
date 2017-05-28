@@ -11,7 +11,6 @@ using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
-
     using System;
 
     using Interfaces.Controllers;

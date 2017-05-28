@@ -8,6 +8,8 @@
 
         void HideMainPlayer(int connectionId);
 
+        void HideAll();
+
         bool IsOnScreen(int connectionId);
     }
 }

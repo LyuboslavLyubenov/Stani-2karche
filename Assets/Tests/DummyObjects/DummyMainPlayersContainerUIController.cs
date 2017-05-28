@@ -52,6 +52,15 @@
             this.OnHideMainPlayer(this, new ClientConnectionIdEventArgs(connectionId));
         }
 
+        public void HideAll()
+        {
+            for (int i = 0; i < this.mainPlayersOnScreen.Count; i++)
+            {
+                var connectionId = this.mainPlayersOnScreen[i];
+                this.HideMainPlayer(connectionId);
+            }
+        }
+
         public bool IsOnScreen(int connectionId)
         {
             return this.mainPlayersOnScreen.Contains(connectionId);

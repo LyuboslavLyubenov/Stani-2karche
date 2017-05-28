@@ -71,8 +71,10 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         public void OnStateExit(StateMachine stateMachine)
         {
-            this.playersConnectingUI.SetActive(false);
+            
 
+            this.playersConnectingUI.SetActive(false);
+            
             PlayersConnectingStateCommandsInitializer.CleanCommands(this.networkManager);
         }
     }
