@@ -71,7 +71,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         public void OnStateExit(StateMachine stateMachine)
         {
-            
+            this.mainPlayersContainerUIController.HideAll();
+            this.audiencePlayersContainerUiController.HideAll();
 
             this.playersConnectingUI.SetActive(false);
             
