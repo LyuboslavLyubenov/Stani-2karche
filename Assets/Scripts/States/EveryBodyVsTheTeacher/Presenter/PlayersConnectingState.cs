@@ -18,12 +18,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
     {
         private readonly GameObject playersConnectingUI;
         private readonly IMainPlayersContainerUIController mainPlayersContainerUIController;    
-        private readonly IAudiencePlayersContainerUIController audiencePlayersContainerUiController;
+        private readonly IAudiencePlayersContainerUIController audiencePlayersContainerUIController;
         private readonly IClientNetworkManager networkManager;
 
         private readonly Action onEveryBodyRequestedGameStart;
-
-
+        
         public PlayersConnectingState(
             GameObject playersConnectingUI,
             IMainPlayersContainerUIController mainPlayersContainerUIController,
@@ -53,7 +52,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
             this.playersConnectingUI = playersConnectingUI;
             this.mainPlayersContainerUIController = mainPlayersContainerUIController;
-            this.audiencePlayersContainerUiController = audiencePlayersContainerUIController;
+            this.audiencePlayersContainerUIController = audiencePlayersContainerUIController;
             this.networkManager = networkManager;
             this.onEveryBodyRequestedGameStart = onEveryBodyRequestedGameStart;
         }
@@ -65,14 +64,14 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             PlayersConnectingStateCommandsInitializer.InitializeCommands(
                 this.networkManager,
                 this.mainPlayersContainerUIController,
-                this.audiencePlayersContainerUiController,
+                this.audiencePlayersContainerUIController,
                 this.onEveryBodyRequestedGameStart);
         }
 
         public void OnStateExit(StateMachine stateMachine)
         {
             this.mainPlayersContainerUIController.HideAll();
-            this.audiencePlayersContainerUiController.HideAll();
+            this.audiencePlayersContainerUIController.HideAll();
 
             this.playersConnectingUI.SetActive(false);
             

@@ -106,5 +106,4 @@
             return this.connectionIdAudienceObj.ContainsKey(connectionId);
         }
     }
-
 }
