@@ -2,10 +2,11 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
 {
-
     using System.Collections;
 
     using Interfaces.Controllers;
+
+    using UnityEngine;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
@@ -27,11 +28,11 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
 
             for (int i = 1; i <= 5; i++)
             {
+                yield return new WaitForSeconds(1f);
                 this.audiencePlayersContainerUiController.ShowAudiencePlayer(i, "Player " + i);
-                yield return null;
             }
 
-            yield return null;
+            yield return new WaitForSeconds(1f);
 
             if (!this.audiencePlayersContainerUiController.IsOnScreen(1))
             {
