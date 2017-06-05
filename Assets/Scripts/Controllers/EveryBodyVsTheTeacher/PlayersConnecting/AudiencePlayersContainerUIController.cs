@@ -1,6 +1,5 @@
 ﻿namespace Controllers.EveryBodyVsTheTeacher.PlayersConnecting
 {
-
     using System.Collections.Generic;
     using System.Linq;
 
@@ -18,6 +17,20 @@
 
     public class AudiencePlayersContainerUIController : MonoBehaviour, IAudiencePlayersContainerUIController
     {
+        private class AudiencePlayerOnScreen : AudiencePlayer
+        {
+            public GameObject Obj { get; set; }
+        }
+
+        private class AudiencePlayer
+        {
+            public int ConnectionId { get; set; }
+
+            public int OrderNumber { get; set; }
+
+            public string Username { get; set; }
+        }
+
         private const int AudiencePlayerObjectStartPositionX = -550;
 
         private readonly Vector2 StartPosition = new Vector2(AudiencePlayerObjectStartPositionX, 0);
@@ -25,9 +38,11 @@
         public GameObject DotsInAudienceContainer;
         
         public ObjectsPool AudienceObjectsPool;
-        
-        private readonly Queue<GameObject> audiencePlayerObjects = new Queue<GameObject>();
-        private readonly Dictionary<int, GameObject> connectionIdAudienceObj = new Dictionary<int, GameObject>();
+
+        private readonly HashSet<AudiencePlayerOnScreen> objectsOnScreen = new HashSet<AudiencePlayerOnScreen>();
+        private readonly HashSet<AudiencePlayer> playersShown = new HashSet<AudiencePlayer>();
+    
+        private int orderIndex = 0;
 
         void Awake()
         {
@@ -37,14 +52,6 @@
         void Start()
         {
             this.DotsInAudienceContainer.SetActive(false);
-        }
-        
-        private void HideDotsIfNoMoreThanFourPlayersAreConnected()
-        {
-            if (this.connectionIdAudienceObj.Count <= 3)
-            {
-                this.DotsInAudienceContainer.SetActive(false);
-            }
         }
         
         private GameObject GetAudienceObjectFromPoolWithStartPosition()
@@ -57,23 +64,69 @@
             return audiencePlayerTransform.gameObject;
         }
 
-        public void ShowAudiencePlayer(int connectionId, string username)
+        private void DeactivateFirstObject()
         {
-            if (this.audiencePlayerObjects.Count >= 3)
-            {
-                var audienceObjectToBeDeactivated = this.audiencePlayerObjects.Dequeue();
-                audienceObjectToBeDeactivated.SetActive(false);
+            var objectToDeactivate = this.objectsOnScreen.OrderBy(o => o.OrderNumber)
+                .First();
+            objectToDeactivate.Obj.SetActive(false);
+            this.objectsOnScreen.Remove(objectToDeactivate);
+        }
 
-                this.DotsInAudienceContainer.SetActive(true);
-            }
+        private void ShowLastConnectedOnScreen()
+        {
+            var player = this.playersShown.OrderByDescending(ps => ps.OrderNumber)
+                .First(ps => this.objectsOnScreen.All(apos => apos.ConnectionId != ps.ConnectionId));
+            this.ShowOnScreen(player);
+        }
 
+        private void ShowOnScreen(AudiencePlayer player)
+        {
             var newAudienceObject = this.GetAudienceObjectFromPoolWithStartPosition();
 
             var textComponent = newAudienceObject.GetComponentInChildren<Text>();
-            textComponent.text = username;
+            textComponent.text = player.Username;
 
-            this.connectionIdAudienceObj.Add(connectionId, newAudienceObject);
-            this.audiencePlayerObjects.Enqueue(newAudienceObject);
+            var playerOnScreen = new AudiencePlayerOnScreen()
+                                       {
+                                           ConnectionId = player.ConnectionId,
+                                           Obj = newAudienceObject,
+                                           OrderNumber = player.OrderNumber,
+                                           Username = player.Username
+                                       };
+
+            this.objectsOnScreen.Add(playerOnScreen);
+        }
+
+        private void HideFromScreen(int connectionId)
+        {
+            var playerToHide = this.objectsOnScreen.FirstOrDefault(apos => apos.ConnectionId == connectionId);
+
+            if (playerToHide == null)
+            {
+                return;
+            }
+
+            playerToHide.Obj.SetActive(false);
+            this.objectsOnScreen.Remove(playerToHide);
+        }
+        
+        public void ShowAudiencePlayer(int connectionId, string username)
+        {
+            if (this.playersShown.Count >= 3)
+            {
+                this.DeactivateFirstObject();
+                this.DotsInAudienceContainer.SetActive(true);
+            }
+
+            var audiencePlayer = new AudiencePlayer()
+                                 {
+                                     ConnectionId = connectionId,
+                                     OrderNumber = this.orderIndex++,
+                                     Username = username
+                                 };
+
+            this.ShowOnScreen(audiencePlayer);
+            this.playersShown.Add(audiencePlayer);
         }
 
         public void HideAudiencePlayer(int connectionId)
@@ -82,28 +135,35 @@
             {
                 return;
             }
+            
+            this.HideFromScreen(connectionId);
 
-            var obj = this.connectionIdAudienceObj[connectionId];
-            obj.SetActive(false);
+            var player = this.playersShown.First(ps => ps.ConnectionId == connectionId);
+            this.playersShown.Remove(player);
+            
+            if (this.playersShown.Count <= 3 || this.objectsOnScreen.Count >= 3)
+            {
+                return;
+            }
 
-            this.connectionIdAudienceObj.Remove(connectionId);
-            this.HideDotsIfNoMoreThanFourPlayersAreConnected();
+            this.ShowLastConnectedOnScreen();
         }
 
         public void HideAll()
         {
-            var audienceConnectionIds = this.connectionIdAudienceObj.Select(c => c.Key).ToArray();
+            var players = this.playersShown.ToArray();
 
-            for (int i = 0; i < audienceConnectionIds.Length; i++)
+            for (int i = 0; i < players.Length; i++)
             {
-                var connectionId = audienceConnectionIds[i];
+                var connectionId = players[i]
+                    .ConnectionId;
                 this.HideAudiencePlayer(connectionId);
             }
         }
 
         public bool IsOnScreen(int connectionId)
         {
-            return this.connectionIdAudienceObj.ContainsKey(connectionId);
+            return this.playersShown.FirstOrDefault(ps => ps.ConnectionId == connectionId) != null;
         }
     }
 }
