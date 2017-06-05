@@ -30,13 +30,12 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
                 yield return new WaitForSeconds(1f);
                 this.audiencePlayersContainerUIController.ShowAudiencePlayer(i, "Player " + i);
             }
-
-            yield return new WaitForSeconds(5f);
         }
         
         IEnumerator StartTest()
         {
             yield return StartCoroutine(this.ShowPlayers());
+            yield return new WaitForSeconds(1f);
 
             this.audiencePlayersContainerUIController.HideAudiencePlayer(5);
 
