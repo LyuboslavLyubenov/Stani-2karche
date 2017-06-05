@@ -70,4 +70,36 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
             }
         }
     }
+
+    public class HideAudiencePlayer : MonoBehaviour
+    {
+        private IAudiencePlayersContainerUIController audiencePlayersContainerUIController;
+
+        void Start()
+        {
+            this.StartCoroutine(this.StartTestsCoroutine());
+        }
+
+        private IEnumerator StartTestsCoroutine()
+        {
+            this.audiencePlayersContainerUIController.ShowAudiencePlayer(1, "Player 1");
+
+            yield return new WaitForSeconds(2f);
+
+            this.audiencePlayersContainerUIController.HideAudiencePlayer(1);
+
+            yield return null;
+
+            var objectsPool = GameObject.FindObjectOfType<ObjectsPool>()
+                .transform;
+            for (int i = 0; i < objectsPool.childCount; i++)
+            {
+                var audiencePlayerObject = objectsPool.GetChild(i).gameObject;
+                if (audiencePlayerObject.activeSelf)
+                {
+                    IntegrationTest.Fail();
+                }
+            }
+        }
+    }
 }
