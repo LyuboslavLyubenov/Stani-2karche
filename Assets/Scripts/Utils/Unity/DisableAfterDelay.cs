@@ -1,16 +1,8 @@
 ﻿namespace Utils.Unity
 {
-    using System;
-    using System.Collections;
-    using System.Linq;
-
     using Controllers;
 
-    using EventArgs;
-
     using UnityEngine;
-
-    using EventArgs = System.EventArgs;
 
     public class DisableAfterDelay : UnityTimer
     {
@@ -26,7 +18,10 @@
         // ReSharper disable once ArrangeTypeMemberModifiers
         void OnDisable()
         {
-            this.StopTimer();
+            if (this.Running)
+            {
+                this.StopTimer();
+            }
         }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
