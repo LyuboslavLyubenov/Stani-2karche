@@ -102,7 +102,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
         public override void OnStateEnter(StateMachine stateMachine)
         {
-#if UNITY_EDITOR
+#if DEVELOPMENT_BUILD
+            if (!PlayerPrefsEncryptionUtils.HasKey("LevelCategory"))
+            {
+                PlayerPrefsEncryptionUtils.SetString("LevelCategory", "философия");
+            }
+
             if (!PlayerPrefsEncryptionUtils.HasKey("LevelCategory"))
             {
                 PlayerPrefsEncryptionUtils.SetString("LevelCategory", "философия");
