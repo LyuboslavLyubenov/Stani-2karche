@@ -31,6 +31,9 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         void Start()
         {
+#if DEVELOPMENT_BUILD
+            PlayerPrefsEncryptionUtils.SetString("Username", "Test");
+#endif
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedToServer;
 
