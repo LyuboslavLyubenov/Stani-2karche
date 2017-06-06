@@ -8,10 +8,13 @@ using SelectedAnswerCommand = Commands.Server.SelectedAnswerCommand;
 using IAvailableElectionJokersUIController = Assets.Scripts.Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter.IAvailableJokersUIController;
 using ILeaderboardReceiver = Interfaces.Network.Leaderboard.ILeaderboardReceiver;
 using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared.SwitchedToNextRoundCommand;
+using ThreadUtils = Utils.ThreadUtils;
+using TimerUtils = Utils.TimerUtils;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
     using System;
+    using System.Collections;
 
     using Interfaces.Controllers;
 
@@ -25,8 +28,10 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private readonly GameObject playingUI;
 
         private readonly IClientNetworkManager networkManager;
-
+        
+        private GameObject electionQuestionUI;
         private readonly IElectionQuestionUIController electionQuestionUIController;
+        private readonly GameObject secondsRemainingUI;
         private readonly ISecondsRemainingUIController secondsRemainingUIController;
         private readonly IAvailableElectionJokersUIController availableJokersUIController;
 
@@ -38,11 +43,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         private readonly ILeaderboardReceiver leaderboardReceiver;
 
+
         public PlayingState(
             GameObject playingUI,
             IClientNetworkManager networkManager,
-            IElectionQuestionUIController electionQuestionUIController,
-            ISecondsRemainingUIController secondsRemainingUIController,
+            GameObject electionQuestionUI,
+            GameObject secondsRemainingUI,
             IAvailableElectionJokersUIController availableJokersUIController,
             SwitchedToNextRoundCommand switchedToNextRoundCommand,
             IAnswerPollResultRetriever pollResultRetriever,
@@ -59,14 +65,14 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
                 throw new ArgumentNullException("networkManager");
             }
 
-            if (electionQuestionUIController == null)
+            if (electionQuestionUI == null)
             {
-                throw new ArgumentNullException("electionQuestionUIController");
+                throw new ArgumentNullException("electionQuestionUI");
             }
 
-            if (secondsRemainingUIController == null)
+            if (secondsRemainingUI == null)
             {
-                throw new ArgumentNullException("secondsRemainingUIController");
+                throw new ArgumentNullException("secondsRemainingUI");
             }
 
             if (availableJokersUIController == null)
@@ -96,8 +102,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
             this.playingUI = playingUI;
             this.networkManager = networkManager;
-            this.electionQuestionUIController = electionQuestionUIController;
-            this.secondsRemainingUIController = secondsRemainingUIController;
+            this.electionQuestionUI = electionQuestionUI;
+            this.electionQuestionUIController =
+                electionQuestionUI.GetComponent(typeof(IElectionQuestionUIController)) as IElectionQuestionUIController;
+            this.secondsRemainingUI = secondsRemainingUI;
+            this.secondsRemainingUIController = 
+                secondsRemainingUI.GetComponent(typeof(ISecondsRemainingUIController)) as ISecondsRemainingUIController;
             this.availableJokersUIController = availableJokersUIController;
             this.switchedToNextRoundCommand = switchedToNextRoundCommand;
             this.pollResultRetriever = pollResultRetriever;
@@ -105,12 +115,22 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             this.leaderboardReceiver = leaderboardReceiver;
         }
 
-        private void OnReceivedQuestion(ISimpleQuestion question, int timeToAnswer)
+        private IEnumerator LoadQuestionAndSecondsRemainingCoroutine(ISimpleQuestion question, int timeToAnswer)
         {
+            this.electionQuestionUI.SetActive(true);
+            this.secondsRemainingUI.SetActive(true);
+
+            yield return null;
+
             this.electionQuestionUIController.LoadQuestion(question);
 
             this.secondsRemainingUIController.InvervalInSeconds = timeToAnswer;
             this.secondsRemainingUIController.StartTimer();
+        }
+
+        private void OnReceivedQuestion(ISimpleQuestion question, int timeToAnswer)
+        {
+            ThreadUtils.Instance.RunOnMainThread(this.LoadQuestionAndSecondsRemainingCoroutine(question, timeToAnswer));
         }
         
         private void OnReceivedAnswer(int connectionId, string answer)

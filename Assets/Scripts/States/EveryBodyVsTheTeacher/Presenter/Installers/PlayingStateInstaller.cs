@@ -202,10 +202,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         private void BindPlayingStateDependencies()
         {
-            this.Container.Bind<GameObject>()
-                .FromInstance(this.playingUI)
-                .WhenInjectedInto<PlayingState>();
-
             this.Container.Bind<IElectionQuestionUIController>()
                 .FromInstance(this.electionQuestionUIController)
                 .AsSingle();
@@ -241,10 +237,26 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             this.BindSwitchedToNextRoundCommand();
             this.BindAvailableJokersUIControllerDependencies(networkManager);
             this.BindPlayingStateDependencies();
-            
+
             this.Container.Bind<PlayingState>()
-                .ToSelf()
-                .AsSingle();
+                .FromMethod(
+                    (context) =>
+                        {
+                            var switchedToNextRoundCommand = context.Container.Resolve<SwitchedToNextRoundCommand>();
+                            var pollResultRetriever = context.Container.Resolve<IAnswerPollResultRetriever>();
+                            var gameEndCommand = context.Container.Resolve<GameEndCommand>();
+                            var leaderboardReceiver = context.Container.Resolve<ILeaderboardReceiver>();
+                            return new PlayingState(
+                                this.playingUI, 
+                                networkManager, 
+                                this.electionQuestionUIController.gameObject, 
+                                this.secondsRemainingUI, 
+                                this.availableJokersUIController, 
+                                switchedToNextRoundCommand,
+                                pollResultRetriever,
+                                gameEndCommand,
+                                leaderboardReceiver);
+                        });
         }
     }
 }
