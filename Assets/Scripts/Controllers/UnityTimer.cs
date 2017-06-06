@@ -1,6 +1,5 @@
 ﻿namespace Controllers
 {
-
     using System;
 
     using Assets.Scripts.Interfaces.Utils;
@@ -42,8 +41,9 @@
             get; private set;
         }
 
-        void Awake()
+        void Start()
         {
+            this.Initialize();
             this.CoroutineUtils.RepeatEverySeconds(1f, this.UpdateTimer);
         }
 
