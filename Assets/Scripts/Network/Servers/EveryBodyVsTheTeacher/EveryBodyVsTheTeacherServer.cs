@@ -160,11 +160,11 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.mainPlayersConnectionIds =
                 new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
 
-            this.roundsSwitcher.SwitchToNextRound();
-
             var startedGameCommand = NetworkCommandData.From<GameStartedCommand>();
             this.SendMainPlayersCommand(startedGameCommand);
 
+            this.roundsSwitcher.SwitchToNextRound();
+            
             this.StartedGame = true;
         }
 

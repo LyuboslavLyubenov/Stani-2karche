@@ -4,7 +4,6 @@ using PlayerPrefsEncryptionUtils = Utils.Unity.PlayerPrefsEncryptionUtils;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
-
     using System;
 
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Audience;
