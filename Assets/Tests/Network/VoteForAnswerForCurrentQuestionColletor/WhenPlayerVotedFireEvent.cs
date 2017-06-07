@@ -4,15 +4,12 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
-
     using Extensions;
 
     using Interfaces;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
-
-    using UnityEngine;
-
+    
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Zenject.Source.Usage;

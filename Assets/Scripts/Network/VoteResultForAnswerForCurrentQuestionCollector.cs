@@ -90,6 +90,8 @@ namespace Network
 
             this.answersVotesCount[answer]++;
 
+            this.OnPlayerVoted(this, new AnswerEventArgs(answer, null));
+
             if (this.clientsVoted.Count != this.server.MainPlayersConnectionIds.Count())
             {
                 return;
