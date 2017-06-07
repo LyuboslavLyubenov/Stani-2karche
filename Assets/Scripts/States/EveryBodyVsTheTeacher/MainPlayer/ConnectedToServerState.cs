@@ -9,12 +9,13 @@ using NetworkCommandData = Commands.NetworkCommandData;
 using NotEnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.NotEnoughPlayersToStartGameCommand;
 using QuestionUIController = Controllers.QuestionUIController;
 using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestCommand;
+using ThreadUtils = Utils.ThreadUtils;
 using TimerUtils = Utils.TimerUtils;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
 {
-
     using System;
+    using System.Collections;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
     using Assets.Scripts.Interfaces;
@@ -35,8 +36,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
         private readonly IQuestionUIController questionUIController;
 
         public ConnectedToServerState(
-            IClientNetworkManager networkManager, 
-            Button gameStartButton, 
+            IClientNetworkManager networkManager,
+            Button gameStartButton,
             GameObject questionUI,
             GameObject playingUI)
         {
@@ -75,11 +76,19 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
             this.networkManager.SendServerCommand(requestStartGameCommand);
         }
 
-        private void OnReceivedQuestion(ISimpleQuestion question, int timeToAnswerInSeconds)
+        private IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
         {
             this.questionUI.SetActive(true);
-            this.questionUIController.LoadQuestion(question);
 
+            yield return null;
+
+            this.questionUIController.LoadQuestion(question);
+        }
+
+        private void OnReceivedQuestion(ISimpleQuestion question, int timeToAnswerInSeconds)
+        {
+            ThreadUtils.Instance.RunOnMainThread(this.LoadQuestionCoroutine(question));
+            
             var timer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, () => this.questionUI.SetActive(false));
             timer.AutoDispose = true;
             timer.RunOnUnityThread = true;
