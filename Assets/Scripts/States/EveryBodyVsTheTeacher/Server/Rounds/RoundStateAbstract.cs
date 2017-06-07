@@ -138,6 +138,15 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                     });
         }
 
+
+        private void OnPlayerVotedForCurrentQuestion(object sender, AnswerEventArgs args)
+        {
+            var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+            answerSelectedCommand.AddOption("ConnectionId", "0");
+            answerSelectedCommand.AddOption("Answer", args.Answer);
+            this.networkManager.SendClientCommand(this.server.PresenterId, answerSelectedCommand);
+        }
+
         private void OnNoVotesCollected(object sender, EventArgs args)
         {
             this.OnMustEndGame(this, EventArgs.Empty);
@@ -181,6 +190,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             this.gameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
             this.currentQuestionAnswersCollector.OnNoVotesCollected += this.OnNoVotesCollected;
             this.currentQuestionAnswersCollector.OnCollectedVote += this.OnCollectedVoteForAnswerForCurrentQuestion;
+            this.currentQuestionAnswersCollector.OnPlayerVoted += this.OnPlayerVotedForCurrentQuestion;
 
             this.currentQuestionAnswersCollector.StartCollecting();
             
