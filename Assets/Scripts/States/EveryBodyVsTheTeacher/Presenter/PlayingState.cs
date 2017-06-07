@@ -42,8 +42,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private readonly GameEndCommand gameEndCommand;
 
         private readonly ILeaderboardReceiver leaderboardReceiver;
-
-
+        
         public PlayingState(
             GameObject playingUI,
             IClientNetworkManager networkManager,
@@ -123,6 +122,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             yield return null;
 
             this.electionQuestionUIController.LoadQuestion(question);
+
+            if (this.secondsRemainingUIController.Running)
+            {
+                this.secondsRemainingUIController.StopTimer();
+            }
 
             this.secondsRemainingUIController.InvervalInSeconds = timeToAnswer;
             this.secondsRemainingUIController.StartTimer();

@@ -14,7 +14,7 @@ namespace Scripts.Controllers.EveryBodyVsTheTeacher
 
     public class ChangedRoundUIController : DisableAfterDelay, IChangedRoundUIController
     {
-        private const int IntervalInSeconds = 10;
+        private const int IntervalInSeconds = 3;
 
         [SerializeField]
         private Text RoundsNumberText;
