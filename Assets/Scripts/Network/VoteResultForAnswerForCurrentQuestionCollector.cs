@@ -24,6 +24,7 @@ namespace Network
 
     public class VoteResultForAnswerForCurrentQuestionCollector : ICollectVoteResultForAnswerForCurrentQuestion
     {
+        public event EventHandler<AnswerEventArgs> OnPlayerVoted = delegate { };
         public event EventHandler<AnswerEventArgs> OnCollectedVote = delegate { };
         public event EventHandler OnNoVotesCollected = delegate { };
         public event EventHandler<UnhandledExceptionEventArgs> OnLoadingCurrentQuestionError = delegate {};
