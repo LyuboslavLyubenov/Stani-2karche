@@ -29,7 +29,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
         private readonly IClientNetworkManager networkManager;
         
-        private GameObject electionQuestionUI;
+        private readonly GameObject electionQuestionUI;
         private readonly IElectionQuestionUIController electionQuestionUIController;
         private readonly GameObject secondsRemainingUI;
         private readonly ISecondsRemainingUIController secondsRemainingUIController;

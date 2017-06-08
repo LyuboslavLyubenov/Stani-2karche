@@ -181,7 +181,6 @@ namespace Network
             }
             
             this.voteTimeoutTimer.Stop();
-            this.voteTimeoutTimer.Dispose();
 
             if (this.networkManager.CommandsManager.Exists("AnswerSelected"))
             {
