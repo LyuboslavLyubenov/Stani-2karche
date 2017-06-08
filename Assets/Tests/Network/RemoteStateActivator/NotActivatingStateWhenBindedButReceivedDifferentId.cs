@@ -34,8 +34,7 @@ namespace Assets.Tests.Network.RemoteStateActivator
             this.stateActivator.Bind("TestState", dummyState);
 
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
-            var activateStateCommand = new NetworkCommandData("ActivateState");
-            activateStateCommand.AddOption("Id", "NotThisTestState");
+            var activateStateCommand = new NetworkCommandData("ActivateNotThisTestState");
             dummyClientNetworkManager.FakeReceiveMessage(activateStateCommand.ToString());
 
             if (this.stateMachine.CurrentState != dummyState)

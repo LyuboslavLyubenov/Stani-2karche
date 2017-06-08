@@ -2,16 +2,13 @@
 
 namespace Assets.Tests.Network.RemoteStateActivator
 {
-
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Network;
 
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
-
-    using UnityEngine;
-
+    
     using Zenject.Source.Install;
 
     public class Installer : MonoInstaller

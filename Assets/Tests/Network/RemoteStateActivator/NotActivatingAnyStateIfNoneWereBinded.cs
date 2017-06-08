@@ -29,8 +29,7 @@ namespace Assets.Tests.Network.RemoteStateActivator
         void Start()
         {
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
-            var activateStateCommand = new NetworkCommandData("ActivateState");
-            activateStateCommand.AddOption("Id", "NotBindedState");
+            var activateStateCommand = new NetworkCommandData("ActivateNotBindedState");
             dummyClientNetworkManager.FakeReceiveMessage(activateStateCommand.ToString());
         }
     }
