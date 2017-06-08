@@ -6,6 +6,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
@@ -121,8 +122,30 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 this.networkManager.KickPlayer(connectionId, "Presenter already connected");//TODO: Transate
                 return;
             }
-
+            
             this.PresenterId = connectionId;
+            this.SendCurrentStateToPresenter();
+        }
+
+        private void SendCurrentStateToPresenter()
+        {
+            var stateName = string.Empty;
+
+            if (this.stateMachine.CurrentState == this.playersConnectingToTheServerState)
+            {
+                stateName = "PlayersConnectingState";
+            }
+            else if (this.stateMachine.CurrentState.IsImplemetingInterface(typeof(IRoundState)))
+            {
+                stateName = "PlayingState";
+            }
+            else
+            {
+                return;
+            }
+
+            var activateStateCommand = new NetworkCommandData("Activate" + stateName);
+            this.networkManager.SendClientCommand(this.PresenterId, activateStateCommand);
         }
 
         private void OnMainPlayerConnecting(int connectionId)

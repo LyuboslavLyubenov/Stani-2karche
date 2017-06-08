@@ -3,6 +3,10 @@ using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkMa
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
+
+    using Assets.Scripts.Interfaces.Network;
+    using Assets.Scripts.Network;
+
     using StateMachine;
 
     using Zenject.Source.Install;
@@ -17,6 +21,10 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
             this.Container.Bind<StateMachine>()
                 .ToSelf()
+                .AsSingle();
+
+            this.Container.Bind<IRemoteStateActivator>()
+                .To<RemoteStateActivator>()
                 .AsSingle();
         }
     }

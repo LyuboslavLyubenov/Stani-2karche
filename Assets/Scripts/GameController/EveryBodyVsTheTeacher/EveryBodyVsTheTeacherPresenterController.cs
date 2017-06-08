@@ -8,6 +8,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
     using System;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter;
     
     using StateMachine;
@@ -32,6 +33,9 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         [Inject]
         private StateMachine stateMachine;
+
+        [Inject]
+        private IRemoteStateActivator remoteStateActivator;
         
         void Start()
         {
@@ -43,6 +47,9 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
             
             this.stateMachine.SetCurrentState(this.notConnectedToServerState);
+
+            this.remoteStateActivator.Bind("PlayersConnectingState", this.playersConnectingState);
+            this.remoteStateActivator.Bind("PlayingState", this.playingState);
         }
 
         private void OnConnectedToServer(object sender, EventArgs args)
