@@ -8,10 +8,13 @@
     {
         public bool DisableAfterClick = true;
         public bool UseAnimator = false;
-        
+
+        private bool deactivating = false;
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void OnEnable()
         {
+            this.deactivating = false;
             this.StartTimer();
         }
 
@@ -27,7 +30,7 @@
         // ReSharper disable once ArrangeTypeMemberModifiers
         void FixedUpdate()
         {
-            if (this.DisableAfterClick && Input.GetMouseButton(0))
+            if (this.DisableAfterClick && Input.GetMouseButton(0) && !this.deactivating)
             {
                 this.StopTimer();
                 this.Disable();
@@ -36,6 +39,8 @@
 
         private void Disable()
         {
+            this.deactivating = true;
+
             if (this.UseAnimator)
             {
                 this.GetComponent<Animator>().SetTrigger("disable");
@@ -46,6 +51,4 @@
             }
         }
     }
-
 }
-
