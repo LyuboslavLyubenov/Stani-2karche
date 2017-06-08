@@ -30,6 +30,8 @@ namespace Assets.Tests.Network.RemoteStateActivator
 
         void Start()
         {
+            this.networkManager.CommandsManager.RemoveAllCommands();
+
             var dummyState = new DummyRoundState();
             this.stateActivator.Bind("TestState", dummyState);
 

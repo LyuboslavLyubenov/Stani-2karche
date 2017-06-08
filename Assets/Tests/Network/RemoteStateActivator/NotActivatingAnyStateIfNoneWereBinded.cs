@@ -13,6 +13,8 @@ namespace Assets.Tests.Network.RemoteStateActivator
 
     using UnityEngine;
 
+    using UnityTestTools.IntegrationTestsFramework.TestRunner;
+
     using Zenject.Source.Usage;
 
     public class NotActivatingAnyStateIfNoneWereBinded : MonoBehaviour
@@ -28,9 +30,20 @@ namespace Assets.Tests.Network.RemoteStateActivator
 
         void Start()
         {
+            this.networkManager.CommandsManager.RemoveAllCommands();
+
             var dummyClientNetworkManager = (DummyClientNetworkManager)this.networkManager;
             var activateStateCommand = new NetworkCommandData("ActivateNotBindedState");
             dummyClientNetworkManager.FakeReceiveMessage(activateStateCommand.ToString());
+
+            if (this.stateMachine.CurrentState == null)
+            {
+                IntegrationTest.Pass();
+            }
+            else
+            {
+                IntegrationTest.Fail();
+            }
         }
     }
 }
