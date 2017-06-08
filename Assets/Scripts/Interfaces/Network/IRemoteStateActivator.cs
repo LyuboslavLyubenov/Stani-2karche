@@ -7,7 +7,5 @@
         void Bind(string id, IState stateToActivate);
 
         void UnBind(string id);
-
-        void UnBind(IState state); 
     }
 }
