@@ -1,4 +1,5 @@
 ﻿using ClientConnectionIdEventArgs = EventArgs.ClientConnectionIdEventArgs;
+using GameEndCommand = Commands.Client.GameEndCommand;
 using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
@@ -39,14 +40,14 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
         {        
             this.networkManager.OnClientConnected += OnClientConnected;
 
-            var endGameCommand = new NetworkCommandData("EndGame");
+            var endGameCommand = NetworkCommandData.From<GameEndCommand>();
             endGameCommand.AddOption("Mark", this.gameDataIterator.CurrentMark.ToString());
             this.networkManager.SendAllClientsCommand(endGameCommand);
         }
 
         private void OnClientConnected(object sender, ClientConnectionIdEventArgs args)
         {
-            var endGameCommand = new NetworkCommandData("EndGame");
+            var endGameCommand = NetworkCommandData.From<GameEndCommand>();
             endGameCommand.AddOption("Mark", this.gameDataIterator.CurrentMark.ToString());
             this.networkManager.SendClientCommand(args.ConnectionId, endGameCommand);
         }
