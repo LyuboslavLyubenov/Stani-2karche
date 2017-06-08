@@ -107,15 +107,17 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
             if (this.index >= 0)
             {
-                this.rounds[this.index].OnStateExit(this.stateMachine);
-                this.rounds[this.index].OnMustGoOnNextRound -= this.OnMustGoOnNextRound;
-                this.rounds[this.index].OnMustEndGame -= this.OnMustEndGame;
+                var previousRound = this.rounds[this.index];
+                previousRound.OnMustGoOnNextRound -= this.OnMustGoOnNextRound;
+                previousRound.OnMustEndGame -= this.OnMustEndGame;
             }
+            
+            var nextRound = this.rounds[nextRoundIndex];
+            this.stateMachine.SetCurrentState(nextRound);
 
-            this.rounds[nextRoundIndex].OnStateEnter(this.stateMachine);
             this.rounds[nextRoundIndex].OnMustGoOnNextRound += this.OnMustGoOnNextRound;
             this.rounds[nextRoundIndex].OnMustEndGame += this.OnMustEndGame;
-
+            
             this.index = nextRoundIndex;
             this.OnSwitchedToNextRound(this, EventArgs.Empty);
         }
