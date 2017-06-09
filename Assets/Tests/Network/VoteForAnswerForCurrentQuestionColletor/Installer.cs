@@ -25,11 +25,16 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
             this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);
 
+            var secondsForAnswer = 5;
+
+            this.Container.Bind<int>()
+                .FromInstance(secondsForAnswer);
+
             var gameDataIterator = new DummyGameDataIterator()
                                    {
                                        CurrentQuestion = question,
                                        CurrentMark = 2,
-                                       SecondsForAnswerQuestion = 5,
+                                       SecondsForAnswerQuestion = secondsForAnswer,
                                        Loaded = true
                                    };
             
