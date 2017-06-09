@@ -5,7 +5,6 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityEngine;
 

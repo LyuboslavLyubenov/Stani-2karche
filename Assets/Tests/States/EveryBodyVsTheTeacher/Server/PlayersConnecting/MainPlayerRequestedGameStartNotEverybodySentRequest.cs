@@ -5,12 +5,14 @@ using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestC
 
 namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 {
+
+    using Assets.Tests.Extensions;
+
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 

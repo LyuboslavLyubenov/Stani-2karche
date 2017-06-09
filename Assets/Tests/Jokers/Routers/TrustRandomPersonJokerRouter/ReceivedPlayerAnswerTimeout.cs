@@ -1,6 +1,8 @@
 namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
 {
 
+    using Assets.Tests.Extensions;
+
     using Exceptions.Jokers;
 
     using Interfaces;
@@ -10,7 +12,6 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityEngine;
 

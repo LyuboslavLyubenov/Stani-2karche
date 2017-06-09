@@ -11,13 +11,13 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
     using System.Collections;
 
     using Assets.Tests.DummyObjects.States.EveryBodyVsTheTeacher;
+    using Assets.Tests.Extensions;
 
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 

@@ -1,5 +1,5 @@
 ﻿using NetworkCommandData = Commands.NetworkCommandData;
-using StringExtensions = Extensions.StringExtensions;
+using StringExtensions = Assets.Scripts.Extensions.StringExtensions;
 
 namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 {
@@ -7,13 +7,14 @@ namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Tests.Extensions;
+
     using Interfaces;
     using Interfaces.GameData;
     using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 

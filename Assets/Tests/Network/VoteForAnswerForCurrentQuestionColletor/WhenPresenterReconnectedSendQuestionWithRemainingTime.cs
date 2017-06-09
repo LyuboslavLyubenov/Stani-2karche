@@ -5,6 +5,9 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Extensions;
+
     using Commands;
 
     using Extensions;
@@ -70,6 +73,9 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
                             () =>
                                 {
                                     dummyNetworkManager.FakeConnectPlayer(6);
+                                    var presenterConnectingCommand =
+                                        NetworkCommandData.From<PresenterConnectingCommand>();
+                                    dummyNetworkManager.FakeReceiveMessage(6, presenterConnectingCommand.ToString());
                                 });
                     });
         }

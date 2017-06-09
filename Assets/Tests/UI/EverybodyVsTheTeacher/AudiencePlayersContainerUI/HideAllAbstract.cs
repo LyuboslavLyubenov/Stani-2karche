@@ -6,7 +6,7 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
     using System.Collections;
     using System.Linq;
 
-    using Extensions;
+    using Assets.Scripts.Extensions;
 
     using Interfaces.Controllers;
 

@@ -9,7 +9,6 @@ namespace Tests.States.RoundsSwitcherEventsNotifier
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityEngine;
 

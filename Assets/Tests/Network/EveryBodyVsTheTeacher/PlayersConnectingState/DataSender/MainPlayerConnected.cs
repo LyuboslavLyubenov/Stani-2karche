@@ -3,13 +3,14 @@
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
 
+    using Assets.Tests.Extensions;
+
     using Interfaces.Network;
     using Interfaces.Network.EveryBodyVsTheTeacher;
     using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 

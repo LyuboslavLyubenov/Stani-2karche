@@ -8,7 +8,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
     using System.Collections.ObjectModel;
     using System.Linq;
 
-    using Extensions;
+    using Assets.Tests.Extensions;
 
     using Interfaces.Network;
     using Interfaces.Network.EveryBodyVsTheTeacher;

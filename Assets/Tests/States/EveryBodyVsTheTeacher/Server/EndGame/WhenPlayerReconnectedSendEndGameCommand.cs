@@ -5,8 +5,7 @@ namespace Tests.States.Server.EndGame
 {
 
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
-
-    using Extensions;
+    using Assets.Tests.Extensions;
 
     using Interfaces.Network.NetworkManager;
 

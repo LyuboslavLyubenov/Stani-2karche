@@ -9,6 +9,7 @@ namespace States.EveryBodyVsTheTeacher.Server
     using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Extensions;
 
     using Commands;
     using Commands.EveryBodyVsTheTeacher;

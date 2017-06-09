@@ -4,7 +4,8 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
-    using Extensions;
+
+    using Assets.Tests.Extensions;
 
     using Interfaces;
     using Interfaces.Network;

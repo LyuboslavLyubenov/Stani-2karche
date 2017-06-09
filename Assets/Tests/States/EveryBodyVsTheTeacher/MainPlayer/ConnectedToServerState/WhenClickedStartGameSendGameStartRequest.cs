@@ -2,11 +2,12 @@
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
+
+    using Assets.Scripts.Extensions.Unity.UI;
+
     using Commands;
     using Commands.EveryBodyVsTheTeacher.PlayersConnectingState;
-
-    using Extensions.Unity.UI;
-
+    
     using Interfaces.Network.NetworkManager;
 
     using UnityEngine;

@@ -10,6 +10,8 @@
     using System.Text;
     using System.Timers;
 
+    using Assets.Scripts.Extensions;
+
     using Extensions;
 
     using Interfaces.Network;

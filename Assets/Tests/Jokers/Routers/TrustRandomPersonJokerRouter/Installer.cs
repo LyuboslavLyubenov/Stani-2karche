@@ -3,6 +3,8 @@ using Routers_TrustRandomPersonJokerRouter = Jokers.Routers.TrustRandomPersonJok
 namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
 {
 
+    using Assets.Tests.Extensions;
+
     using DTOs;
 
     using Interfaces;
@@ -12,7 +14,6 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using Zenject.Source.Install;
 

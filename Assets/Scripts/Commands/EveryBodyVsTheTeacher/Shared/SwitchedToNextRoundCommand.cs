@@ -5,6 +5,7 @@ namespace Scripts.Commands.EveryBodyVsTheTeacher.Shared
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Controllers;
 
     using Extensions;

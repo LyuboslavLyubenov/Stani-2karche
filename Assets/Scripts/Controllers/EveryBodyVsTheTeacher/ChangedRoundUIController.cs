@@ -5,6 +5,7 @@ namespace Scripts.Controllers.EveryBodyVsTheTeacher
 
     using System;
 
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Controllers;
 
     using Extensions;

@@ -1,10 +1,9 @@
-﻿using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
+﻿using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
+using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 
-namespace Tests.Extensions
+namespace Assets.Tests.Extensions
 {
-
-    using Tests.DummyObjects;
 
     public static class DummyServerNetworkManagersExtensions
     {

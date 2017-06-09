@@ -3,12 +3,13 @@
 namespace Tests.Jokers.Routers.AskClientQuestionRouter
 {
 
+    using Assets.Tests.Extensions;
+
     using Interfaces;
     using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityEngine;
 

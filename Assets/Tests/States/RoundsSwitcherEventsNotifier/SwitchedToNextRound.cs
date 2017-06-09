@@ -5,8 +5,6 @@ namespace Tests.States.RoundsSwitcherEventsNotifier
 {
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
-    
-    using Extensions;
 
     using Interfaces.Network.NetworkManager;
 

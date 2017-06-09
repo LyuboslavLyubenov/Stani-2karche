@@ -3,13 +3,13 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerState
 {
+
+    using Assets.Scripts.Extensions.Unity.UI;
     using Assets.Scripts.Interfaces;
 
     using Commands;
     using Commands.Client;
-
-    using Extensions.Unity.UI;
-
+    
     using Interfaces;
     using Interfaces.Network.NetworkManager;
 

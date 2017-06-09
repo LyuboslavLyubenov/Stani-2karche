@@ -6,13 +6,12 @@ using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.Pl
 namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
 {
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Tests.Extensions;
 
     using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
-
-    using Tests.Extensions;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 

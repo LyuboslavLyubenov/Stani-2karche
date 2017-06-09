@@ -4,8 +4,8 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
     using Commands;
-
-    using Extensions.Unity.UI;
+    
+    using Assets.Scripts.Extensions.Unity.UI;
 
     using Interfaces;
     using Interfaces.Controllers;

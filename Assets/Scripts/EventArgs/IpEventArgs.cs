@@ -3,6 +3,8 @@
 
     using System;
 
+    using Assets.Scripts.Extensions;
+
     using Extensions;
 
     using EventArgs = System.EventArgs;

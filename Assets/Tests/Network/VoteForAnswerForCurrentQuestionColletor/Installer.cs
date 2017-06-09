@@ -2,7 +2,6 @@
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
-
     using System.Linq;
 
     using DTOs;

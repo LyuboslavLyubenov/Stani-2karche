@@ -1,13 +1,13 @@
 ﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
+using NetworkCommandData = Commands.NetworkCommandData;
 
-namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
+namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
 
-    using Commands;
-
-    using Extensions;
+    using Assets.Scripts.Extensions;
+    using Assets.Tests.Extensions;
 
     using Interfaces;
     using Interfaces.Network;
@@ -70,7 +70,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
                             () =>
                                 {
                                     dummyServer.MainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
-                                    dummyNetworkManager.FakeConnectPlayer(2);
+                                    dummyNetworkManager.SimulateMainPlayerConnected(1, "Ivan");
                                 });
                     });
         }

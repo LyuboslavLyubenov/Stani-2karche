@@ -8,10 +8,9 @@ namespace Tests.States.Server.EndGame
     using System.Linq;
 
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Tests.Extensions;
 
     using Commands;
-
-    using Extensions;
 
     using Interfaces.Network.NetworkManager;
 

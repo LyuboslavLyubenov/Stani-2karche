@@ -1,4 +1,4 @@
-﻿namespace Extensions.Unity.UI
+﻿namespace Assets.Scripts.Extensions.Unity.UI
 {
 
     using UnityEngine.EventSystems;

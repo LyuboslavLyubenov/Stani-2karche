@@ -7,6 +7,8 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Tests.Extensions;
+
     using EventArgs;
 
     using Interfaces.Network.NetworkManager;
@@ -14,7 +16,6 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
     using StateMachine;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 

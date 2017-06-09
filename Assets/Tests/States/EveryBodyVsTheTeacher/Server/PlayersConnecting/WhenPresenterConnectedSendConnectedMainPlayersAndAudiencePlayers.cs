@@ -11,8 +11,7 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
     using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
-
-    using Extensions;
+    using Assets.Tests.Extensions;
 
     using Interfaces.Network.NetworkManager;
 

@@ -2,6 +2,7 @@
 {
     using System;
 
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Controllers;
 
     using Extensions;

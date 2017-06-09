@@ -5,13 +5,13 @@ namespace Tests.States.RoundsSwitcherEventsNotifier
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
     using Assets.Tests.DummyObjects.States.EveryBodyVsTheTeacher;
+    using Assets.Tests.Extensions;
 
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
 
     using Tests.DummyObjects;
-    using Tests.Extensions;
 
     using Zenject.Source.Install;
 
