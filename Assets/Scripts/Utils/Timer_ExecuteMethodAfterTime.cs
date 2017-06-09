@@ -4,7 +4,7 @@ namespace Utils
     using System;
     using System.Timers;
 
-    public class Timer_ExecuteMethodAfterTime : Timer, IExtendedTimer
+    public class Timer_ExecuteMethodAfterTime : ExtendedTimer, IExtendedTimer
     {
         public Action Method
         {
@@ -22,7 +22,6 @@ namespace Utils
         }
 
         public Timer_ExecuteMethodAfterTime(double interval)
-            : base(interval)
         {
             base.AutoReset = false;
             base.Elapsed += this.OnElapsed;
@@ -38,7 +37,7 @@ namespace Utils
             {
                 this.Method();
             }
-            
+
             base.Stop();
 
             if (this.AutoDispose)

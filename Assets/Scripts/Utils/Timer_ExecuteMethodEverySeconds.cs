@@ -1,10 +1,9 @@
 ﻿namespace Utils
 {
-
     using System;
     using System.Timers;
 
-    public class Timer_ExecuteMethodEverySeconds : Timer, IExtendedTimer
+    public class Timer_ExecuteMethodEverySeconds : ExtendedTimer, IExtendedTimer
     {
         public Action Method
         {
@@ -17,8 +16,8 @@
         }
 
         public Timer_ExecuteMethodEverySeconds(double interval)
-            : base(interval)
         {
+            this.Interval = interval;
             base.AutoReset = true;
             base.Elapsed += this.OnElapsed;
         }
