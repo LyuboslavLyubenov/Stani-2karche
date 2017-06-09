@@ -12,6 +12,10 @@ namespace Network
     using System.Collections.Generic;
     using System.Linq;
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+
+    using Commands.Server;
+
     using EventArgs;
 
     using Interfaces.Network;
@@ -29,11 +33,13 @@ namespace Network
         public event EventHandler OnNoVotesCollected = delegate { };
         public event EventHandler<UnhandledExceptionEventArgs> OnLoadingCurrentQuestionError = delegate {};
 
-        private IEveryBodyVsTheTeacherServer server;
-        private IServerNetworkManager networkManager;
-        private IGameDataIterator gameDataIterator;
+        private readonly IEveryBodyVsTheTeacherServer server;
+        private readonly IServerNetworkManager networkManager;
+        private readonly IGameDataIterator gameDataIterator;
 
-        private SelectedAnswerCommand answerSelectedCommand;
+        private readonly SelectedAnswerCommand answerSelectedCommand;
+        private readonly MainPlayerConnectingCommand mainPlayerConnecting;
+        private readonly PresenterConnectingCommand presenterConnecting;
 
         private List<int> clientsVoted = new List<int>();
         private Dictionary<string, int> answersVotesCount = new Dictionary<string, int>();
@@ -41,7 +47,7 @@ namespace Network
         private string[] possibleAnswers;
 
         private Timer_ExecuteMethodAfterTime voteTimeoutTimer;
-
+        
         public bool Collecting
         {
             get;
@@ -62,8 +68,31 @@ namespace Network
             this.gameDataIterator = gameDataIterator;
 
             this.answerSelectedCommand = new SelectedAnswerCommand(this.OnReceivedAnswer);
+            this.mainPlayerConnecting = new MainPlayerConnectingCommand(this.OnMainPlayerConnected);
+            this.presenterConnecting = new PresenterConnectingCommand(this.OnPresenterConnecting);
+        }
+        
+        private void OnMainPlayerConnected(int connectionId)
+        {
+            this.SendCurrentQuestionTo(connectionId);
         }
 
+        private void OnPresenterConnecting(int connectionId)
+        {
+            this.SendCurrentQuestionTo(connectionId);   
+        }
+
+        private void SendCurrentQuestionTo(int connectionId)
+        {
+            this.gameDataIterator.GetCurrentQuestion(
+                (question) =>
+                    {
+                        var timeToAnswerLeft = (int)this.voteTimeoutTimer.RemainingTimeInMiliseconds / 1000;
+                        var loadQuestionCommand = this.ConfigureLoadQuestionCommand(question, timeToAnswerLeft);
+                        this.networkManager.SendClientCommand(connectionId, loadQuestionCommand);
+                    });
+        }
+        
         private void ConfigureTimer(int timeToAnswerInSeconds)
         {
             this.voteTimeoutTimer = TimerUtils.ExecuteAfter(timeToAnswerInSeconds, this.OnReceivedAllAnswersTimeout);
@@ -115,21 +144,17 @@ namespace Network
             }
             else
             {
-                var highestVotedAnswer = this.answersVotesCount.OrderByDescending(answerVotesCount => answerVotesCount.Value)
-                .First()
-                .Key;
+                var highestVotedAnswer = this.answersVotesCount
+                    .OrderByDescending(answerVotesCount => answerVotesCount.Value)
+                    .First()
+                    .Key;
                 this.OnCollectedVote(this, new AnswerEventArgs(highestVotedAnswer, null));
             }
         }
 
         private void SendQuestionToMainPlayersAndPresenter(ISimpleQuestion question, int timeToAnswerInSeconds)
         {
-            var loadQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
-            var questionJSON = JsonUtility.ToJson(question.Serialize());
-
-            loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
-            loadQuestionCommand.AddOption("TimeToAnswer", timeToAnswerInSeconds.ToString());
-
+            var loadQuestionCommand = this.ConfigureLoadQuestionCommand(question, timeToAnswerInSeconds);
             var connectionIds = this.server.MainPlayersConnectionIds.ToList();
             connectionIds.Add(this.server.PresenterId);
 
@@ -138,6 +163,17 @@ namespace Network
                 var mainPlayerConnectionId = connectionIds[i];
                 this.networkManager.SendClientCommand(mainPlayerConnectionId, loadQuestionCommand);
             }
+        }
+
+        private NetworkCommandData ConfigureLoadQuestionCommand(ISimpleQuestion question, int timeToAnswerInSeconds)
+        {
+            var loadQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
+            var questionJSON = JsonUtility.ToJson(question.Serialize());
+
+            loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
+            loadQuestionCommand.AddOption("TimeToAnswer", timeToAnswerInSeconds.ToString());
+
+            return loadQuestionCommand;
         }
 
         public void StartCollecting()
@@ -162,9 +198,12 @@ namespace Network
 
                         this.ConfigureTimer(this.gameDataIterator.SecondsForAnswerQuestion);
                         this.SendQuestionToMainPlayersAndPresenter(question, this.gameDataIterator.SecondsForAnswerQuestion);
-                        this.voteTimeoutTimer.Start();
+                        
                         this.networkManager.CommandsManager.AddCommand("AnswerSelected", this.answerSelectedCommand);
+                        this.networkManager.CommandsManager.AddCommand(this.mainPlayerConnecting);
+                        this.networkManager.CommandsManager.AddCommand(this.presenterConnecting);
 
+                        this.voteTimeoutTimer.Start();
                         this.Collecting = true;
                     },
                 (error) =>
@@ -187,6 +226,16 @@ namespace Network
                 this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
             }
 
+            if (this.networkManager.CommandsManager.Exists(this.mainPlayerConnecting))
+            {
+                this.networkManager.CommandsManager.RemoveCommand(this.mainPlayerConnecting);
+            }
+
+            if (this.networkManager.CommandsManager.Exists(this.presenterConnecting))
+            {
+                this.networkManager.CommandsManager.RemoveCommand(this.presenterConnecting);
+            }
+
             this.Collecting = false;
         }
 
@@ -202,10 +251,6 @@ namespace Network
             this.voteTimeoutTimer.Stop();
             this.voteTimeoutTimer.Dispose();
             this.voteTimeoutTimer = null;
-
-            this.server = null;
-            this.networkManager = null;
-            this.gameDataIterator = null;
         }
     }
 }
