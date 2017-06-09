@@ -23,6 +23,7 @@ namespace Utils
 
         public Timer_ExecuteMethodAfterTime(double interval)
         {
+            this.Interval = interval;
             base.AutoReset = false;
             base.Elapsed += this.OnElapsed;
         }

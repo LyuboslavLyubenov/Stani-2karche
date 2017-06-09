@@ -1,8 +1,12 @@
-﻿using VoteResultForAnswerForCurrentQuestionCollector = Network.VoteResultForAnswerForCurrentQuestionCollector;
+﻿using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
+using VoteResultForAnswerForCurrentQuestionCollector = Network.VoteResultForAnswerForCurrentQuestionCollector;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
     using System.Linq;
+
+    using Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor;
+    using Assets.Tests.Utils;
 
     using DTOs;
 
@@ -19,7 +23,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
     {
         public override void InstallBindings()
         {
-            var question = new SimpleQuestion("QuestionText", new[] { "answer1", "answer2", "answer3", "answer4" }, 0);
+            var question = new QuestionGenerator().GenerateQuestion();
 
             this.Container.Bind<ISimpleQuestion>()
                 .FromInstance(question);
@@ -27,7 +31,12 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
             var secondsForAnswer = 5;
 
             this.Container.Bind<int>()
-                .FromInstance(secondsForAnswer);
+                .FromInstance(secondsForAnswer)
+                .WhenInjectedInto<WhenPresenterReconnectedSendQuestionWithRemainingTime>();
+
+            this.Container.Bind<int>()
+                .FromInstance(secondsForAnswer)
+                .WhenInjectedInto<WhenMainPlayerReconnectedSendQuestionWithRemainingTime>();
 
             var gameDataIterator = new DummyGameDataIterator()
                                    {
@@ -53,8 +62,10 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
                 .AsSingle();
 
             this.Container.Bind<IServerNetworkManager>()
-                .To<DummyServerNetworkManager>()
-                .AsSingle();
+                .FromInstance(DummyServerNetworkManager.Instance);
+
+            var dummyServerNetworkManager = DummyServerNetworkManager.Instance;
+            dummyServerNetworkManager.CommandsManager.AddCommand(new LoadQuestionCommand(delegate { }));
             
             this.Container.Bind<ICollectVoteResultForAnswerForCurrentQuestion>()
                 .To<VoteResultForAnswerForCurrentQuestionCollector>();
