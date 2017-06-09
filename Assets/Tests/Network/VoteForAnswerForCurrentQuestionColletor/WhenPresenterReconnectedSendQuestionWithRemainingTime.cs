@@ -22,7 +22,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
     public class WhenPresenterReconnectedSendQuestionWithRemainingTime : ExtendedMonoBehaviour
     {
         [Inject]
-        private IClientNetworkManager networkManager;
+        private IServerNetworkManager networkManager;
 
         [Inject]
         private IEveryBodyVsTheTeacherServer server;
