@@ -67,13 +67,28 @@ namespace Network
             this.networkManager = networkManager;
             this.gameDataIterator = gameDataIterator;
 
+            this.networkManager.OnClientDisconnected += OnClientDisconnected;
+
             this.answerSelectedCommand = new SelectedAnswerCommand(this.OnReceivedAnswer);
             this.mainPlayerConnecting = new MainPlayerConnectingCommand(this.OnMainPlayerConnected);
             this.presenterConnecting = new PresenterConnectingCommand(this.OnPresenterConnecting);
         }
-        
+
+        private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
+        {
+            if (this.Collecting && !this.server.MainPlayersConnectionIds.Any())
+            {
+                this.voteTimeoutTimer.Pause();
+            }
+        }
+
         private void OnMainPlayerConnected(int connectionId)
         {
+            if (this.voteTimeoutTimer.Paused)
+            {
+                this.voteTimeoutTimer.Resume();
+            }
+
             this.SendCurrentQuestionTo(connectionId);
         }
 
