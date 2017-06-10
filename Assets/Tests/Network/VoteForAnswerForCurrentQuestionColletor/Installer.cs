@@ -31,12 +31,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
             var secondsForAnswer = 5;
 
             this.Container.Bind<int>()
-                .FromInstance(secondsForAnswer)
-                .WhenInjectedInto<WhenPresenterReconnectedSendQuestionWithRemainingTime>();
-
-            this.Container.Bind<int>()
-                .FromInstance(secondsForAnswer)
-                .WhenInjectedInto<WhenMainPlayerReconnectedSendQuestionWithRemainingTime>();
+                .FromInstance(secondsForAnswer);
 
             var gameDataIterator = new DummyGameDataIterator()
                                    {
@@ -63,9 +58,6 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 
             this.Container.Bind<IServerNetworkManager>()
                 .FromInstance(DummyServerNetworkManager.Instance);
-
-            var dummyServerNetworkManager = DummyServerNetworkManager.Instance;
-            dummyServerNetworkManager.CommandsManager.AddCommand(new LoadQuestionCommand(delegate { }));
             
             this.Container.Bind<ICollectVoteResultForAnswerForCurrentQuestion>()
                 .To<VoteResultForAnswerForCurrentQuestionCollector>();

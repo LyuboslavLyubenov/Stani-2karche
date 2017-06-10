@@ -10,15 +10,11 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 {
-
     using System;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
-    using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher;
     using Assets.Scripts.Utils.States.EveryBodyVsTheTeacher.Server;
-
-    using EventArgs;
 
     using StateMachine;
 

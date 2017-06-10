@@ -1,6 +1,5 @@
 namespace Utils
 {
-
     using System;
     using System.Timers;
 
@@ -8,7 +7,12 @@ namespace Utils
     {
         private DateTime endTime;
         private DateTime pauseTime;
-        private bool paused;
+
+        public bool Paused
+        {
+            get;
+            private set;
+        }
 
         public double RemainingTimeInMiliseconds
         {
@@ -33,7 +37,7 @@ namespace Utils
 
         public new void Start()
         {
-            if (this.paused)
+            if (this.Paused)
             {
                 throw new InvalidOperationException();
             }
@@ -50,7 +54,7 @@ namespace Utils
             }
             
             this.pauseTime = DateTime.Now;
-            this.paused = true;
+            this.Paused = true;
             this.Stop();
         }
 
@@ -62,7 +66,7 @@ namespace Utils
             }
 
             this.Interval = (this.endTime - this.pauseTime).TotalMilliseconds;
-            this.paused = false;
+            this.Paused = false;
             base.Start();
         }
         
