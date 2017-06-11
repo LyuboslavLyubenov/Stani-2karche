@@ -294,7 +294,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1567722860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +340,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1627409100}
   - component: {fileID: 1627409101}
+  - component: {fileID: 1627409102}
   m_Layer: 0
   m_Name: SendResumeCommandWhenNoMainPlayersConnectedAndThenMainPlayerConnected
   m_TagString: Untagged
@@ -381,6 +382,17 @@ MonoBehaviour:
   platformsToIgnore: []
   dynamic: 0
   dynamicTypeName: 
+--- !u!114 &1627409102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1627409099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f66945eb41e6f1c4e94574aa9298eb9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1668942965
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,13 +402,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1668942966}
   - component: {fileID: 1668942967}
+  - component: {fileID: 1668942968}
   m_Layer: 0
   m_Name: SendPauseCommandWhenAllMainPlayersDisconnected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1668942966
 Transform:
   m_ObjectHideFlags: 0
@@ -431,3 +444,14 @@ MonoBehaviour:
   platformsToIgnore: []
   dynamic: 0
   dynamicTypeName: 
+--- !u!114 &1668942968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1668942965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fefc8797e15e4d40a57f43aaf152a15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

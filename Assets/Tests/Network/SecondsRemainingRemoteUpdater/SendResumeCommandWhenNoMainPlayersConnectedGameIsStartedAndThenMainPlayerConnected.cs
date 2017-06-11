@@ -18,7 +18,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
 
     using Zenject.Source.Usage;
 
-    public class SendResumeCommandWhenNoMainPlayersConnectedAndThenMainPlayerConnected : ExtendedMonoBehaviour
+    public class SendResumeCommandWhenNoMainPlayersConnectedGameIsStartedAndThenMainPlayerConnected : ExtendedMonoBehaviour
     {
         [Inject]
         private IServerNetworkManager networkManager;
@@ -57,4 +57,5 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
                     });
         }
     }
+
 }

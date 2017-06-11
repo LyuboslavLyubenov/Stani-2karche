@@ -1,10 +1,8 @@
 ﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
-using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
 {
-
     using System.Collections;
     using System.Linq;
 
@@ -17,20 +15,22 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
+    using StateMachine;
+
     using UnityEngine;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Zenject.Source.Usage;
 
-    public class SendPauseCommandWhenAllMainPlayersDisconnected : MonoBehaviour
+    public class SendPauseCommandWhenAllMainPlayersDisconnectedAndIsGameStarted : MonoBehaviour
     {
         [Inject]
         private IServerNetworkManager networkManager;
 
         [Inject]
         private IEveryBodyVsTheTeacherServer server;
-
+        
         [Inject]
         private IRemoteSecondsRemainingUIUpdater remoteSecondsRemainingUIUpdater;
 
