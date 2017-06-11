@@ -3,7 +3,9 @@
 namespace Network.Servers.EveryBodyVsTheTeacher
 {
 
+    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.Network;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
@@ -212,6 +214,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             this.Container.Bind<IPlayersConnectingStateDataSender>()
                 .To<PlayersConnectingStateDataSender>();
+
+            this.Container.Bind<IRemoteSecondsRemainingUIUpdater>()
+                .To<RemoteSecondsRemainingUICommandsSender>();
 
             this.InstallStateMachine();
 

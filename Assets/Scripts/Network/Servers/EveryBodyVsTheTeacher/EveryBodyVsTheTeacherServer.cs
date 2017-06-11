@@ -7,6 +7,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
@@ -30,8 +31,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IEveryBodyVsTheTeacherServer
     {
-        public const int MinMainPlayersNeededToStartGame = 6;
-        public const int MaxMainPlayersNeededToStartGame = 10;
+        public const int MinMainPlayersNeededToStartGame = 4;
+        public const int MaxMainPlayersNeededToStartGame = 8;
 
         public event EventHandler OnGameOver = delegate
             {
@@ -60,6 +61,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         [Inject]
         private IPlayersConnectingStateDataSender playersConnectingStateDataSender;
+
+        [Inject]
+        private IRemoteSecondsRemainingUIUpdater remoteSecondsRemainingUIUpdater;
 
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
