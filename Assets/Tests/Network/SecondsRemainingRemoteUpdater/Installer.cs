@@ -22,7 +22,11 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
             this.Container.Bind<IEveryBodyVsTheTeacherServer>()
                 .To<DummyEveryBodyVsTheTeacherServer>()
                 .AsSingle();
-            
+
+            var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.Container.Resolve<IEveryBodyVsTheTeacherServer>();
+            dummyServer.StartedGame = true;
+            dummyServer.IsGameOver = false;
+
             this.Container.Bind<IRemoteSecondsRemainingUIUpdater>()
                 .To<RemoteSecondsRemainingUICommandsSender>();
         }

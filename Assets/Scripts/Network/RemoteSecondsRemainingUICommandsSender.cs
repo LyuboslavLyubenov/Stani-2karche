@@ -43,7 +43,7 @@ namespace Assets.Scripts.Network
 
         private void OnMainPlayerConnecting(int connectionId)
         {
-            if (this.paused)
+            if (this.paused && this.server.StartedGame && !this.server.IsGameOver)
             {
                 var resumeSecondsRemainingCommand = NetworkCommandData.From<ResumeSecondsRemainingCommand>();
                 this.networkManager.SendClientCommand(this.server.PresenterId, resumeSecondsRemainingCommand);
@@ -53,7 +53,7 @@ namespace Assets.Scripts.Network
 
         private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
-            if (!this.server.MainPlayersConnectionIds.Any() && !this.paused)
+            if (!this.server.MainPlayersConnectionIds.Any() && !this.paused && this.server.StartedGame && !this.server.IsGameOver)
             {
                 var pauseSecondsRemainingCommand = NetworkCommandData.From<PauseSecondsRemainingCommand>();
                 this.networkManager.SendClientCommand(this.server.PresenterId, pauseSecondsRemainingCommand);

@@ -15,7 +15,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
 
     using Zenject.Source.Usage;
 
-    public class WhenGameIsStartedDontSendCommands : ExtendedMonoBehaviour
+    public class WhenGameIsNotStartedDontSendCommands : ExtendedMonoBehaviour
     {
         [Inject]
         private IServerNetworkManager networkManager;
@@ -32,6 +32,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
             dummyNetworkManager.OnSentDataToClient += (sender, args) => { IntegrationTest.Fail(); };
 
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
+            dummyServer.StartedGame = false;
             dummyServer.MainPlayersConnectionIds = new int[] { };
             dummyNetworkManager.FakeDisconnectPlayer(1);
 
@@ -45,6 +46,8 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
                                                                    3
                                                                };
                         dummyNetworkManager.FakeConnectPlayer(3);
+
+                        this.CoroutineUtils.WaitForFrames(1, IntegrationTest.Pass);
                     });
         }
     }
