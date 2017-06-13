@@ -2,7 +2,6 @@
 
 namespace Assets.Scripts.Commands.UI
 {
-
     using System;
     using System.Collections.Generic;
 

@@ -63,7 +63,7 @@ namespace Network.EveryBodyVsTheTeacher
         {
             var clientsToSendTo = new List<int>();
 
-            clientsToSendTo.AddRange(this.server.MainPlayersConnectionIds);
+            clientsToSendTo.AddRange(this.server.ConnectedMainPlayersConnectionIds);
             clientsToSendTo.Add(this.server.PresenterId);
 
             for (int i = 0; i < clientsToSendTo.Count; i++)

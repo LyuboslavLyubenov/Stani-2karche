@@ -41,21 +41,21 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
         protected void ConfigureServerMainPlayers()
         {
             var mainPlayersConnectionIds = new int[] { 1, 2, 3, 4 };
-            this.dummyServer.MainPlayersConnectionIds = mainPlayersConnectionIds;
+            this.dummyServer.ConnectedMainPlayersConnectionIds = mainPlayersConnectionIds;
         }
 
         protected void DisconnectMainPlayer(int connectionId)
         {
-            var mainPlayersConnectionIds = this.dummyServer.MainPlayersConnectionIds.ToArray();
-            this.dummyServer.MainPlayersConnectionIds = mainPlayersConnectionIds.Except(new[] { connectionId });
+            var mainPlayersConnectionIds = this.dummyServer.ConnectedMainPlayersConnectionIds.ToArray();
+            this.dummyServer.ConnectedMainPlayersConnectionIds = mainPlayersConnectionIds.Except(new[] { connectionId });
             this.dummyNetworkManager.FakeDisconnectPlayer(connectionId);
         }
 
         protected void ConnectMainPlayer(int connectionId)
         {
-            var mainPlayersConnectionIds = this.dummyServer.MainPlayersConnectionIds.ToList();
+            var mainPlayersConnectionIds = this.dummyServer.ConnectedMainPlayersConnectionIds.ToList();
             mainPlayersConnectionIds.Add(connectionId);
-            this.dummyServer.MainPlayersConnectionIds = mainPlayersConnectionIds.AsEnumerable();
+            this.dummyServer.ConnectedMainPlayersConnectionIds = mainPlayersConnectionIds.AsEnumerable();
             this.dummyNetworkManager.SimulateMainPlayerConnected(connectionId, "Main player " + connectionId);
         }
     }

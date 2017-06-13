@@ -133,7 +133,7 @@ namespace States.EveryBodyVsTheTeacher.Server
 
         private void OnMainPlayerConnecting(int connectionId)
         {
-            if (this.mainPlayersConnectionsIds.Count < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame)
+            if (this.mainPlayersConnectionsIds.Count <= EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame)
             {
                 this.mainPlayersConnectionsIds.Add(connectionId);
                 this.OnMainPlayerConnected(this, new ClientConnectionIdEventArgs(connectionId));

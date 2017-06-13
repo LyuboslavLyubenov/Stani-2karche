@@ -33,7 +33,7 @@
 
             var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
 
-            if (!this.server.MainPlayersConnectionIds.Contains(connectionId) || this.votedClients.Contains(connectionId))
+            if (!this.server.ConnectedMainPlayersConnectionIds.Contains(connectionId) || this.votedClients.Contains(connectionId))
             {
                 return; 
             }

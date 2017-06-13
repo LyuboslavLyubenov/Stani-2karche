@@ -46,7 +46,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
         IEnumerator TestCoroutine()
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
-            dummyServer.MainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
+            dummyServer.ConnectedMainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
             dummyServer.PresenterId = 6;
 
             var dummyNetworkManager = DummyServerNetworkManager.Instance;
@@ -70,7 +70,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
                     }
                 };
 
-            dummyServer.MainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
+            dummyServer.ConnectedMainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
             dummyNetworkManager.FakeDisconnectPlayer(6);
 
             yield return null;

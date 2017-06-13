@@ -109,7 +109,7 @@
 
             var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
             
-            if (!this.server.MainPlayersConnectionIds.Contains(connectionId) ||
+            if (!this.server.ConnectedMainPlayersConnectionIds.Contains(connectionId) ||
                 this.playersVotedFor.Contains(connectionId) ||
                 this.playersVotedAgainst.Contains(connectionId) || 
                 !commandsOptionsValues.ContainsKey("Decision"))
@@ -142,7 +142,7 @@
                 return;
             }
 
-            var areAllVoted = !this.server.MainPlayersConnectionIds.Except(this.playersVotedFor)
+            var areAllVoted = !this.server.ConnectedMainPlayersConnectionIds.Except(this.playersVotedFor)
                 .Except(this.playersVotedAgainst)
                 .Any();
 

@@ -65,7 +65,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         [Inject]
         private IRemoteSecondsRemainingUIUpdater remoteSecondsRemainingUIUpdater;
 
-        private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
+        private HashSet<int> connectedMainPlayersConnectionIds = new HashSet<int>();
 
         public bool IsGameOver
         {
@@ -73,11 +73,11 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             private set;
         }
 
-        public IEnumerable<int> MainPlayersConnectionIds
+        public IEnumerable<int> ConnectedMainPlayersConnectionIds
         {
             get
             {
-                return this.mainPlayersConnectionIds;
+                return this.connectedMainPlayersConnectionIds;
             }
         }
 
@@ -155,7 +155,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private void OnMainPlayerConnecting(int connectionId)
         {
             if (this.stateMachine.CurrentState == this.playersConnectingToTheServerState ||
-                this.mainPlayersConnectionIds.Contains(connectionId))
+                this.connectedMainPlayersConnectionIds.Contains(connectionId))
             {
                 return;
             }
@@ -175,16 +175,16 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         private void SendMainPlayersCommand(NetworkCommandData command)
         {
-            for (int i = 0; i < this.mainPlayersConnectionIds.Count; i++)
+            for (int i = 0; i < this.connectedMainPlayersConnectionIds.Count; i++)
             {
-                var connectionId = this.mainPlayersConnectionIds.Skip(i).First();
+                var connectionId = this.connectedMainPlayersConnectionIds.Skip(i).First();
                 this.networkManager.SendClientCommand(connectionId, command);
             }
         }
 
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs args)
         {
-            this.mainPlayersConnectionIds =
+            this.connectedMainPlayersConnectionIds =
                 new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
 
             var startedGameCommand = NetworkCommandData.From<GameStartedCommand>();

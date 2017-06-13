@@ -29,7 +29,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
         void Start()
         {
-            ((DummyEveryBodyVsTheTeacherServer)this.server).MainPlayersConnectionIds = Enumerable.Range(1, 2);
+            ((DummyEveryBodyVsTheTeacherServer)this.server).ConnectedMainPlayersConnectionIds = Enumerable.Range(1, 2);
             
             this.command.OnElectionResult += (sender, args) =>
                 {

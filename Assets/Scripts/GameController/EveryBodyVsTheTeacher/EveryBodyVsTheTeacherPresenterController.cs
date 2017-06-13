@@ -40,7 +40,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         void Start()
         {
             PlayerPrefsEncryptionUtils.SetString("Username", "Ivan");
-            PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "192.168.0.101");
+            PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "127.0.0.1");
             PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
             
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;

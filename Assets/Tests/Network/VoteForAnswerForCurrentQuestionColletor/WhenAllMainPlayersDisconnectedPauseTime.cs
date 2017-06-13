@@ -33,7 +33,7 @@
 
             yield return null;
 
-            var mainPlayersConnectionIds = base.server.MainPlayersConnectionIds.ToArray();
+            var mainPlayersConnectionIds = base.server.ConnectedMainPlayersConnectionIds.ToArray();
 
             for (int i = 0; i < mainPlayersConnectionIds.Length; i++)
             {

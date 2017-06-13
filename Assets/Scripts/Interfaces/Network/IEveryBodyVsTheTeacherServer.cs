@@ -5,7 +5,7 @@
 
     public interface IEveryBodyVsTheTeacherServer : IGameServer
     {
-        IEnumerable<int> MainPlayersConnectionIds
+        IEnumerable<int> ConnectedMainPlayersConnectionIds
         {
             get;
         }

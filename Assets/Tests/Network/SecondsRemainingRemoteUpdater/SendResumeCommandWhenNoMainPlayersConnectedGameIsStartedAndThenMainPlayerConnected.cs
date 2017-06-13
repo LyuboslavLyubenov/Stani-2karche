@@ -34,7 +34,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             var dummyNetworkManager = (DummyServerNetworkManager)this.networkManager;
 
-            dummyServer.MainPlayersConnectionIds = new int[] {};
+            dummyServer.ConnectedMainPlayersConnectionIds = new int[] {};
             dummyNetworkManager.FakeDisconnectPlayer(1);            
 
             this.CoroutineUtils.WaitForFrames(1,
@@ -49,7 +49,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
                                 }
                             };
 
-                        dummyServer.MainPlayersConnectionIds = new int[]
+                        dummyServer.ConnectedMainPlayersConnectionIds = new int[]
                                                                {
                                                                    1
                                                                };

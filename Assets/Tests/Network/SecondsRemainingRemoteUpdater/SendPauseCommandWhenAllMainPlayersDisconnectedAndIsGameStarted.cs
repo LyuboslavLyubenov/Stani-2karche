@@ -43,7 +43,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             var mainPlayersConnectionIds = new int[] { 1, 2, 3 };
-            dummyServer.MainPlayersConnectionIds = mainPlayersConnectionIds;
+            dummyServer.ConnectedMainPlayersConnectionIds = mainPlayersConnectionIds;
 
             yield return null;
 
@@ -61,8 +61,8 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
             for (int i = 0; i < mainPlayersConnectionIds.Length; i++)
             {
                 var connectionId = mainPlayersConnectionIds[i];
-                dummyServer.MainPlayersConnectionIds =
-                    dummyServer.MainPlayersConnectionIds.Except(
+                dummyServer.ConnectedMainPlayersConnectionIds =
+                    dummyServer.ConnectedMainPlayersConnectionIds.Except(
                         new int[]
                         {
                             connectionId

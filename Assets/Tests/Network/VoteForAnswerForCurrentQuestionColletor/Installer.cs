@@ -48,7 +48,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
             var mainPlayers = Enumerable.Range(1, 4);
             var server = new DummyEveryBodyVsTheTeacherServer()
                          {
-                             MainPlayersConnectionIds = mainPlayers,
+                             ConnectedMainPlayersConnectionIds = mainPlayers,
                              StartedGame = true
                          };
             

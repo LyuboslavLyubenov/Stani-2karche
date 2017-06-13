@@ -30,7 +30,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
         void Start()
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
-            dummyServer.MainPlayersConnectionIds = new int[] {1, 2, 3};
+            dummyServer.ConnectedMainPlayersConnectionIds = new int[] {1, 2, 3};
             dummyServer.PresenterId = 4;
 
             this.voteResultCollector.StartCollecting();

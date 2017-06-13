@@ -33,13 +33,13 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
 
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.StartedGame = false;
-            dummyServer.MainPlayersConnectionIds = new int[] { };
+            dummyServer.ConnectedMainPlayersConnectionIds = new int[] { };
             dummyNetworkManager.FakeDisconnectPlayer(1);
 
             this.CoroutineUtils.WaitForFrames(1,
                 () =>
                     {
-                        dummyServer.MainPlayersConnectionIds = new int[]
+                        dummyServer.ConnectedMainPlayersConnectionIds = new int[]
                                                                {
                                                                    1,
                                                                    2,

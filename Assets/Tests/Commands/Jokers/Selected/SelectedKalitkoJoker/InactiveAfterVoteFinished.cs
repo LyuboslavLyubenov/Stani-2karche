@@ -27,7 +27,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
         void Start()
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
-            dummyServer.MainPlayersConnectionIds = Enumerable.Range(1, 1);
+            dummyServer.ConnectedMainPlayersConnectionIds = Enumerable.Range(1, 1);
 
             this.CoroutineUtils.WaitForSeconds(0.5f,
                 () =>

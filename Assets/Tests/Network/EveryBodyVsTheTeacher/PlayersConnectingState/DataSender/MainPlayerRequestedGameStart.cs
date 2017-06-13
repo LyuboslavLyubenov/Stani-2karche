@@ -38,7 +38,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.StartedGame = true;
-            dummyServer.MainPlayersConnectionIds = Enumerable.Range(1, 5);
+            dummyServer.ConnectedMainPlayersConnectionIds = Enumerable.Range(1, 5);
 
             var dummyNetworkManager = (DummyServerNetworkManager)this.networkManager;
             var connectionId = 1;

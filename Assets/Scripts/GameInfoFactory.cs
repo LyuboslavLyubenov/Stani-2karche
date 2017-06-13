@@ -84,7 +84,7 @@ public class GameInfoFactory
         var canConnectAsMainPlayer = 
             !server.IsGameOver &&
             !server.StartedGame &&
-            server.MainPlayersConnectionIds.Count() < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame;
+            server.ConnectedMainPlayersConnectionIds.Count() < EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame;
 
         var canConnectAsAudience = 
             !server.IsGameOver &&

@@ -39,7 +39,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
         void Start()
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
-            dummyServer.MainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
+            dummyServer.ConnectedMainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
             dummyServer.PresenterId = 6;
 
             this.voteResultCollector.StartCollecting();
@@ -63,13 +63,13 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
                                 }
                             };
 
-                        dummyServer.MainPlayersConnectionIds = new int[] { 1, 3, 4, 5 };
+                        dummyServer.ConnectedMainPlayersConnectionIds = new int[] { 1, 3, 4, 5 };
                         dummyNetworkManager.FakeDisconnectPlayer(2);
 
                         this.CoroutineUtils.WaitForFrames(1,
                             () =>
                                 {
-                                    dummyServer.MainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
+                                    dummyServer.ConnectedMainPlayersConnectionIds = new int[] { 1, 2, 3, 4, 5 };
                                     dummyNetworkManager.SimulateMainPlayerConnected(1, "Ivan");
                                 });
                     });

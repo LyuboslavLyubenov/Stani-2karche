@@ -17,7 +17,7 @@
             get; set;
         }
 
-        public IEnumerable<int> MainPlayersConnectionIds
+        public IEnumerable<int> ConnectedMainPlayersConnectionIds
         {
             get; set;
         }

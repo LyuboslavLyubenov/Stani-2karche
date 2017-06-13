@@ -54,7 +54,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
         IEnumerator SimulateMainPlayersVoting(string answerToSelect)
         {
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
-            var mainPlayersConnectionIds = this.server.MainPlayersConnectionIds.ToList();
+            var mainPlayersConnectionIds = this.server.ConnectedMainPlayersConnectionIds.ToList();
             var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
             answerSelectedCommand.AddOption("Answer", answerToSelect);
 

@@ -44,7 +44,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
             dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>
                 {
                     var command = NetworkCommandData.Parse(args.Message);
-                    if (this.server.MainPlayersConnectionIds.Contains(args.ConnectionId) &&
+                    if (this.server.ConnectedMainPlayersConnectionIds.Contains(args.ConnectionId) &&
                         command.Name == "LoadQuestion" &&
                         command.Options["QuestionJSON"] == questionJSON)
                     {
@@ -57,7 +57,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
             this.CoroutineUtils.WaitForSeconds(0.5f,
                 () =>
                     {
-                        if (this.server.MainPlayersConnectionIds.All(this.clientsReceivedQuestion.Contains))
+                        if (this.server.ConnectedMainPlayersConnectionIds.All(this.clientsReceivedQuestion.Contains))
                         {
                             IntegrationTest.Pass();
                         }

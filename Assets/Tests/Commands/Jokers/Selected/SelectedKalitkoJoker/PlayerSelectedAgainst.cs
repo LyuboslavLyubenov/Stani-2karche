@@ -28,7 +28,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
         
         void Start()
         {
-            ((DummyEveryBodyVsTheTeacherServer)server).MainPlayersConnectionIds = Enumerable.Range(1, 10);
+            ((DummyEveryBodyVsTheTeacherServer)server).ConnectedMainPlayersConnectionIds = Enumerable.Range(1, 10);
             var connectionId = 1;
             
             this.command.OnPlayerSelectedAgainst += (sender, args) =>

@@ -39,7 +39,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.StartedGame = true;
-            dummyServer.MainPlayersConnectionIds = Enumerable.Range(1, 5);
+            dummyServer.ConnectedMainPlayersConnectionIds = Enumerable.Range(1, 5);
 
             var dummyNetworkManager = (DummyServerNetworkManager)this.networkManager;
 
@@ -71,9 +71,9 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
             IEveryBodyVsTheTeacherServer server, 
             DummyServerNetworkManager dummyNetworkManager)
         {
-            for (int i = 0; i < server.MainPlayersConnectionIds.Count(); i++)
+            for (int i = 0; i < server.ConnectedMainPlayersConnectionIds.Count(); i++)
             {
-                var connectionId = server.MainPlayersConnectionIds.Skip(i).First();
+                var connectionId = server.ConnectedMainPlayersConnectionIds.Skip(i).First();
                 var username = "Ivan" + connectionId;
                 dummyNetworkManager.SimulateClientConnected(connectionId, username);
                 yield return null;

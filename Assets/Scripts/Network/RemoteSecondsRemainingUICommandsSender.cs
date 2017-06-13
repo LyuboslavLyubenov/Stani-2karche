@@ -53,7 +53,7 @@ namespace Assets.Scripts.Network
 
         private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
-            if (!this.server.MainPlayersConnectionIds.Any() && !this.paused && this.server.StartedGame && !this.server.IsGameOver)
+            if (!this.server.ConnectedMainPlayersConnectionIds.Any() && !this.paused && this.server.StartedGame && !this.server.IsGameOver)
             {
                 var pauseSecondsRemainingCommand = NetworkCommandData.From<PauseSecondsRemainingCommand>();
                 this.networkManager.SendClientCommand(this.server.PresenterId, pauseSecondsRemainingCommand);

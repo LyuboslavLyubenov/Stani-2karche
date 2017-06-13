@@ -76,7 +76,7 @@ namespace Network
 
         private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
         {
-            if (this.Collecting && !this.server.MainPlayersConnectionIds.Any())
+            if (this.Collecting && !this.server.ConnectedMainPlayersConnectionIds.Any())
             {
                 this.voteTimeoutTimer.Pause();
             }
@@ -118,7 +118,7 @@ namespace Network
 
         private void OnReceivedAnswer(int connectionId, string answer)
         {
-            if (!this.server.MainPlayersConnectionIds.Contains(connectionId) ||
+            if (!this.server.ConnectedMainPlayersConnectionIds.Contains(connectionId) ||
                 this.clientsVoted.Contains(connectionId) ||
                 !this.possibleAnswers.Contains(answer))
             {
@@ -136,7 +136,7 @@ namespace Network
 
             this.OnPlayerVoted(this, new AnswerEventArgs(answer, null));
 
-            if (this.clientsVoted.Count != this.server.MainPlayersConnectionIds.Count())
+            if (this.clientsVoted.Count != this.server.ConnectedMainPlayersConnectionIds.Count())
             {
                 return;
             }
@@ -170,7 +170,7 @@ namespace Network
         private void SendQuestionToMainPlayersAndPresenter(ISimpleQuestion question, int timeToAnswerInSeconds)
         {
             var loadQuestionCommand = this.ConfigureLoadQuestionCommand(question, timeToAnswerInSeconds);
-            var connectionIds = this.server.MainPlayersConnectionIds.ToList();
+            var connectionIds = this.server.ConnectedMainPlayersConnectionIds.ToList();
             connectionIds.Add(this.server.PresenterId);
 
             for (int i = 0; i < connectionIds.Count; i++)
