@@ -74,6 +74,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
         {
             var requestStartGameCommand = NetworkCommandData.From<StartGameRequestCommand>();
             this.networkManager.SendServerCommand(requestStartGameCommand);
+            this.gameStartButton.gameObject.SetActive(false);
         }
 
         private IEnumerator LoadQuestionCoroutine(ISimpleQuestion question)
