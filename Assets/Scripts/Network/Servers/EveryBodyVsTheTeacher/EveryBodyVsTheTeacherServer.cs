@@ -31,8 +31,14 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IEveryBodyVsTheTeacherServer
     {
-        public const int MinMainPlayersNeededToStartGame = 4;
+
+#if DEVELOPMENT_BUILD
+        public const int MinMainPlayersNeededToStartGame = 2;
         public const int MaxMainPlayersNeededToStartGame = 8;
+#else
+        public const int MinMainPlayersNeededToStartGame = 7;
+        public const int MaxMainPlayersNeededToStartGame = 8;
+#endif
 
         public event EventHandler OnGameOver = delegate
             {
@@ -65,7 +71,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         [Inject]
         private IRemoteSecondsRemainingUIUpdater remoteSecondsRemainingUIUpdater;
 
-        private HashSet<int> connectedMainPlayersConnectionIds = new HashSet<int>();
+        private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
         public bool IsGameOver
         {
@@ -77,7 +83,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         {
             get
             {
-                return this.connectedMainPlayersConnectionIds;
+                return this.networkManager.ConnectedClientsConnectionId.Intersect(this.mainPlayersConnectionIds);
             }
         }
 
@@ -155,7 +161,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private void OnMainPlayerConnecting(int connectionId)
         {
             if (this.stateMachine.CurrentState == this.playersConnectingToTheServerState ||
-                this.connectedMainPlayersConnectionIds.Contains(connectionId))
+                this.mainPlayersConnectionIds.Contains(connectionId))
             {
                 return;
             }
@@ -175,16 +181,16 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         private void SendMainPlayersCommand(NetworkCommandData command)
         {
-            for (int i = 0; i < this.connectedMainPlayersConnectionIds.Count; i++)
+            for (int i = 0; i < this.mainPlayersConnectionIds.Count; i++)
             {
-                var connectionId = this.connectedMainPlayersConnectionIds.Skip(i).First();
+                var connectionId = this.mainPlayersConnectionIds.Skip(i).First();
                 this.networkManager.SendClientCommand(connectionId, command);
             }
         }
 
         private void OnEveryBodyRequestedGameStart(object sender, EventArgs args)
         {
-            this.connectedMainPlayersConnectionIds =
+            this.mainPlayersConnectionIds =
                 new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
 
             var startedGameCommand = NetworkCommandData.From<GameStartedCommand>();
