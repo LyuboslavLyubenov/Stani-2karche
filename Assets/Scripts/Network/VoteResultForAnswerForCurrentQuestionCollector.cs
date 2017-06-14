@@ -105,6 +105,7 @@ namespace Network
             {
                 var vote = votes[i];
                 var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+                answerSelectedCommand.AddOption("ConnectionId", "0");
                 answerSelectedCommand.AddOption("Answer", vote.Key);
 
                 for (int j = 0; j < vote.Value; j++)
