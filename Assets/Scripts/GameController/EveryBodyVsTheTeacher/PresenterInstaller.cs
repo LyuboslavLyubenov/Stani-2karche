@@ -1,18 +1,25 @@
 using ClientNetworkManager = Network.NetworkManagers.ClientNetworkManager;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
 
+    using Assets.Scripts.Commands.UI;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Network;
 
     using StateMachine;
 
+    using UnityEngine;
+
     using Zenject.Source.Install;
 
     public class PresenterInstaller : MonoInstaller
     {
+        [SerializeField]
+        private SecondsRemainingUIController secondsRemainingUIController;
+
         public override void InstallBindings()
         {
             this.Container.Bind<IClientNetworkManager>()
@@ -26,6 +33,10 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
             this.Container.Bind<IRemoteStateActivator>()
                 .To<RemoteStateActivator>()
                 .AsSingle();
+
+            var networkManager = ClientNetworkManager.Instance;
+            networkManager.CommandsManager.AddCommand(new PauseSecondsRemainingCommand(this.secondsRemainingUIController));
+            networkManager.CommandsManager.AddCommand(new ResumeSecondsRemainingCommand(this.secondsRemainingUIController));
         }
     }
 }
