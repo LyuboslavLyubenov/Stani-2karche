@@ -236,6 +236,9 @@
 
             var deadClientsIds = this.GetDeadClientsIds();
 
+            this.connectedClientsIds.RemoveAll(deadClientsIds.Contains);
+            this.aliveClientsId.Clear();
+
             for (int i = 0; i < deadClientsIds.Count; i++)
             {
                 var deadClientConnectionId = deadClientsIds[i];
@@ -257,9 +260,6 @@
                     this.OnClientDisconnected(this, new ClientConnectionIdEventArgs(deadClientConnectionId));
                 }
             }
-
-            this.connectedClientsIds.RemoveAll(deadClientsIds.Contains);
-            this.aliveClientsId.Clear();
         }
 
         private void OnConnectedClient(NetworkData networkData)
