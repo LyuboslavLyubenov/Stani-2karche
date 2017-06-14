@@ -98,7 +98,7 @@
         {
             this.SendToPresenterClientConnected(args.ConnectionId, true);
 
-            if (this.playersConnectingState.MainPlayersConnectionIds.Count >= EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame)
+            if (this.playersConnectingState.MainPlayersConnectionIds.Count >= EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame)
             {
                 var enoughPlayersCommand = NetworkCommandData.From<EnoughPlayersToStartGameCommand>();
                 this.SendToMainPlayers(enoughPlayersCommand);
