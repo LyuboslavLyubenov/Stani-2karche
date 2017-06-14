@@ -1,5 +1,8 @@
 ﻿namespace Utils.Unity
 {
+
+    using System;
+
     using Controllers;
 
     using UnityEngine;
@@ -10,6 +13,16 @@
         public bool UseAnimator = false;
 
         private bool deactivating = false;
+
+        protected override void Initialize()
+        {
+            this.OnFinished += this.OnTimeOver;
+        }
+
+        private void OnTimeOver(object sender, EventArgs args)
+        {
+            this.Disable();
+        }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
         void OnEnable()
