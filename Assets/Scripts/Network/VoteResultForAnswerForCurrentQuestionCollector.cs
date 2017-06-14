@@ -94,9 +94,26 @@ namespace Network
 
         private void OnPresenterConnecting(int connectionId)
         {
-            this.SendCurrentQuestionTo(connectionId);   
+            this.SendCurrentQuestionTo(connectionId);  
+            this.ResendVotes(connectionId); 
         }
 
+        private void ResendVotes(int connectionId)
+        {
+            var votes = this.answersVotesCount.ToArray();
+            for (int i = 0; i < votes.Length; i++)
+            {
+                var vote = votes[i];
+                var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+                answerSelectedCommand.AddOption("Answer", vote.Key);
+
+                for (int j = 0; j < vote.Value; j++)
+                {
+                    this.networkManager.SendClientCommand(connectionId, answerSelectedCommand);
+                }
+            }
+        }
+        
         private void SendCurrentQuestionTo(int connectionId)
         {
             this.gameDataIterator.GetCurrentQuestion(
