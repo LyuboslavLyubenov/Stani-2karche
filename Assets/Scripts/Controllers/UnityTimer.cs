@@ -68,7 +68,6 @@
             }
             else
             {
-
                 this.OnFinished(this, EventArgs.Empty);
             }
         }

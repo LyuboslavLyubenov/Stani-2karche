@@ -1944,7 +1944,7 @@ Prefab:
     - target: {fileID: 114104332075666150, guid: bed317d57854c5b40a947b74d3547b0a,
         type: 2}
       propertyPath: DisableAfterClick
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114648188897065286, guid: bed317d57854c5b40a947b74d3547b0a, type: 2}

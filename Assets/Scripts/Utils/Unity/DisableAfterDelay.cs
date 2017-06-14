@@ -17,6 +17,7 @@
         protected override void Initialize()
         {
             this.OnFinished += this.OnTimeOver;
+            base.Initialize();
         }
 
         private void OnTimeOver(object sender, EventArgs args)

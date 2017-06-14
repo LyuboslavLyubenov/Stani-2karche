@@ -15,11 +15,11 @@ EditorBuildSettings:
     path: Assets/Scene/BasicExam/BasicExamServer.unity
   - enabled: 0
     path: Assets/Scene/BasicExam/BasicExamMainPlayer.unity
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scene/EverybodyVsTheTeacher/EveryBodyVsTheTeacherServer.unity
   - enabled: 0
     path: Assets/Scene/EverybodyVsTheTeacher/Presenter.unity
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/EverybodyVsTheTeacher/EveryBodyVsTheTeacherMainPlayer.unity
   - enabled: 0
     path: Assets/Scene/EverybodyVsTheTeacher/Audience.unity
