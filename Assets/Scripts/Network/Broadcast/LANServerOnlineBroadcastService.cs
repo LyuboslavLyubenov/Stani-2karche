@@ -16,6 +16,8 @@
         public LANServerOnlineBroadcastService()
         {
             this.timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, this.SendServerOnline);
+            this.timer.AutoDispose = false;
+            this.timer.RunOnUnityThread = false;
             this.timer.Start();
         }
         
@@ -38,6 +40,4 @@
             base.Dispose();
         }
     }
-
 }
-

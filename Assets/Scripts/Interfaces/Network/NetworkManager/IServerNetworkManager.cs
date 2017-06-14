@@ -70,5 +70,4 @@ namespace Interfaces.Network.NetworkManager
 
         bool IsConnected(int connectionId);
     }
-
 }

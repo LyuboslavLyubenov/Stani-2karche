@@ -14,21 +14,21 @@
     using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
+    using Network.Servers.EveryBodyVsTheTeacher;
+
     public class PlayersConnectingStateDataSender : IPlayersConnectingStateDataSender
     {
         private readonly IPlayersConnectingToTheServerState playersConnectingState;
 
         private readonly IServerNetworkManager networkManager;
         private readonly IEveryBodyVsTheTeacherServer server;
-        private readonly int playersRequiredForGameStart;
-
+        
         private bool mustSentNotEnoughPlayersCommand = false;
 
         public PlayersConnectingStateDataSender(
             IPlayersConnectingToTheServerState playersConnectingState, 
             IServerNetworkManager networkManager,
-            IEveryBodyVsTheTeacherServer server,
-            int playersRequiredForGameStart)
+            IEveryBodyVsTheTeacherServer server)
         {
             if (playersConnectingState == null)
             {
@@ -49,8 +49,6 @@
             this.networkManager = networkManager;
             this.server = server;
            
-            this.playersRequiredForGameStart = playersRequiredForGameStart;
-            
             playersConnectingState.OnMainPlayerConnected += this.OnMainPlayerConnected;
             playersConnectingState.OnMainPlayerDisconnected += this.OnMainPlayerDisconnected;
 
@@ -88,7 +86,7 @@
         {
             this.SendToPresenterClientDisconnected(args.ConnectionId, true);
 
-            if (this.playersConnectingState.MainPlayersConnectionIds.Count < this.playersRequiredForGameStart && 
+            if (this.playersConnectingState.MainPlayersConnectionIds.Count < EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame && 
                 this.mustSentNotEnoughPlayersCommand)
             {
                 var notEnoughPlayersCommand = NetworkCommandData.From<NotEnoughPlayersToStartGameCommand>();
@@ -100,7 +98,7 @@
         {
             this.SendToPresenterClientConnected(args.ConnectionId, true);
 
-            if (this.playersConnectingState.MainPlayersConnectionIds.Count() >= this.playersRequiredForGameStart)
+            if (this.playersConnectingState.MainPlayersConnectionIds.Count >= EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame)
             {
                 var enoughPlayersCommand = NetworkCommandData.From<EnoughPlayersToStartGameCommand>();
                 this.SendToMainPlayers(enoughPlayersCommand);
