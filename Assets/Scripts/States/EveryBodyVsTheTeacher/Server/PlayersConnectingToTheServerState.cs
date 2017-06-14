@@ -83,6 +83,16 @@ namespace States.EveryBodyVsTheTeacher.Server
 
         private int presenterConnectionId = 0;
 
+        private bool areAllMainPlayersRequestedGameStart
+        {
+            get
+            {
+                return 
+                    this.mainPlayersConnectionsIds.Any() &&
+                    this.mainPlayersConnectionsIds.All(this.playersRequestingGameStartIds.Contains);
+            }
+        }
+
         //---
         [Inject]
         private IServerNetworkManager networkManager;
@@ -111,14 +121,16 @@ namespace States.EveryBodyVsTheTeacher.Server
             {
                 this.mainPlayersConnectionsIds.Remove(args.ConnectionId);
                 this.OnMainPlayerDisconnected(this, args);
-                return;
             }
-
-            if (this.audiencePlayersConnectionIds.Contains(args.ConnectionId))
+            else if (this.audiencePlayersConnectionIds.Contains(args.ConnectionId))
             {
                 this.audiencePlayersConnectionIds.Remove(args.ConnectionId);
                 this.OnAudiencePlayerDisconnected(this, args);
-                return;
+            }
+            
+            if (this.areAllMainPlayersRequestedGameStart)
+            {
+                this.OnEveryBodyRequestedGameStart(this, EventArgs.Empty);
             }
         }
 
@@ -175,7 +187,7 @@ namespace States.EveryBodyVsTheTeacher.Server
             
             this.OnMainPlayerRequestedGameStart(this, new ClientConnectionIdEventArgs(connectionId));
 
-            if (this.mainPlayersConnectionsIds.All(this.playersRequestingGameStartIds.Contains))
+            if (this.areAllMainPlayersRequestedGameStart)
             {
                 this.OnEveryBodyRequestedGameStart(this, EventArgs.Empty);
             }
