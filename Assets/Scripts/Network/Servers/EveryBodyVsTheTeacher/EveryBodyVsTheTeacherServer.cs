@@ -32,7 +32,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IEveryBodyVsTheTeacherServer
     {
 
-#if DEVELOPMENT_BUILD
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
         public const int MinMainPlayersNeededToStartGame = 2;
         public const int MaxMainPlayersNeededToStartGame = 8;
 #else
