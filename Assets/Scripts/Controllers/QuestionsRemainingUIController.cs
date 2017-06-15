@@ -3,10 +3,12 @@
 
     using System;
 
+    using Assets.Scripts.Interfaces.Controllers;
+
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class QuestionsRemainingUIController : MonoBehaviour
+    public class QuestionsRemainingUIController : MonoBehaviour, IQuestionsRemainingUIController
     {
         public Text QuestionsRemaining;
 
