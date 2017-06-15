@@ -27,8 +27,8 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
             dummyServer.StartedGame = true;
             dummyServer.IsGameOver = false;
 
-            this.Container.Bind<IRemoteSecondsRemainingUIUpdater>()
-                .To<RemoteSecondsRemainingUICommandsSender>();
+            this.Container.Bind<ISecondsRemainingUICommandsSender>()
+                .To<SecondsRemainingUICommandsSender>();
         }
     }
 }

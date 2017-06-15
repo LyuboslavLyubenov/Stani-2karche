@@ -24,7 +24,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
         private IEveryBodyVsTheTeacherServer server;
         
         [Inject]
-        private IRemoteSecondsRemainingUIUpdater remoteSecondsRemainingUIUpdater;
+        private ISecondsRemainingUICommandsSender secondsRemainingUiCommandsSender;
 
         void Start()
         {

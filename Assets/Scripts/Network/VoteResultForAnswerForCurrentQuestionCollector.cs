@@ -13,6 +13,7 @@ namespace Network
     using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Commands.UI;
 
     using Commands.Server;
 

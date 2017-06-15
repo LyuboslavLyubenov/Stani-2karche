@@ -69,7 +69,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private IPlayersConnectingStateDataSender playersConnectingStateDataSender;
 
         [Inject]
-        private IRemoteSecondsRemainingUIUpdater remoteSecondsRemainingUIUpdater;
+        private ISecondsRemainingUICommandsSender secondsRemainingUiCommandsSender;
 
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 

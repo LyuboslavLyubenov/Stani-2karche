@@ -215,8 +215,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.Container.Bind<IPlayersConnectingStateDataSender>()
                 .To<PlayersConnectingStateDataSender>();
 
-            this.Container.Bind<IRemoteSecondsRemainingUIUpdater>()
-                .To<RemoteSecondsRemainingUICommandsSender>();
+            this.Container.Bind<ISecondsRemainingUICommandsSender>()
+                .To<SecondsRemainingUICommandsSender>();
 
             this.InstallStateMachine();
 
