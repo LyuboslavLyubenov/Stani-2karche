@@ -1,9 +1,17 @@
 namespace Assets.Scripts.Network
 {
 
-    public class QuestionsRemainingUICommandsSender
+    using Assets.Scripts.Interfaces.Network;
+
+    public class QuestionsRemainingUICommandsSender : IQuestionsRemainingCommandsSender
     {
+        public QuestionsRemainingUICommandsSender()
+        {
+            
+        }
 
+        public void Dispose()
+        {
+        }
     }
-
 }
