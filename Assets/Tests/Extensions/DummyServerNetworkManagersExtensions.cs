@@ -5,20 +5,29 @@ using NetworkCommandData = Commands.NetworkCommandData;
 namespace Assets.Tests.Extensions
 {
 
+    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
+
     public static class DummyServerNetworkManagersExtensions
     {
 
-        public static void SimulateClientConnected(this DummyServerNetworkManager networkManager, int connectionId, string username)
+        public static void SimulateClientConnected(this DummyServerNetworkManager dummyNetworkManager, int connectionId, string username)
         {
-            networkManager.FakeConnectPlayer(connectionId);
-            networkManager.FakeSetUsernameToPlayer(connectionId, username);
+            dummyNetworkManager.FakeConnectPlayer(connectionId);
+            dummyNetworkManager.FakeSetUsernameToPlayer(connectionId, username);
         }
         
-        public static void SimulateMainPlayerConnected(this DummyServerNetworkManager dummyServerNetworkManager, int connectionId, string username)
+        public static void SimulateMainPlayerConnected(this DummyServerNetworkManager dummyNetworkManager, int connectionId, string username)
         {
-            dummyServerNetworkManager.SimulateClientConnected(connectionId, username);
+            dummyNetworkManager.SimulateClientConnected(connectionId, username);
             var mainPlayerConnectingCommand = NetworkCommandData.From<MainPlayerConnectingCommand>();
-            dummyServerNetworkManager.FakeReceiveMessage(connectionId, mainPlayerConnectingCommand.ToString());
+            dummyNetworkManager.FakeReceiveMessage(connectionId, mainPlayerConnectingCommand.ToString());
+        }
+
+        public static void SimulatePresenterConnected(this DummyServerNetworkManager dummyNetworkManager, int connectionId)
+        {
+            dummyNetworkManager.SimulateClientConnected(connectionId, "Presenter " + connectionId);
+            var presenterConnectingCommand = NetworkCommandData.From<PresenterConnectingCommand>();
+            dummyNetworkManager.FakeReceiveMessage(connectionId, presenterConnectingCommand.ToString());
         }
     }
 }
