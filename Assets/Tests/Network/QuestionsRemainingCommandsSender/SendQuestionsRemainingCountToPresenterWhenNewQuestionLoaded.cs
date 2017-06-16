@@ -45,7 +45,7 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
                 };
 
             var dummyGameDataIterator = (DummyGameDataIterator)this.iterator;
-            dummyGameDataIterator.GetCurrentQuestion((question) => { });
+            dummyGameDataIterator.GetNextQuestion((question) => { });
         }
     }
 }
