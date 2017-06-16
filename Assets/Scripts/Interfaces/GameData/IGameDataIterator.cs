@@ -7,6 +7,8 @@
 
     public interface IGameDataIterator
     {
+        event EventHandler OnNextQuestionLoaded;
+
         event EventHandler<MarkEventArgs> OnMarkIncrease;
 
         event EventHandler OnLoaded;
@@ -40,5 +42,4 @@
 
         void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null);
     }
-
 }

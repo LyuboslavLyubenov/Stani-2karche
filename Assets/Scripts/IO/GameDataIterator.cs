@@ -18,6 +18,8 @@
 
         public event EventHandler OnLoaded = delegate {};
 
+        public event EventHandler OnNextQuestionLoaded = delegate {};
+
         public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate {};
 
         /// <summary>
@@ -221,7 +223,8 @@
                     onError(ex);
                 }
             }
+
+            this.OnNextQuestionLoaded(this, EventArgs.Empty);
         }
     }
-
 }

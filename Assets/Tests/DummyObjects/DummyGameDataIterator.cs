@@ -10,6 +10,8 @@
 
     public class DummyGameDataIterator : IGameDataIterator
     {
+        public event EventHandler OnNextQuestionLoaded = delegate { };
+
         public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate { };
 
         public event EventHandler OnLoaded = delegate { };
@@ -57,6 +59,7 @@
         public void GetNextQuestion(Action<ISimpleQuestion> onSuccessfullyLoaded, Action<Exception> onError = null)
         {
             onSuccessfullyLoaded(this.NextQuestion);
+            this.OnNextQuestionLoaded(this, EventArgs.Empty);
         }
 
         public void IncreaseMark(int mark)

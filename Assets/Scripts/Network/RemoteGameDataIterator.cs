@@ -23,6 +23,19 @@
 
     public class RemoteGameDataIterator : IGameDataIterator
     {
+        public event EventHandler OnLoaded = delegate {};
+
+        public event EventHandler OnNextQuestionLoaded = delegate {};
+
+        public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate {};
+
+        private IClientNetworkManager networkManager;
+
+        private readonly Stack<GetQuestionRequest> currentQuestionRequests = new Stack<GetQuestionRequest>();
+        private readonly Stack<GetQuestionRequest> nextQuestionRequests = new Stack<GetQuestionRequest>();
+
+        private ISimpleQuestion currentQuestionCache = null;
+
         public int RemainingQuestionsToNextMark
         {
             get;
@@ -47,18 +60,11 @@
             private set;
         }
 
-        public bool Loaded { get; private set; }
-
-        public event EventHandler OnLoaded = delegate {};
-        public event EventHandler<MarkEventArgs> OnMarkIncrease = delegate {};
-
-        private IClientNetworkManager networkManager;
-
-        private readonly Stack<GetQuestionRequest> currentQuestionRequests = new Stack<GetQuestionRequest>();
-        private readonly Stack<GetQuestionRequest> nextQuestionRequests = new Stack<GetQuestionRequest>();
-
-        private ISimpleQuestion currentQuestionCache = null;
-
+        public bool Loaded
+        {
+            get; private set;
+        }
+        
         public RemoteGameDataIterator(IClientNetworkManager networkManager)
         {
             this.networkManager = networkManager;
@@ -128,6 +134,11 @@
             this.SecondsForAnswerQuestion = secondsForAnswerQuestion;
 
             questionRequest.OnLoaded(question);
+
+            if (requestType == QuestionRequestType.Next)
+            {
+                this.OnNextQuestionLoaded(this, EventArgs.Empty);
+            }
         }
 
         private void SendGetQuestionRequest(QuestionRequestType requestType)
