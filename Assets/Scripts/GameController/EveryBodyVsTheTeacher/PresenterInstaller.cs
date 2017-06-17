@@ -1,5 +1,6 @@
 using ClientNetworkManager = Network.NetworkManagers.ClientNetworkManager;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using QuestionsRemainingUIController = Controllers.QuestionsRemainingUIController;
 using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
@@ -20,6 +21,9 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         [SerializeField]
         private SecondsRemainingUIController secondsRemainingUIController;
 
+        [SerializeField]
+        private QuestionsRemainingUIController questionsRemainingUIController;
+
         public override void InstallBindings()
         {
             this.Container.Bind<IClientNetworkManager>()
@@ -35,8 +39,11 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
                 .AsSingle();
 
             var networkManager = ClientNetworkManager.Instance;
+
             networkManager.CommandsManager.AddCommand(new PauseSecondsRemainingCommand(this.secondsRemainingUIController));
             networkManager.CommandsManager.AddCommand(new ResumeSecondsRemainingCommand(this.secondsRemainingUIController));
+
+            networkManager.CommandsManager.AddCommand(new LoadQuestionRemainingCountCommand(this.questionsRemainingUIController));
         }
     }
 }
