@@ -71,6 +71,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         [Inject]
         private ISecondsRemainingUICommandsSender secondsRemainingUiCommandsSender;
 
+        [Inject]
+        private IQuestionsRemainingCommandsSender questionsRemainingCommandsSender;
+
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
 
         public bool IsGameOver
