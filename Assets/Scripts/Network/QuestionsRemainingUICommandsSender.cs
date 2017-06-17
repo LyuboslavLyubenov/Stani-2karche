@@ -51,11 +51,21 @@ namespace Assets.Scripts.Network
 
         private void OnPresenterConnecting(int connectionId)
         {
+            if (!this.server.StartedGame || this.server.IsGameOver)
+            {
+                return;
+            }
+
             this.SendQuestionsRemainingCountToPresenter();
         }
 
         private void OnNextQuestionLoaded(object sender, EventArgs args)
         {
+            if (!this.server.StartedGame || this.server.IsGameOver)
+            {
+                return;
+            }
+
             this.SendQuestionsRemainingCountToPresenter();
         }
 
