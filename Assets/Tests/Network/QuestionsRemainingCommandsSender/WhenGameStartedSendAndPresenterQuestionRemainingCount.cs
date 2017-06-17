@@ -4,8 +4,6 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
 {
-
-    using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.UI;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Utils;
@@ -17,15 +15,11 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
-    using IO;
-
-    using UnityEngine;
-
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Zenject.Source.Usage;
 
-    public class SendQuestionRemainingCountWhenPresenterReconnected : ExtendedMonoBehaviour
+    public class WhenGameStartedSendAndPresenterQuestionRemainingCount : ExtendedMonoBehaviour
     {
         [Inject]
         private IServerNetworkManager networkManager;
@@ -53,6 +47,8 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
                 };
 
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
+            dummyServer.IsGameOver = false;
+            dummyServer.StartedGame = true;
             dummyServer.PresenterId = 0;
             
             dummyNetworkManager.SimulateClientConnected(1, "Presenter");
@@ -62,10 +58,7 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
                 () =>
                     {
                         dummyServer.PresenterId = 1;
-                        dummyNetworkManager.SimulateClientConnected(1, "Presenter");
-
-                        var presenterConnectingCommand = NetworkCommandData.From<PresenterConnectingCommand>();
-                        dummyNetworkManager.FakeReceiveMessage(1, presenterConnectingCommand.ToString());
+                        dummyNetworkManager.SimulatePresenterConnected(1);
                     });
         }
     }

@@ -1,4 +1,4 @@
-using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
+﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
@@ -6,20 +6,19 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
 {
 
     using Assets.Scripts.Commands.UI;
-    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Utils;
+    using Assets.Tests.Extensions;
 
     using Commands;
 
-    using Interfaces.GameData;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
-
+    
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Zenject.Source.Usage;
 
-    public class WhenGameNotStartedAndNewQuestionLoadedDontSendCommandToPresenter : ExtendedMonoBehaviour
+    public class WhenGameEndedAndPresenterReconnectedDontSendCommand : ExtendedMonoBehaviour
     {
         [Inject]
         private IServerNetworkManager networkManager;
@@ -27,18 +26,13 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
         [Inject]
         private IEveryBodyVsTheTeacherServer server;
 
-        [Inject]
-        private IGameDataIterator iterator;
-
-        [Inject]
-        private IQuestionsRemainingCommandsSender commandsSender;
-
         void Start()
         {
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
-            dummyServer.PresenterId = 1;
-            dummyServer.IsGameOver = false;
-            dummyServer.StartedGame = false;
+
+            dummyServer.PresenterId = 0;
+            dummyServer.StartedGame = true;
+            dummyServer.IsGameOver = true;
 
             var dummyNetworkManager = (DummyServerNetworkManager)this.networkManager;
             dummyNetworkManager.OnSentDataToClient += (sender, args) =>
@@ -50,10 +44,10 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
                     }
                 };
 
-            this.iterator.GetNextQuestion((question) => {});
+            dummyServer.PresenterId = 1;
+            dummyNetworkManager.SimulatePresenterConnected(1);
 
             this.CoroutineUtils.WaitForFrames(1, IntegrationTest.Pass);
         }
     }
-
 }

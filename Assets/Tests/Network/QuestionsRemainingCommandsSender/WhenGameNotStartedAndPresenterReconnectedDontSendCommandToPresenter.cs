@@ -4,6 +4,7 @@ using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
 {
+
     using Assets.Scripts.Commands.UI;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Utils;
@@ -37,22 +38,21 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
                     var command = NetworkCommandData.Parse(args.Message);
                     if (command.Name == NetworkManagerCommandUtils.GetCommandName<LoadQuestionRemainingCountCommand>())
                     {
-                        IntegrationTest.Pass();
+                        IntegrationTest.Fail();
                     }
                 };
 
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
+            dummyServer.IsGameOver = false;
             dummyServer.StartedGame = false;
 
             dummyServer.PresenterId = 0;
             dummyNetworkManager.FakeDisconnectPlayer(1);
 
-            this.CoroutineUtils.WaitForFrames(1,
-                () =>
-                    {
-                        dummyServer.PresenterId = 1;
-                        dummyNetworkManager.SimulatePresenterConnected(1);
-                    });
+            dummyServer.PresenterId = 1;
+            dummyNetworkManager.SimulatePresenterConnected(1);
+
+            this.CoroutineUtils.WaitForFrames(1, IntegrationTest.Pass);
         }
     }
 }

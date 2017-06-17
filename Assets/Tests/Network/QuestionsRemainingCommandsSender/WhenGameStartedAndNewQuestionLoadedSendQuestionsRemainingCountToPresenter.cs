@@ -1,4 +1,5 @@
-﻿using DummyGameDataIterator = Tests.DummyObjects.DummyGameDataIterator;
+﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
+using DummyGameDataIterator = Tests.DummyObjects.DummyGameDataIterator;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 
 namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
@@ -11,6 +12,7 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
     using Commands;
 
     using Interfaces.GameData;
+    using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
@@ -19,10 +21,13 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
 
     using Zenject.Source.Usage;
 
-    public class SendQuestionsRemainingCountToPresenterWhenNewQuestionLoaded : MonoBehaviour
+    public class WhenGameStartedAndNewQuestionLoadedSendQuestionsRemainingCountToPresenter : MonoBehaviour
     {
         [Inject]
         private IServerNetworkManager networkManager;
+
+        [Inject]
+        private IEveryBodyVsTheTeacherServer server;
 
         [Inject]
         private IGameDataIterator iterator;
@@ -32,6 +37,11 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
 
         void Start()
         {
+            var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
+            dummyServer.IsGameOver = false;
+            dummyServer.StartedGame = true;
+            dummyServer.PresenterId = 1;
+
             var dummyNetworkManager = (DummyServerNetworkManager)this.networkManager;
 
             dummyNetworkManager.OnSentDataToClient += (sender, args) =>
@@ -48,4 +58,5 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
             dummyGameDataIterator.GetNextQuestion((question) => { });
         }
     }
+
 }
