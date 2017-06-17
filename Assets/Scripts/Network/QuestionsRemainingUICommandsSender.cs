@@ -10,14 +10,14 @@ namespace Assets.Scripts.Network
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.UI;
     using Assets.Scripts.Interfaces.Network;
-
+    
     public class QuestionsRemainingUICommandsSender : IQuestionsRemainingCommandsSender
     {
         private readonly IEveryBodyVsTheTeacherServer server;
 
         private readonly IServerNetworkManager networkManager;
         private readonly IGameDataIterator gameDataIterator;
-
+        
         private readonly PresenterConnectingCommand presenterConnectingCommand;
         
         public QuestionsRemainingUICommandsSender(
@@ -47,6 +47,12 @@ namespace Assets.Scripts.Network
             this.presenterConnectingCommand = new PresenterConnectingCommand(this.OnPresenterConnecting);
             this.networkManager.CommandsManager.AddCommand(presenterConnectingCommand);
             this.gameDataIterator.OnNextQuestionLoaded += OnNextQuestionLoaded;
+            this.gameDataIterator.OnLoaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, EventArgs args)
+        {
+            
         }
 
         private void OnPresenterConnecting(int connectionId)
