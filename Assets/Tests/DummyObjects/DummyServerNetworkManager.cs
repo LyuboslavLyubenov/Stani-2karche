@@ -37,7 +37,7 @@ namespace Tests.DummyObjects
         public event EventHandler<DataSentEventArgs> OnSentDataToClient = delegate
             {
             };
-        
+
         private static DummyServerNetworkManager instance;
 
         public static DummyServerNetworkManager Instance
@@ -50,7 +50,7 @@ namespace Tests.DummyObjects
                 }
 
                 return instance;
-             }
+            }
         }
 
         public ICommandsManager CommandsManager
@@ -63,7 +63,10 @@ namespace Tests.DummyObjects
             get; private set;
         }
 
-        public int MaxConnections { get; set; }
+        public int MaxConnections
+        {
+            get; set;
+        }
 
         public int ConnectedClientsCount
         {
@@ -79,6 +82,12 @@ namespace Tests.DummyObjects
             {
                 return this.connectedClientsConnectionIds.ToArray();
             }
+        }
+
+        public int[] BannedClientsConnectionIds
+        {
+            get;
+            set;
         }
 
         private HashSet<int> connectedClientsConnectionIds = new HashSet<int>();
@@ -189,7 +198,7 @@ namespace Tests.DummyObjects
 
         public void FakeConnectPlayer(int connectionId)
         {
-            this.connectedClientsConnectionIds.Add(connectionId);            
+            this.connectedClientsConnectionIds.Add(connectionId);
             this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));
         }
 

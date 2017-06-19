@@ -22,6 +22,11 @@
             get; set;
         }
 
+        public IEnumerable<int> MainPlayersConnectionIds
+        {
+            get; set;
+        }
+
         public bool StartedGame
         {
             get; set;
