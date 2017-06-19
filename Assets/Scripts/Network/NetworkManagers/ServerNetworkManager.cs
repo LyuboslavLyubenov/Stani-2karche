@@ -116,6 +116,14 @@
             }
         }
 
+        public int[] BannedClientsConnectionIds
+        {
+            get
+            {
+                return this.bannedConnections.ToArray();
+            }
+        }
+
         public string[] GetAllClientsNames()
         {
             return this.connectedClientsNames.Select(c => c.Value).ToArray();
@@ -508,7 +516,7 @@
             this.bannedConnections.Add(connectionId);
             this.KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
         }
-
+       
         public bool IsConnected(int connectionId)
         {
             return this.connectedClientsIds.Contains(connectionId);

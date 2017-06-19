@@ -2,11 +2,8 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Interfaces.Network.NetworkManager
 {
-
     using System;
-
-    using Commands;
-
+    
     using EventArgs;
 
     public interface IServerNetworkManager
@@ -38,6 +35,11 @@ namespace Interfaces.Network.NetworkManager
         }
 
         int[] ConnectedClientsConnectionId
+        {
+            get;
+        }
+
+        int[] BannedClientsConnectionIds
         {
             get;
         }
