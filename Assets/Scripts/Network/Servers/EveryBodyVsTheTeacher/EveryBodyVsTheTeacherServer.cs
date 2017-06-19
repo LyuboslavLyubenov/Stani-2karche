@@ -90,6 +90,14 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             }
         }
 
+        public IEnumerable<int> MainPlayersConnectionIds
+        {
+            get
+            {
+                return this.mainPlayersConnectionIds;
+            }
+        }
+
         public bool StartedGame
         {
             get;
@@ -111,7 +119,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
-
+            
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 
@@ -195,7 +203,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         {
             this.mainPlayersConnectionIds =
                 new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
-
+            
             var startedGameCommand = NetworkCommandData.From<GameStartedCommand>();
             this.SendMainPlayersCommand(startedGameCommand);
 

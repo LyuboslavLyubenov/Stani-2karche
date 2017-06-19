@@ -10,6 +10,11 @@
             get;
         }
 
+        IEnumerable<int> MainPlayersConnectionIds
+        {
+            get;
+        }
+
         bool StartedGame
         {
             get;
