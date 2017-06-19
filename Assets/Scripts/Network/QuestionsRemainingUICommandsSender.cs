@@ -52,7 +52,7 @@ namespace Assets.Scripts.Network
 
         private void OnLoaded(object sender, EventArgs args)
         {
-            
+            this.SendQuestionsRemainingCountToPresenter();            
         }
 
         private void OnPresenterConnecting(int connectionId)
