@@ -119,7 +119,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
-            
+            this.networkManager.CommandsManager.AddCommand(new SurrenderCommand(this.networkManager, this, this.gameDataIterator));
+
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
 
