@@ -1,7 +1,7 @@
 ﻿namespace GameController.EveryBodyVsTheTeacher
 {
     using System;
-
+    
     using Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer;
 
     using Commands;
@@ -35,7 +35,7 @@
         {
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
-
+            
             this.stateMachine.SetCurrentState(this.notConnectedToServerState);
         }
 

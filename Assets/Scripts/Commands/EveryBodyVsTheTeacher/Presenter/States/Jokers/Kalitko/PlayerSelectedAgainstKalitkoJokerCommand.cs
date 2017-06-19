@@ -3,7 +3,6 @@ using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManager
 
 namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher.Presenter.States.Jokers.Kalitko
 {
-
     using System;
     using System.Collections.Generic;
 
