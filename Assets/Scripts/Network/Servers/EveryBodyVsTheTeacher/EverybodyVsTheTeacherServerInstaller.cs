@@ -3,6 +3,8 @@
 namespace Network.Servers.EveryBodyVsTheTeacher
 {
 
+    using System;
+
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network;
@@ -182,9 +184,17 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             var roundsSwitcher = roundsSwitcherBuilder.Build();
 
+            roundsSwitcher.OnMustEndGame += OnMustEndGame;
+
             this.Container.Bind<IRoundsSwitcher>()
                 .FromInstance(roundsSwitcher)
                 .AsSingle();
+        }
+
+        private void OnMustEndGame(object sender, EventArgs args)
+        {
+            var server = this.Container.Resolve<IEveryBodyVsTheTeacherServer>();
+            server.EndGame();
         }
 
         private void InstallRoundsSwitcherEventsNotifier()
