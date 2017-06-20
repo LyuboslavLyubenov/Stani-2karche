@@ -10,6 +10,7 @@
     {
         public event EventHandler OnMustGoOnNextRound = delegate { };
         public event EventHandler OnMustEndGame = delegate {};
+        public event EventHandler OnSelectedInCorrectAnswer = delegate {};
         public event EventHandler OnEnter = delegate { };
         public event EventHandler OnExit = delegate { };
 
@@ -31,6 +32,11 @@
         public void FireOnTooManyWrongAnswers()
         {
             this.OnMustEndGame(this, EventArgs.Empty);
+        }
+
+        public void FireOnSelectedInCorrectAnswer()
+        {
+            this.OnSelectedInCorrectAnswer(this, EventArgs.Empty);
         }
     }
 }
