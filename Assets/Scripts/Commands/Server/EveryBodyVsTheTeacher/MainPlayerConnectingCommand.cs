@@ -14,7 +14,9 @@ namespace Assets.Scripts.Commands.Server.EveryBodyVsTheTeacher
     {
         private readonly IEveryBodyVsTheTeacherServer server;
 
-        public MainPlayerConnectingCommand(IEveryBodyVsTheTeacherServer server, PlayerConnectingDelegate onPlayerConnecting)
+        public MainPlayerConnectingCommand(
+            IEveryBodyVsTheTeacherServer server, 
+            PlayerConnectingDelegate onPlayerConnecting)
             : base(onPlayerConnecting)
         {
             if (server == null)

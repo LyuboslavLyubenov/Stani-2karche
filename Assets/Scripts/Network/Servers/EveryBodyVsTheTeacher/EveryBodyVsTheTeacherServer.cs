@@ -1,11 +1,14 @@
 namespace Network.Servers.EveryBodyVsTheTeacher
 {
+    using MainPlayerConnectingCommand = Assets.Scripts.Commands.Server.EveryBodyVsTheTeacher.MainPlayerConnectingCommand;
+
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
+    using Assets.Scripts.Commands.Server.EveryBodyVsTheTeacher;
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
@@ -125,8 +128,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
-
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
+            
+            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this, this.OnMainPlayerConnecting));
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
             this.networkManager.CommandsManager.AddCommand(new SurrenderCommand(this.networkManager, this, this.gameDataIterator));
 
