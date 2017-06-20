@@ -75,6 +75,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private IQuestionsRemainingCommandsSender questionsRemainingCommandsSender;
 
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
+        private readonly HashSet<int> surrenderedMainPlayersConnectionIds = new HashSet<int>();
 
         public bool IsGameOver
         {
@@ -95,6 +96,14 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             get
             {
                 return this.mainPlayersConnectionIds;
+            }
+        }
+
+        public IEnumerable<int> SurrenderedMainPlayersConnectionIds
+        {
+            get
+            {
+                return this.surrenderedMainPlayersConnectionIds;
             }
         }
 
@@ -119,7 +128,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this.OnMainPlayerConnecting));
             this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
-            this.networkManager.CommandsManager.AddCommand(new SurrenderCommand(this.networkManager, this, this.gameDataIterator));
+
+            var surrenderCommand = new SurrenderCommand(this.networkManager, this, this.gameDataIterator);
+            
+            this.networkManager.CommandsManager.AddCommand(surrenderCommand);
 
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }
@@ -144,7 +156,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 this.networkManager.KickPlayer(connectionId, "Presenter already connected");//TODO: Transate
                 return;
             }
-            
+
             this.PresenterId = connectionId;
             this.SendCurrentStateToPresenter();
         }
@@ -177,7 +189,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             {
                 return;
             }
-            
+
             this.networkManager.KickPlayer(connectionId);
         }
 
@@ -204,13 +216,18 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         {
             this.mainPlayersConnectionIds =
                 new HashSet<int>(this.playersConnectingToTheServerState.MainPlayersConnectionIds);
-            
+
             var startedGameCommand = NetworkCommandData.From<GameStartedCommand>();
             this.SendMainPlayersCommand(startedGameCommand);
 
             this.roundsSwitcher.SwitchToNextRound();
-            
+
             this.StartedGame = true;
+        }
+
+        public void AddMainPlayerToSurrenderList(int connectionId)
+        {
+            this.surrenderedMainPlayersConnectionIds.Add(connectionId);
         }
 
         public void EndGame()
