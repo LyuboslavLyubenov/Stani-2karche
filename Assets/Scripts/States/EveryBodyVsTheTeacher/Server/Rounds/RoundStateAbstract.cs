@@ -139,8 +139,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                         this.OnLoadQuestionError(sender, new UnhandledExceptionEventArgs(error, false));
                     });
         }
-
-
+        
         private void OnPlayerVotedForCurrentQuestion(object sender, AnswerEventArgs args)
         {
             var answerSelectedCommand = new NetworkCommandData("AnswerSelected");

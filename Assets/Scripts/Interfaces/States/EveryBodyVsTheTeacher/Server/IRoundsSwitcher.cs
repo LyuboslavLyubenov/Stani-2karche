@@ -6,6 +6,7 @@
     {
         event EventHandler OnSwitchedToNextRound;
         event EventHandler OnMustEndGame;
+        event EventHandler OnSelectedInCorrectAnswer;
         event EventHandler OnNoMoreRounds;
 
         int CurrentRoundNumber { get; }

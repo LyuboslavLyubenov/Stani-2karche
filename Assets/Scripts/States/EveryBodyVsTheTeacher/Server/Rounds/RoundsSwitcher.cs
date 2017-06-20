@@ -13,6 +13,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
     {
         public event EventHandler OnSwitchedToNextRound = delegate { };
         public event EventHandler OnMustEndGame = delegate { };
+        public event EventHandler OnSelectedInCorrectAnswer = delegate { };
         public event EventHandler OnNoMoreRounds = delegate { };
 
         private readonly IRoundState[] rounds;
@@ -110,6 +111,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                 var previousRound = this.rounds[this.index];
                 previousRound.OnMustGoOnNextRound -= this.OnMustGoOnNextRound;
                 previousRound.OnMustEndGame -= this.OnMustEndGame;
+                previousRound.OnSelectedInCorrectAnswer -= this.OnSelectedInCorrectAnswer;
             }
             
             var nextRound = this.rounds[nextRoundIndex];
@@ -117,6 +119,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
             this.rounds[nextRoundIndex].OnMustGoOnNextRound += this.OnMustGoOnNextRound;
             this.rounds[nextRoundIndex].OnMustEndGame += this.OnMustEndGame;
+            this.rounds[nextRoundIndex].OnSelectedInCorrectAnswer += this.OnSelectedInCorrectAnswer;
             
             this.index = nextRoundIndex;
             this.OnSwitchedToNextRound(this, EventArgs.Empty);
