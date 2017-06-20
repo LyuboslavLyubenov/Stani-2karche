@@ -8,7 +8,6 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
-    using Assets.Scripts.Commands.Server.EveryBodyVsTheTeacher;
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
@@ -16,7 +15,6 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
 
     using Commands;
-    using Commands.Server;
 
     using EventArgs;
 
@@ -129,9 +127,12 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
             
-            this.networkManager.CommandsManager.AddCommand(new MainPlayerConnectingCommand(this, this.OnMainPlayerConnecting));
-            this.networkManager.CommandsManager.AddCommand(new PresenterConnectingCommand(this.OnPresenterConnecting));
-            this.networkManager.CommandsManager.AddCommand(new SurrenderCommand(this.networkManager, this, this.gameDataIterator));
+            this.networkManager.CommandsManager.AddCommand(
+                new MainPlayerConnectingCommand(this.networkManager, this, this.OnMainPlayerConnecting));
+            this.networkManager.CommandsManager.AddCommand(
+                new PresenterConnectingCommand(this.OnPresenterConnecting));
+            this.networkManager.CommandsManager.AddCommand(
+                new SurrenderCommand(this.networkManager, this, this.gameDataIterator));
 
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
         }

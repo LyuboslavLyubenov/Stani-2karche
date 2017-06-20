@@ -69,6 +69,15 @@ namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher
             this.networkManager.SendClientCommand(connectionId, gameEndCommand);
 
             this.server.AddMainPlayerToSurrenderList(connectionId);
+
+            var areAllMainPlayersSurrenderedGame = 
+                !this.server.SurrenderedMainPlayersConnectionIds
+                    .Except(this.server.MainPlayersConnectionIds)
+                    .Any();
+            if (areAllMainPlayersSurrenderedGame)
+            {
+                this.server.EndGame();
+            }
         }
     }
 }
