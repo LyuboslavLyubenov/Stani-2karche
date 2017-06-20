@@ -26,6 +26,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
     {
         public event EventHandler OnMustGoOnNextRound = delegate { };
         public event EventHandler OnMustEndGame = delegate { };
+        public event EventHandler OnSelectedInCorrectAnswer = delegate { };
         public event EventHandler<UnhandledExceptionEventArgs> OnLoadQuestionError = delegate { };
 
         protected readonly IGameDataIterator gameDataIterator;
@@ -115,6 +116,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             else
             {
                 this.UseNextQuestion();
+                this.OnSelectedInCorrectAnswer(this, EventArgs.Empty);
             }
         }
 

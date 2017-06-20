@@ -6,5 +6,6 @@
     {
         event EventHandler OnMustGoOnNextRound;
         event EventHandler OnMustEndGame;
+        event EventHandler OnSelectedInCorrectAnswer;
     }
 }
