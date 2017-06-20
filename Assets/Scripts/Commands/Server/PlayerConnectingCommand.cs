@@ -22,7 +22,7 @@
             this.onPlayerConnecting = onPlayerConnecting;
         }
 
-        public void Execute(Dictionary<string, string> commandsOptionsValues)
+        public virtual void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var connectionId = int.Parse(commandsOptionsValues["ConnectionId"]);
             this.onPlayerConnecting(connectionId);
