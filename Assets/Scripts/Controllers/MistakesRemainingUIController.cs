@@ -3,11 +3,12 @@
     using System;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class MistakesRemainingUIController : MonoBehaviour
+    public class MistakesRemainingUIController : MonoBehaviour, IMistakesRemainingUIController
     {
         [SerializeField]
         private Text textComponent;
