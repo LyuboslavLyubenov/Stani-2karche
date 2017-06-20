@@ -7,7 +7,7 @@
     using UnityEngine;
     using UnityEngine.UI;
 
-    public class RemainingMistakesUIController : MonoBehaviour
+    public class MistakesRemainingUIController : MonoBehaviour
     {
         [SerializeField]
         private Text textComponent;
