@@ -2,26 +2,28 @@
 using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+using INetworkOperationExecutedCallback = Interfaces.Network.NetworkManager.INetworkOperationExecutedCallback;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using NetworkCommandData = Commands.NetworkCommandData;
-using ThreadUtils = Utils.ThreadUtils;
 
 namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
     using Assets.Scripts.Extensions;
 
-    using UnityEngine;
-
-    public class SurrenderCommand : INetworkManagerCommand
+    public class SurrenderCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
         private readonly IServerNetworkManager networkManager;
         private readonly IEveryBodyVsTheTeacherServer server;
         private readonly IGameDataIterator iterator;
+
+        public EventHandler OnExecuted
+        {
+            get; set;
+        }
 
         public SurrenderCommand(
             IServerNetworkManager networkManager, 
@@ -47,40 +49,26 @@ namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher
             this.server = server;
             this.iterator = iterator;
         }
-
-        private IEnumerator SurrenderCoroutine(int connectionId)
-        {
-            var gameEndCommand = NetworkCommandData.From<GameEndCommand>();
-            gameEndCommand.AddOption("Mark", this.iterator.CurrentMark.ToString());
-            this.networkManager.SendClientCommand(connectionId, gameEndCommand);
-
-            yield return new WaitForSeconds(1f);
-            
-            this.networkManager.KickPlayer(connectionId, "Успешно се отказа за игра.");
-            this.networkManager.BanPlayer(connectionId);
-
-            var areAllMainPlayersBanned =
-                !this.server.MainPlayersConnectionIds
-                    .Except(this.networkManager.BannedClientsConnectionIds)
-                    .Any();
-
-            if (areAllMainPlayersBanned)
-            {
-                this.server.EndGame();
-            }
-        }
-
+        
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
-
             var isMainPlayer = this.server.ConnectedMainPlayersConnectionIds.Contains(connectionId);
-            if (!isMainPlayer || this.server.IsGameOver || !this.server.StartedGame)
+            var isMainPlayerAlreadySurrendered = this.server.SurrenderedMainPlayersConnectionIds.Contains(connectionId);
+
+            if (!isMainPlayer || 
+                this.server.IsGameOver || 
+                !this.server.StartedGame || 
+                isMainPlayerAlreadySurrendered)
             {
                 return;
             }
 
-            ThreadUtils.Instance.RunOnMainThread(this.SurrenderCoroutine(connectionId));
+            var gameEndCommand = NetworkCommandData.From<GameEndCommand>();
+            gameEndCommand.AddOption("Mark", this.iterator.CurrentMark.ToString());
+            this.networkManager.SendClientCommand(connectionId, gameEndCommand);
+
+            this.server.AddMainPlayerToSurrenderList(connectionId);
         }
     }
 }
