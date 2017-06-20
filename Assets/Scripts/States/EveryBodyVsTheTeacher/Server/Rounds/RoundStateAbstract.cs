@@ -112,6 +112,10 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             {
                 this.OnMustEndGame(this, System.EventArgs.Empty);
             }
+            else
+            {
+                this.UseNextQuestion();
+            }
         }
 
         private void OnCollectedVoteForAnswerForCurrentQuestion(object sender, AnswerEventArgs args)
