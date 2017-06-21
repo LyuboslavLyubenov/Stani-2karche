@@ -1,4 +1,5 @@
 ﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
+using DummyGameDataIterator = Tests.DummyObjects.DummyGameDataIterator;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 
 namespace Assets.Tests.Network.MistakesRemainingCommandsSender
@@ -9,6 +10,7 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
     using Assets.Tests.DummyObjects;
     using Assets.Tests.DummyObjects.States.EveryBodyVsTheTeacher;
 
+    using Interfaces.GameData;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
@@ -50,6 +52,10 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
             var stateMachine = this.Container.Resolve<StateMachine>();
             stateMachine.SetCurrentState(roundState);
+
+            this.Container.Bind<IGameDataIterator>()
+                .To<DummyGameDataIterator>()
+                .AsSingle();
 
             this.Container.Bind<IMistakesRemainingCommandsSender>()
                 .To<MistakesRemainingCommandsSender>()
