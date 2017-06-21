@@ -6,6 +6,7 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 {
 
     using Assets.Scripts.Commands.UI;
+    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Utils;
     using Assets.Tests.DummyObjects;
@@ -15,8 +16,6 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
-
-    using UnityEngine;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
@@ -32,6 +31,9 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
         [Inject]
         private IRoundsSwitcher roundsSwitcher;
+        
+        [Inject]
+        private IMistakesRemainingCommandsSender commandsSender;
 
         void Start()
         {

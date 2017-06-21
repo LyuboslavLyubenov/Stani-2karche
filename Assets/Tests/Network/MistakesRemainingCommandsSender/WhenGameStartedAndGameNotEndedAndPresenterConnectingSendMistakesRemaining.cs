@@ -4,6 +4,7 @@ using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 {
     using Assets.Scripts.Commands.UI;
+    using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Utils;
     using Assets.Tests.Extensions;
 
@@ -28,6 +29,9 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
         [Inject]
         private int remainingMistakesCount;
+        
+        [Inject]
+        private IMistakesRemainingCommandsSender commandsSender;
 
         void Start()
         {
