@@ -21,5 +21,20 @@
         {
             this.OnSwitchedToNextRound(this, EventArgs.Empty);
         }
+
+        public void FireOnMustEndGame()
+        {
+            this.OnMustEndGame(this, EventArgs.Empty);
+        }
+
+        public void FireOnSelectedInCorrectAnswer()
+        {
+            this.OnSelectedInCorrectAnswer(this, EventArgs.Empty);
+        }
+
+        public void FireOnNoMoreRounds()
+        {
+            this.OnNoMoreRounds(this, EventArgs.Empty);
+        }
     }
 }
