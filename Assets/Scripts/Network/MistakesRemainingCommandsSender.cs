@@ -1,4 +1,5 @@
 ﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using NetworkCommandData = Commands.NetworkCommandData;
 
@@ -19,6 +20,9 @@ namespace Assets.Scripts.Network
         private readonly IServerNetworkManager networkManager;
         private readonly IEveryBodyVsTheTeacherServer server;
         private readonly IRoundsSwitcher roundsSwitcher;
+
+        private readonly IGameDataIterator iterator;
+
         private readonly StateMachine stateMachine;
         private readonly PresenterConnectingCommand presenterConnectingCommand;
 
@@ -26,6 +30,7 @@ namespace Assets.Scripts.Network
             IServerNetworkManager networkManager,
             IEveryBodyVsTheTeacherServer server, 
             IRoundsSwitcher roundsSwitcher,
+            IGameDataIterator iterator,
             StateMachine stateMachine)
         {
             if (networkManager == null)
@@ -43,6 +48,11 @@ namespace Assets.Scripts.Network
                 throw new ArgumentNullException("roundsSwitcher");
             }
 
+            if (iterator == null)
+            {
+                throw new ArgumentNullException("iterator");
+            }
+
             if (stateMachine == null)
             {
                 throw new ArgumentNullException("stateMachine");
@@ -51,21 +61,28 @@ namespace Assets.Scripts.Network
             this.networkManager = networkManager;
             this.server = server;
             this.roundsSwitcher = roundsSwitcher;
+            this.iterator = iterator;
             this.stateMachine = stateMachine;
             this.presenterConnectingCommand = new PresenterConnectingCommand(this.OnPresenterConnecting);
-
-            this.roundsSwitcher.OnSelectedInCorrectAnswer += OnSelectedInCorrectAnswer;
-            this.roundsSwitcher.OnSwitchedToNextRound += OnSwitchedToNextRound;
             
             this.networkManager.CommandsManager.AddCommand(this.presenterConnectingCommand);
+
+            this.roundsSwitcher.OnSelectedInCorrectAnswer += this.OnSelectedInCorrectAnswer;
+            this.roundsSwitcher.OnSwitchedToNextRound += this.OnSwitchedToNextRound;
+            
+            this.iterator.OnLoaded += this.OnLoadedGameData;
+        }
+
+        private void OnLoadedGameData(object sender, EventArgs args)
+        {
+            this.SendLoadMistakesRemainingCommandToPresenterIfPossible();
         }
 
         private void OnSwitchedToNextRound(object sender, EventArgs args)
         {
             this.SendLoadMistakesRemainingCommandToPresenterIfPossible();
         }
-
-
+        
         private void OnSelectedInCorrectAnswer(object sender, EventArgs args)
         {
             this.SendLoadMistakesRemainingCommandToPresenterIfPossible();
