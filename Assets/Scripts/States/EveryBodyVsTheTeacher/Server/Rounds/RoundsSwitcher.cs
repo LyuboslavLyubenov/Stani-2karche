@@ -1,6 +1,5 @@
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;

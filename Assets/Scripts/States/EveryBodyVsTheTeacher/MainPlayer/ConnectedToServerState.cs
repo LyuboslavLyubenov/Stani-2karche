@@ -1,7 +1,9 @@
 ﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
 using AnswerTimeoutCommand = Commands.Client.AnswerTimeoutCommand;
 using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPlayersToStartGameCommand;
+using GameEndCommand = Commands.Client.GameEndCommand;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
+using ILeaderboardReceiver = Interfaces.Network.Leaderboard.ILeaderboardReceiver;
 using IQuestionUIController = Interfaces.Controllers.IQuestionUIController;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
@@ -60,7 +62,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
             {
                 throw new ArgumentNullException("playingUI");
             }
-
+            
             this.networkManager = networkManager;
             this.gameStartButton = gameStartButton;
             this.questionUI = questionUI;
@@ -114,7 +116,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
 
             var answerTimeoutCommand = new AnswerTimeoutCommand(this.questionUI, NotificationsController.Instance);
             this.networkManager.CommandsManager.AddCommand(answerTimeoutCommand);
-
+            
             this.questionUIController.OnAnswerClick += OnAnswerClick;
         }
 
