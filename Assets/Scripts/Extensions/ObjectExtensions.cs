@@ -12,5 +12,10 @@
                 .GetInterfaces()
                 .Contains(interfaceType);
         }
+
+        public static bool IsImplementingInterface<T>(this object obj)
+        {
+            return obj.IsImplemetingInterface(typeof(T));
+        }
     }
 }
