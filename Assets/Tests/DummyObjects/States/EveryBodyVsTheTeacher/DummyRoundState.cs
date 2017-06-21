@@ -11,8 +11,14 @@
         public event EventHandler OnMustGoOnNextRound = delegate { };
         public event EventHandler OnMustEndGame = delegate {};
         public event EventHandler OnSelectedInCorrectAnswer = delegate {};
+        
         public event EventHandler OnEnter = delegate { };
         public event EventHandler OnExit = delegate { };
+
+        public int MistakesRemaining
+        {
+            get; set;
+        }
 
         public void OnStateEnter(StateMachine stateMachine)
         {
