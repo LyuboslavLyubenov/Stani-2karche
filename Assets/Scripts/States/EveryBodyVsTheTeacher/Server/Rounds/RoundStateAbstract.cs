@@ -42,6 +42,14 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
         private readonly IElectionJokerCommand[] selectedJokerCommands;
 
+        public int MistakesRemaining
+        {
+            get
+            {
+                return this.maxInCorrectAnswersAllowed - this.inCorrectAnswersCount;
+            }
+        }
+
         protected RoundStateAbstract(
             IServerNetworkManager networkManager,
             IEveryBodyVsTheTeacherServer server,
