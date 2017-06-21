@@ -3,7 +3,6 @@ using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 
 namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 {
-
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network;

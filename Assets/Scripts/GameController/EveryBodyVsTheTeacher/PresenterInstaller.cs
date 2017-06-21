@@ -5,8 +5,8 @@ using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
-
     using Assets.Scripts.Commands.UI;
+    using Assets.Scripts.Controllers;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Network;
 
@@ -23,6 +23,9 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         [SerializeField]
         private QuestionsRemainingUIController questionsRemainingUIController;
+
+        [SerializeField]
+        private MistakesRemainingUIController mistakesRemainingUIController;
 
         public override void InstallBindings()
         {
@@ -44,6 +47,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
             networkManager.CommandsManager.AddCommand(new ResumeSecondsRemainingCommand(this.secondsRemainingUIController));
 
             networkManager.CommandsManager.AddCommand(new LoadQuestionRemainingCountCommand(this.questionsRemainingUIController));
+            networkManager.CommandsManager.AddCommand(new LoadMistakesRemainingCommand(this.mistakesRemainingUIController));
         }
     }
 }

@@ -1308,6 +1308,12 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224266527330273556, guid: 8be34f60e2f18cd4882c270dcdad6794,
     type: 2}
   m_PrefabInternal: {fileID: 687293424}
+--- !u!114 &687293426 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114663892513050954, guid: 8be34f60e2f18cd4882c270dcdad6794,
+    type: 2}
+  m_PrefabInternal: {fileID: 687293424}
+  m_Script: {fileID: 11500000, guid: b6ed4f56c8627624698b731d48b526e0, type: 3}
 --- !u!1 &709057043
 GameObject:
   m_ObjectHideFlags: 0
@@ -1493,6 +1499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   secondsRemainingUIController: {fileID: 1427097528}
   questionsRemainingUIController: {fileID: 1970462483}
+  mistakesRemainingUIController: {fileID: 687293426}
 --- !u!1 &768114745 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1274727331752780, guid: 3d04cae489b06f94b869676cad440435,
