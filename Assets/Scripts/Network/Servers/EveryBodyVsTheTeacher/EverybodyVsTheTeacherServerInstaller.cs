@@ -233,6 +233,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 .To<QuestionsRemainingUICommandsSender>()
                 .AsSingle();
 
+            this.Container.Bind<IMistakesRemainingCommandsSender>()
+                .To<MistakesRemainingCommandsSender>()
+                .AsSingle();
+
             this.InstallStateMachine();
 
             var networkManager = this.Container.Resolve<IServerNetworkManager>();

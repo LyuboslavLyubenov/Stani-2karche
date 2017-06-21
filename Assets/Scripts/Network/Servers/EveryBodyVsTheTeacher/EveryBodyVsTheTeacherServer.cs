@@ -75,6 +75,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         [Inject]
         private IQuestionsRemainingCommandsSender questionsRemainingCommandsSender;
 
+        [Inject]
+        private IMistakesRemainingCommandsSender mistakesRemainingCommandsSender;
+
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
         private readonly HashSet<int> surrenderedMainPlayersConnectionIds = new HashSet<int>();
 
