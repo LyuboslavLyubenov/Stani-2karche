@@ -9,6 +9,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Network.JokersData.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
     using Interfaces;
@@ -213,7 +214,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             
             this.Container.Bind<JokersData>()
                 .AsSingle();
-        
+            
             this.Container.Bind<IPlayersConnectingToTheServerState>()
                 .To<PlayersConnectingToTheServerState>()
                 .AsSingle();
@@ -235,6 +236,10 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             this.Container.Bind<IMistakesRemainingCommandsSender>()
                 .To<MistakesRemainingCommandsSender>()
+                .AsSingle();
+
+            this.Container.Bind<JokersDataSender>()
+                .ToSelf()
                 .AsSingle();
 
             this.InstallStateMachine();

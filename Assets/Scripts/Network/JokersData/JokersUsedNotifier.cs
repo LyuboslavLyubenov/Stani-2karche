@@ -3,6 +3,7 @@ using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManager
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using JokersData = Network.JokersData;
 using JokerTypeEventArgs = EventArgs.JokerTypeEventArgs;
+using Network_JokersData = Network.JokersData;
 
 namespace Assets.Scripts.Network
 {
@@ -43,11 +44,11 @@ namespace Assets.Scripts.Network
         public event EventHandler<JokerTypeEventArgs> OnUsedJoker = delegate { };
 
         private readonly IServerNetworkManager networkManager;
-        private readonly JokersData jokersData;
+        private readonly Network_JokersData jokersData;
 
         private readonly Dictionary<Type, INetworkManagerCommand> trackedJokersUsedCommands = new Dictionary<Type, INetworkManagerCommand>();
 
-        public JokersUsedNotifier(IServerNetworkManager networkManager, JokersData jokersData)
+        public JokersUsedNotifier(IServerNetworkManager networkManager, Network_JokersData jokersData)
         {
             if (networkManager == null)
             {

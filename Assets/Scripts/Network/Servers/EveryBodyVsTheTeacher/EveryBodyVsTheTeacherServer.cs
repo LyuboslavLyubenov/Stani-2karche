@@ -12,6 +12,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Network.JokersData.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
 
     using Commands;
@@ -78,6 +79,9 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         [Inject]
         private IMistakesRemainingCommandsSender mistakesRemainingCommandsSender;
 
+        [Inject]
+        private JokersDataSender jokersDataSender;
+        
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
         private readonly HashSet<int> surrenderedMainPlayersConnectionIds = new HashSet<int>();
 
