@@ -10,7 +10,8 @@ namespace Network
 
     public class JokersDataSender
     {
-        private readonly int receiverConnectionId;
+        protected int receiverConnectionId;
+
         private readonly IServerNetworkManager networkManager;
 
         public JokersDataSender(JokersData jokersData, int receiverConnectionId, IServerNetworkManager networkManager)
@@ -19,12 +20,7 @@ namespace Network
             {
                 throw new ArgumentNullException("jokersData");
             }
-
-            if (receiverConnectionId <= 0)
-            {
-                throw new ArgumentOutOfRangeException("receiverConnectionId");
-            }
-
+            
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
@@ -36,20 +32,24 @@ namespace Network
             jokersData.OnAddedJoker += this.OnAddedJoker;
             jokersData.OnRemovedJoker += this.OnRemovedJoker;
         }
+
+        public JokersDataSender(JokersData jokersData, IServerNetworkManager networkManager) : 
+            this(jokersData, 0, networkManager)
+        {
+        }
         
-        private void OnAddedJoker(object sender, JokerTypeEventArgs args)
+        protected virtual void OnAddedJoker(object sender, JokerTypeEventArgs args)
         {
             var commandName = "Add" + args.JokerType.Name;
             var command = new NetworkCommandData(commandName);
             this.networkManager.SendClientCommand(this.receiverConnectionId, command);
         }
 
-        private void OnRemovedJoker(object sender, JokerTypeEventArgs args)
+        protected virtual void OnRemovedJoker(object sender, JokerTypeEventArgs args)
         {
             var commandName = "Remove" + args.JokerType.Name;
             var command = new NetworkCommandData(commandName);
             this.networkManager.SendClientCommand(this.receiverConnectionId, command);
         }
     }
-
 }
