@@ -8,12 +8,16 @@ namespace Assets.Scripts.Network.JokersData.EveryBodyVsTheTeacher
 {
 
     using System;
+    using System.Linq;
 
     public class JokersDataSender : Network_JokersDataSender
     {
         private readonly IEveryBodyVsTheTeacherServer server;
 
-        public JokersDataSender(Network_JokersData jokersData, IServerNetworkManager networkManager, IEveryBodyVsTheTeacherServer server)
+        public JokersDataSender(
+            Network_JokersData jokersData, 
+            IServerNetworkManager networkManager, 
+            IEveryBodyVsTheTeacherServer server)
             : base(jokersData, networkManager)
         {
             if (server == null)
@@ -23,22 +27,27 @@ namespace Assets.Scripts.Network.JokersData.EveryBodyVsTheTeacher
 
             this.server = server;
         }
-
-        private void UpdateReceiverConnectionId()
-        {
-            base.receiverConnectionId = this.server.PresenterId;
-        }
-
+        
         protected override void OnAddedJoker(object sender, JokerTypeEventArgs args)
         {
-            this.UpdateReceiverConnectionId();
-            base.OnAddedJoker(sender, args);
+            var connectionIds = this.server.ConnectedMainPlayersConnectionIds.ToArray();
+
+            for (int i = 0; i < connectionIds.Length; i++)
+            {
+                this.receiverConnectionId = connectionIds[i];
+                base.OnAddedJoker(sender, args);
+            }
         }
 
         protected override void OnRemovedJoker(object sender, JokerTypeEventArgs args)
         {
-            this.UpdateReceiverConnectionId();
-            base.OnRemovedJoker(sender, args);
+            var connectionIds = this.server.ConnectedMainPlayersConnectionIds.ToArray();
+
+            for (int i = 0; i < connectionIds.Length; i++)
+            {
+                this.receiverConnectionId = connectionIds[i];
+                base.OnAddedJoker(sender, args);
+            }
         }
     }
 }
