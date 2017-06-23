@@ -2,7 +2,6 @@
 
 namespace Network.Servers.EveryBodyVsTheTeacher
 {
-
     using System;
 
     using Assets.Scripts.Interfaces.Network;
