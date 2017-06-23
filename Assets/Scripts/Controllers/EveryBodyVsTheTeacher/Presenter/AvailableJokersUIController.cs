@@ -8,9 +8,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter;
     using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-
-    using EventArgs;
-
+    
     using UnityEngine;
 
     using Zenject.Source.Usage;
