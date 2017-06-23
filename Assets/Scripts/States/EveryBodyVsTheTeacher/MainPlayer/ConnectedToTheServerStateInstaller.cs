@@ -18,6 +18,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
         [SerializeField]
         private GameObject playingUI;
 
+        [SerializeField]
+        private GameObject availableJokersUI;
+
         public override void InstallBindings()
         {
             this.Container.Bind<ConnectedToServerState>()
@@ -30,7 +33,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
                                     clientNetworkManager,
                                     this.gameStartButton,
                                     this.questionUI,
-                                    this.playingUI);
+                                    this.playingUI,
+                                    this.availableJokersUI);
                         })
                 .AsSingle();
         }

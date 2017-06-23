@@ -1,9 +1,8 @@
 ﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
 using AnswerTimeoutCommand = Commands.Client.AnswerTimeoutCommand;
+using AvailableJokersUIController = Controllers.AvailableJokersUIController;
 using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPlayersToStartGameCommand;
-using GameEndCommand = Commands.Client.GameEndCommand;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using ILeaderboardReceiver = Interfaces.Network.Leaderboard.ILeaderboardReceiver;
 using IQuestionUIController = Interfaces.Controllers.IQuestionUIController;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
@@ -21,6 +20,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers;
 
     using Notifications;
 
@@ -35,13 +35,17 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
         private readonly Button gameStartButton;
         private readonly GameObject questionUI;
         private readonly GameObject playingUI;
+        private readonly GameObject availableJokersUI;
+
         private readonly IQuestionUIController questionUIController;
+        private readonly IAvailableJokersUIController availableJokersUIController;
 
         public ConnectedToServerState(
             IClientNetworkManager networkManager,
             Button gameStartButton,
             GameObject questionUI,
-            GameObject playingUI)
+            GameObject playingUI,
+            GameObject availableJokersUI)
         {
             if (networkManager == null)
             {
@@ -62,12 +66,20 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
             {
                 throw new ArgumentNullException("playingUI");
             }
+
+            if (availableJokersUI == null)
+            {
+                throw new ArgumentNullException("availableJokersUI");
+            }
             
             this.networkManager = networkManager;
             this.gameStartButton = gameStartButton;
             this.questionUI = questionUI;
             this.playingUI = playingUI;
+            this.availableJokersUI = availableJokersUI;
+
             this.questionUIController = this.questionUI.GetComponent<QuestionUIController>();
+            this.availableJokersUIController = this.availableJokersUI.GetComponent<AvailableJokersUIController>();
 
             this.gameStartButton.onClick.AddListener(this.OnRequestedGameStart);
         }
@@ -131,6 +143,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
 
         public void OnStateExit(StateMachine stateMachine)
         {
+            this.questionUI.SetActive(false);
+            this.gameStartButton.gameObject.SetActive(false);
+            this.availableJokersUIController.ClearAll();
+
+            this.playingUI.SetActive(false);
+
             this.networkManager.CommandsManager.RemoveCommand<EnoughPlayersToStartGameCommand>();
             this.networkManager.CommandsManager.RemoveCommand<NotEnoughPlayersToStartGameCommand>();
             this.networkManager.CommandsManager.RemoveCommand<GameStartedCommand>();
