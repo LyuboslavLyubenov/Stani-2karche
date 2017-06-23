@@ -15,11 +15,11 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
     public class ElectionForJokersBinder : IElectionForJokersBinder, IDisposable
     {
         private readonly IClientNetworkManager networkManager;
-        private readonly IJokerElectionUIController jokerElectionUiController;
-        private readonly GameObject jokerElectionUi;
+        private readonly IJokerElectionUIController jokerElectionUIController;
+        private readonly GameObject jokerElectionUI;
 
-        private readonly GameObject successfullyActivatedJokerUi;
-        private readonly GameObject unsuccessfullyActivatedJokerUi;
+        private readonly GameObject successfullyActivatedJokerUI;
+        private readonly GameObject unsuccessfullyActivatedJokerUI;
 
         private readonly List<string> jokerNamesCurrentlyListening = new List<string>();
         
@@ -56,10 +56,10 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             }
 
             this.networkManager = networkManager;
-            this.jokerElectionUiController = jokerElectionUIController;
-            this.jokerElectionUi = jokerElectionUI;
-            this.successfullyActivatedJokerUi = successfullyActivatedJokerUI;
-            this.unsuccessfullyActivatedJokerUi = unsuccessfullyActivatedJokerUI;
+            this.jokerElectionUIController = jokerElectionUIController;
+            this.jokerElectionUI = jokerElectionUI;
+            this.successfullyActivatedJokerUI = successfullyActivatedJokerUI;
+            this.unsuccessfullyActivatedJokerUI = unsuccessfullyActivatedJokerUI;
         }
 
         private void RemoveCommandsBindedToJoker(string jokerName)
@@ -79,10 +79,10 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
                 throw new InvalidOperationException("Already listening for " + jokerName + " joker");
             }
 
-            var startedElectionCommand = new StartedVotingForJokerCommand(this.jokerElectionUiController, this.jokerElectionUi, joker);
-            var playerVotedForCommand = new VotedForJokerCommand(this.jokerElectionUiController);
-            var playerVotedAgainstCommand = new VotedAgainstCommand(this.jokerElectionUiController);
-            var electionResultCommand = new ElectionResultCommand(this.successfullyActivatedJokerUi, this.unsuccessfullyActivatedJokerUi);
+            var startedElectionCommand = new StartedVotingForJokerCommand(this.jokerElectionUIController, this.jokerElectionUI, joker);
+            var playerVotedForCommand = new VotedForJokerCommand(this.jokerElectionUIController);
+            var playerVotedAgainstCommand = new VotedAgainstCommand(this.jokerElectionUIController);
+            var electionResultCommand = new ElectionResultCommand(this.successfullyActivatedJokerUI, this.unsuccessfullyActivatedJokerUI);
 
             this.networkManager.CommandsManager.AddCommand("ElectionStartedFor" + jokerName, startedElectionCommand);
             this.networkManager.CommandsManager.AddCommand("PlayerVotedFor" + jokerName, playerVotedForCommand);
