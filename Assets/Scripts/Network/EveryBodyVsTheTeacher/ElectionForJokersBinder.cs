@@ -84,10 +84,10 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             var playerVotedAgainstCommand = new VotedAgainstCommand(this.jokerElectionUIController);
             var electionResultCommand = new ElectionResultCommand(this.successfullyActivatedJokerUI, this.unsuccessfullyActivatedJokerUI);
 
-            this.networkManager.CommandsManager.AddCommand("ElectionStartedFor" + jokerName, startedElectionCommand);
-            this.networkManager.CommandsManager.AddCommand("PlayerVotedFor" + jokerName, playerVotedForCommand);
-            this.networkManager.CommandsManager.AddCommand("PlayerVotedAgainst" + jokerName, playerVotedAgainstCommand);
-            this.networkManager.CommandsManager.AddCommand("ElectionResultFor" + jokerName, electionResultCommand);
+            this.networkManager.CommandsManager.AddCommand("ElectionStartedFor" + jokerName + "Joker", startedElectionCommand);
+            this.networkManager.CommandsManager.AddCommand("PlayerVotedFor" + jokerName + "Joker", playerVotedForCommand);
+            this.networkManager.CommandsManager.AddCommand("PlayerVotedAgainst" + jokerName + "Joker", playerVotedAgainstCommand);
+            this.networkManager.CommandsManager.AddCommand("ElectionResultFor" + jokerName + "Joker", electionResultCommand);
 
             this.jokerNamesCurrentlyListening.Add(jokerName);
         }
