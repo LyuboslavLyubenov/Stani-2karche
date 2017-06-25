@@ -64,10 +64,10 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
         private void RemoveCommandsBindedToJoker(string jokerName)
         {
-            this.networkManager.CommandsManager.RemoveCommand("ElectionStartedFor" + jokerName);
-            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedFor" + jokerName);
-            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedAgainst" + jokerName);
-            this.networkManager.CommandsManager.RemoveCommand("ElectionResultFor" + jokerName);
+            this.networkManager.CommandsManager.RemoveCommand("ElectionStartedFor" + jokerName + "Joker");
+            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedFor" + jokerName + "Joker");
+            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedAgainst" + jokerName + "Joker");
+            this.networkManager.CommandsManager.RemoveCommand("ElectionResultFor" + jokerName + "Joker");
         }
         
         public void Bind(IJoker joker)
@@ -82,7 +82,7 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             var startedElectionCommand = new StartedVotingForJokerCommand(this.jokerElectionUIController, this.jokerElectionUI, joker);
             var playerVotedForCommand = new VotedForJokerCommand(this.jokerElectionUIController);
             var playerVotedAgainstCommand = new VotedAgainstCommand(this.jokerElectionUIController);
-            var electionResultCommand = new ElectionResultCommand(this.successfullyActivatedJokerUI, this.unsuccessfullyActivatedJokerUI);
+            var electionResultCommand = new ElectionResultCommand(this.jokerElectionUI, this.successfullyActivatedJokerUI, this.unsuccessfullyActivatedJokerUI);
 
             this.networkManager.CommandsManager.AddCommand("ElectionStartedFor" + jokerName + "Joker", startedElectionCommand);
             this.networkManager.CommandsManager.AddCommand("PlayerVotedFor" + jokerName + "Joker", playerVotedForCommand);

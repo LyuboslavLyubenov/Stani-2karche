@@ -4,7 +4,6 @@ using MainPlayersContainerUIController = Controllers.EveryBodyVsTheTeacher.Playe
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
-
     using StateMachine;
 
     using UnityEngine;
