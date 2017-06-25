@@ -12,6 +12,9 @@
 
     public class JokerElectionUIController : MonoBehaviour, IJokerElectionUIController
     {
+        public event EventHandler OnVotedFor = delegate {};
+        public event EventHandler OnVotedAgainst = delegate {};
+
         [SerializeField]
         private Image jokerImageObj;
 
@@ -50,6 +53,8 @@
             this.thumbsUpCountText.text = (++peopleVotedFor).ToString();
 
             this.thumbsUpAnimator.SetTrigger("zoomBounce");
+
+            this.OnVotedFor(this, EventArgs.Empty);
         }
 
         public void AddThumbsDown()
@@ -58,6 +63,8 @@
             this.thumbsDownCountText.text = (++peopleAgainst).ToString();
 
             this.thumbsDownAnimator.SetTrigger("zoomBounce");
+
+            this.OnVotedAgainst(this, EventArgs.Empty);
         }
     }
 }
