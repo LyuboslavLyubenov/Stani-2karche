@@ -1,4 +1,5 @@
 ﻿using AnswerEventArgs = EventArgs.AnswerEventArgs;
+using ElectionJokersActionNotifier = Network.EveryBodyVsTheTeacher.ElectionJokersActionNotifier;
 using ICollectVoteResultForAnswerForCurrentQuestion = Interfaces.Network.ICollectVoteResultForAnswerForCurrentQuestion;
 using IElectionJokerCommand = Interfaces.Commands.Jokers.Selected.IElectionJokerCommand;
 using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
@@ -41,6 +42,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         private int inCorrectAnswersCount = 0;
 
         private readonly IElectionJokerCommand[] selectedJokerCommands;
+        private ElectionJokersActionNotifier electionJokersActionNotifier;
 
         public int MistakesRemaining
         {
@@ -192,6 +194,11 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         {
             var commandsManager = this.networkManager.CommandsManager;
             commandsManager.AddCommands(this.selectedJokerCommands);
+
+            this.electionJokersActionNotifier = new ElectionJokersActionNotifier(
+                this.networkManager,
+                this.server,
+                this.selectedJokerCommands);
         }
 
         public virtual void OnStateEnter(StateMachine stateMachine)
@@ -211,6 +218,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         {
             JokersUtils.RemoveRemainingJokers(this.jokersForThisRound, this.jokersData);
             JokersUtils.RemoveSelectJokerCommands(this.networkManager, this.selectedJokerCommands);
+            this.electionJokersActionNotifier.Dispose();
         }
     }
 }
