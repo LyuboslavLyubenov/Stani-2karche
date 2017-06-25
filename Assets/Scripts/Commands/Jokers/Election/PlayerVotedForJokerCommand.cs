@@ -7,11 +7,11 @@ namespace Assets.Scripts.Commands.Jokers.Election
     using System;
     using System.Collections.Generic;
 
-    public class VotedForJokerCommand : INetworkManagerCommand
+    public class PlayerVotedForJokerCommand : INetworkManagerCommand
     {
         private readonly IJokerElectionUIController jokerElectionUIController;
 
-        public VotedForJokerCommand(IJokerElectionUIController jokerElectionUIController)
+        public PlayerVotedForJokerCommand(IJokerElectionUIController jokerElectionUIController)
         {
             if (jokerElectionUIController == null)
             {
