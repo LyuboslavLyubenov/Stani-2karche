@@ -55,11 +55,22 @@
         {
             var connectionId = args.ConnectionId;
 
-            if (!this.connectionIdClientElement.ContainsKey(connectionId))
+            if (this.connectionIdClientElement.ContainsKey(connectionId))
             {
-                this.AddConnectedClientToList(connectionId);
-                this.UpdateContainerSize();
+                return;
             }
+
+            this.CoroutineUtils.WaitUntil(
+                () =>
+                    {
+                        var username = ServerNetworkManager.Instance.GetClientUsername(args.ConnectionId);
+                        return !string.IsNullOrEmpty(username);
+                    },
+                () =>
+                    {
+                        this.AddConnectedClientToList(connectionId);
+                        this.UpdateContainerSize();
+                    });
         }
 
         private void OnClientDisconnected(object sender, ClientConnectionIdEventArgs args)
