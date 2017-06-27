@@ -1,6 +1,5 @@
 namespace Jokers.Routers
 {
-
     using System;
     using System.Linq;
 

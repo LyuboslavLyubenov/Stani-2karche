@@ -57,7 +57,8 @@ namespace Commands.Jokers.Selected
             //to
             var sendClientId = int.Parse(commandsOptionsValues["PlayerConnectionId"]);
 
-            if (!this.mainPlayerData.JokersData.AvailableJokers.Contains(this.helpFromFriendJokerType) || !this.networkManager.IsConnected(senderConnectionId))
+            if (!this.mainPlayerData.JokersData.AvailableJokers.Contains(this.helpFromFriendJokerType) || 
+                !this.networkManager.IsConnected(senderConnectionId))
             {
                 return;
             }

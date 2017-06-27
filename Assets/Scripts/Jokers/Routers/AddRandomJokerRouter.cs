@@ -1,7 +1,5 @@
-
 namespace Jokers.Routers
 {
-
     using System;
     using System.Linq;
 
@@ -12,7 +10,6 @@ namespace Jokers.Routers
 
     using DTOs;
 
-    using Interfaces;
     using Interfaces.Network.Jokers.Routers;
 
     using Network;

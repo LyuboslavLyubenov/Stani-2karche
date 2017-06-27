@@ -195,6 +195,7 @@ namespace Jokers.Routers
             {
                 var audiencePollSettingsCommand = NetworkCommandData.From<AnswerPollSettingsCommand>();
                 audiencePollSettingsCommand.AddOption("TimeToAnswerInSeconds", this.senderConnectionId.ToString());
+                this.networkManager.SendClientCommand(this.senderConnectionId, audiencePollSettingsCommand);
 
                 this.SendGeneratedResultToMainPlayer();
                 return;

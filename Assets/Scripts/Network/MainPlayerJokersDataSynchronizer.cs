@@ -76,5 +76,4 @@ namespace Network
             this.networkManager.SendClientCommand(connectionId, addJokerCommand);
         }
     }
-
 }

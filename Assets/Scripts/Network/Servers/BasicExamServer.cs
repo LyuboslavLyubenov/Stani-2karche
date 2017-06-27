@@ -370,8 +370,7 @@ namespace Network.Servers
             ServerNetworkManager.Instance.CommandsManager.AddCommand(selectedFifthyFifthyChanceCommand);
             ServerNetworkManager.Instance.CommandsManager.AddCommand("Surrender", surrenderCommand);
         }
-
-
+        
         private void UpdateRemainingTime()
         {
             if (!this.MainPlayerData.IsConnected || this.paused)
