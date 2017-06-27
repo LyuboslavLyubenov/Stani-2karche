@@ -33,8 +33,8 @@
         void OnDisable()
         {
             this.jokerImageObj.sprite = null;
-            this.thumbsDownCountText.text = null;
-            this.thumbsDownCountText.text = null;
+            this.thumbsUpCountText.text = "0";
+            this.thumbsDownCountText.text = "0";
         }
 
         public void SetJokerImage(Sprite jokerImage)
