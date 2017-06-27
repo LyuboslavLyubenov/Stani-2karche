@@ -188,6 +188,12 @@ namespace GameController
         private void OnQuestionLoaded(object sender, SimpleQuestionEventArgs args)
         {
             this.QuestionsRemainingUIController.SetRemainingQuestions(this.remoteGameDataIterator.RemainingQuestionsToNextMark);
+
+            if (this.SecondsRemainingUIController.Running)
+            {
+                this.SecondsRemainingUIController.StopTimer();
+            }
+            
             this.SecondsRemainingUIController.InvervalInSeconds = this.remoteGameDataIterator.SecondsForAnswerQuestion;
             this.SecondsRemainingUIController.StartTimer();
         }
