@@ -179,19 +179,25 @@ namespace Network.Servers
         private void OnConnectedClientSelected(int connectionId)
         {
             this.ClientOptionsUIController.gameObject.SetActive(true);
-            this.CoroutineUtils.WaitForFrames(1, () =>
-            {
-                var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
-                var clientData = new ConnectedClientData(connectionId, username);
-                var role =
-                    (this.MainPlayerData.IsConnected && this.MainPlayerData.ConnectionId == connectionId)
-                        ?
-                        BasicExamClientRole.MainPlayer
-                        :
-                        BasicExamClientRole.Audience;
+            this.CoroutineUtils.WaitUntil(
+                () =>
+                    {
+                        var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
+                        return !string.IsNullOrEmpty(username);
+                    },
+                () =>
+                    {
+                        var username = ServerNetworkManager.Instance.GetClientUsername(connectionId);
+                        var clientData = new ConnectedClientData(connectionId, username);
+                        var role =
+                            (this.MainPlayerData.IsConnected && this.MainPlayerData.ConnectionId == connectionId)
+                                ?
+                                BasicExamClientRole.MainPlayer
+                                :
+                                BasicExamClientRole.Audience;
 
-                this.ClientOptionsUIController.Set(clientData, role);
-            });
+                        this.ClientOptionsUIController.Set(clientData, role);
+                    });
         }
 
         private void OnMainPlayerSurrender()
@@ -349,7 +355,7 @@ namespace Network.Servers
             var selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedSelectedAnswer);
             var selectedAskPlayerQuestionCommand = new SelectedAskPlayerQuestionCommand(ServerNetworkManager.Instance, this.MainPlayerData, this.askPlayerQuestionRouter, 60);
             var selectedAudiencePollCommand = new SelectedHelpFromAudienceJokerCommand(this.MainPlayerData, this.audiencePollRouter, 60);
-            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, this.MainPlayerData.ConnectionId, 2);
+            var selectedFifthyFifthyChanceCommand = new SelectedDisableRandomAnswersJokerCommand(this.MainPlayerData, this.disableRandomAnswersJokerRouter, 2);
             var surrenderCommand = new SurrenderBasicExamOneTimeCommand(this.MainPlayerData, this.OnMainPlayerSurrender);
             var selectedJokerCommands = new INetworkOperationExecutedCallback[] { selectedAudiencePollCommand, selectedFifthyFifthyChanceCommand, selectedAskPlayerQuestionCommand };
 
