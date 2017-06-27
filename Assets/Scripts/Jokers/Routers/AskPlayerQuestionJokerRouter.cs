@@ -140,7 +140,8 @@ namespace Jokers.Routers
                 throw new ArgumentOutOfRangeException("senderConnectionId");
             }
 
-            if (friendConnectionId <= 0)
+            if (friendConnectionId != NetworkCommandData.CODE_Option_ClientConnectionId_AI && 
+                friendConnectionId <= 0)
             {
                 throw new ArgumentOutOfRangeException("friendConnectionId");
             }
