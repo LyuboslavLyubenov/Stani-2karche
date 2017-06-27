@@ -1,6 +1,5 @@
 namespace Jokers.Retrievers
 {
-
     using System;
 
     using Commands.Client;
@@ -33,7 +32,7 @@ namespace Jokers.Retrievers
 
         protected IClientNetworkManager networkManager;
 
-        private int receiveSettingsTimeout;
+        private readonly int receiveSettingsTimeout;
 
         private Timer_ExecuteMethodAfterTime timer;
 
@@ -127,12 +126,7 @@ namespace Jokers.Retrievers
             {
                 throw new InvalidOperationException("Already started");
             }
-
-            if (clientConnectionId <= 0)
-            {
-                throw new ArgumentOutOfRangeException("clientConnectionId");
-            }
-
+            
             var receivedSettingsCommand = new AskClientQuestionSettingsCommand(this._OnReceivedSettings);
             this.networkManager.CommandsManager.AddCommand(receivedSettingsCommand);
 
@@ -170,5 +164,4 @@ namespace Jokers.Retrievers
             this.OnReceiveSettingsTimeout = null;
         }
     }
-
 }
