@@ -2,7 +2,6 @@
 
 namespace Jokers
 {
-
     using System;
     using System.Linq;
 
@@ -20,7 +19,6 @@ namespace Jokers
 
     using Exceptions;
 
-    using Interfaces;
     using Interfaces.Network.NetworkManager;
 
     using Localization;
@@ -148,7 +146,15 @@ namespace Jokers
         {
             this.loadingUI.SetActive(false);
             this.waitingToAnswerUI.SetActive(true);
-            this.waitingToAnswerUI.GetComponent<DisableAfterDelay>().InvervalInSeconds = args.TimeToAnswerInSeconds;
+            var disableAfterDelay = this.waitingToAnswerUI.GetComponent<DisableAfterDelay>();
+
+            if (disableAfterDelay.Running)
+            {
+                disableAfterDelay.StopTimer();
+            }
+
+            disableAfterDelay.InvervalInSeconds = args.TimeToAnswerInSeconds;
+            disableAfterDelay.StartTimer();
         }
 
         private void OnReceiveSettingsTimeout(object sender, EventArgs args)
