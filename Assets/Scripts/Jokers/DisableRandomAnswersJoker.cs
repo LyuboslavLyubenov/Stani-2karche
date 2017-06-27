@@ -160,7 +160,7 @@
             this.networkManager.CommandsManager.AddCommand(receiveJokerSettings);
 
             this.receiveSettingsTimeoutTimer =
-                TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds * 1000, this.OnReceiveSettingsTimeout);
+                TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds, this.OnReceiveSettingsTimeout);
 
             this.receiveSettingsTimeoutTimer.AutoDispose = true;
             this.receiveSettingsTimeoutTimer.RunOnUnityThread = true;
