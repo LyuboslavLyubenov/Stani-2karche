@@ -13,11 +13,6 @@
 
         public StateEventArgs(IState state)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException("state");
-            }
-
             this.State = state;
         }
     }
