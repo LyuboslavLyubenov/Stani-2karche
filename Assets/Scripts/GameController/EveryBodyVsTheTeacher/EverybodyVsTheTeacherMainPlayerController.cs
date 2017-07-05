@@ -33,6 +33,18 @@
 
         void Start()
         {
+#if UNITY_EDITOR
+            if (!PlayerPrefsEncryptionUtils.HasKey("ServerLocalIP"))
+            {
+                PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
+            }
+
+            if (!PlayerPrefsEncryptionUtils.HasKey("ServerExternalIP"))
+            {
+                PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "127.0.0.1");
+            }
+#endif
+
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
             
