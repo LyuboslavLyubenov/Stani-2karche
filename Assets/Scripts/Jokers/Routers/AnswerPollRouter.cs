@@ -159,6 +159,7 @@ namespace Jokers.Routers
             var sendQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             var questionJSON = JsonUtility.ToJson(question.Serialize());
             sendQuestionCommand.AddOption("QuestionJSON", questionJSON);
+            sendQuestionCommand.AddOption("TimeToAnswer",  this.timeToAnswerInSeconds.ToString());
 
             for (int i = 0; i < this.clientsThatMustVote.Count; i++)
             {
