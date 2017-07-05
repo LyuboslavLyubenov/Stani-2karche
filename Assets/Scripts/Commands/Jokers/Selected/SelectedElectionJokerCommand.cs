@@ -92,7 +92,10 @@
 
             this.OnElectionResult(this, new ElectionJokerResultEventArgs(decision));
 
-            this.ActivateRouter();
+            if (decision == ElectionDecision.For)
+            {
+                this.ActivateRouter();
+            }
         }
 
         /// <summary>
