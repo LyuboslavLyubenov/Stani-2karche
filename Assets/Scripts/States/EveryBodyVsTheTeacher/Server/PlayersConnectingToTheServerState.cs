@@ -145,6 +145,12 @@ namespace States.EveryBodyVsTheTeacher.Server
 
         private void OnMainPlayerConnecting(int connectionId)
         {
+            if (this.audiencePlayersConnectionIds.Contains(connectionId))
+            {
+                this.networkManager.KickPlayer(connectionId);
+                return;
+            }
+
             if (this.mainPlayersConnectionsIds.Count <= EveryBodyVsTheTeacherServer.MaxMainPlayersNeededToStartGame)
             {
                 this.mainPlayersConnectionsIds.Add(connectionId);
