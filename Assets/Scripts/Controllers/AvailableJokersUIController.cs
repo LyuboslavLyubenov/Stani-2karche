@@ -4,6 +4,7 @@
     using System;
     using System.Collections.Generic;
 
+    using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
 
@@ -80,7 +81,7 @@
 
             var jokerObj = Instantiate(this.dummyJokerButtonPrefab);
 
-            jokerObj.name = joker.GetType().Name.Replace("Joker", "");
+            jokerObj.name = joker.GetName();
             jokerObj.SetParent(this.Container, false);
 
             var jokerRect = jokerObj.GetComponent<RectTransform>();
