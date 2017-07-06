@@ -1,5 +1,6 @@
 ﻿using ElectionDecision = EventArgs.Jokers.ElectionDecision;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
+using INetworkOperationExecutedCallback = Interfaces.Network.NetworkManager.INetworkOperationExecutedCallback;
 
 namespace Assets.Scripts.Commands.Jokers.Election
 {
@@ -10,13 +11,16 @@ namespace Assets.Scripts.Commands.Jokers.Election
 
     using UnityEngine;
 
-    public class ElectionJokerResultCommand : INetworkManagerCommand
+    public class ElectionJokerResultCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
     {
         private readonly GameObject electionJokerUI;
         private readonly GameObject succesfullyVotedForJokerUi;
         private readonly GameObject unsuccessfullyVotedForJokerUi;
-
-        private readonly IJoker joker;
+        
+        public EventHandler OnExecuted
+        {
+            get; set;
+        }
 
         public ElectionJokerResultCommand(
             GameObject electionJokerUI,
@@ -37,27 +41,12 @@ namespace Assets.Scripts.Commands.Jokers.Election
             {
                 throw new ArgumentNullException("unsuccessfullyVotedForJokerUI");
             }
-
-            if (joker == null)
-            {
-                throw new ArgumentNullException("joker");
-            }
-
+            
             this.electionJokerUI = electionJokerUI;
             this.succesfullyVotedForJokerUi = succesfullyVotedForJokerUI;
             this.unsuccessfullyVotedForJokerUi = unsuccessfullyVotedForJokerUI;
         }
-
-        protected virtual void OnSuccessfullyActivated()
-        {
-
-        }
-
-        protected virtual void OnUnSuccessfullyActivated()
-        {
-
-        }
-
+        
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             this.electionJokerUI.SetActive(false);
@@ -71,6 +60,11 @@ namespace Assets.Scripts.Commands.Jokers.Election
             else
             {
                 this.unsuccessfullyVotedForJokerUi.SetActive(true);
+            }
+
+            if (this.OnExecuted != null)
+            {
+                this.OnExecuted(this, EventArgs.Empty);
             }
         }
     }
