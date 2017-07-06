@@ -134,10 +134,10 @@ namespace States.EveryBodyVsTheTeacher.Server
             }
         }
 
-        private void OnPlayerConnectedToServer(object sender, ClientConnectionIdEventArgs args)
+        private void OnPlayerSetUsername(object sender, ConnectedClientDataEventArgs args)
         {
-            var connectionId = args.ConnectionId;
-            var timer = TimerUtils.ExecuteAfter(1f, () => this.CheckIsClientJoinedAudienceOrMainPlayers(connectionId));
+            var connectionId = args.ClientData.ConnectionId;
+            var timer = TimerUtils.ExecuteAfter(0.5f, () => this.CheckIsClientJoinedAudienceOrMainPlayers(connectionId));
             timer.RunOnUnityThread = true;
             timer.AutoDispose = true;
             timer.Start();
@@ -253,7 +253,7 @@ namespace States.EveryBodyVsTheTeacher.Server
 
         private void AttachEventHandlers()
         {
-            this.networkManager.OnClientConnected += this.OnPlayerConnectedToServer;
+            this.networkManager.OnClientSetUsername += this.OnPlayerSetUsername;
             this.networkManager.OnClientDisconnected += this.OnPlayerDisconnectedFromServer;
 
             this.startGameRequestCommand.OnExecuted += this.OnMainPlayerRequestGameStart;
@@ -261,7 +261,7 @@ namespace States.EveryBodyVsTheTeacher.Server
 
         private void DetachEventHandlers()
         {
-            this.networkManager.OnClientConnected -= this.OnPlayerConnectedToServer;
+            this.networkManager.OnClientSetUsername -= this.OnPlayerSetUsername;
             this.networkManager.OnClientDisconnected -= this.OnPlayerDisconnectedFromServer;
             this.startGameRequestCommand.OnExecuted -= this.OnMainPlayerRequestGameStart;
         }
