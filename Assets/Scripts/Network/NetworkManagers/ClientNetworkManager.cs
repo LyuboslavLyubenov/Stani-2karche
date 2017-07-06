@@ -220,7 +220,7 @@
         {
             if (this.isRunning)
             {
-                NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromClientAsync, (exception) =>
+                NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromServerAsync, (exception) =>
                     {
                         Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
                         Debug.LogException(exception);
@@ -241,7 +241,7 @@
             return username;
         }
 
-        private void ReceivedMessageFromClientAsync(NetworkData networkData)
+        private void ReceivedMessageFromServerAsync(NetworkData networkData)
         {
             switch (networkData.NetworkEventType)
             {
@@ -255,16 +255,21 @@
             }
         }
 
-        private void ConnectedToServer()
+        private IEnumerator ConnectedToServerCoroutine()
         {
             var username = this.GetUsername();
-            var commandLine = NetworkCommandData.From<SetUsernameCommand>();
+            var setUsernameCommand = NetworkCommandData.From<SetUsernameCommand>();
+            setUsernameCommand.AddOption("Username", username);
+            this.SendServerCommand(setUsernameCommand);
 
-            commandLine.AddOption("Username", username);
-
-            this.SendServerCommand(commandLine);
+            yield return null;
 
             this.IsConnected = true;
+        }
+
+        private void ConnectedToServer()
+        {
+            ThreadUtils.Instance.RunOnMainThread(this.ConnectedToServerCoroutine());
         }
 
         private void DataReceivedFromServer(NetworkData networkData)
