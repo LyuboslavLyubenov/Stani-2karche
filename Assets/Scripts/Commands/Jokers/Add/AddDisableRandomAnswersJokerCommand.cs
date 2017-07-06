@@ -2,14 +2,11 @@ using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
 
 namespace Commands.Jokers.Add
 {
-
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Controllers;
 
-    using Controllers;
-
-    using Interfaces;
     using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
@@ -17,7 +14,7 @@ namespace Commands.Jokers.Add
     {
         private readonly IJoker joker;
 
-        public AddDisableRandomAnswersJokerCommand(AvailableJokersUIController availableJokersUIController, IClientNetworkManager networkManager, IQuestionUIController questionUIController)
+        public AddDisableRandomAnswersJokerCommand(IAvailableJokersUIController availableJokersUIController, IClientNetworkManager networkManager, IQuestionUIController questionUIController)
             : base(availableJokersUIController)
         {
             this.joker = new DisableRandomAnswersJoker(networkManager, questionUIController);
