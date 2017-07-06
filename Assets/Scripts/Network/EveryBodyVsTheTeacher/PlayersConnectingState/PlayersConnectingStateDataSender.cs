@@ -16,6 +16,8 @@
 
     using Network.Servers.EveryBodyVsTheTeacher;
 
+    using Utils;
+
     public class PlayersConnectingStateDataSender : IPlayersConnectingStateDataSender
     {
         private readonly IPlayersConnectingToTheServerState playersConnectingState;
@@ -96,14 +98,26 @@
 
         private void OnMainPlayerConnected(object sender, ClientConnectionIdEventArgs args)
         {
-            this.SendToPresenterClientConnected(args.ConnectionId, true);
+            var connectionId = args.ConnectionId;
+            var timer = TimerUtils.ExecuteWhen(
+                () =>
+                    {
+                        return !string.IsNullOrEmpty(this.networkManager.GetClientUsername(connectionId));
+                    },
+                () =>
+                    {
+                        this.SendToPresenterClientConnected(args.ConnectionId, true);
 
-            if (this.playersConnectingState.MainPlayersConnectionIds.Count >= EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame)
-            {
-                var enoughPlayersCommand = NetworkCommandData.From<EnoughPlayersToStartGameCommand>();
-                this.SendToMainPlayers(enoughPlayersCommand);
-                this.mustSentNotEnoughPlayersCommand = true;
-            }
+                        if (this.playersConnectingState.MainPlayersConnectionIds.Count
+                            >= EveryBodyVsTheTeacherServer.MinMainPlayersNeededToStartGame)
+                        {
+                            var enoughPlayersCommand = NetworkCommandData.From<EnoughPlayersToStartGameCommand>();
+                            this.SendToMainPlayers(enoughPlayersCommand);
+                            this.mustSentNotEnoughPlayersCommand = true;
+                        }
+                    });
+            timer.RunOnUnityThread = true;
+            timer.Start();
         }
 
         private void SendToMainPlayers(NetworkCommandData command)
