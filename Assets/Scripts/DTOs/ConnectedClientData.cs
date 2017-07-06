@@ -5,7 +5,7 @@
 
     public class ConnectedClientData
     {
-        private const int MinUsernameLength = 3;
+        private const int MinUsernameLength = 1;
 
         private int connectionId;
 

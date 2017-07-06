@@ -4,6 +4,7 @@ using GameEndCommand = Commands.Client.GameEndCommand;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 using LeaderboardReceiver = Network.Leaderboard.LeaderboardReceiver;
+using ThreadUtils = Utils.ThreadUtils;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
@@ -54,6 +55,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         public override void InstallBindings()
         {
+            var threadUtils = ThreadUtils.Instance;
             var networkManager = ClientNetworkManager.Instance;
 
             this.Container.Bind<IClientNetworkManager>()

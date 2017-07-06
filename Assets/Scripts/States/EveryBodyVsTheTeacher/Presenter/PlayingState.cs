@@ -16,6 +16,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
     using System;
     using System.Collections;
 
+    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
+
     using Interfaces.Controllers;
 
     using Interfaces;
@@ -33,7 +35,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
         private readonly IElectionQuestionUIController electionQuestionUIController;
         private readonly GameObject secondsRemainingUI;
         private readonly ISecondsRemainingUIController secondsRemainingUIController;
-        private readonly IAvailableElectionJokersUIController availableJokersUIController;
 
         private readonly SwitchedToNextRoundCommand switchedToNextRoundCommand;
 
@@ -48,7 +49,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             IClientNetworkManager networkManager,
             GameObject electionQuestionUI,
             GameObject secondsRemainingUI,
-            IAvailableElectionJokersUIController availableJokersUIController,
             SwitchedToNextRoundCommand switchedToNextRoundCommand,
             IAnswerPollResultRetriever pollResultRetriever,
             GameEndCommand gameEndCommand,
@@ -73,12 +73,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             {
                 throw new ArgumentNullException("secondsRemainingUI");
             }
-
-            if (availableJokersUIController == null)
-            {
-                throw new ArgumentNullException("availableJokersUIController");
-            }
-
+            
             if (switchedToNextRoundCommand == null)
             {
                 throw new ArgumentNullException("switchedToNextRoundCommand");
@@ -107,7 +102,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             this.secondsRemainingUI = secondsRemainingUI;
             this.secondsRemainingUIController = 
                 secondsRemainingUI.GetComponent(typeof(ISecondsRemainingUIController)) as ISecondsRemainingUIController;
-            this.availableJokersUIController = availableJokersUIController;
             this.switchedToNextRoundCommand = switchedToNextRoundCommand;
             this.pollResultRetriever = pollResultRetriever;
             this.gameEndCommand = gameEndCommand;
@@ -152,7 +146,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             
             this.networkManager.CommandsManager.AddCommand(this.switchedToNextRoundCommand);
             this.networkManager.CommandsManager.AddCommand(this.gameEndCommand);
-
+            
             this.playingUI.SetActive(true);
         }
         
@@ -162,8 +156,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
             this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
             this.networkManager.CommandsManager.RemoveCommand<SwitchedToNextRoundCommand>();
             this.networkManager.CommandsManager.RemoveCommand<GameEndCommand>();
-
-            this.availableJokersUIController.Dispose();
+            
             this.pollResultRetriever.Dispose();
             this.leaderboardReceiver.Dispose();
 
