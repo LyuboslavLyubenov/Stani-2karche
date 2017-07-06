@@ -3,7 +3,6 @@ using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManager
 
 namespace Assets.Scripts.Commands.Jokers.Election
 {
-
     using System;
     using System.Collections.Generic;
 
@@ -13,18 +12,18 @@ namespace Assets.Scripts.Commands.Jokers.Election
 
     public class StartedVotingForJokerCommand : INetworkManagerCommand
     {
-        private readonly IJokerElectionUIController jokerElectionUiController;
+        private readonly IJokerElectionUIController jokerElectionUIController;
         private readonly GameObject jokerElectionUI;
         private readonly IJoker joker;
 
         public StartedVotingForJokerCommand(
-            IJokerElectionUIController jokerElectionUiController, 
+            IJokerElectionUIController jokerElectionUIController, 
             GameObject jokerElectionUI,
             IJoker joker)
         {
-            if (jokerElectionUiController == null)
+            if (jokerElectionUIController == null)
             {
-                throw new ArgumentNullException("jokerElectionUiController");
+                throw new ArgumentNullException("jokerElectionUIController");
             }
 
             if (jokerElectionUI == null)
@@ -37,20 +36,15 @@ namespace Assets.Scripts.Commands.Jokers.Election
                 throw new ArgumentNullException("joker");
             }
 
-            this.jokerElectionUiController = jokerElectionUiController;
+            this.jokerElectionUIController = jokerElectionUIController;
             this.jokerElectionUI = jokerElectionUI;
             this.joker = joker;
         }
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            if (this.jokerElectionUI.activeSelf)
-            {
-                throw new InvalidOperationException("Voting is already activated");
-            }
-
             this.jokerElectionUI.SetActive(true);
-            this.jokerElectionUiController.SetJokerImage(this.joker.Image);
+            this.jokerElectionUIController.SetJokerImage(this.joker.Image);
         }
     }
 }
