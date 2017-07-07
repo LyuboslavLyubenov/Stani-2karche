@@ -8,7 +8,7 @@ using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using JokersData = Network.JokersData;
 using KalitkoJokerRouter = Jokers.Routers.KalitkoJokerRouter;
-using MainPlayerKalitkoJoker = Jokers.Kalitko.MainPlayerKalitkoJoker;
+using KalitkoJoker = Jokers.Kalitko.MainPlayerKalitkoJoker;
 using PlayerPrefsEncryptionUtils = Utils.Unity.PlayerPrefsEncryptionUtils;
 using SelectedConsultWithTeacherJokerCommand = Commands.Jokers.Selected.SelectedConsultWithTeacherJokerCommand;
 using SelectedKalitkoJokerCommand = Commands.Jokers.Selected.SelectedKalitkoJokerCommand;
@@ -29,7 +29,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 
         private static readonly Type[] JokersForThisRound = new[]
                                                             {
-                                                                typeof(MainPlayerKalitkoJoker),
+                                                                typeof(KalitkoJoker),
                                                                 typeof(TrustRandomPersonJoker),
                                                                 typeof(ConsultWithTheTeacherJoker)
                                                             };
