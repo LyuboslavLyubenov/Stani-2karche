@@ -84,7 +84,7 @@
             var questionJSON = JsonUtility.ToJson(question.Serialize());
             var loadQuestionCommand = NetworkCommandData.From<LoadQuestionCommand>();
             loadQuestionCommand.AddOption("QuestionJSON", questionJSON);
-            loadQuestionCommand.AddOption("TimeToAnswerInSeconds", timeToAnswerInSeconds.ToString());
+            loadQuestionCommand.AddOption("TimeToAnswer", timeToAnswerInSeconds.ToString());
             this.networkManager.SendClientCommand(playerConnectionId, loadQuestionCommand);
         }
         

@@ -24,8 +24,8 @@
 
     public class SimpleTcpClient : ISimpleTcpClient
     {
-        private const int ReceiveMessageTimeoutInMiliseconds = 4000;
-        private const int SendMessageTimeoutInMiliseconds = 4000;
+        private const int ReceiveMessageTimeoutInMiliseconds = 10000;
+        private const int SendMessageTimeoutInMiliseconds = 10000;
 
         private Dictionary<string, Socket> connectedToServersIPsSockets = new Dictionary<string, Socket>();
 
@@ -35,8 +35,6 @@
 
         public SimpleTcpClient()
         {
-            var threadUtils = ThreadUtils.Instance;//initialize
-
             this.updateConnectedSocketsTimer = TimerUtils.ExecuteEvery(1f, this.UpdateConnectedSockets);
             this.updateConnectedSocketsTimer.Start();
         }
@@ -73,6 +71,8 @@
             socket.SendTimeout = ReceiveMessageTimeoutInMiliseconds;
             socket.ReceiveTimeout = SendMessageTimeoutInMiliseconds;
 
+            Debug.Log("Begin connecting to" + ipAddress);
+
             socket.BeginConnect(ipAddress, port, new AsyncCallback(this.EndConnectToServer), state);
         }
 
@@ -84,9 +84,11 @@
             try
             {
                 socket.EndConnect(result);
-
+                
                 var serverIpEndPoint = (IPEndPoint)socket.RemoteEndPoint;
                 var ipAddress = serverIpEndPoint.Address.ToString().Split(':').First();
+                
+                Debug.Log("Connected to server " + ipAddress);
 
                 lock (this.myLock)
                 {

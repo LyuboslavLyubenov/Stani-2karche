@@ -12,18 +12,18 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 
     using UnityEngine;
 
-    public class ElectionForJokersBinder : IElectionForJokersBinder, IDisposable
+    public class JokerJokerElectionUiCommandsBinder : IJokerElectionCommandsBinder, IDisposable
     {
-        private readonly IClientNetworkManager networkManager;
-        private readonly IJokerElectionUIController jokerElectionUIController;
-        private readonly GameObject jokerElectionUI;
+        protected readonly IClientNetworkManager networkManager;
+        protected readonly IJokerElectionUIController jokerElectionUIController;
+        protected readonly GameObject jokerElectionUI;
 
-        private readonly GameObject successfullyActivatedJokerUI;
-        private readonly GameObject unsuccessfullyActivatedJokerUI;
+        protected readonly GameObject successfullyActivatedJokerUI;
+        protected readonly GameObject unsuccessfullyActivatedJokerUI;
 
         private readonly List<string> jokerNamesCurrentlyListening = new List<string>();
         
-        public ElectionForJokersBinder(
+        public JokerJokerElectionUiCommandsBinder(
             IClientNetworkManager networkManager,
             IJokerElectionUIController jokerElectionUIController, 
             GameObject jokerElectionUI,
@@ -60,14 +60,18 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             this.jokerElectionUI = jokerElectionUI;
             this.successfullyActivatedJokerUI = successfullyActivatedJokerUI;
             this.unsuccessfullyActivatedJokerUI = unsuccessfullyActivatedJokerUI;
+
+            var playerVotedForCommand = new PlayerVotedForCommand(this.jokerElectionUIController);
+            var playerVotedAgainstCommand = new PlayerVotedAgainstCommand(this.jokerElectionUIController);
+            
+            this.networkManager.CommandsManager.AddCommand(playerVotedForCommand);
+            this.networkManager.CommandsManager.AddCommand(playerVotedAgainstCommand);
         }
 
         private void RemoveCommandsBindedToJoker(string jokerName)
         {
             this.networkManager.CommandsManager.RemoveCommand("ElectionStartedFor" + jokerName + "Joker");
-            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedFor" + jokerName + "Joker");
-            this.networkManager.CommandsManager.RemoveCommand("PlayerVotedAgainst" + jokerName + "Joker");
-            this.networkManager.CommandsManager.RemoveCommand("ElectionResultFor" + jokerName + "Joker");
+            this.networkManager.CommandsManager.RemoveCommand("ElectionJokerResultFor" + jokerName + "Joker");
         }
         
         public void Bind(IJoker joker)
@@ -79,15 +83,20 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
                 throw new InvalidOperationException("Already listening for " + jokerName + " joker");
             }
 
-            var startedElectionCommand = new StartedVotingForJokerCommand(this.jokerElectionUIController, this.jokerElectionUI, joker);
-            var playerVotedForCommand = new VotedForJokerCommand(this.jokerElectionUIController);
-            var playerVotedAgainstCommand = new VotedAgainstCommand(this.jokerElectionUIController);
-            var electionResultCommand = new ElectionResultCommand(this.jokerElectionUI, this.successfullyActivatedJokerUI, this.unsuccessfullyActivatedJokerUI);
+            var startedElectionCommand = 
+                new StartedVotingForJokerCommand(
+                    this.jokerElectionUIController, 
+                    this.jokerElectionUI, 
+                    joker);
+            var electionJokerResultCommand =
+                new ElectionJokerResultCommand(
+                    this.jokerElectionUI,
+                    this.successfullyActivatedJokerUI,
+                    this.unsuccessfullyActivatedJokerUI);
 
-            this.networkManager.CommandsManager.AddCommand("ElectionStartedFor" + jokerName + "Joker", startedElectionCommand);
-            this.networkManager.CommandsManager.AddCommand("PlayerVotedFor" + jokerName + "Joker", playerVotedForCommand);
-            this.networkManager.CommandsManager.AddCommand("PlayerVotedAgainst" + jokerName + "Joker", playerVotedAgainstCommand);
-            this.networkManager.CommandsManager.AddCommand("ElectionResultFor" + jokerName + "Joker", electionResultCommand);
+            var commandsManager = this.networkManager.CommandsManager;
+            commandsManager.AddCommand("ElectionStartedFor" + jokerName + "Joker", startedElectionCommand);
+            commandsManager.AddCommand("ElectionJokerResultFor" + jokerName + "Joker", electionJokerResultCommand);
 
             this.jokerNamesCurrentlyListening.Add(jokerName);
         }
@@ -114,6 +123,10 @@ namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
             }
             
             this.jokerNamesCurrentlyListening.Clear();
+
+            this.networkManager.CommandsManager.RemoveCommand<PlayerVotedForCommand>();
+            this.networkManager.CommandsManager.RemoveCommand<PlayerVotedAgainstCommand>();
+            this.networkManager.CommandsManager.RemoveCommand<ElectionJokerResultCommand>();
         }
     }
 }

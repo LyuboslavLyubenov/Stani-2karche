@@ -17,7 +17,7 @@
         {
             this.timer = TimerUtils.ExecuteAfter(TimeDelaySendServerIsOnlineInSeconds, this.SendServerOnline);
             this.timer.AutoDispose = false;
-            this.timer.RunOnUnityThread = false;
+            this.timer.RunOnUnityThread = true;
             this.timer.Start();
         }
         

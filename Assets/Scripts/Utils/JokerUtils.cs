@@ -9,6 +9,8 @@ namespace Utils
 
     public class JokerUtils
     {
+        private static Type[] allJokerTypes;
+
         public static Type[] AllJokersTypes
         {
             get
@@ -24,8 +26,6 @@ namespace Utils
                 return allJokerTypes;
             }
         }
-
-        private static Type[] allJokerTypes;
 
         private JokerUtils()
         {

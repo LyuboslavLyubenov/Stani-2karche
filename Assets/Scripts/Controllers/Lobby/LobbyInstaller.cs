@@ -3,6 +3,7 @@ namespace Controllers.Lobby
 
     using Interfaces.Network;
     using Interfaces.Network.Kinvey;
+    using Interfaces.Network.NetworkManager;
     using Interfaces.Services;
 
     using Network;
@@ -50,9 +51,13 @@ namespace Controllers.Lobby
             this.Container.Bind<ILANServersDiscoverer>()
                 .To<LANServersDiscoverer>()
                 .AsSingle();
-
+            
             this.Container.Bind<CreatedGameInfoReceiver>()
                 .AsSingle();
+
+            var createdGameInfoReceiver = Container.Resolve<CreatedGameInfoReceiver>();
+            this.Container.Bind<ICreatedGameInfoReceiver>()
+                .FromInstance(createdGameInfoReceiver);
 
         }
         

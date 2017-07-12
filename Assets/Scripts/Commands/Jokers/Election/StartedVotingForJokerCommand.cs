@@ -44,7 +44,7 @@ namespace Assets.Scripts.Commands.Jokers.Election
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             this.jokerElectionUI.SetActive(true);
-            this.jokerElectionUIController.SetJokerImage(this.joker.Image);
+            this.jokerElectionUIController.SetJoker(this.joker);
         }
     }
 }

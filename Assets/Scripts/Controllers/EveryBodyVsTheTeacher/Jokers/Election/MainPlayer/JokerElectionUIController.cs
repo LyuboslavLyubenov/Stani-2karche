@@ -1,10 +1,14 @@
-﻿using Election_JokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.JokerElectionUIController;
+﻿using ElectionDecision = EventArgs.Jokers.ElectionDecision;
+using Election_JokerElectionUIController = Controllers.EveryBodyVsTheTeacher.Jokers.Election.JokerElectionUIController;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Jokers.Election.MainPlayer
 {
     using System;
+
+    using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces;
 
     using UnityEngine.UI;
 
@@ -14,7 +18,9 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Jokers.Election.MainP
     {
         [Inject]
         private IClientNetworkManager networkManager;
-        
+
+        private string jokerName;
+
         void Awake()
         {
             base.OnVotedFor += this.OnVotedForJoker;
@@ -31,17 +37,28 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Jokers.Election.MainP
             }
         }
 
+        public override void SetJoker(IJoker joker)
+        {
+            base.SetJoker(joker);
+            this.jokerName = joker.GetName();
+        }
+
+        private void SendElectionDecision(ElectionDecision decision)
+        {
+            var jokerElectionDecision = new NetworkCommandData("Selected" + this.jokerName + "Joker");
+            jokerElectionDecision.AddOption("Decision", decision.ToString());
+            this.networkManager.SendServerCommand(jokerElectionDecision);
+        }
+
         private void OnVotedForJoker(object sender, EventArgs args)
         {
-            var votedForCommand = new NetworkCommandData("PlayerVotedFor");
-            this.networkManager.SendServerCommand(votedForCommand);
+            this.SendElectionDecision(ElectionDecision.For);
             this.gameObject.SetActive(false);
         }
         
         private void OnVotedAgainstJoker(object sender, EventArgs args)
         {
-            var votedAgainstCommand = new NetworkCommandData("PlayerVotedAgainst");
-            this.networkManager.SendServerCommand(votedAgainstCommand);
+            this.SendElectionDecision(ElectionDecision.Against);
             this.gameObject.SetActive(false);
         }
     }

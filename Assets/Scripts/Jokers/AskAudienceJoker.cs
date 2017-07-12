@@ -57,8 +57,7 @@
             get;
             private set;
         }
-
-
+        
         public bool Activated
         {
             get;

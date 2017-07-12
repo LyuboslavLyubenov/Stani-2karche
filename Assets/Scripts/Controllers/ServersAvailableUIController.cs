@@ -67,7 +67,7 @@
                     {
                         return;
                     }
-
+                    
                     this.kinveyWrapper.RetrieveEntityAsync<ServerInfo_DTO>("Servers", null, this.OnLoadedServers, Debug.LogException);
                 });
         }
@@ -84,6 +84,8 @@
 
         private void OnLocalServerFound(object sender, IpEventArgs args)
         {
+            Debug.Log("Found server  " + args.IPAddress);
+
             var ip = args.IPAddress;
             this.BeginReceiveServerGameInfo(ip);
         }

@@ -406,11 +406,6 @@ namespace Network
                 throw new ArgumentNullException("tableName");
             }
 
-            if (string.IsNullOrEmpty(id))
-            {
-                throw new ArgumentNullException("id");
-            }
-
             if (onRetrieved == null)
             {
                 throw new ArgumentNullException("onRetrieved");

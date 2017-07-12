@@ -5,10 +5,11 @@ using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Network.EveryBodyVsTheTeacher
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using Assets.Scripts.Commands.Jokers.Election;
 
     using EventArgs.Jokers;
 
@@ -90,22 +91,20 @@ namespace Network.EveryBodyVsTheTeacher
         private void OnElectionResultJoker(object sender, ElectionJokerResultEventArgs args)
         {
             var jokerName = this.GetJokerName(sender);
-            var command = new NetworkCommandData("ElectionResultFor" + jokerName);
+            var command = new NetworkCommandData("ElectionJokerResultFor" + jokerName);
             command.AddOption("Decision", args.ElectionDecision.ToString());
             this.SendToMainPlayersAndPresenter(command);
         }
         
         private void OnPlayerSelectedFor(object sender, ClientConnectionIdEventArgs args)
         {
-            var jokerName = this.GetJokerName(sender);
-            var command = new NetworkCommandData("PlayerVotedFor" + jokerName);
+            var command = NetworkCommandData.From<PlayerVotedForCommand>();
             this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
         
         private void OnPlayerSelectedAgainst(object sender, ClientConnectionIdEventArgs args)
         {
-            var jokerName = this.GetJokerName(sender);
-            var command = new NetworkCommandData("PlayerVotedAgainst" + jokerName);
+            var command = NetworkCommandData.From<PlayerVotedAgainstCommand>();
             this.networkManager.SendClientCommand(this.server.PresenterId, command);
         }
 

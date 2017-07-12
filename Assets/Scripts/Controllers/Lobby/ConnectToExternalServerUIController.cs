@@ -3,6 +3,8 @@
 
     using EventArgs;
 
+    using Interfaces.Network.NetworkManager;
+
     using Network.GameInfo;
 
     using Notifications;
@@ -14,14 +16,14 @@
 
     public class ConnectToExternalServerUIController : MonoBehaviour
     {
-        private const int ConnectionTimeoutInSeconds = 5;
+        private const int ConnectionTimeoutInSeconds = 10;
         
         public GameObject LoadingUI;
 
         public Text IPText;
 
         [Inject]
-        private CreatedGameInfoReceiver gameInfoReceiver;
+        private ICreatedGameInfoReceiver gameInfoReceiver;
 
         [Inject]
         private SelectPlayerTypeRouter SelectPlayerTypeRouter;
@@ -77,7 +79,9 @@
             this.ip = ip;
             this.connecting = true;
 
-            this.gameInfoReceiver.ReceiveFrom(ip, this.OnReceivedGameInfo);
+            Debug.Log("Trying to connect to " + ip);
+
+            this.gameInfoReceiver.ReceiveFrom(ip, this.OnReceivedGameInfo, Debug.LogException);
             this.LoadingUI.SetActive(true);
         }
 

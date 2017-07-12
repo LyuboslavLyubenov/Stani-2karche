@@ -2,10 +2,10 @@
 {
     using System;
     
-    public interface IElectionForJokersBinder : IDisposable
+    public interface IJokerElectionCommandsBinder : IDisposable
     {
         void Bind(IJoker joker);
-
+        
         void Unbind(IJoker joker);
     }
 }

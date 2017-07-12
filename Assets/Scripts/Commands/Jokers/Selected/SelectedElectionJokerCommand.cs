@@ -20,7 +20,7 @@
 
     public abstract class SelectedElectionJokerCommand : IElectionJokerCommand
     {
-        protected const int MinTimeTimeoutInSeconds = 5;
+        protected const int MinTimeTimeoutInSeconds = 10;
 
         public event EventHandler OnElectionStarted = delegate
             {

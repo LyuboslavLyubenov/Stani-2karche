@@ -43,6 +43,8 @@
                 return;
             }
 
+            UnityEngine.Debug.Log("Received gameinfo from " + args.IPAddress);
+
             var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSender.GameInfoTag.Length);
             var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
 
@@ -55,12 +57,23 @@
 
         private void _ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
-            this.client.Send(ipAddress, CreatedGameInfoSender.SendGameInfoCommandTag, null, onError);
+            this.client.Send(ipAddress, CreatedGameInfoSender.SendGameInfoCommandTag, null,
+                (exception) =>
+                    {
+                        this.pendingRequests.Remove(ipAddress);
+
+                        if (onError != null)
+                        {
+                            onError(exception);
+                        }
+                    });
             this.pendingRequests.Add(ipAddress, receivedGameInfo);
         }
 
         public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
+            UnityEngine.Debug.Log("Start receiving game info from " + ipAddress);
+
             if (this.client.IsConnectedTo(ipAddress))
             {
                 this._ReceiveFrom(ipAddress, receivedGameInfo, onError);

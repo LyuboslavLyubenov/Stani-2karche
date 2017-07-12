@@ -79,7 +79,6 @@
         {
             ThreadUtils.Instance.RunOnBackgroundThread(this.ReceiveMessageCoroutine(onReceivedMessage));
         }
-
         
         public virtual void Dispose()
         {
@@ -87,5 +86,4 @@
             this.udpClient = null;
         }
     }
-
 }

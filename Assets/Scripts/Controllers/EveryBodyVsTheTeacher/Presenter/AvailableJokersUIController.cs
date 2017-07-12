@@ -16,7 +16,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter
     public class AvailableJokersUIController : Controllers_AvailableJokersUIController, IAvailableJokersUIController
     {
         [Inject]
-        private IElectionForJokersBinder jokersBinder;
+        private IJokerElectionCommandsBinder jokersBinder;
 
         public AvailableJokersUIController()
         {

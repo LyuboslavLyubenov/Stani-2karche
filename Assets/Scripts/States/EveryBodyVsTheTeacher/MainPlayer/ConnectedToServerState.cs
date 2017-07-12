@@ -5,6 +5,7 @@ using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPla
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using IQuestionUIController = Interfaces.Controllers.IQuestionUIController;
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
+using JokerEventArgs = EventArgs.JokerEventArgs;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 using NotEnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.NotEnoughPlayersToStartGameCommand;
@@ -21,6 +22,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher.Shared;
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
+    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
 
     using Notifications;
 
@@ -37,6 +39,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
         private readonly GameObject playingUI;
         private readonly GameObject availableJokersUI;
 
+        private readonly IJokerElectionCommandsBinder jokerElectionCommandsBinder;
+
         private readonly IQuestionUIController questionUIController;
         private readonly IAvailableJokersUIController availableJokersUIController;
 
@@ -45,7 +49,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
             Button gameStartButton,
             GameObject questionUI,
             GameObject playingUI,
-            GameObject availableJokersUI)
+            GameObject availableJokersUI,
+            IJokerElectionCommandsBinder jokerElectionCommandsBinder)
         {
             if (networkManager == null)
             {
@@ -71,12 +76,18 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
             {
                 throw new ArgumentNullException("availableJokersUI");
             }
-            
+
+            if (jokerElectionCommandsBinder == null)
+            {
+                throw new ArgumentNullException("jokerElectionCommandsBinder");
+            }
+
             this.networkManager = networkManager;
             this.gameStartButton = gameStartButton;
             this.questionUI = questionUI;
             this.playingUI = playingUI;
             this.availableJokersUI = availableJokersUI;
+            this.jokerElectionCommandsBinder = jokerElectionCommandsBinder;
 
             this.questionUIController = this.questionUI.GetComponent<QuestionUIController>();
             this.availableJokersUIController = this.availableJokersUI.GetComponent<AvailableJokersUIController>();
@@ -130,6 +141,12 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
             this.networkManager.CommandsManager.AddCommand(answerTimeoutCommand);
             
             this.questionUIController.OnAnswerClick += OnAnswerClick;
+            this.availableJokersUIController.OnAddedJoker += OnAddedJoker;
+        }
+
+        private void OnAddedJoker(object sender, JokerEventArgs args)
+        {
+            this.jokerElectionCommandsBinder.Bind(args.Joker);
         }
 
         private void OnAnswerClick(object sender, AnswerEventArgs args)
@@ -143,6 +160,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
 
         public void OnStateExit(StateMachine stateMachine)
         {
+            this.questionUIController.OnAnswerClick -= OnAnswerClick;
+            this.availableJokersUIController.OnAddedJoker -= OnAddedJoker;
+
             this.questionUI.SetActive(false);
             this.gameStartButton.gameObject.SetActive(false);
             this.availableJokersUIController.ClearAll();

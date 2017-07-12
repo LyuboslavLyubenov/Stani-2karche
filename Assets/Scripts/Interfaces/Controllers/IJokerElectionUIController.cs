@@ -10,7 +10,7 @@ namespace Assets.Scripts.Interfaces.Controllers
         event EventHandler OnVotedFor;
         event EventHandler OnVotedAgainst;
 
-        void SetJokerImage(Sprite sprite);
+        void SetJoker(IJoker joker);
 
         void AddThumbsUp();
 

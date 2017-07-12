@@ -3,9 +3,8 @@
     using System;
 
     using Assets.Scripts.Extensions;
+    using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
-
-    using Extensions;
 
     using UnityEngine;
     using UnityEngine.UI;
@@ -37,17 +36,17 @@
             this.thumbsDownCountText.text = "0";
         }
 
-        public void SetJokerImage(Sprite jokerImage)
+        public virtual void SetJoker(IJoker joker)
         {
-            if (jokerImage == null)
+            if (joker == null)
             {
-                throw new ArgumentNullException("jokerImage");
+                throw new ArgumentNullException("joker");
             }
 
-            this.jokerImageObj.sprite = jokerImage;
+            this.jokerImageObj.sprite = joker.Image;
         }
 
-        public void AddThumbsUp()
+        public virtual void AddThumbsUp()
         {
             var peopleVotedFor = this.thumbsUpCountText.text.ConvertTo<int>();
             this.thumbsUpCountText.text = (++peopleVotedFor).ToString();
@@ -57,7 +56,7 @@
             this.OnVotedFor(this, EventArgs.Empty);
         }
 
-        public void AddThumbsDown()
+        public virtual void AddThumbsDown()
         {
             var peopleAgainst = this.thumbsDownCountText.text.ConvertTo<int>();
             this.thumbsDownCountText.text = (++peopleAgainst).ToString();

@@ -2,6 +2,7 @@ using ClientNetworkManager = Network.NetworkManagers.ClientNetworkManager;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using QuestionsRemainingUIController = Controllers.QuestionsRemainingUIController;
 using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
+using ThreadUtils = Utils.ThreadUtils;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
@@ -29,6 +30,8 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         public override void InstallBindings()
         {
+            var threadUtils = ThreadUtils.Instance;
+
             this.Container.Bind<IClientNetworkManager>()
                 .FromInstance(ClientNetworkManager.Instance)
                 .AsSingle();
