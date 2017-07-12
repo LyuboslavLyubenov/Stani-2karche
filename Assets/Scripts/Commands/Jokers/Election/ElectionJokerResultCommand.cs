@@ -7,8 +7,6 @@ namespace Assets.Scripts.Commands.Jokers.Election
     using System;
     using System.Collections.Generic;
 
-    using Assets.Scripts.Interfaces;
-
     using UnityEngine;
 
     public class ElectionJokerResultCommand : INetworkManagerCommand, INetworkOperationExecutedCallback
