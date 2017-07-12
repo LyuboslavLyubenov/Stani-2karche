@@ -101,7 +101,7 @@
             this.foundServers.Add(ip);
         }
 
-        private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs receivedData)
+        private void OnReceivedGameInfo(GameInfoEventArgs receivedData)
         {
             var gameInfo = receivedData.GameInfo;
             var obj = this.ServerFoundElementsPool.Get();

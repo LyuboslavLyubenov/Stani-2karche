@@ -58,7 +58,7 @@
             this.gameInfoReceiver.StopReceivingFrom(this.ip);
         }
 
-        private void OnReceivedGameInfo(GameInfoReceivedDataEventArgs args)
+        private void OnReceivedGameInfo(GameInfoEventArgs args)
         {
             this.LoadingUI.SetActive(false);
             this.connecting = false;
