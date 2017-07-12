@@ -11,7 +11,7 @@
 
     public class CreatedGameInfoReceiver : ICreatedGameInfoReceiver
     {
-        private readonly Dictionary<string, Action<GameInfoReceivedDataEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoReceivedDataEventArgs>>();
+        private readonly Dictionary<string, Action<GameInfoEventArgs>> pendingRequests = new Dictionary<string, Action<GameInfoEventArgs>>();
 
         private ISimpleTcpClient client;
         private ISimpleTcpServer server;
@@ -46,7 +46,7 @@
             UnityEngine.Debug.Log("Received gameinfo from " + args.IPAddress);
 
             var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSender.GameInfoTag.Length);
-            var gameInfo = new GameInfoReceivedDataEventArgs(filteredMessage);
+            var gameInfo = new GameInfoEventArgs(filteredMessage);
 
             var requestCallback = this.pendingRequests[args.IPAddress];
 
@@ -55,7 +55,7 @@
             requestCallback(gameInfo);
         }
 
-        private void _ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
+        private void _ReceiveFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
             this.client.Send(ipAddress, CreatedGameInfoSender.SendGameInfoCommandTag, null,
                 (exception) =>
@@ -70,7 +70,7 @@
             this.pendingRequests.Add(ipAddress, receivedGameInfo);
         }
 
-        public void ReceiveFrom(string ipAddress, Action<GameInfoReceivedDataEventArgs> receivedGameInfo, Action<Exception> onError = null)
+        public void ReceiveFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
             UnityEngine.Debug.Log("Start receiving game info from " + ipAddress);
 

@@ -9,7 +9,7 @@
     {
         void ReceiveFrom(
             string ipAddress,
-            Action<GameInfoReceivedDataEventArgs> receivedGameInfo,
+            Action<GameInfoEventArgs> receivedGameInfo,
             Action<Exception> onError = null);
 
         void StopReceivingFrom(string ipAddress);

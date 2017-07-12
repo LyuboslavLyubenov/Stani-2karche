@@ -9,9 +9,9 @@
 
     using EventArgs = System.EventArgs;
 
-    public class GameInfoReceivedDataEventArgs : EventArgs
+    public class GameInfoEventArgs : EventArgs
     {
-        public GameInfoReceivedDataEventArgs(string json)
+        public GameInfoEventArgs(string json)
         {
             if (string.IsNullOrEmpty(json))
             {
