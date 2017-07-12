@@ -2,8 +2,13 @@
 
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
+
+    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Jokers.Election.MainPlayer;
     using Assets.Scripts.Interfaces;
+    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer;
+    using Assets.Tests.DummyObjects.Network;
     using Assets.Tests.Utils;
 
     using Controllers;
@@ -66,7 +71,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
             var questionUIController = this.questionUI.GetComponent<QuestionUIController>();
             this.Container.Bind<IQuestionUIController>()
                 .FromInstance(questionUIController);
-
+            
             this.Container.Bind<IState>()
                 .FromMethod(
                     (context) =>
@@ -75,14 +80,15 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
                             var gameStartButton = context.Container.Resolve<Button>("GameStartButton");
                             var questionUI = context.Container.Resolve<GameObject>("QuestionUI");
                             var playingUI = context.Container.Resolve<GameObject>("PlayingUI");
-
+                            
                             return 
                                 new ConnectedToServerState(
                                     clientNetworkManager, 
                                     gameStartButton, 
                                     questionUI,
                                     playingUI,
-                                    this.availableJokersUI);
+                                    this.availableJokersUI,
+                                    new DummyJokerElectionCommandsBinder());
                         })
                 .AsSingle();
 
