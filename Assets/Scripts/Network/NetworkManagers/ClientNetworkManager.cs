@@ -122,6 +122,8 @@
 
         private ClientNetworkManager()
         {
+            var threadUtils = ThreadUtils.Instance;
+
             NetworkTransport.Init();
             
             this.ConfigureCommands();

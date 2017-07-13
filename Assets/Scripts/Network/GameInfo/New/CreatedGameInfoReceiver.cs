@@ -1,12 +1,16 @@
 ﻿using GameInfoEventArgs = EventArgs.GameInfoEventArgs;
 using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using ICreatedGameInfoReceiver = Interfaces.Network.NetworkManager.ICreatedGameInfoReceiver;
+using NetworkCommandData = Commands.NetworkCommandData;
+using ThreadUtils = Utils.ThreadUtils;
 
 namespace Assets.Scripts.Network.GameInfo.New
 {
     using System;
+    using System.Collections;
 
     using Assets.Scripts.Commands.CreatedGameInfoReceiver;
+    using Assets.Scripts.Commands.CreatedGameInfoSender;
 
     using UnityEngine;
 
@@ -32,6 +36,9 @@ namespace Assets.Scripts.Network.GameInfo.New
 
         private void StartReceivingFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
+            var sendGameInfoCommand = NetworkCommandData.From<SendGameInfoCommand>();
+            this.networkManager.SendServerCommand(sendGameInfoCommand);
+
             this.receivedGameInfoCommand.AllowToReceiveFrom(ipAddress, receivedGameInfo,
                 () =>
                     {
@@ -42,25 +49,39 @@ namespace Assets.Scripts.Network.GameInfo.New
                     });
         }
 
-        public void ReceiveFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
+        private IEnumerator ReceiveFromCoroutine(
+            string ipAddress,
+            Action<GameInfoEventArgs> receivedGameInfo,
+            Action<Exception> onError = null)
         {
             if (this.networkManager.IsConnected)
             {
                 this.networkManager.Disconnect();
+                yield return null;
             }
 
-            var connectionResult = this.networkManager.ConnectToHost(ipAddress);
-            if (connectionResult == NetworkConnectionError.NoError)
-            {
-                this.StartReceivingFrom(ipAddress, receivedGameInfo, onError);
-            }
-            else
-            {
-                if (onError != null)
-                {
-                    onError(new TimeoutException());
-                }
-            }
+            this.networkManager.ConnectToHost(ipAddress);
+
+            yield return new WaitUntil(() => this.networkManager.IsConnected);
+
+            this.StartReceivingFrom(ipAddress, receivedGameInfo,
+                (exception) =>
+                    {
+                        this.networkManager.Disconnect();
+                        if (onError != null)
+                        {
+                            onError(exception);
+                        }
+                    });
+        }
+
+        public void ReceiveFrom(
+            string ipAddress, 
+            Action<GameInfoEventArgs> receivedGameInfo, 
+            Action<Exception> onError = null)
+        {
+            ThreadUtils.Instance.RunOnMainThread(
+                this.ReceiveFromCoroutine(ipAddress, receivedGameInfo, onError));
         }
 
         public void StopReceivingFrom(string ipAddress)

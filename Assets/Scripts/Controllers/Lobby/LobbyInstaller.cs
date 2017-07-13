@@ -13,6 +13,8 @@ namespace Controllers.Lobby
 
     using UnityEngine;
 
+    using Utils;
+
     using Zenject;
 
     public class LobbyInstaller : MonoInstaller
@@ -22,6 +24,9 @@ namespace Controllers.Lobby
 
         public override void InstallBindings()
         {
+            var threadUtils = ThreadUtils.Instance;
+            var clientNetworkManager = ClientNetworkManager.Instance;
+
             this.InstallSelectPlayerTypeRouterBindings();
             
             var connectToExternalServerUIController = GameObject.FindObjectOfType<ConnectToExternalServerUIController>();

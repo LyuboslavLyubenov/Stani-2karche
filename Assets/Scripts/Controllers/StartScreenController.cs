@@ -3,13 +3,17 @@
 
     using UnityEngine;
 
+    using Utils;
+
     public class StartScreenController : MonoBehaviour
     {
         public GameObject CreateOrJoinUI;
         public EnterNameUIController EnterNameUIController;
 
-        private void Start()
+        void Start()
         {
+            var threadUtils = ThreadUtils.Instance;
+
             if (PlayerPrefs.HasKey("Username"))
             {
                 this.EnterNameUIController.gameObject.SetActive(false);
