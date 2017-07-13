@@ -10,6 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace UnityTestTools.IntegrationTestsFramework.TestRunner
 {
 
+    using System;
     using System.Collections.Generic;
 
     public class NetworkResultSender : ITestRunnerCallback
