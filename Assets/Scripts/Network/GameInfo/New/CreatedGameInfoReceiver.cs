@@ -8,6 +8,8 @@ namespace Assets.Scripts.Network.GameInfo.New
 
     using Assets.Scripts.Commands.CreatedGameInfoReceiver;
 
+    using UnityEngine;
+
     public class CreatedGameInfoReceiver : ICreatedGameInfoReceiver, IDisposable
     {        
         private const int ReceiveGameInfoTimeoutInSeconds = 5;
@@ -28,7 +30,7 @@ namespace Assets.Scripts.Network.GameInfo.New
             networkManager.CommandsManager.AddCommand(receivedGameInfoCommand);
         }
 
-        public void ReceiveFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
+        private void StartReceivingFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
             this.receivedGameInfoCommand.AllowToReceiveFrom(ipAddress, receivedGameInfo,
                 () =>
@@ -38,6 +40,27 @@ namespace Assets.Scripts.Network.GameInfo.New
                             onError(new TimeoutException());
                         }
                     });
+        }
+
+        public void ReceiveFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
+        {
+            if (this.networkManager.IsConnected)
+            {
+                this.networkManager.Disconnect();
+            }
+
+            var connectionResult = this.networkManager.ConnectToHost(ipAddress);
+            if (connectionResult == NetworkConnectionError.NoError)
+            {
+                this.StartReceivingFrom(ipAddress, receivedGameInfo, onError);
+            }
+            else
+            {
+                if (onError != null)
+                {
+                    onError(new TimeoutException());
+                }
+            }
         }
 
         public void StopReceivingFrom(string ipAddress)
