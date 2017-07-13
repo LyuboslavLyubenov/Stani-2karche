@@ -15,7 +15,7 @@ namespace Tests.States.Server.EndGame
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenPlayerReconnectedSendEndGameCommand : ExtendedMonoBehaviour
     {

@@ -5,14 +5,12 @@
 
     using Interfaces.Network.NetworkManager;
 
-    using Network.GameInfo;
-
     using Notifications;
 
     using UnityEngine;
     using UnityEngine.UI;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class ConnectToExternalServerUIController : MonoBehaviour
     {

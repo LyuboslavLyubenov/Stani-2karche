@@ -8,14 +8,13 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Tests.Extensions;
 
-    using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenPresenterConnectedDontAddIntoMainPlayersOrAudience : ExtendedMonoBehaviour
     {

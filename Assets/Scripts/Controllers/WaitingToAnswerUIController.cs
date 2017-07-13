@@ -5,8 +5,6 @@
 
     using Assets.Scripts.Interfaces.Utils;
 
-    using EventArgs;
-
     using UnityEngine;
     using UnityEngine.UI;
 

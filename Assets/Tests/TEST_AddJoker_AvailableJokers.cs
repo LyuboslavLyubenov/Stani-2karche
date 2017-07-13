@@ -1,6 +1,4 @@
-﻿using DisableRandomAnswersJoker = Jokers.DisableRandomAnswersJoker;
-
-namespace Tests
+﻿namespace Tests
 {
 
     using Controllers;

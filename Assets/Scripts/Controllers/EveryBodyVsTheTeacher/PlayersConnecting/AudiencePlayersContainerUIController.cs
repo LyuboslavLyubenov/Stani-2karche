@@ -3,17 +3,12 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    using EventArgs;
-
     using Interfaces.Controllers;
-    using Interfaces.Network.NetworkManager;
 
     using UnityEngine;
     using UnityEngine.UI;
 
     using Utils.Unity;
-
-    using Zenject.Source.Usage;
 
     public class AudiencePlayersContainerUIController : MonoBehaviour, IAudiencePlayersContainerUIController
     {

@@ -14,7 +14,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenReceivedQuestionLoadIntoQuestionUI : MonoBehaviour
     {

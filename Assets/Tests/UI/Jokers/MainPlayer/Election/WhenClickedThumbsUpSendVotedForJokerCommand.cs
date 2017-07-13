@@ -16,7 +16,7 @@ namespace Assets.Tests.UI.Jokers.MainPlayer.Election
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenClickedThumbsUpSendVotedForJokerCommand : ExtendedMonoBehaviour
     {

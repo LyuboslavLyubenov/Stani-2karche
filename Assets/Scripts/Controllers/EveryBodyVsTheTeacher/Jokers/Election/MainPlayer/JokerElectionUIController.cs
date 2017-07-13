@@ -12,7 +12,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Jokers.Election.MainP
 
     using UnityEngine.UI;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class JokerElectionUIController : Election_JokerElectionUIController
     {

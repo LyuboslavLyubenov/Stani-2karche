@@ -16,7 +16,7 @@ namespace Tests.UI.Lobby.ServersAvailableUIController
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class AddFoundLocalServer : ExtendedMonoBehaviour
     {

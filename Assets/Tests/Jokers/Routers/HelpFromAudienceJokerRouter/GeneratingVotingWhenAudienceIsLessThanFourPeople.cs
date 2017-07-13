@@ -16,7 +16,7 @@ namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class GeneratingVotingWhenAudienceIsLessThanFourPeople : MonoBehaviour
     {

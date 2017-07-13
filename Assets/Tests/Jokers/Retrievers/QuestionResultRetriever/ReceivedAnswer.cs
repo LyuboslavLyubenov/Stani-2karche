@@ -15,7 +15,7 @@ namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class ReceivedAnswer : ExtendedMonoBehaviour
     {

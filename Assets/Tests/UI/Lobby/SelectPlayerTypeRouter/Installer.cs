@@ -4,7 +4,7 @@
     using Controllers;
     using Controllers.Lobby;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

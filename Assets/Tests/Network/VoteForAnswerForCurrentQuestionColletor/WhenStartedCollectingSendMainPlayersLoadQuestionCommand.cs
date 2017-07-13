@@ -18,7 +18,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenStartedCollectingSendMainPlayersLoadQuestionCommand : ExtendedMonoBehaviour
     {

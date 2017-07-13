@@ -2,6 +2,7 @@
 
 namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
 {
+
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter;
     using Assets.Tests.DummyObjects.UIControllers;
@@ -13,7 +14,7 @@ namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

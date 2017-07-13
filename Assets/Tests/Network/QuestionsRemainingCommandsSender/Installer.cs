@@ -12,8 +12,8 @@ namespace Assets.Tests.Network.QuestionsRemainingCommandsSender
     using Interfaces.GameData;
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
-    
-    using Zenject.Source.Install;
+
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

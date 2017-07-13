@@ -27,7 +27,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class PlayingStateInstaller : MonoInstaller
     {

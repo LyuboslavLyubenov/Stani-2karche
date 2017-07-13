@@ -5,7 +5,6 @@
     using System.Linq;
 
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.MainPlayer;
 
     public static class IJokerExtensions
     {

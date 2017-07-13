@@ -10,11 +10,9 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
-    using UnityEngine;
-
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenStartedAndAudiencePlayerReconnectedDontSendQuestion : ExtendedMonoBehaviour
     {

@@ -5,8 +5,6 @@
 
     using Assets.Scripts.Extensions;
 
-    using Extensions;
-
     using EventArgs = System.EventArgs;
 
     public class IpEventArgs : EventArgs

@@ -4,8 +4,8 @@ using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkMa
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
     using StateMachine;
-    
-    using Zenject.Source.Install;
+
+    using Zenject;
 
     public class EveryBodyVsTheTeacherAudienceInstaller : MonoInstaller
     {

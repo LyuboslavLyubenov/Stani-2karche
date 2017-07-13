@@ -14,7 +14,7 @@ namespace Tests.States.RoundsSwitcherEventsNotifier
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class NoMoreRounds : MonoBehaviour
     {

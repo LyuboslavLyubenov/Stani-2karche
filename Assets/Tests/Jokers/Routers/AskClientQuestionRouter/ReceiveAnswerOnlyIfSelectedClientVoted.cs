@@ -15,7 +15,7 @@ namespace Tests.Jokers.Routers.AskClientQuestionRouter
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class ReceiveAnswerOnlyIfSelectedClientVoted : MonoBehaviour
     {

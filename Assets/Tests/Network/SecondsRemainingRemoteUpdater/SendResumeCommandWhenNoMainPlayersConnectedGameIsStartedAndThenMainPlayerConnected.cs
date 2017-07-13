@@ -16,7 +16,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class SendResumeCommandWhenNoMainPlayersConnectedGameIsStartedAndThenMainPlayerConnected : ExtendedMonoBehaviour
     {

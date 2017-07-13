@@ -1,6 +1,5 @@
 ﻿using ClientConnectionIdEventArgs = EventArgs.ClientConnectionIdEventArgs;
 using GameEndCommand = Commands.Client.GameEndCommand;
-using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using NetworkCommandData = Commands.NetworkCommandData;
@@ -10,8 +9,6 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server
     using System;
 
     using Assets.Scripts.Interfaces;
-
-    using EventArgs;
 
     using StateMachine;
 

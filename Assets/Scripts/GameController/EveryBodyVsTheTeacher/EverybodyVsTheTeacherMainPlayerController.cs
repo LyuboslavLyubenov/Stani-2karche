@@ -13,10 +13,9 @@
 
     using States.EveryBodyVsTheTeacher.Shared;
 
-    using Utils;
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class EverybodyVsTheTeacherMainPlayerController : ExtendedMonoBehaviour
     {

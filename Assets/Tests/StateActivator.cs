@@ -3,13 +3,11 @@
 
     using Assets.Scripts.Interfaces;
 
-    using Interfaces;
-
     using StateMachine;
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class StateActivator : MonoBehaviour
     {

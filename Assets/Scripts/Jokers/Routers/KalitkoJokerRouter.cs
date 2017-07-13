@@ -15,10 +15,6 @@ namespace Jokers.Routers
     using Assets.Scripts.Commands.Jokers.Result;
     using Assets.Scripts.Utils;
 
-    using Commands.Jokers;
-
-    using Utils;
-
     public class KalitkoJokerRouter : IKalitkoJokerRouter
     {
         private const float DefaultChanceForAnswer = 0.5f; //50%

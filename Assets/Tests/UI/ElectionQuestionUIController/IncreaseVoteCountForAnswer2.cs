@@ -16,10 +16,9 @@ namespace Tests.UI.ElectionQuestionUIController
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Utils;
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class IncreaseVoteCountForAnswer2 : ExtendedMonoBehaviour
     {

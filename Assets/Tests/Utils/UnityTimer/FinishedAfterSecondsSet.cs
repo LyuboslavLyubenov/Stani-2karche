@@ -8,7 +8,7 @@ namespace Assets.Tests.Utils.UnityTimer
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class FinishedAfterSecondsSet : MonoBehaviour
     {

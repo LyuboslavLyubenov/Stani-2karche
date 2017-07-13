@@ -12,7 +12,7 @@
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class SenderConnectionIdMustBePositiveNumber : MonoBehaviour
     {

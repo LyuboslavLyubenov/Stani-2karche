@@ -19,7 +19,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenPresenterReconnectedSendQuestionWithRemainingTime : ExtendedMonoBehaviour
     {

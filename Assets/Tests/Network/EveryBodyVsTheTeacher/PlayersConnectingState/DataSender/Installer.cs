@@ -1,5 +1,4 @@
-﻿using JokersUsedNotifier = Assets.Scripts.Network.JokersUsedNotifier;
-using PlayersConnectingStateDataSender = Network.EveryBodyVsTheTeacher.PlayersConnectingState.PlayersConnectingStateDataSender;
+﻿using PlayersConnectingStateDataSender = Network.EveryBodyVsTheTeacher.PlayersConnectingState.PlayersConnectingStateDataSender;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
@@ -11,7 +10,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

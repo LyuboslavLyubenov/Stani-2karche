@@ -15,13 +15,11 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
-    using StateMachine;
-
     using UnityEngine;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class SendPauseCommandWhenAllMainPlayersDisconnectedAndIsGameStarted : MonoBehaviour
     {

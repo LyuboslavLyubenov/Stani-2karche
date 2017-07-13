@@ -3,10 +3,7 @@
 namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServerState
 {
 
-    using Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Jokers.Election.MainPlayer;
     using Assets.Scripts.Interfaces;
-    using Assets.Scripts.Interfaces.Network.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer;
     using Assets.Tests.DummyObjects.Network;
     using Assets.Tests.Utils;
@@ -22,7 +19,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
     using UnityEngine;
     using UnityEngine.UI;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {
@@ -77,9 +74,9 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.MainPlayer.ConnectedToServer
                     (context) =>
                         {
                             var clientNetworkManager = context.Container.Resolve<IClientNetworkManager>();
-                            var gameStartButton = context.Container.Resolve<Button>("GameStartButton");
-                            var questionUI = context.Container.Resolve<GameObject>("QuestionUI");
-                            var playingUI = context.Container.Resolve<GameObject>("PlayingUI");
+                            var gameStartButton = context.Container.ResolveId<Button>("GameStartButton");
+                            var questionUI = context.Container.ResolveId<GameObject>("QuestionUI");
+                            var playingUI = context.Container.ResolveId<GameObject>("PlayingUI");
                             
                             return 
                                 new ConnectedToServerState(

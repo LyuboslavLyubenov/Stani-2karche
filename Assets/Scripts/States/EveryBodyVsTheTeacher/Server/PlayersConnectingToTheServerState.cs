@@ -18,8 +18,6 @@ namespace States.EveryBodyVsTheTeacher.Server
 
     using EventArgs;
 
-    using Extensions;
-
     using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
@@ -29,7 +27,7 @@ namespace States.EveryBodyVsTheTeacher.Server
 
     using Utils;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class PlayersConnectingToTheServerState : IPlayersConnectingToTheServerState
     {

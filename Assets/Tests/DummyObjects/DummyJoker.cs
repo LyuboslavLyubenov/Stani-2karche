@@ -5,8 +5,6 @@
 
     using Assets.Scripts.Interfaces;
 
-    using Interfaces;
-
     using UnityEngine;
 
     public class DummyJoker : IJoker

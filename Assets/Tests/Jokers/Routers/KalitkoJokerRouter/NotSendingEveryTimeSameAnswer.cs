@@ -17,7 +17,7 @@ namespace Tests.Jokers.Routers.KalitkoJokerRouter
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class NotSendingEveryTimeSameAnswer : ExtendedMonoBehaviour
     {

@@ -10,7 +10,7 @@ namespace Assets.Tests.Network.SecondsRemainingRemoteUpdater
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

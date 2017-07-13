@@ -3,7 +3,6 @@ using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkMa
 using ISimpleQuestion = Interfaces.ISimpleQuestion;
 using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
-using SelectedAnswerCommand = Commands.Server.SelectedAnswerCommand;
 
 namespace Network
 {
@@ -13,7 +12,6 @@ namespace Network
     using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
-    using Assets.Scripts.Commands.UI;
 
     using Commands.Server;
 
@@ -25,7 +23,7 @@ namespace Network
 
     using Utils;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class VoteResultForAnswerForCurrentQuestionCollector : ICollectVoteResultForAnswerForCurrentQuestion
     {

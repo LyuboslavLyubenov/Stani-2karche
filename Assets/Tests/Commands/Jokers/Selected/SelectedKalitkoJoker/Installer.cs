@@ -4,11 +4,10 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
 
     using Interfaces.Network;
-    using Interfaces.Network.Jokers.Routers;
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

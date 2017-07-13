@@ -12,13 +12,11 @@ namespace Assets.Tests.States.Presenter.Playing
 
     using Interfaces.Network.NetworkManager;
 
-    using Jokers;
-
     using StateMachine;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class RemoveUsedJoker : ExtendedMonoBehaviour
     {

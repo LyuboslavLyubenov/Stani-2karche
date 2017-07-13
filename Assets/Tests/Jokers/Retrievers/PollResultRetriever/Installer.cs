@@ -11,7 +11,7 @@ namespace Tests.Jokers.Retrievers.PollResultRetriever
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

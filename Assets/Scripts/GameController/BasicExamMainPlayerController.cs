@@ -23,7 +23,6 @@ namespace GameController
 
     using EventArgs;
 
-    using Interfaces;
     using Interfaces.GameData;
     using Interfaces.Network.Jokers;
     using Interfaces.Network.Leaderboard;

@@ -16,7 +16,7 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
     using StateMachine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

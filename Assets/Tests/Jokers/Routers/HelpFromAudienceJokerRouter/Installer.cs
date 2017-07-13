@@ -12,7 +12,7 @@ namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

@@ -19,7 +19,7 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenGameOverDontSendCommand : ExtendedMonoBehaviour
     {

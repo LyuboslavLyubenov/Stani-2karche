@@ -8,7 +8,7 @@ namespace Assets.Tests.UI.Jokers.MainPlayer.Election
     using UnityEngine;
     using UnityEngine.UI;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

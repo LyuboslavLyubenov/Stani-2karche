@@ -9,8 +9,8 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.MainPlayer
     using UnityEngine;
     using UnityEngine.UI;
 
-    using Zenject.Source.Install;
-    
+    using Zenject;
+
     public class ConnectedToTheServerStateInstaller : MonoInstaller
     {
         [SerializeField]

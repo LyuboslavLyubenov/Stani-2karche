@@ -8,7 +8,7 @@ namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class SettingsTimeout : MonoBehaviour
     {

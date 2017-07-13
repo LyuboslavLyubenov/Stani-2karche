@@ -10,8 +10,6 @@ namespace Tests.States.Server.EndGame
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
     using Assets.Tests.Extensions;
 
-    using Commands;
-
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
@@ -20,7 +18,7 @@ namespace Tests.States.Server.EndGame
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class SendEveryPlayerEndGameCommand : ExtendedMonoBehaviour
     {

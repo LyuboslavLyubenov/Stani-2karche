@@ -3,6 +3,7 @@ using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 
 namespace Assets.Tests.States.Server.EndGame
 {
+
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
 
     using DTOs;
@@ -10,7 +11,7 @@ namespace Assets.Tests.States.Server.EndGame
     using Interfaces.GameData;
     using Interfaces.Network.NetworkManager;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

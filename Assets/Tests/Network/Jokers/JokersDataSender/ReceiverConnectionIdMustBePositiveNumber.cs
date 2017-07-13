@@ -8,7 +8,7 @@ namespace Tests.Network.Jokers.JokersDataSender
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class ReceiverConnectionIdMustBePositiveNumber : MonoBehaviour
     {

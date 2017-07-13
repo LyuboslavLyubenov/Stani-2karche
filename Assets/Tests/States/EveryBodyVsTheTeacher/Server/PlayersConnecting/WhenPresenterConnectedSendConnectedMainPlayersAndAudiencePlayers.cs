@@ -17,13 +17,11 @@ namespace Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
 
     using StateMachine;
 
-    using Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting;
-
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenPresenterConnectedSendConnectedMainPlayersAndAudiencePlayers : ExtendedMonoBehaviour
     {

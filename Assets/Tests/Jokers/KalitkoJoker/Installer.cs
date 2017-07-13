@@ -2,6 +2,7 @@
 
 namespace Assets.Tests.Jokers.KalitkoJoker
 {
+
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
     using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter;
@@ -11,7 +12,7 @@ namespace Assets.Tests.Jokers.KalitkoJoker
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

@@ -15,7 +15,7 @@ namespace Assets.Tests.Network.RemoteStateActivator
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class NotActivatingAnyStateIfNoneWereBinded : MonoBehaviour
     {

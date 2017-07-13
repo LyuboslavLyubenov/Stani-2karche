@@ -3,11 +3,9 @@
 
     using Interfaces.Controllers;
 
-    using UnityEngine;
-
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class RemoveAudiencePlayer : ExtendedMonoBehaviour
     {

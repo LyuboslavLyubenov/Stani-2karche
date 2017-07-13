@@ -1,6 +1,5 @@
 ﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
-using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
 
 namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 {
@@ -19,7 +18,7 @@ namespace Assets.Tests.Network.MistakesRemainingCommandsSender
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenGameIsStartedAndGameIsNotOverAndRoundChangedSendMistakesRemaining : MonoBehaviour
     {

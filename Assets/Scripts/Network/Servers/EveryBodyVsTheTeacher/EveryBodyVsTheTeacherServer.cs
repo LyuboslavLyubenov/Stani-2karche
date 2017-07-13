@@ -29,7 +29,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class EveryBodyVsTheTeacherServer : ExtendedMonoBehaviour, IEveryBodyVsTheTeacherServer
     {

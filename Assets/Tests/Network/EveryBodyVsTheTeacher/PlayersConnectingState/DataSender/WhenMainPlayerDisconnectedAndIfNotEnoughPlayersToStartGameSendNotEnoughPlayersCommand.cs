@@ -4,7 +4,6 @@ using NotEnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.NotEno
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
 
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
 
@@ -21,7 +20,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenMainPlayerDisconnectedAndIfNotEnoughPlayersToStartGameSendNotEnoughPlayersCommand : ExtendedMonoBehaviour
     {

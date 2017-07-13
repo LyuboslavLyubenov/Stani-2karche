@@ -6,7 +6,7 @@ namespace Tests.Jokers.Retrievers.QuestionResultRetriever
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class PlayerConnectionIdMustBePositiveNumber : MonoBehaviour
     {

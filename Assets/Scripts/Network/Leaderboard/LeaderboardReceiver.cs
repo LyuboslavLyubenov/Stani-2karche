@@ -14,8 +14,6 @@
     using Interfaces.Network.Leaderboard;
     using Interfaces.Network.NetworkManager;
 
-    using Network.NetworkManagers;
-
     using Utils;
 
     using EventArgs = System.EventArgs;

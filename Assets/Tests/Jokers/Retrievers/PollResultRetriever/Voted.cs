@@ -15,7 +15,7 @@ namespace Tests.Jokers.Retrievers.PollResultRetriever
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class Voted : ExtendedMonoBehaviour
     {

@@ -7,8 +7,6 @@ namespace Commands.Server
     using Interfaces;
     using Interfaces.Network.NetworkManager;
 
-    using IO;
-
     using EventArgs = System.EventArgs;
 
     public class GetAvailableCategoriesCommand : IOneTimeExecuteCommand

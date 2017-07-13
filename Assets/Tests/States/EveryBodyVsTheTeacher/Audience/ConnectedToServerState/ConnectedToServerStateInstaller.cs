@@ -1,8 +1,6 @@
-﻿using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
-
-namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerState
+﻿namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerState
 {
-    using Assets.Scripts.Interfaces;
+
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Audience;
     using Assets.Tests.Utils;
 
@@ -12,11 +10,9 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
     using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
-    using StateMachine;
-
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class ConnectedToServerStateInstaller : MonoInstaller
     {

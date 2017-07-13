@@ -8,8 +8,8 @@ namespace Assets.Tests.Network.RemoteStateActivator
     using Interfaces.Network.NetworkManager;
 
     using StateMachine;
-    
-    using Zenject.Source.Install;
+
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

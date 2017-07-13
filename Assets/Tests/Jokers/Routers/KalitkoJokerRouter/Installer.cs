@@ -10,7 +10,7 @@
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

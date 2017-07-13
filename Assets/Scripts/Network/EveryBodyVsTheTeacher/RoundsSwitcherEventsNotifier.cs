@@ -5,7 +5,6 @@ using NetworkCommandData = Commands.NetworkCommandData;
 namespace Assets.Scripts.Network.EveryBodyVsTheTeacher
 {
     using System;
-    using System.Linq;
 
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
 

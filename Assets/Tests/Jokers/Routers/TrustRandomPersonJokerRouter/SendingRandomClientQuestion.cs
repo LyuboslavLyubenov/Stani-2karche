@@ -14,7 +14,7 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class SendingRandomClientQuestion : MonoBehaviour
     {

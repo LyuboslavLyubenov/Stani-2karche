@@ -8,9 +8,6 @@ namespace Commands.Jokers.Add
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Controllers;
-
-    using Interfaces;
     using Interfaces.Network.Jokers;
 
     using UnityEngine;

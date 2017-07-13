@@ -7,8 +7,6 @@ namespace Network
 
     using EventArgs;
 
-    using Interfaces;
-
     using Utils;
 
     public class JokersData

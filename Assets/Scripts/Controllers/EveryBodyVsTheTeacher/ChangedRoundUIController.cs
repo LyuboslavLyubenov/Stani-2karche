@@ -8,8 +8,6 @@ namespace Scripts.Controllers.EveryBodyVsTheTeacher
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Extensions;
-
     using UnityEngine;
     using UnityEngine.UI;
 

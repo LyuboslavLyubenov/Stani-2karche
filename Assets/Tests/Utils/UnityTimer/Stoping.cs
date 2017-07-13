@@ -5,11 +5,9 @@ namespace Assets.Tests.Utils.UnityTimer
 
     using Assets.Scripts.Interfaces.Utils;
 
-    using UnityEngine;
-
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class Stoping : ExtendedMonoBehaviour
     {

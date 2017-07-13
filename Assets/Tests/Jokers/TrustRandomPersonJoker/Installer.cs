@@ -2,6 +2,7 @@ using DummyClientNetworkManager = Tests.DummyObjects.DummyClientNetworkManager;
 
 namespace Assets.Tests.Jokers.TrustRandomPersonJoker
 {
+
     using Assets.Scripts.Interfaces;
     using Assets.Scripts.Interfaces.Controllers;
     using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter;
@@ -13,7 +14,7 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

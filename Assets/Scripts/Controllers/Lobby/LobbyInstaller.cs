@@ -1,19 +1,19 @@
 namespace Controllers.Lobby
 {
 
-    using Interfaces.Network;
+    using Assets.Scripts.Network.GameInfo.New;
+
     using Interfaces.Network.Kinvey;
     using Interfaces.Network.NetworkManager;
     using Interfaces.Services;
 
     using Network;
     using Network.Broadcast;
-    using Network.GameInfo;
-    using Network.TcpSockets;
+    using Network.NetworkManagers;
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class LobbyInstaller : MonoInstaller
     {
@@ -23,15 +23,7 @@ namespace Controllers.Lobby
         public override void InstallBindings()
         {
             this.InstallSelectPlayerTypeRouterBindings();
-
-            this.Container.Bind<ISimpleTcpServer>()
-                .FromInstance(new SimpleTcpServer(7772))
-                .AsSingle();
-
-            this.Container.Bind<ISimpleTcpClient>()
-                .To<SimpleTcpClient>()
-                .AsSingle();
-
+            
             var connectToExternalServerUIController = GameObject.FindObjectOfType<ConnectToExternalServerUIController>();
 
             this.Container.Bind<ConnectToExternalServerUIController>()
@@ -51,7 +43,11 @@ namespace Controllers.Lobby
             this.Container.Bind<ILANServersDiscoverer>()
                 .To<LANServersDiscoverer>()
                 .AsSingle();
-            
+
+            this.Container.Bind<IClientNetworkManager>()
+                .FromInstance(ClientNetworkManager.Instance)
+                .AsSingle();
+
             this.Container.Bind<CreatedGameInfoReceiver>()
                 .AsSingle();
 

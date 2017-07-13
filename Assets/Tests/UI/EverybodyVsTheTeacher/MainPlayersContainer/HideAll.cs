@@ -6,7 +6,7 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.MainPlayersContainer
     
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class HideAll : ExtendedMonoBehaviour
     {

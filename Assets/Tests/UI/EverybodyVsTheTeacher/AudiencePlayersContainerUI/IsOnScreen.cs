@@ -11,7 +11,7 @@ namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class IsOnScreen : MonoBehaviour
     {

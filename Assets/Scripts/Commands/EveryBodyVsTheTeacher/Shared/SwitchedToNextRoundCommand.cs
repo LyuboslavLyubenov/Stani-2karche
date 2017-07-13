@@ -8,8 +8,6 @@ namespace Scripts.Commands.EveryBodyVsTheTeacher.Shared
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Extensions;
-
     using UnityEngine;
 
     public class SwitchedToNextRoundCommand : INetworkManagerCommand

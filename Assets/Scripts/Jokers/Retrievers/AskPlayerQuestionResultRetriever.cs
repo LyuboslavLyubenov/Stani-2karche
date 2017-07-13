@@ -1,14 +1,10 @@
 namespace Jokers.Retrievers
 {
 
-    using System;
-
     using Commands;
     using Commands.Jokers.Selected;
 
     using Interfaces.Network.NetworkManager;
-
-    using EventArgs = System.EventArgs;
 
     public class AskPlayerQuestionResultRetriever : AskClientQuestionResultRetriever
     {

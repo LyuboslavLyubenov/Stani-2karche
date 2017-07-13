@@ -18,7 +18,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerSt
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenSelectedAnswerSendToServerAndHideQuestionUI : ExtendedMonoBehaviour
     {

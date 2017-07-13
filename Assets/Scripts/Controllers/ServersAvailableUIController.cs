@@ -20,7 +20,7 @@
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     using Debug = UnityEngine.Debug;
 
@@ -84,8 +84,6 @@
 
         private void OnLocalServerFound(object sender, IpEventArgs args)
         {
-            Debug.Log("Found server  " + args.IPAddress);
-
             var ip = args.IPAddress;
             this.BeginReceiveServerGameInfo(ip);
         }

@@ -42,9 +42,7 @@
             {
                 return;
             }
-
-            UnityEngine.Debug.Log("Received gameinfo from " + args.IPAddress);
-
+            
             var filteredMessage = args.Message.Remove(gameInfoTagIndex, CreatedGameInfoSender.GameInfoTag.Length);
             var gameInfo = new GameInfoEventArgs(filteredMessage);
 
@@ -72,8 +70,6 @@
 
         public void ReceiveFrom(string ipAddress, Action<GameInfoEventArgs> receivedGameInfo, Action<Exception> onError = null)
         {
-            UnityEngine.Debug.Log("Start receiving game info from " + ipAddress);
-
             if (this.client.IsConnectedTo(ipAddress))
             {
                 this._ReceiveFrom(ipAddress, receivedGameInfo, onError);

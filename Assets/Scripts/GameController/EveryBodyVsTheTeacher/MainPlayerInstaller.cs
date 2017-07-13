@@ -14,7 +14,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class MainPlayerInstaller : MonoInstaller
     {

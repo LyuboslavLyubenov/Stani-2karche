@@ -1,6 +1,4 @@
-﻿using IJoker = Assets.Scripts.Interfaces.IJoker;
-
-namespace Jokers
+﻿namespace Jokers
 {
 
     using System;

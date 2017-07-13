@@ -70,9 +70,7 @@
 
             socket.SendTimeout = ReceiveMessageTimeoutInMiliseconds;
             socket.ReceiveTimeout = SendMessageTimeoutInMiliseconds;
-
-            Debug.Log("Begin connecting to" + ipAddress);
-
+            
             socket.BeginConnect(ipAddress, port, new AsyncCallback(this.EndConnectToServer), state);
         }
 
@@ -88,8 +86,6 @@
                 var serverIpEndPoint = (IPEndPoint)socket.RemoteEndPoint;
                 var ipAddress = serverIpEndPoint.Address.ToString().Split(':').First();
                 
-                Debug.Log("Connected to server " + ipAddress);
-
                 lock (this.myLock)
                 {
                     this.connectedToServersIPsSockets.Add(ipAddress, socket);

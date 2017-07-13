@@ -16,7 +16,7 @@ namespace Tests.UI.Lobby.ServersAvailableUIController
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

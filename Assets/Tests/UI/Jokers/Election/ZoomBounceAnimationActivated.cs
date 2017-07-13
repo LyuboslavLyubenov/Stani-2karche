@@ -3,12 +3,11 @@
 
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Controllers.EveryBodyVsTheTeacher.Jokers.Election;
-
     using UnityEngine;
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Utils.Unity;
-    using Zenject.Source.Usage;
+
+    using Zenject;
 
     public class ZoomBounceAnimationActivated : ExtendedMonoBehaviour
     {

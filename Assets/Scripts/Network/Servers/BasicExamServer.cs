@@ -5,6 +5,8 @@ namespace Network.Servers
 
     using System;
 
+    using Assets.Scripts.Network.GameInfo.New;
+
     using Commands;
     using Commands.Client;
     using Commands.Jokers.Selected;
@@ -18,7 +20,6 @@ namespace Network.Servers
 
     using Interfaces;
     using Interfaces.GameData;
-    using Interfaces.Network;
     using Interfaces.Network.Jokers.Routers;
     using Interfaces.Network.Leaderboard;
     using Interfaces.Network.NetworkManager;
@@ -28,11 +29,9 @@ namespace Network.Servers
 
     using Jokers;
     using Jokers.Routers;
-
-    using Network.GameInfo;
+    
     using Network.Leaderboard;
     using Network.NetworkManagers;
-    using Network.TcpSockets;
 
     using Statistics;
 
@@ -115,20 +114,21 @@ namespace Network.Servers
         private IGameDataExtractor gameDataExtractor = null;
 
         private ICreatedGameInfoSender gameInfoSender = null;
-        private ISimpleTcpServer tcpServer;
-        private ISimpleTcpClient tcpClient;
 
         void Awake()
         {
             var threadUtils = ThreadUtils.Instance;//Initialize
             var serverNetworkManager = ServerNetworkManager.Instance;
+
+            if (!serverNetworkManager.IsRunning)
+            {
+                serverNetworkManager.StartServer();
+            }
             
             this.MainPlayerData = new MainPlayerData(serverNetworkManager);
             this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(serverNetworkManager, this.MainPlayerData);
-
-            this.tcpServer = new SimpleTcpServer(7772);
-            this.tcpClient = new SimpleTcpClient();
-            this.gameInfoSender = new CreatedGameInfoSender(this.tcpClient, this.tcpServer, GameInfoFactory.Instance, ServerNetworkManager.Instance, this);
+            
+            this.gameInfoSender = new CreatedGameInfoSender(ServerNetworkManager.Instance, this);
             
             this.gameDataExtractor = new GameDataExtractor();
             this.GameDataIterator = new GameDataIterator(this.gameDataExtractor);

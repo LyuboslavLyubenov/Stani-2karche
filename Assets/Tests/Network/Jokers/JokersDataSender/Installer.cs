@@ -7,7 +7,7 @@ namespace Tests.Network.Jokers.JokersDataSender
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

@@ -4,7 +4,6 @@ using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkMa
 namespace Assets.Scripts.Commands.Jokers.Add.EveryBodyVsTheTeacher.Presenter
 {
 
-    using System;
     using System.Collections.Generic;
 
     using Assets.Scripts.Interfaces;

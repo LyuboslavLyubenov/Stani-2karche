@@ -9,7 +9,6 @@ namespace Assets.Tests.Jokers.KalitkoJoker
     using Assets.Tests.DummyObjects.UIControllers;
 
     using Commands;
-    using Commands.Jokers;
 
     using Interfaces.Network.NetworkManager;
 
@@ -17,7 +16,7 @@ namespace Assets.Tests.Jokers.KalitkoJoker
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class ReceivedNothing : MonoBehaviour
     {

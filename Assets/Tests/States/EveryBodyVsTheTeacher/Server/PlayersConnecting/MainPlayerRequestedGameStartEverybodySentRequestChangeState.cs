@@ -1,5 +1,4 @@
 using EveryBodyVsTheTeacherServer = Network.Servers.EveryBodyVsTheTeacher.EveryBodyVsTheTeacherServer;
-using FirstRoundState = Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds.FirstRoundState;
 using NetworkCommandData = Commands.NetworkCommandData;
 using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.PlayersConnectingToTheServerState;
 using StartGameRequestCommand = Commands.EveryBodyVsTheTeacher.StartGameRequestCommand;
@@ -10,7 +9,6 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
     using System;
     using System.Collections;
 
-    using Assets.Tests.DummyObjects.States.EveryBodyVsTheTeacher;
     using Assets.Tests.Extensions;
 
     using Interfaces.Network.NetworkManager;
@@ -23,7 +21,7 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class MainPlayerRequestedGameStartEverybodySentRequestChangeState : ExtendedMonoBehaviour
     {

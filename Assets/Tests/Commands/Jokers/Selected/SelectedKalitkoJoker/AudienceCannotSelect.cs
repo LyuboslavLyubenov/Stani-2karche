@@ -10,13 +10,11 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
     using Tests.DummyObjects;
 
-    using UnityEngine;
-
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class AudienceCannotSelect : ExtendedMonoBehaviour
     {

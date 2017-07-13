@@ -6,7 +6,8 @@ namespace Tests.UI.ElectionQuestionUIController
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
     using Utils.Unity;
-    using Zenject.Source.Usage;
+
+    using Zenject;
 
     public class HighestVotedAnswer : ExtendedMonoBehaviour
     {

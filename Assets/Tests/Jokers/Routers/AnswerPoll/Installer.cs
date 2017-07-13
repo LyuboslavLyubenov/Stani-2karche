@@ -11,7 +11,7 @@ namespace Tests.Jokers.Routers.AnswerPoll
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

@@ -17,7 +17,7 @@ namespace Assets.Tests.States.Presenter.Playing
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class LoadQuestion : MonoBehaviour
     {

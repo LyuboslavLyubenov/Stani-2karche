@@ -20,7 +20,7 @@ namespace Tests.Jokers.Routers.HelpFromAudienceJokerRouter
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class AfterFinishedVoteResultIsSentToSender : ExtendedMonoBehaviour
     {

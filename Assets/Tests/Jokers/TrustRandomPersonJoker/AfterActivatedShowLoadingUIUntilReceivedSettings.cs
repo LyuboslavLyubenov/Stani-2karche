@@ -7,7 +7,8 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
     using Interfaces.Network.NetworkManager;
     using UnityEngine;
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
-    using Zenject.Source.Usage;
+
+    using Zenject;
 
     public class AfterActivatedShowLoadingUIUntilReceivedSettings : MonoBehaviour
     {

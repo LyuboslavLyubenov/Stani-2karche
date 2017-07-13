@@ -5,8 +5,6 @@ namespace Controllers
 
     using Assets.Scripts.Extensions;
 
-    using Extensions;
-
     using Interfaces.Controllers;
 
     using UnityEngine;

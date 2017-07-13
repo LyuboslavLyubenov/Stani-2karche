@@ -10,7 +10,7 @@ namespace Tests.Network
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class MakeClientMainPlayer : ExtendedMonoBehaviour
     {

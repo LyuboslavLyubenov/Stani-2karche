@@ -1,7 +1,6 @@
 ﻿namespace Assets.Tests.States.RoundsSwitcher
 {
 
-    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
     using StateMachine;

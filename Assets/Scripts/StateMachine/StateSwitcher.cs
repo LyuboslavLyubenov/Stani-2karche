@@ -6,9 +6,7 @@ namespace StateMachine
     using Assets.Scripts.EventArgs;
     using Assets.Scripts.Interfaces;
 
-    using Interfaces;
-
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class StateMachine
     {

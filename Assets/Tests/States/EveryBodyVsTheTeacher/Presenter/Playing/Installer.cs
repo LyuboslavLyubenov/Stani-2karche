@@ -26,7 +26,7 @@ namespace Assets.Tests.States.Presenter.Playing
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     using IAvailableJokersUIController = Assets.Scripts.Interfaces.Controllers.EveryBodyVsTheTeacher.Presenter.IAvailableJokersUIController;
 

@@ -6,8 +6,6 @@
 
     using Assets.Scripts.Extensions;
 
-    using Extensions;
-
     using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 

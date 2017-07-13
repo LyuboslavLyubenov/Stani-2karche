@@ -19,7 +19,7 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class MainPlayerConnectedTests : MonoBehaviour
     {

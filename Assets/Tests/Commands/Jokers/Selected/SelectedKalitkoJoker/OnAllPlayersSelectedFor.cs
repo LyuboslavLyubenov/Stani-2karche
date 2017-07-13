@@ -17,7 +17,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class OnAllPlayersSelectedFor : MonoBehaviour
     {

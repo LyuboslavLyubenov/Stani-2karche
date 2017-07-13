@@ -9,14 +9,11 @@ using IAvailableElectionJokersUIController = Assets.Scripts.Interfaces.Controlle
 using ILeaderboardReceiver = Interfaces.Network.Leaderboard.ILeaderboardReceiver;
 using SwitchedToNextRoundCommand = Scripts.Commands.EveryBodyVsTheTeacher.Shared.SwitchedToNextRoundCommand;
 using ThreadUtils = Utils.ThreadUtils;
-using TimerUtils = Utils.TimerUtils;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Presenter
 {
     using System;
     using System.Collections;
-
-    using Assets.Scripts.Network.EveryBodyVsTheTeacher;
 
     using Interfaces.Controllers;
 

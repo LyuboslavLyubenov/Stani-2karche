@@ -14,7 +14,7 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class ReceivedAnswerFromPlayer : ExtendedMonoBehaviour
     {

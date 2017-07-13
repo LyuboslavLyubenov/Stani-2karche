@@ -1,5 +1,4 @@
-﻿using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
-using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPlayersToStartGameCommand;
+﻿using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPlayersToStartGameCommand;
 using NetworkCommandData = Commands.NetworkCommandData;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
@@ -21,7 +20,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenEnoughPlayersToStartTheGameSendEnoughPlayersCommand : MonoBehaviour
     {

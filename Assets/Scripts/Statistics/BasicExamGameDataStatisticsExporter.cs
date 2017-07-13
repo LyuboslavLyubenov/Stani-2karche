@@ -11,8 +11,6 @@
     using CSharpJExcel.Jxl;
     using CSharpJExcel.Jxl.Write;
 
-    using Extensions;
-
     using Interfaces.GameData;
     using Interfaces.Statistics;
 

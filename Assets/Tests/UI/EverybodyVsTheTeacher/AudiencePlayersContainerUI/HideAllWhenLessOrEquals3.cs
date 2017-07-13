@@ -1,6 +1,4 @@
-﻿using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
-
-namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
+﻿namespace Assets.Tests.UI.EverybodyVsTheTeacher.AudiencePlayersContainerUI
 {
 
     public class HideAllWhenLessOrEquals3 : HideAllAbstract

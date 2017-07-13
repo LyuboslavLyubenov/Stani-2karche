@@ -1,14 +1,10 @@
-﻿using LoadQuestionCommand = Commands.Client.LoadQuestionCommand;
-using VoteResultForAnswerForCurrentQuestionCollector = Network.VoteResultForAnswerForCurrentQuestionCollector;
+﻿using VoteResultForAnswerForCurrentQuestionCollector = Network.VoteResultForAnswerForCurrentQuestionCollector;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
     using System.Linq;
 
-    using Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor;
     using Assets.Tests.Utils;
-
-    using DTOs;
 
     using Interfaces;
     using Interfaces.GameData;
@@ -17,7 +13,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

@@ -19,7 +19,7 @@ namespace Assets.Tests.States.EveryBodyVsTheTeacher.Server.PlayersConnecting
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenMainPlayerDisconnectsFromGameAndAllRemainingConnectedPlayersAreReadyForGameStartStartTheGame : ExtendedMonoBehaviour
     {

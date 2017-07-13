@@ -1,5 +1,4 @@
-﻿using ClientConnectionIdEventArgs = EventArgs.ClientConnectionIdEventArgs;
-using ICreatedGameInfoSender = Interfaces.Network.NetworkManager.ICreatedGameInfoSender;
+﻿using ICreatedGameInfoSender = Interfaces.Network.NetworkManager.ICreatedGameInfoSender;
 using IGameServer = Interfaces.IGameServer;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 

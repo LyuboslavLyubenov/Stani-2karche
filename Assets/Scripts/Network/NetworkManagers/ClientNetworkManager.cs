@@ -15,8 +15,6 @@
 
     using EventArgs;
 
-    using Extensions;
-
     using Interfaces.Network.NetworkManager;
 
     using Notifications;
@@ -121,8 +119,8 @@
                 return this.serverConnectedClientsCount.Value;
             }
         }
-        
-        public ClientNetworkManager()
+
+        private ClientNetworkManager()
         {
             NetworkTransport.Init();
             

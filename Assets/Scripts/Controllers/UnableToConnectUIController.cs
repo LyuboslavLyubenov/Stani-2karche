@@ -7,8 +7,6 @@ namespace Controllers
     using Interfaces.Controllers;
     using Interfaces.Network.NetworkManager;
 
-    using Network.NetworkManagers;
-
     using UnityEngine;
     using UnityEngine.SceneManagement;
 

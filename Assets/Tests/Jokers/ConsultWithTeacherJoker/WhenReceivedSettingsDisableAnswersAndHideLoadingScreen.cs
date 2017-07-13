@@ -19,7 +19,7 @@ namespace Assets.Tests.Jokers.ConsultWithTeacherJoker
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenReceivedSettingsDisableAnswersAndHideLoadingScreen : ExtendedMonoBehaviour
     {

@@ -18,7 +18,7 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
     using Utils;
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class MainPlayerRequestGameStartNotEnoughPlayers : ExtendedMonoBehaviour
     {

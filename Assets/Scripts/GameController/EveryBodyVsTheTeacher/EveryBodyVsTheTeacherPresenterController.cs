@@ -15,7 +15,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class EveryBodyVsTheTeacherPresenterController : MonoBehaviour
     {

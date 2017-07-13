@@ -5,13 +5,11 @@ namespace Tests.UI.Jokers.Election
 
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Controllers.EveryBodyVsTheTeacher.Jokers.Election;
-
     using UnityEngine.UI;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class IncreasingPlayersVotedFor : MonoBehaviour
     {

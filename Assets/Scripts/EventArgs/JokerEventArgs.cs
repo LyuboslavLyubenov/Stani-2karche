@@ -5,8 +5,6 @@ namespace EventArgs
 
     using Assets.Scripts.Interfaces;
 
-    using Interfaces;
-
     public class JokerEventArgs : System.EventArgs
     {
         public IJoker Joker

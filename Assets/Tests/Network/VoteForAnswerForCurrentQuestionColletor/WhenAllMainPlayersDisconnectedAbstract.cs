@@ -13,7 +13,7 @@ namespace Assets.Tests.Network.VoteForAnswerForCurrentQuestionColletor
 
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenAllMainPlayersDisconnectedAbstract : MonoBehaviour
     {

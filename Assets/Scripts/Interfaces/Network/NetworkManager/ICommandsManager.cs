@@ -5,8 +5,6 @@ namespace Interfaces.Network.NetworkManager
 
     using System.Collections.Generic;
 
-    using Commands;
-
     public interface ICommandsManager
     {
         void AddCommand(INetworkManagerCommand commandToExecute);

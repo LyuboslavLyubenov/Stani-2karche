@@ -13,7 +13,7 @@ namespace Assets.Tests.Jokers.TrustRandomPersonJoker
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenReceivedSettingsShowSecondsRemainingUI : MonoBehaviour
     {

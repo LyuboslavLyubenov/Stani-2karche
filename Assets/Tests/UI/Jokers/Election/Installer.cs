@@ -7,7 +7,7 @@
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

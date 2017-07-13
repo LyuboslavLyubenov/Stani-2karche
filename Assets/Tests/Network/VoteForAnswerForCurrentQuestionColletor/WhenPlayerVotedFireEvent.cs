@@ -13,7 +13,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
     
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class WhenPlayerVotedFireEvent : ExtendedMonoBehaviour
     {

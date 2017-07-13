@@ -29,7 +29,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
     using UnityEngine;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class EverybodyVsTheTeacherServerInstaller : MonoInstaller
     {

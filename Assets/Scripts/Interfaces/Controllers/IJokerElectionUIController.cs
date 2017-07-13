@@ -3,8 +3,6 @@ namespace Assets.Scripts.Interfaces.Controllers
 
     using System;
 
-    using UnityEngine;
-
     public interface IJokerElectionUIController
     {
         event EventHandler OnVotedFor;

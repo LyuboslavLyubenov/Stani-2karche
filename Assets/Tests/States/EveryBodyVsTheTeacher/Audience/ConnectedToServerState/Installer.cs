@@ -1,7 +1,7 @@
 ﻿namespace Assets.Tests.States.EveryBodyVsTheTeacher.Audience.ConnectedToServerState
 {
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

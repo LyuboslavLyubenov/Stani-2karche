@@ -1,4 +1,3 @@
-using FirstRoundState = Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds.FirstRoundState;
 using PlayersConnectingToTheServerState = States.EveryBodyVsTheTeacher.Server.PlayersConnectingToTheServerState;
 
 namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
@@ -18,7 +17,7 @@ namespace Tests.EveryBodyVsTheTeacher.States.Server.PlayersConnecting
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class AudiencePlayerConnected : ExtendedMonoBehaviour
     {

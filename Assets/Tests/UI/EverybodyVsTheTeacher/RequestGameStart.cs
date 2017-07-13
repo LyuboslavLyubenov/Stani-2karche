@@ -9,7 +9,7 @@ namespace Tests.UI.EverybodyVsTheTeacher
 
     using Utils.Unity;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class RequestGameStart : ExtendedMonoBehaviour
     {

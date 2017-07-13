@@ -3,14 +3,12 @@
 
     using Assets.Scripts.Interfaces.Controllers;
 
-    using Controllers.EveryBodyVsTheTeacher.Jokers.Election;
-
     using UnityEngine;
     using UnityEngine.UI;
 
     using UnityTestTools.IntegrationTestsFramework.TestRunner;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class IncreasingPlatersVotedAgainst : MonoBehaviour
     {

@@ -11,7 +11,7 @@ namespace Assets.Scripts.Controllers.EveryBodyVsTheTeacher.Presenter
     
     using UnityEngine;
 
-    using Zenject.Source.Usage;
+    using Zenject;
 
     public class AvailableJokersUIController : Controllers_AvailableJokersUIController, IAvailableJokersUIController
     {

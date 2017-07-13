@@ -6,8 +6,6 @@ namespace Interfaces.Network.NetworkManager
 
     using System;
 
-    using Commands;
-
     using EventArgs;
 
     using UnityEngine;

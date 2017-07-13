@@ -12,7 +12,7 @@ namespace Tests.UI.Lobby
     using Interfaces.Network;
     using Interfaces.Services;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {

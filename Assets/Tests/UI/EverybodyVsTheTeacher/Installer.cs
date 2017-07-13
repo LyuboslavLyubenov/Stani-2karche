@@ -8,7 +8,7 @@ namespace Tests.UI.EverybodyVsTheTeacher
     
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller {
     

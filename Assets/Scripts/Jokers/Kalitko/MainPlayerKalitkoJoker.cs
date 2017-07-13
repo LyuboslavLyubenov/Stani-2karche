@@ -8,7 +8,6 @@
     using Commands.Jokers.JokerElection;
     using Commands.Jokers.Selected;
 
-    using Interfaces;
     using Interfaces.Network.NetworkManager;
 
     using UnityEngine;

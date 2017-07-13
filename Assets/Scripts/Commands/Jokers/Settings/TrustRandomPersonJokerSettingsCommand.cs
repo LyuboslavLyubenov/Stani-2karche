@@ -7,8 +7,6 @@ namespace Scripts.Commands.Jokers.Settings
 
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Controllers;
-    
-    using Extensions;
 
     using UnityEngine;
 

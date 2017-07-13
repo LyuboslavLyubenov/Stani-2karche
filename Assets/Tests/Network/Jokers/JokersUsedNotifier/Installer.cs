@@ -4,16 +4,12 @@ using Network_JokersUsedNotifier = Assets.Scripts.Network.JokersUsedNotifier;
 namespace Tests.Network.Jokers.JokersUsedNotifier
 {
 
-    using System;
-
-    using EventArgs;
-
     using Interfaces.Network;
     using Interfaces.Network.NetworkManager;
 
     using Tests.DummyObjects;
 
-    using Zenject.Source.Install;
+    using Zenject;
 
     public class Installer : MonoInstaller
     {
