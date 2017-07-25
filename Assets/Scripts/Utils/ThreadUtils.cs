@@ -1,6 +1,5 @@
 ﻿namespace Utils
 {
-
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -25,23 +24,27 @@
         {
             get
             {
-                lock (instanceLock)
+                if (instance == null)
                 {
-                    if (instance == null)
+                    lock (instanceLock)
                     {
-                        var gameObject = new GameObject("ThreadUtils");
-                        var threadUtilsComponent = gameObject.AddComponent<ThreadUtils>();
+                        if (instance == null)
+                        {
+                            var gameObject = new GameObject("ThreadUtils");
+                            var threadUtilsComponent = gameObject.AddComponent<ThreadUtils>();
 
-                        instance = threadUtilsComponent;
+                            instance = threadUtilsComponent;
+                        }
                     }
                 }
-
+                
                 return instance;
             }
         }
 
-        void Start()
+        void Awake()
         {
+            DontDestroyOnLoad(this);
             SceneManager.activeSceneChanged += this.OnActiveSceneChanged;
         }
 
@@ -65,8 +68,9 @@
 
         private void OnActiveSceneChanged(Scene arg0, Scene scene)
         {
-            this.Dispose();
-            SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
+            this.StopAllThreads();
+            //this.Dispose();
+            //SceneManager.activeSceneChanged -= this.OnActiveSceneChanged;
         }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
@@ -168,6 +172,7 @@
             }
 
             instance = null;
+            Destroy(this);
         }
     }
 
