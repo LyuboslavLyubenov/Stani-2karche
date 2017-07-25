@@ -1,15 +1,10 @@
 namespace Controllers.Lobby
 {
-
-    using Assets.Scripts.Network.GameInfo.New;
-
     using Interfaces.Network.Kinvey;
-    using Interfaces.Network.NetworkManager;
     using Interfaces.Services;
 
     using Network;
     using Network.Broadcast;
-    using Network.NetworkManagers;
 
     using UnityEngine;
 
@@ -25,7 +20,6 @@ namespace Controllers.Lobby
         public override void InstallBindings()
         {
             var threadUtils = ThreadUtils.Instance;
-            var clientNetworkManager = ClientNetworkManager.Instance;
 
             this.InstallSelectPlayerTypeRouterBindings();
             
@@ -48,18 +42,6 @@ namespace Controllers.Lobby
             this.Container.Bind<ILANServersDiscoverer>()
                 .To<LANServersDiscoverer>()
                 .AsSingle();
-
-            this.Container.Bind<IClientNetworkManager>()
-                .FromInstance(ClientNetworkManager.Instance)
-                .AsSingle();
-
-            this.Container.Bind<CreatedGameInfoReceiver>()
-                .AsSingle();
-
-            var createdGameInfoReceiver = Container.Resolve<CreatedGameInfoReceiver>();
-            this.Container.Bind<ICreatedGameInfoReceiver>()
-                .FromInstance(createdGameInfoReceiver);
-
         }
         
         private void InstallSelectPlayerTypeRouterBindings()
@@ -76,5 +58,4 @@ namespace Controllers.Lobby
                 .AsSingle();
         }
     }
-
 }

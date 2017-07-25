@@ -1,34 +1,44 @@
 ﻿namespace Controllers.Lobby
 {
 
+    using Assets.Scripts.Network.GameInfo.New;
+
     using EventArgs;
 
     using Interfaces.Network.NetworkManager;
+
+    using Network.NetworkManagers;
 
     using Notifications;
 
     using UnityEngine;
     using UnityEngine.UI;
 
+    using Utils.Unity;
+
     using Zenject;
 
-    public class ConnectToExternalServerUIController : MonoBehaviour
+    public class ConnectToExternalServerUIController : ExtendedMonoBehaviour
     {
         private const int ConnectionTimeoutInSeconds = 10;
-        
+
         public GameObject LoadingUI;
 
         public Text IPText;
 
         [Inject]
-        private ICreatedGameInfoReceiver gameInfoReceiver;
-
-        [Inject]
         private SelectPlayerTypeRouter SelectPlayerTypeRouter;
+
+        private ICreatedGameInfoReceiver gameInfoReceiver;
 
         private float elapsedTimeTryingToConnect = 0;
         private string ip;
         private bool connecting = false;
+
+        void Start()
+        {
+            this.gameInfoReceiver = new CreatedGameInfoReceiver(ClientNetworkManager.Instance);
+        }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Update()
@@ -70,7 +80,7 @@
         {
             this.SelectPlayerTypeRouter.Handle(gameType, gameTypeJSON);
         }
-        
+
         public void TryToConnect(string ip)
         {
             this.elapsedTimeTryingToConnect = 0;
