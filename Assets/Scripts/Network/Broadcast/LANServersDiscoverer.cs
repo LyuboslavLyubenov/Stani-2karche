@@ -23,6 +23,8 @@
         
         public LANServersDiscoverer()
         {
+            var threadUtils = ThreadUtils.Instance;
+
             this.timer = TimerUtils.ExecuteAfter(RetrieveMessageDelayInSeconds, this.ReceiveIsServerOnlineMessage);
             this.timer.RunOnUnityThread = true;
             this.timer.Start();

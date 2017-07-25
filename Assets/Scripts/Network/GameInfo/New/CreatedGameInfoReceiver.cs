@@ -67,7 +67,11 @@ namespace Assets.Scripts.Network.GameInfo.New
             this.StartReceivingFrom(ipAddress, receivedGameInfo,
                 (exception) =>
                     {
-                        this.networkManager.Disconnect();
+                        if (this.networkManager.IsConnected)
+                        {
+                            this.networkManager.Disconnect();
+                        }
+                        
                         if (onError != null)
                         {
                             onError(exception);

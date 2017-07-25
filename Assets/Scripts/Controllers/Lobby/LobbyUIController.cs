@@ -1,29 +1,19 @@
 ﻿// ReSharper disable ArrangeTypeMemberModifiers
 namespace Controllers.Lobby
 {
-    using Interfaces.Network.NetworkManager;
     using Interfaces.Services;
-    
-    using UnityEngine;
+
     using UnityEngine.SceneManagement;
 
     using Utils;
+    using Utils.Unity;
 
     using Zenject;
 
-    public class LobbyUIController : MonoBehaviour
+    public class LobbyUIController : ExtendedMonoBehaviour
     {
         [Inject]
-        private ConnectToExternalServerUIController connectToExternalServerUIController;
-
-        [Inject]
-        private ServersAvailableUIController serversAvailableUIController;
-
-        [Inject]
         private ILANServersDiscoverer IlanServersDiscoverer;
-        
-        [Inject]
-        private ICreatedGameInfoReceiver createdGameInfoReceiver;
         
         void Awake()
         {
@@ -49,10 +39,7 @@ namespace Controllers.Lobby
         private void Dispose()
         {
             this.IlanServersDiscoverer.Dispose();
-            
             this.IlanServersDiscoverer = null;
-
-            this.createdGameInfoReceiver = null;
         }
     }
 }

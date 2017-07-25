@@ -118,18 +118,22 @@ namespace Network.Servers
         void Awake()
         {
             var threadUtils = ThreadUtils.Instance;//Initialize
+        }
+        
+        void Start()
+        {
             var serverNetworkManager = ServerNetworkManager.Instance;
 
-            if (!serverNetworkManager.IsRunning)
-            {
-                serverNetworkManager.StartServer();
-            }
-            
+            //if (!serverNetworkManager.IsRunning)
+            //{
+            //    serverNetworkManager.StartServer();
+            //}
+
             this.MainPlayerData = new MainPlayerData(serverNetworkManager);
             this.mainPlayerJokersDataSynchronizer = new MainPlayerJokersDataSynchronizer(serverNetworkManager, this.MainPlayerData);
-            
+
             this.gameInfoSender = new CreatedGameInfoSender(ServerNetworkManager.Instance, this);
-            
+
             this.gameDataExtractor = new GameDataExtractor();
             this.GameDataIterator = new GameDataIterator(this.gameDataExtractor);
             this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
@@ -137,7 +141,7 @@ namespace Network.Servers
             this.leaderboardDataManipulator = new LeaderboardDataManipulator();
             this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, this.MainPlayerData.JokersData);
-           
+
             this.askPlayerQuestionRouter = new AskPlayerQuestionJokerRouter(serverNetworkManager, this.GameDataIterator, new AskClientQuestionRouter(serverNetworkManager));
 
             var answerPollRouter = new AnswerPollRouter(serverNetworkManager);
@@ -146,7 +150,7 @@ namespace Network.Servers
             this.statisticsCollector = new BasicExamStatisticsCollector(serverNetworkManager, this, this.GameDataQuestionsSender, this.GameDataIterator);
 
             this.leaderboardSender = new LeaderboardSender(serverNetworkManager, this.leaderboardDataManipulator);
-            
+
             this.LoadServerSettings();
             this.InitializeCommands();
             this.AttachEventHandlers();
@@ -154,10 +158,7 @@ namespace Network.Servers
             this.MainPlayerData.JokersData.AddJoker<HelpFromFriendJoker>();
             this.MainPlayerData.JokersData.AddJoker<AskAudienceJoker>();
             this.MainPlayerData.JokersData.AddJoker<DisableRandomAnswersJoker>();
-        }
-        
-        void Start()
-        {
+
             this.CoroutineUtils.RepeatEverySeconds(1f, () =>
                 {
                     if (!ServerNetworkManager.Instance.IsRunning || this.IsGameOver || this.paused || this.remainingTimeToAnswerMainQuestion == -1)

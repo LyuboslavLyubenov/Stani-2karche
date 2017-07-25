@@ -1,6 +1,5 @@
 ﻿namespace Network.NetworkManagers
 {
-
     using System;
     using System.Collections;
     using System.Timers;
@@ -36,6 +35,7 @@
         private const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
         private const float SendKeepAliveRequestDelayInSeconds = 3f;
         private const float ReceiveConnectedClientsCountDelayInSeconds = 3f;
+        private const float ValidateConnectionDelayInSeconds = 1f;
 
         private const int MaxConnectionAttempts = 3;
         private const int MaxServerReactionTimeInSeconds = 6;
@@ -63,10 +63,10 @@
         private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
         
-        private Timer keepAliveTimer;
-        private Timer connectedClientsCountTimer;
-        private Timer receiveNetworkMessagesTimer;
-        private Timer validateConnectionTimer;
+        private Timer_ExecuteMethodEverySeconds keepAliveTimer;
+        private Timer_ExecuteMethodEverySeconds connectedClientsCountTimer;
+        private Timer_ExecuteMethodEverySeconds receiveNetworkMessagesTimer;
+        private Timer_ExecuteMethodEverySeconds validateConnectionTimer;
 
         private static ClientNetworkManager instance;
 
@@ -74,12 +74,7 @@
         {
             get
             {
-                if (instance == null)
-                {
-                    instance = new ClientNetworkManager();
-                }
-
-                return instance;
+                return instance ?? (instance = new ClientNetworkManager());
             }
         }
         
@@ -122,8 +117,6 @@
 
         private ClientNetworkManager()
         {
-            var threadUtils = ThreadUtils.Instance;
-
             NetworkTransport.Init();
             
             this.ConfigureCommands();
@@ -139,12 +132,12 @@
                 TimerUtils.ExecuteEvery(ReceiveNetworkMessagesDelayInSeconds, this.ReceiveMessages);
 
             this.validateConnectionTimer =
-                TimerUtils.ExecuteEvery(1f, this.ValidateConnection);
+                TimerUtils.ExecuteEvery(ValidateConnectionDelayInSeconds, this.ValidateConnection);
 
-            ((IExtendedTimer)this.keepAliveTimer).RunOnUnityThread = true;
-            ((IExtendedTimer)this.connectedClientsCountTimer).RunOnUnityThread = true;
-            ((IExtendedTimer)this.receiveNetworkMessagesTimer).RunOnUnityThread = true;
-            ((IExtendedTimer)this.validateConnectionTimer).RunOnUnityThread = true;
+            this.keepAliveTimer.RunOnUnityThread = true;
+            this.connectedClientsCountTimer.RunOnUnityThread = true;
+            this.receiveNetworkMessagesTimer.RunOnUnityThread = true;
+            this.validateConnectionTimer.RunOnUnityThread = true;
 
             this.keepAliveTimer.Start();
             this.connectedClientsCountTimer.Start();
@@ -437,8 +430,7 @@
         #region DEBUG
 
         private string debug_connectIp = "(example 127.0.0.1)";
-
-
+        
         private void OnGUI()
         {
             if (!this.ShowDebugMenu)
@@ -462,6 +454,5 @@
         }
 
         #endregion
-
     }
 }
