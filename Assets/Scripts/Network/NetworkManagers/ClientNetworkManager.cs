@@ -315,7 +315,7 @@
                 if (this.IsConnected)
                 {
                     this.ConnectedToServer();
-                    break;
+                    yield break;
                 }
 
                 time += Time.deltaTime;

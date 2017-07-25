@@ -39,9 +39,15 @@ namespace Assets.Scripts.Network.GameInfo.New
             var sendGameInfoCommand = NetworkCommandData.From<SendGameInfoCommand>();
             this.networkManager.SendServerCommand(sendGameInfoCommand);
 
-            this.receivedGameInfoCommand.AllowToReceiveFrom(ipAddress, receivedGameInfo,
+            this.receivedGameInfoCommand.AllowToReceiveFrom(ipAddress,
+                (args) =>
+                    {
+                        this.networkManager.Disconnect();
+                        receivedGameInfo(args);
+                    },
                 () =>
                     {
+                        this.networkManager.Disconnect();
                         if (onError != null)
                         {
                             onError(new TimeoutException());
@@ -54,29 +60,15 @@ namespace Assets.Scripts.Network.GameInfo.New
             Action<GameInfoEventArgs> receivedGameInfo,
             Action<Exception> onError = null)
         {
-            if (this.networkManager.IsConnected)
+            if (!this.networkManager.IsConnected)
             {
-                this.networkManager.Disconnect();
+                this.networkManager.ConnectToHost(ipAddress);
                 yield return null;
             }
-
-            this.networkManager.ConnectToHost(ipAddress);
-
+            
             yield return new WaitUntil(() => this.networkManager.IsConnected);
 
-            this.StartReceivingFrom(ipAddress, receivedGameInfo,
-                (exception) =>
-                    {
-                        if (this.networkManager.IsConnected)
-                        {
-                            this.networkManager.Disconnect();
-                        }
-                        
-                        if (onError != null)
-                        {
-                            onError(exception);
-                        }
-                    });
+            this.StartReceivingFrom(ipAddress, receivedGameInfo, onError);
         }
 
         public void ReceiveFrom(

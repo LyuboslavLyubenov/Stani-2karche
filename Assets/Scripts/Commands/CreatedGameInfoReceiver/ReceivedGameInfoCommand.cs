@@ -34,7 +34,7 @@ namespace Assets.Scripts.Commands.CreatedGameInfoReceiver
             var serverExternalIp = gameInfo.ServerInfo.ExternalIpAddress;
             var serverLocalIp = gameInfo.ServerInfo.LocalIPAddress;
             
-            if (!this.requests.ContainsKey(serverExternalIp) || !this.requests.ContainsKey(serverLocalIp))
+            if (!this.requests.ContainsKey(serverExternalIp) && !this.requests.ContainsKey(serverLocalIp))
             {
                 return;
             }

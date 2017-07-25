@@ -2,17 +2,20 @@
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using NetworkCommandData = Commands.NetworkCommandData;
+using ThreadUtils = Utils.ThreadUtils;
 
 namespace Assets.Scripts.Commands.CreatedGameInfoSender
 {
 
     using System;
+    using System.Collections;
     using System.Collections.Generic;
 
     using Assets.Scripts.Commands.CreatedGameInfoReceiver;
     using Assets.Scripts.Extensions;
 
     using UnityEngine;
+    using UnityEngine.Networking;
 
     public class SendGameInfoCommand : INetworkManagerCommand
     {
@@ -35,7 +38,7 @@ namespace Assets.Scripts.Commands.CreatedGameInfoSender
             this.networkManager = networkManager;
             this.gameServer = gameServer;
         }
-
+        
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
             var connectionId = commandsOptionsValues["ConnectionId"].ConvertTo<int>();
@@ -44,8 +47,6 @@ namespace Assets.Scripts.Commands.CreatedGameInfoSender
             var receivedGameInfoCommand = NetworkCommandData.From<ReceivedGameInfoCommand>();
             receivedGameInfoCommand.AddOption("GameInfoJSON", gameInfoJSON);
             this.networkManager.SendClientCommand(connectionId, receivedGameInfoCommand);
-
-            this.networkManager.KickPlayer(connectionId);
         }
     }
 }

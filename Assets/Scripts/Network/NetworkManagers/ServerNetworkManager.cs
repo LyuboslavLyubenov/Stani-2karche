@@ -334,25 +334,25 @@
             //if we received data from client
             var connectionId = receiveNetworkData.ConnectionId;
             var message = receiveNetworkData.Message;
-            NetworkCommandData commmandData = null;
+            NetworkCommandData commandData = null;
 
             try
             {
-                commmandData = NetworkCommandData.Parse(message);
+                commandData = NetworkCommandData.Parse(message);
             }
             catch (Exception ex)
             {
                 Debug.LogWarning(ex.Message);
             }
 
-            if (commmandData != null)
+            if (commandData != null)
             {
-                this.FilterCommandLineOptions(commmandData);
-                commmandData.AddOption("ConnectionId", connectionId.ToString());
+                this.FilterCommandLineOptions(commandData);
+                commandData.AddOption("ConnectionId", connectionId.ToString());
 
                 try
                 {
-                    this.commandsManager.Execute(commmandData);    
+                    this.commandsManager.Execute(commandData);    
                 }
                 catch (Exception ex)
                 {
