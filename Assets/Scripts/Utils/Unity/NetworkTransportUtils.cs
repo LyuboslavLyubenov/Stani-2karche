@@ -143,13 +143,23 @@
             });
         }
 
-        public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null)
+        public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null, Action onSent = null)
         {
             EncryptMessageAsync(message, (buffer) =>
             {
                 byte error;
 
-                NetworkTransport.Send(hostId, connectionId, channelId, buffer, buffer.Length, out error);
+                var isSent = NetworkTransport.Send(hostId, connectionId, channelId, buffer, buffer.Length, out error);
+
+                if (!isSent)
+                {
+                    if (onError != null)
+                    {
+                        onError(new NetworkException(6));
+                    }
+
+                    return;
+                }
 
                 try
                 {
