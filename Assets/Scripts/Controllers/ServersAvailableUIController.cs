@@ -1,8 +1,9 @@
 ﻿namespace Controllers
 {
-
     using System.Collections.Generic;
     using System.Linq;
+
+    using Assets.Scripts.Network.GameInfo.New;
 
     using Controllers.Lobby;
 
@@ -15,9 +16,12 @@
     using Interfaces.Network.NetworkManager;
     using Interfaces.Services;
 
+    using Network.NetworkManagers;
+
     using UnityEngine;
     using UnityEngine.UI;
 
+    using Utils;
     using Utils.Unity;
 
     using Zenject;
@@ -37,19 +41,20 @@
         private ILANServersDiscoverer IlanServersDiscoverer;
 
         [Inject]
-        private ICreatedGameInfoReceiver gameInfoReceiver;
-
-        [Inject]
         private SelectPlayerTypeRouter selectPlayerTypeRouter;
 
         [Inject]
         private IKinveyWrapper kinveyWrapper;
+
+        private ICreatedGameInfoReceiver gameInfoReceiver;
 
         private List<string> foundServers = new List<string>();
 
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
+            this.gameInfoReceiver = new CreatedGameInfoReceiver(ClientNetworkManager.Instance);
+
             this.CoroutineUtils.RepeatEverySeconds(10f, () =>
                 {
                     this.ClearFoundServerList();
@@ -67,7 +72,7 @@
                     {
                         return;
                     }
-                    
+
                     this.kinveyWrapper.RetrieveEntityAsync<ServerInfo_DTO>("Servers", null, this.OnLoadedServers, Debug.LogException);
                 });
         }
