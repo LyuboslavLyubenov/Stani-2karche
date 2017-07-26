@@ -1,5 +1,7 @@
 ﻿namespace Controllers
 {
+
+    using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -57,7 +59,7 @@
 
             this.CoroutineUtils.RepeatEverySeconds(10f, () =>
                 {
-                    this.ClearFoundServerList();
+                    this.UpdateServerList();
                     this.StartLoadingExternalServersIfConnectedToInternet();
                 });
 
@@ -126,20 +128,37 @@
             this.selectPlayerTypeRouter.Handle(gameType, gameInfoJSON);
         }
 
-        private void ClearFoundServerList()
+        private void UpdateServerList()
         {
-            var serversElements = this.Container.GetComponentsInChildren<ServerDiscoveredElementController>()
-                .Select(c => c.gameObject)
-                .ToList();
+            var servers = this.Container.GetComponentsInChildren<ServerDiscoveredElementController>();
+            this.StartCoroutine(this.UpdateServerListCoroutine(servers));
+        }
 
-            for (int i = 0; i < serversElements.Count; i++)
+        private IEnumerator UpdateServerListCoroutine(ServerDiscoveredElementController[] servers)
+        {
+            for (int i = 0; i < servers.Length; i++)
             {
-                var server = serversElements[i];
-                server.gameObject.SetActive(false);
-            }
+                var server = servers[i];
+                var isUp = false;
+                var checkCompleted = false;
 
-            this.foundServers.Clear();
-            this.gameInfoReceiver.StopReceivingFromAll();
+                NetworkManagerUtils.Instance.IsServerUp(
+                    server.ServerIPAddress, 
+                    ClientNetworkManager.Port,
+                    (isRunning) =>
+                        {
+                            isUp = isRunning;
+                            checkCompleted = true;
+                        });
+                
+                yield return new WaitUntil(() => checkCompleted);
+
+                if (!isUp)
+                {
+                    server.gameObject.SetActive(false);
+                    this.foundServers.Remove(server.ServerIPAddress);
+                }
+            }
         }
     }
 }
