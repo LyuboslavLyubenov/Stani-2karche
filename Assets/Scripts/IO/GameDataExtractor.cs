@@ -118,7 +118,7 @@
         /// </summary>
         private string[] GetQuestionsFilesPath()
         {
-            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
+            var execPath = PathUtils.GetGameDirectoryPath();
             var levelPath = execPath + LevelPath + this.LevelCategory;
             var questionsFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
             return questionsFilesPath;
