@@ -326,3 +326,5 @@ Assets/Scene/TEST FindServer.unity
 Languages/Bulgarian.xml
 *.xls
 Server/
+.collabignore
+Assets/StreamingAssets/build_info.txt
