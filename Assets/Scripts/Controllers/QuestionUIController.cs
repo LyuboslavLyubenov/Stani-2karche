@@ -214,6 +214,7 @@
 
                     var answerImage = this.answersImages[buttonIndex];
                     answerImage.gameObject.SetActive(true);
+                    answerImage.preserveAspect = true;
 
                     var spriteRect = new Rect(0, 0, texture.width, texture.height);
                     var pivot = new Vector2(0.5f, 0.5f);
