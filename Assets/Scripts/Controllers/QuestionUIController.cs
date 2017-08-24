@@ -1,9 +1,11 @@
 ﻿namespace Controllers
 {
-
     using System;
     using System.Collections;
+    using System.IO;
     using System.Linq;
+
+    using Assets.Scripts.Utils;
 
     using EventArgs;
 
@@ -28,6 +30,7 @@
         private Text questionText = null;
 
         private Text[] answersTexts = null;
+        private Image[] answersImages = null;
         private Button[] answersButtons = null;
         private Animator[] answersAnimators = null;
 
@@ -37,6 +40,7 @@
         private RectTransform rightColumn = null;
 
         private GameObject answerPrefab;
+
 
         public EventHandler<AnswerEventArgs> OnAnswerClick
         {
@@ -86,31 +90,24 @@
             this.answersTexts = new Text[answers.Length];
             this.answersButtons = new Button[answers.Length];
             this.answersAnimators = new Animator[answers.Length];
+            this.answersImages = new Image[answers.Length];
 
             for (int i = 0; i < answers.Length; i++)
             {
                 var answerButton = answers[i].GetComponent<Button>();
                 var answerText = answers[i].transform.GetComponentInChildren<Text>();
                 var answerAnimator = answers[i].GetComponent<Animator>();
-
-                if (answerButton == null)
-                {
-                    throw new Exception("Answer must be button");
-                }
-
-                if (answerText == null)
-                {
-                    throw new Exception("Answer must have text component");
-                }
-
-                if (answerAnimator == null)
-                {
-                    throw new Exception("Answer must have animator component");
-                }
+                var answerImage = answers[i].transform
+                    .GetChild(1)
+                    .GetComponent<Image>();
 
                 this.answersButtons[i] = answerButton;
                 this.answersTexts[i] = answerText;
                 this.answersAnimators[i] = answerAnimator;
+                this.answersImages[i] = answerImage;
+
+                this.answersTexts[i].gameObject.SetActive(false);
+                this.answersImages[i].gameObject.SetActive(false);
             }
         }
 
@@ -120,22 +117,28 @@
 
             for (int i = 0; i < answers.Length; i++)
             {
-                var parent = (i % 2 == 0) ? this.leftColumn : this.rightColumn;
-                var parentRectTransform = (i % 2 == 0) ? this.leftColumn : this.rightColumn;
-                var parentHeight = parentRectTransform.rect.size.y;
-                var answerObjsInColumn = (int)Math.Ceiling(count / 2d);
-                var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
-                var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
-                var y = (sizeY / 2) + (parent.childCount * (DistanceBetweenAnswerButton + (int)sizeY));
-                var answer = (GameObject)Instantiate(this.answerPrefab, parent, false);
-                var answerRectTransform = answer.GetComponent<RectTransform>();
-
-                answerRectTransform.sizeDelta = new Vector2(answerRectTransform.sizeDelta.x, (float)sizeY);
-                answerRectTransform.anchoredPosition = new Vector2(answerRectTransform.anchoredPosition.x, (float)-y);
-                answers[i] = answer;
+                answers[i] = GenerateAnswer(i, count);
             }
 
             return answers;
+        }
+
+        private GameObject GenerateAnswer(int answerIndex, int answersCount)
+        {
+            var parent = (answerIndex % 2 == 0) ? this.leftColumn : this.rightColumn;
+            var parentRectTransform = (answerIndex % 2 == 0) ? this.leftColumn : this.rightColumn;
+            var parentHeight = parentRectTransform.rect.size.y;
+            var answerObjsInColumn = (int)Math.Ceiling(answersCount / 2d);
+            var distanceBetweenAnswersInColumnSum = (DistanceBetweenAnswerButton / 2 * answerObjsInColumn);
+            var sizeY = ((parentHeight - distanceBetweenAnswersInColumnSum) / answerObjsInColumn);
+            var y = (sizeY / 2) + (parent.childCount * (DistanceBetweenAnswerButton + (int)sizeY));
+            var answer = (GameObject)Instantiate(this.answerPrefab, parent, false);
+            var answerRectTransform = answer.GetComponent<RectTransform>();
+
+            answerRectTransform.sizeDelta = new Vector2(answerRectTransform.sizeDelta.x, (float)sizeY);
+            answerRectTransform.anchoredPosition = new Vector2(answerRectTransform.anchoredPosition.x, (float)-y);
+
+            return answer;
         }
 
         private IEnumerator InitializeCoroutine()
@@ -201,7 +204,25 @@
                 var buttonIndex = i;
                 var isCorrect = (buttonIndex == question.CorrectAnswerIndex);
 
+                var imagePath = PathUtils.GetGameDirectoryPath() + question.Answers[buttonIndex];
+
+                if (File.Exists(imagePath))
+                {
+                    var imageData = File.ReadAllBytes(imagePath);
+                    var texture = new Texture2D(256, 256);
+                    texture.LoadImage(imageData);
+
+                    var answerImage = this.answersImages[buttonIndex];
+                    answerImage.gameObject.SetActive(true);
+
+                    var spriteRect = new Rect(0, 0, texture.width, texture.height);
+                    var pivot = new Vector2(0.5f, 0.5f);
+                    answerImage.sprite = Sprite.Create(texture, spriteRect, pivot);
+                }
+
+                this.answersTexts[buttonIndex].gameObject.SetActive(true);
                 this.answersTexts[buttonIndex].text = question.Answers[buttonIndex];
+
                 this.answersButtons[buttonIndex].interactable = true;
                 this.answersButtons[buttonIndex].onClick.RemoveAllListeners();
 
@@ -214,7 +235,7 @@
 
             if (this.OnQuestionLoaded != null)
             {
-                this.OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));    
+                this.OnQuestionLoaded(this, new SimpleQuestionEventArgs(question));
             }
         }
 
@@ -246,7 +267,7 @@
                     if (this.ShouldPlayButtonAnimation)
                     {
                         var answerText = this.answersTexts[buttonIndex].text;
-                        this.ColorAnswer(answerText, true);   
+                        this.ColorAnswer(answerText, true);
                     }
                     else
                     {
@@ -291,7 +312,7 @@
         }
 
         protected int GetAnswerIndex(string answer)
-        {        
+        {
             for (int i = 0; i < this.AnswersCount; i++)
             {
                 var answerText = this.answersTexts[i].text;
@@ -314,7 +335,7 @@
 
             return this.answersTexts[index].transform.parent.gameObject;
         }
-        
+
         public void ChangeAnswersCount(int count)
         {
             if (this.answersButtons.Length == count)
@@ -333,16 +354,24 @@
 
         public void HideAnswer(int index)
         {
+            if (!this.initialized)
+            {
+                throw new InvalidOperationException("Wait to initialize");
+            }
+
             if (index < 0 || index >= this.AnswersCount)
             {
                 throw new ArgumentOutOfRangeException("index");
             }
 
+            this.answersTexts[index].gameObject.SetActive(false);
+            this.answersImages[index].gameObject.SetActive(false);
+
             var currentState = this.answersAnimators[index].GetCurrentAnimatorStateInfo(0);
 
             if (!currentState.IsTag("Hidden"))
             {
-                this.answersAnimators[index].SetTrigger("hide");    
+                this.answersAnimators[index].SetTrigger("hide");
             }
         }
 
@@ -370,7 +399,7 @@
         {
             for (int i = 0; i < this.AnswersCount; i++)
             {
-                this.ShowAnswer(i);  
+                this.ShowAnswer(i);
             }
         }
 
@@ -390,7 +419,7 @@
                     {
                         this.OnAnswerClick(this, new AnswerEventArgs(answer, false));
                     });
-            
+
             }
             else
             {
