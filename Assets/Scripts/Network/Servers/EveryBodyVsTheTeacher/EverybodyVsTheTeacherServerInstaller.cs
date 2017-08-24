@@ -8,6 +8,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
     using Assets.Scripts.Network;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Network.GameInfo.New;
     using Assets.Scripts.Network.JokersData.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
@@ -21,7 +22,6 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using IO;
 
     using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
-    using Network.GameInfo;
     using Network.NetworkManagers;
     using Network.TcpSockets;
 
@@ -41,7 +41,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         private void InstallServerNetworkManager()
         {
             var serverNetworkManager = ServerNetworkManager.Instance;
-
+            
             this.Container.Bind<IServerNetworkManager>()
                 .To<ServerNetworkManager>()
                 .FromInstance(serverNetworkManager)
@@ -89,17 +89,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         private void InstallCreatedGameInfoSender(IServerNetworkManager networkManager, IGameServer gameServer)
         {
-            var tcpClient = new SimpleTcpClient();
-            var tcpServer = new SimpleTcpServer(ServerPort);
-            var gameInfoFactory = GameInfoFactory.Instance;
-
-            var createdGameInfoSender =
-                new CreatedGameInfoSender(
-                    tcpClient,
-                    tcpServer,
-                    gameInfoFactory,
-                    networkManager,
-                    gameServer);
+            var createdGameInfoSender = new CreatedGameInfoSender(networkManager, gameServer);
 
             this.Container.Bind<ICreatedGameInfoSender>()
                 .FromInstance(createdGameInfoSender)
@@ -223,7 +213,8 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 .WhenInjectedInto<IPlayersConnectingStateDataSender>();
 
             this.Container.Bind<IPlayersConnectingStateDataSender>()
-                .To<PlayersConnectingStateDataSender>();
+                .To<PlayersConnectingStateDataSender>()
+                .AsSingle();
 
             this.Container.Bind<ISecondsRemainingUICommandsSender>()
                 .To<SecondsRemainingUICommandsSender>()

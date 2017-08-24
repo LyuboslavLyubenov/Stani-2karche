@@ -544,6 +544,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1620963471}
   - component: {fileID: 1620963472}
+  - component: {fileID: 1620963473}
   m_Layer: 0
   m_Name: WhenGameDataLoadedSendQuestionsRemainingCountToPresenter
   m_TagString: Untagged
@@ -585,6 +586,17 @@ MonoBehaviour:
   platformsToIgnore: []
   dynamic: 0
   dynamicTypeName: 
+--- !u!114 &1620963473
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1620963470}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5ef3aeef8408f47964c2e5e217534e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1770976248
 GameObject:
   m_ObjectHideFlags: 0
