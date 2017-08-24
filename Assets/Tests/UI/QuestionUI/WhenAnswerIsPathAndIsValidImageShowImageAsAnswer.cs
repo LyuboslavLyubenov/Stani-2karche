@@ -1,14 +1,10 @@
-﻿using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
-
-namespace Assets.Tests.UI.QuestionUI
+﻿namespace Assets.Tests.UI.QuestionUI
 {
-
     using System.Collections;
-    using System.Reflection;
+    using System.Linq;
 
     using Assets.Tests.Utils;
-    
-    using Interfaces;
+
     using Interfaces.Controllers;
 
     using UnityEngine;
@@ -33,16 +29,18 @@ namespace Assets.Tests.UI.QuestionUI
             yield return new WaitForSeconds(1);
 
             var question = new QuestionGenerator().GenerateQuestion();
-            question.Answers[0] = "images\\testimage.jpg";
+            question.Answers[0] = "testimages\\testimage.jpg";
             this.questionUIController.LoadQuestion(question);
 
             yield return new WaitForSeconds(3);
 
-            var answerObj = GameObject.FindObjectOfType<Button>();
-            var imageComponent = answerObj.transform.GetChild(0)
-                .GetComponent<Image>();
-
-            if (imageComponent != null)
+            var answerObj = GameObject.FindObjectsOfType<Button>()
+                .First(b => b.GetComponentInChildren<Text>().text == question.Answers[0]);
+            var textComponent = answerObj.GetComponentInChildren<Text>();
+            var imageComponent = answerObj.GetComponentsInChildren<Image>(true)[1];
+           
+            if (textComponent.text == question.Answers[0] &&
+                imageComponent.gameObject.activeSelf)
             {
                 IntegrationTest.Pass();
             }
