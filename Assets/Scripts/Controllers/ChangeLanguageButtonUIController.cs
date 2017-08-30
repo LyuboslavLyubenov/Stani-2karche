@@ -1,6 +1,10 @@
 ﻿namespace Controllers
 {
 
+    using System;
+
+    using EventArgs;
+
     using Localization;
 
     using UnityEngine;
@@ -16,17 +20,14 @@
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Awake()
         {
-            this.CoroutineUtils.WaitUntil(this.IsLoadedLanguage, this.OnLoadedLanguage);
+            LanguagesManager.Instance.OnLoadedLanguage += OnLoadedLanguage;
+
+            //this.CoroutineUtils.WaitUntil(this.IsLoadedLanguage, this.OnLoadedLanguage);
 
             this.GetComponent<Button>().onClick.AddListener(new UnityAction(this.OnMouseDown));
         }
 
-        private bool IsLoadedLanguage()
-        {
-            return LanguagesManager.Instance.IsLoadedLanguage;
-        }
-
-        private void OnLoadedLanguage()
+        private void OnLoadedLanguage(object sender, LanguageEventArgs args)
         {
             this.transform.GetComponentInChildren<Text>().text = LanguagesManager.Instance.Language;
         }

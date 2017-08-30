@@ -5,7 +5,7 @@
     {
         public static void StartServer(string gameTypeName)
         {
-            var serverPath = string.Format("Server\\{0}.exe", gameTypeName);
+            var serverPath = string.Format("Servers\\{0}\\server.exe", gameTypeName);
             System.Diagnostics.Process.Start(serverPath);
         }
     }

@@ -14,7 +14,7 @@
         {
             this.usernameInputField = this.transform.Find("ChangeUsername")
                 .Find("InputField")
-                .GetComponent<InputField>();    
+                .GetComponent<InputField>();
         }
 
         // ReSharper disable once UnusedMember.Local

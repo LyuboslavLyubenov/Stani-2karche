@@ -5,7 +5,7 @@
 
     public class LanguageLoader : ExtendedMonoBehaviour
     {
-        private void Start()
+        void Start()
         {
             this.CoroutineUtils.WaitForFrames(1, () =>
                 {
@@ -20,5 +20,4 @@
                 });
         }
     }
-
 }

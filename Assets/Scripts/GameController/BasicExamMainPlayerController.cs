@@ -48,7 +48,7 @@ namespace GameController
 
     public class BasicExamMainPlayerController : ExtendedMonoBehaviour, IDisposable
     {
-        private const string ServerBinaryName = "stani2karcheserver";
+        private const string ServerBinaryName = "server";
 
         public GameObject LeaderboardUI;
         public GameObject LoadingUI;

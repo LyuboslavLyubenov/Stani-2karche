@@ -1,8 +1,6 @@
 ﻿namespace Localization
 {
-
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Xml;
@@ -12,6 +10,7 @@
     using Interfaces.Localization;
 
     using UnityEngine;
+    using UnityEngine.SceneManagement;
 
     using Utils.Unity;
 
@@ -74,6 +73,11 @@
             }
         }
 
+        void Awake()
+        {
+            
+        }
+
         void Start()
         {
             if (instance != null &&
@@ -112,7 +116,7 @@
             }
             catch (Exception e)
             {
-                Debug.Log(e.Message);
+                Debug.LogException(e);
             }
         }
 
@@ -182,7 +186,7 @@
             }
             catch (System.Exception e)
             {
-                Debug.Log(e.Message);
+                Debug.LogException(e);
             }
         }
 
