@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Stani2karche>
+
+    <Errors>
+        <NetworkMessages>
+            <Ok> Successfully sent message</Ok>
+            <WrongHost>Host doesnt exists</WrongHost>
+            <WrongConnection>Cant find server. Wrong connection</WrongConnection>
+            <WrongChannel>Wrong server channel</WrongChannel>
+            <NoResources>Not enough resources</NoResources>
+            <Timeout>Connection timeout</Timeout>
+            <MessageToLong>Message too long to send</MessageToLong>
+            <WrongOperation>Not supported</WrongOperation>
+            <VersionMismatch>Mismatched versions client server</VersionMismatch>
+            <CRCMismatch>Server have different network settings</CRCMismatch>
+            <DNSFailure>Cant find server. DNSFailure</DNSFailure>
+        </NetworkMessages>
+        
+        <NoInternetConnection>No internet connection</NoInternetConnection>
+        <LoadCategoriesTimeout>Cant find categories</LoadCategoriesTimeout>
+        <NotLoadedQuestions>Questions not loaded</NotLoadedQuestions>
+        <CurrentlyLoadingQuestions>Questions are still loading</CurrentlyLoadingQuestions>
+        <CantLoadCategories>Error trying to load categories</CantLoadCategories>
+        <CantExtractSecondsForAnswer>Not found settings entry "time in seconds for question" in file {0}. Will use default value of {1}.</CantExtractSecondsForAnswer>
+        <CantExtractQuestionsToTakeCount>Not found how many questions to use in file {0}. Will use all of them</CantExtractQuestionsToTakeCount>
+        <EmptyQuestion>There is empty question in file {0} on line {1}</EmptyQuestion>
+        <EmptyAnswer>There is missing answer in file {0} on line{1}</EmptyAnswer>
+        <MultipleCorrectAnswers>There is multiple correct answers for question on line {1} in file {0}.</MultipleCorrectAnswers>
+        <NoCorrectAnswer>Question on line {1} in file {0} doesnt have correct answer.</NoCorrectAnswer>
+        <QuestionWithoutAnswers>Question on line {1} in file {0} doesnt have answers.</QuestionWithoutAnswers>
+    </Errors>
+    
+    <UnableToConnect>
+        <Text>Unable to connect to server.</Text>
+        <TryAgainToConnect>Try again to connect</TryAgainToConnect>
+        <ReturnToLobby>Return to lobby</ReturnToLobby>
+    </UnableToConnect>
+
+    <Surrender>
+        <Text>Do you really want to surrender?</Text>
+        <Text1>(If so you will receive mark displayed on the screen)</Text1>
+        <Confirm>Yes :(</Confirm>
+        <Decline>Nooo</Decline>
+    </Surrender>
+    
+    <Jokers>
+        <HelpFromFriend>
+            <Text>
+                <b>Help from friend</b>
+                Ask someone from the audience for help.
+            </Text>
+        </HelpFromFriend>
+        <AskAudience>
+            <Text>
+                <b>Help from audience</b>
+                Create poll for current question.
+             </Text>
+        </AskAudience>
+        <DisableRandomAnswers>
+            <Text>
+                Disable some of the incorrect answers
+            </Text>
+        </DisableRandomAnswers>
+    </Jokers>
+
+    <ConnectSettings>
+        <ConnectToServerIP>Enter ip address</ConnectToServerIP>
+    </ConnectSettings>
+
+    <CreateOrJoinGame>
+        <Create>Create</Create>
+        <Join>Join</Join>
+    </CreateOrJoinGame>
+
+    <GameTypes>
+        <NormalGame>
+            <Text>Normal</Text>
+            <ToolTip></ToolTip>
+        </NormalGame>
+        <AudienceRevenge>
+            <Text>Отмъщението на публиката</Text>
+            <ToolTip></ToolTip>
+        </AudienceRevenge>
+        <FastestWins>
+            <Text>Най-бързият печели</Text>
+            <ToolTip></ToolTip>
+        </FastestWins>
+    </GameTypes>
+
+    <EnterName>
+        <Text>Enter username</Text>
+        <ExampleName>Username123</ExampleName>
+        <Submit>I want this username!</Submit>
+    </EnterName>
+
+    <ConnectToExternalServer>
+        <Text>Connect to server manually</Text>
+        <ExampleIP>IP address (127.0.0.1 example)</ExampleIP>
+        <ConnectButton>Connect!</ConnectButton>
+    </ConnectToExternalServer>
+
+    <CreatedGames>
+        <Text>CReated games</Text>
+        <GameType>Game type</GameType>
+        <CreatorName>Creator name</CreatorName>
+        <ConnectedPlayersCount>Connected players count</ConnectedPlayersCount>
+    </CreatedGames>
+
+    <NormalExamSelectMode>
+        <Text>Select type of player</Text>
+        <MainPlayer>Main player</MainPlayer>
+        <Audience>Audience</Audience>
+    </NormalExamSelectMode>
+
+    <GameDataInfo>
+      <Category>Category</Category>
+      <Mark>Current mark</Mark>
+      <RemainingQuestions>Remaining questions</RemainingQuestions>
+      <CurrentQuestion>Current question</CurrentQuestion>
+    </GameDataInfo>
+
+    <ConnectedClients>
+        <Text>Connected clients</Text>
+        <ConnectionId>Id</ConnectionId>
+        <Username>Username</Username>
+    </ConnectedClients>
+
+    <ClientOptions>
+        <ConnectionId>Id</ConnectionId>
+        <Username>Username</Username>
+        <Role>Role</Role>
+        <Reason>Reason</Reason>
+        <Kick>Kick</Kick>
+        <Ban>Ban</Ban>
+    </ClientOptions>
+
+    <IPAddressUI>
+        <IP>IP address</IP>
+    </IPAddressUI>
+
+    <RemainingSeconds>
+        <Text>Remaining seconds for answer</Text>
+    </RemainingSeconds>
+
+    <Mark>
+        <Text>Mark</Text>
+    </Mark>
+
+    <RemainingQuestions>
+        <Text>Remaining questions</Text>
+    </RemainingQuestions>
+
+    <EndGameButton>Stop the game!</EndGameButton>
+
+    <MainPlayerInfo>
+        <MainPlayer>Main player</MainPlayer>
+        <ConnectionId>Id</ConnectionId>
+        <IsConnected>Is it connected?</IsConnected>
+        <Yes>Yes</Yes>
+        <No>No</No>
+    </MainPlayerInfo>
+
+    <Leaderboard>Leaderboard</Leaderboard>
+    <CallingAFriend>Select a friend</CallingAFriend>
+    <Loading>Loading</Loading>
+
+    <ChooseCategory>
+        <Text>Select category</Text>
+    </ChooseCategory>
+
+    <EndGame>
+        <Leaderboard>
+            <Text>Leaderboard</Text>
+        </Leaderboard>
+    </EndGame>
+
+    <WaitingToAnswer>
+        <Text>Remaining time in seconds for answer</Text>
+    </WaitingToAnswer>
+
+    <CallAFriend>
+        <Text>Select a friend</Text>
+    </CallAFriend>
+    
+    <Computer>AI</Computer>
+    
+    <Settings>
+        <Text>Settings</Text>
+        <Username>Username</Username>
+        <Language>Language</Language>
+    </Settings>
+
+    <KickMessages>
+        <UsernameContainsBannedWords>Username contains forbidden words. Please change your username</UsernameContainsBannedWords>
+    </KickMessages>
+</Stani2karche>
