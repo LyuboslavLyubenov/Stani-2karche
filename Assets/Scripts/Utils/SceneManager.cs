@@ -1,6 +1,5 @@
 ﻿namespace Assets.Scripts.Utils
 {
-
     using System;
 
     using UnityEngine.Internal;

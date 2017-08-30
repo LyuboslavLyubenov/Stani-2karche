@@ -1,5 +1,8 @@
 ﻿namespace Localization
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using EventArgs;
 
@@ -10,53 +13,86 @@
 
     public class LanguageUITextsFiller : ExtendedMonoBehaviour
     {
+        //use id as key
+        private Dictionary<int, string> uiTextsOldValues = new Dictionary<int, string>();
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Awake()
         {
             DontDestroyOnLoad(this);
-
+            
             LanguagesManager.Instance.OnLoadedLanguage += this.OnLoadedLanguage;
-            SceneManager.sceneLoaded += this.OnSceneLoaded;
+            Assets.Scripts.Utils.SceneManager.OnBeforeLoadScene += this.OnBeforeLoadScene;
+            Assets.Scripts.Utils.SceneManager.sceneLoaded += this.OnSceneLoaded;
+        }
+
+        private void OnBeforeLoadScene(object sender, EventArgs args)
+        {
+            this.RestoreTextComponentsPaths();
         }
 
         private void OnLoadedLanguage(object sender, LanguageEventArgs args)
         {
-            this.TranslateAllTextComponentsInScene();
+            this.TranslateUI();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
             if (LanguagesManager.Instance.IsLoadedLanguage)
             {
-                this.CoroutineUtils.WaitForFrames(1, this.TranslateAllTextComponentsInScene);
+                this.CoroutineUtils.WaitForFrames(1, this.TranslateUI);
             }
         }
 
-        private void TranslateAllTextComponentsInScene()
+        private Text[] GetAllTextComponentsInScene()
         {
-            if (!LanguagesManager.Instance.IsLoadedLanguage)
+            return GameObjectUtils.GetAllObjectsIncludingInactive()
+                .Select(obj => obj.GetComponent<Text>())
+                .Where(textComponent => textComponent != null)
+                .ToArray();
+        }
+
+        private void RestoreTextComponentsPaths()
+        {
+            if (this.uiTextsOldValues.Count == 0)
             {
-                return;  
+                return;
             }
 
-            var allObjectsInScene = GameObjectUtils.GetAllObjectsIncludingInactive();
+            var allTextComponents = this.GetAllTextComponentsInScene();
 
-            for (var i = 0; i < allObjectsInScene.Length; i++)
+            for (int i = 0; i < allTextComponents.Length; i++)
             {
-                var obj = allObjectsInScene[i];
-                var textComponent = obj.GetComponent<Text>();
+                var textComponent = allTextComponents[i];
+                var id = textComponent.gameObject.GetInstanceID();
 
-                if (textComponent == null)
+                if (!this.uiTextsOldValues.ContainsKey(id))
                 {
                     continue;
                 }
 
-                var path = textComponent.text;
-                var translated = LanguagesManager.Instance.GetValue(path);
+                textComponent.text = this.uiTextsOldValues[id];
+            }
 
-                textComponent.text = translated;
+            this.uiTextsOldValues.Clear();
+        }
+
+        private void TranslateUI()
+        {
+            this.RestoreTextComponentsPaths();
+
+            var allTextComponents = this.GetAllTextComponentsInScene();
+
+            for (int i = 0; i < allTextComponents.Length; i++)
+            {
+                var textComponent = allTextComponents[i];
+                var id = textComponent.gameObject.GetInstanceID();
+                var oldValue = textComponent.text;
+                var translation = LanguagesManager.Instance.GetValue(oldValue);
+
+                textComponent.text = translation;
+                this.uiTextsOldValues.Add(id, oldValue);
             }
         }
     }
-
 }

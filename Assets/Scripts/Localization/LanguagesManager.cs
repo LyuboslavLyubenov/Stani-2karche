@@ -20,6 +20,8 @@
     {
         private const string DefaultLanguage = "Bulgarian";
 
+        public event EventHandler OnBeforeLoadLanguage = delegate { };
+
         public event EventHandler<LanguageEventArgs> OnLoadedLanguage = delegate
             {
             };
@@ -178,10 +180,13 @@
 
             #endif
 
+                this.OnBeforeLoadLanguage(this, EventArgs.Empty);
+
                 this.root = this.mainDoc.DocumentElement;
 
                 this.IsLoadedLanguage = true;
                 this.Language = language;
+
                 this.OnLoadedLanguage(this, new LanguageEventArgs(language));
             }
             catch (System.Exception e)

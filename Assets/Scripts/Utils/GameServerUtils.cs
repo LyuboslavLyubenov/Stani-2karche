@@ -1,6 +1,5 @@
 ﻿namespace Scripts.Utils
 {
-
     public class GameServerUtils
     {
         public static void StartServer(string gameTypeName)
