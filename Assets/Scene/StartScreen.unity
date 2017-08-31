@@ -3901,7 +3901,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 141288, guid: bba3c27cd34b1f84bb4ccb61ac996ca9, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11448314, guid: bba3c27cd34b1f84bb4ccb61ac996ca9, type: 2}
       propertyPath: m_Color.a

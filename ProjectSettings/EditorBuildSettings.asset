@@ -5,19 +5,19 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/StartScreen.unity
     guid: b6829133f7309ea4da2521eff7d72f6a
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/Lobby.unity
     guid: 2c4979f3081ba3942a06ce2aa25357e4
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/BasicExam/BasicExamAudience.unity
     guid: 3dcbc485d662c6d4da2e8e9fc987002b
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scene/BasicExam/BasicExamServer.unity
     guid: 36ca5df69792d1b41b0716c827ae5c46
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/BasicExam/BasicExamMainPlayer.unity
     guid: c4c5d1aecadd82f4d81b49339a3ac3e9
   - enabled: 0

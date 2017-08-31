@@ -3,6 +3,7 @@ namespace Network
 
     using System;
 
+    using Assets.Scripts.Commands.Server.BasicExam;
     using Assets.Scripts.Network;
 
     using Commands.Server;
@@ -11,6 +12,8 @@ namespace Network
 
     using Interfaces;
     using Interfaces.Network.NetworkManager;
+
+    using MainPlayerConnectingCommand = Assets.Scripts.Commands.Server.BasicExam.MainPlayerConnectingCommand;
 
     public class MainPlayerData : IPlayerData
     {
@@ -67,7 +70,7 @@ namespace Network
 
             this.networkManager = networkManager;
 
-            this.mainPlayerConnecting = new MainPlayerConnectingCommand(this.OnMainPlayerConnecting);
+            this.mainPlayerConnecting = new MainPlayerConnectingCommand(this, this.OnMainPlayerConnecting);
             this.JokersData = new JokersData();
             this.JokersUsedNotifier = new JokersUsedNotifier(this.networkManager, this.JokersData);
 

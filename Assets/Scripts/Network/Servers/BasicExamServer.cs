@@ -29,7 +29,7 @@ namespace Network.Servers
 
     using Jokers;
     using Jokers.Routers;
-    
+
     using Network.Leaderboard;
     using Network.NetworkManagers;
 
@@ -56,10 +56,10 @@ namespace Network.Servers
         public event EventHandler<AnswerEventArgs> OnMainPlayerSelectedAnswer = delegate
             {
             };
-        
+
         public ConnectedClientsUIController ConnectedClientsUIController;
         public BasicExamClientOptionsUIController ClientOptionsUIController;
-        
+
         public int RemainingTimetoAnswerInSeconds
         {
             get
@@ -89,7 +89,7 @@ namespace Network.Servers
         {
             get; private set;
         }
-        
+
         private MainPlayerJokersDataSynchronizer mainPlayerJokersDataSynchronizer;
 
         private float chanceToAddRandomJoker = DefaultChanceToAddRandomJokerOnMarkChange;
@@ -119,7 +119,7 @@ namespace Network.Servers
         {
             var threadUtils = ThreadUtils.Instance;//Initialize
         }
-        
+
         void Start()
         {
             var serverNetworkManager = ServerNetworkManager.Instance;
@@ -222,7 +222,7 @@ namespace Network.Servers
             {
                 return;
             }
-            
+
             var isCorrect = (answer == this.lastQuestion.CorrectAnswer);
 
             if (isCorrect)
@@ -233,7 +233,7 @@ namespace Network.Servers
             {
                 this.OnMainPlayerAnsweredIncorrectly();
             }
-            
+
             this.playerSentAnswer = true;
         }
 
@@ -323,10 +323,10 @@ namespace Network.Servers
 
             if (PlayerPrefsEncryptionUtils.HasKey("ServerMaxPlayers"))
             {
-                serverMaxPlayers = int.Parse(PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers"));    
+                serverMaxPlayers = int.Parse(PlayerPrefsEncryptionUtils.GetString("ServerMaxPlayers"));
             }
 
-            ServerNetworkManager.Instance.MaxConnections = serverMaxPlayers;    
+            ServerNetworkManager.Instance.MaxConnections = serverMaxPlayers;
         }
 
         private void AttachEventHandlers()
@@ -344,12 +344,12 @@ namespace Network.Servers
 
             this.ConnectedClientsUIController.OnSelectedPlayer += (sender, args) => this.OnConnectedClientSelected(args.ConnectionId);
         }
-        
+
         private void InitializeCommands()
         {
             AvailableCategoriesCommandsInitializer.Initialize(
-                ServerNetworkManager.Instance, 
-                this.gameDataExtractor, 
+                ServerNetworkManager.Instance,
+                this.gameDataExtractor,
                 this.leaderboardDataManipulator,
                 new LocalCategoriesReader());
 
@@ -371,7 +371,7 @@ namespace Network.Servers
             ServerNetworkManager.Instance.CommandsManager.AddCommand(selectedFifthyFifthyChanceCommand);
             ServerNetworkManager.Instance.CommandsManager.AddCommand("Surrender", surrenderCommand);
         }
-        
+
         private void UpdateRemainingTime()
         {
             if (!this.MainPlayerData.IsConnected || this.paused)
