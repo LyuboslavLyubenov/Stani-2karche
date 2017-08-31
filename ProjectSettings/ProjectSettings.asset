@@ -138,7 +138,7 @@ PlayerSettings:
   useHDRDisplay: 0
   applicationIdentifier:
     Android: com.dead4y.Stani2karche
-    Standalone: unity.dead4y.Stani 2karche
+    Standalone: unity.dead4y.Stani2karche
     Tizen: com.dead4y.Stani2karche
     iOS: com.dead4y.Stani2karche
     tvOS: com.dead4y.Stani2karche
