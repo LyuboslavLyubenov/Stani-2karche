@@ -1336,7 +1336,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30.182617, y: 26.810059}
+  m_AnchoredPosition: {x: 30.182648, y: 26.810059}
   m_SizeDelta: {x: 90, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &472666670
@@ -3913,15 +3913,16 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11448314, guid: bba3c27cd34b1f84bb4ccb61ac996ca9, type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11448314, guid: bba3c27cd34b1f84bb4ccb61ac996ca9, type: 2}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 21300000, guid: 96db0d26d9bc9ac4eb0ccb37f3af2fcb,
+        type: 3}
     - target: {fileID: 11448314, guid: bba3c27cd34b1f84bb4ccb61ac996ca9, type: 2}
       propertyPath: m_Type
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11448314, guid: bba3c27cd34b1f84bb4ccb61ac996ca9, type: 2}
       propertyPath: m_Color.r

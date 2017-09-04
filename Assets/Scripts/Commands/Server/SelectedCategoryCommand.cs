@@ -6,6 +6,10 @@ namespace Commands.Server
     using Interfaces.GameData;
     using Interfaces.Network.NetworkManager;
 
+    using Notifications;
+
+    using UnityEngine;
+
     using EventArgs = System.EventArgs;
 
     public class SelectedCategoryCommand : IOneTimeExecuteCommand
@@ -42,6 +46,11 @@ namespace Commands.Server
             this.leaderboard = leaderboard;
         }
 
+        private void OnGameDataExtractError(Exception exception)
+        {
+            NotificationsController.Instance.AddNotification(Color.red, exception.Message, 20);
+        }
+
         public void Execute(System.Collections.Generic.Dictionary<string, string> commandsOptionsValues)
         {
             var category = commandsOptionsValues["Category"];
@@ -49,7 +58,7 @@ namespace Commands.Server
             this.gameData.LevelCategory = category;
             this.leaderboard.LevelCategory = category;
 
-            this.gameData.ExtractDataAsync(UnityEngine.Debug.LogException);
+            this.gameData.ExtractDataAsync(this.OnGameDataExtractError);
             this.leaderboard.LoadDataAsync();
             
             this.FinishedExecution = true;

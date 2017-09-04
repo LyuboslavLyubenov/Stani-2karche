@@ -46,7 +46,6 @@ namespace Network.Servers
     public class BasicExamServer : ExtendedMonoBehaviour, IGameServer, IDisposable
     {
         private const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
-
         private const int DefaultServerMaxPlayers = 40;
 
         public event EventHandler OnGameOver = delegate

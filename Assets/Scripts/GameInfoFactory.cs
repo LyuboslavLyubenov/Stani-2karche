@@ -115,7 +115,7 @@ public class GameInfoFactory
     private ServerInfo_DTO GetServerInfo(IServerNetworkManager serverNetworkManager)
     {
         var localIPAddress = NetworkUtils.GetLocalIP();
-        var connectedClientsCount = serverNetworkManager.ConnectedClientsCount;
+        var connectedClientsCount = serverNetworkManager.ConnectedClientsCount - 1;
         var maxConnections = serverNetworkManager.MaxConnections;
         var serverInfo = new ServerInfo_DTO()
                          {

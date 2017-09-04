@@ -31,6 +31,19 @@
             }
         }
 
+        public int RemainingSeconds
+        {
+            get
+            {
+                if (!this.Running)
+                {
+                    return 0;
+                }
+
+                return this.intervalInSeconds - this.elapsedSeconds;
+            }
+        }
+
         public bool Paused
         {
             get; set;

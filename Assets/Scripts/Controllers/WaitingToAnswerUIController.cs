@@ -43,6 +43,7 @@
             this.UpdateTimer(this.disableAfterDelay.InvervalInSeconds);
 
             this.disableAfterDelay.OnSecondPassed += this.OnTimePass;
+            this.disableAfterDelay.StartTimer();
         }
 
         // ReSharper disable once ArrangeTypeMemberModifiers
@@ -58,7 +59,7 @@
 
         private void OnTimePass(object sender, EventArgs args)
         {
-            this.UpdateTimer(((IUnityTimer)sender).InvervalInSeconds);
+            this.UpdateTimer(this.disableAfterDelay.RemainingSeconds);
         }
     }
 }

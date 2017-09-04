@@ -9,6 +9,8 @@
 
     public class DisableAfterDelay : UnityTimer
     {
+        private const int DefaultDelayInSeconds = 8;
+
         public bool DisableAfterClick = true;
         public bool UseAnimator = false;
 
@@ -16,6 +18,11 @@
 
         protected override void Initialize()
         {
+            if (base.InvervalInSeconds == 0)
+            {
+                base.InvervalInSeconds = DefaultDelayInSeconds;
+            }
+
             this.OnFinished += this.OnTimeOver;
             base.Initialize();
         }
