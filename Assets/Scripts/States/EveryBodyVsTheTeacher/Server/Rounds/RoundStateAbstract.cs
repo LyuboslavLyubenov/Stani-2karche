@@ -125,7 +125,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             }
             else
             {
-                this.UseNextQuestion();
+                this.currentQuestionAnswersCollector.StartCollecting();
                 this.OnSelectedInCorrectAnswer(this, EventArgs.Empty);
             }
         }
