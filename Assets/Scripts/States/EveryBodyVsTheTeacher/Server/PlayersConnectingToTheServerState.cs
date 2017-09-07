@@ -92,12 +92,18 @@ namespace States.EveryBodyVsTheTeacher.Server
         }
 
         //---
-        [Inject]
         private IServerNetworkManager networkManager;
         //---
-
-        public PlayersConnectingToTheServerState()
+        
+        [Inject]
+        public PlayersConnectingToTheServerState(IServerNetworkManager networkManager)
         {
+            if (networkManager == null)
+            {
+                throw new ArgumentNullException("networkManager");
+            }
+
+            this.networkManager = networkManager;
             this.mainPlayerConnectingCommand = new MainPlayerConnectingCommand(this.OnMainPlayerConnecting);
             this.presenterConnectingCommand = new PresenterConnectingCommand(this.OnPresenterConnecting);
         }

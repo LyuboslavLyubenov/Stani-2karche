@@ -11,9 +11,12 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.Network;
     using Assets.Scripts.Network.EveryBodyVsTheTeacher;
+    using Assets.Scripts.Network.GameInfo.New;
     using Assets.Scripts.Network.JokersData.EveryBodyVsTheTeacher;
     using Assets.Scripts.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
     using Commands;
 
@@ -25,7 +28,13 @@ namespace Network.Servers.EveryBodyVsTheTeacher
     using Interfaces.Network.EveryBodyVsTheTeacher.States;
     using Interfaces.Network.NetworkManager;
 
+    using Network.Broadcast;
+    using Network.EveryBodyVsTheTeacher.PlayersConnectingState;
+    using Network.NetworkManagers;
+
     using StateMachine;
+
+    using States.EveryBodyVsTheTeacher.Server;
 
     using Utils.Unity;
 
@@ -47,40 +56,34 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             };
 
         [Inject]
-        private ICreatedGameInfoSender gameInfoSender;
-
-        [Inject]
         private IGameDataIterator gameDataIterator;
+        
+        [Inject]
+        private IGameDataExtractor gameDataExtractor;
 
         [Inject]
-        private IServerNetworkManager networkManager;
-
-        [Inject]
-        private IPlayersConnectingToTheServerState playersConnectingToTheServerState;
-
-        [Inject]
-        private IRoundsSwitcher roundsSwitcher;
+        private JokersData jokersData;
 
         [Inject]
         private StateMachine stateMachine;
 
-        [Inject]
+
+        private JokersDataSender jokersDataSender;
+
+        private IPlayersConnectingToTheServerState playersConnectingToTheServerState;
+
+        private IRoundsSwitcher roundsSwitcher;
+
         private RoundsSwitcherEventsNotifier roundsSwitcherEventsNotifier;
-
-        [Inject]
+        
+        private ICreatedGameInfoSender gameInfoSender;
         private IPlayersConnectingStateDataSender playersConnectingStateDataSender;
-
-        [Inject]
+        
         private ISecondsRemainingUICommandsSender secondsRemainingUiCommandsSender;
-
-        [Inject]
         private IQuestionsRemainingCommandsSender questionsRemainingCommandsSender;
-
-        [Inject]
         private IMistakesRemainingCommandsSender mistakesRemainingCommandsSender;
 
-        [Inject]
-        private JokersDataSender jokersDataSender;
+        private LANServerOnlineBroadcastService broadcastService = new LANServerOnlineBroadcastService();
         
         private HashSet<int> mainPlayersConnectionIds = new HashSet<int>();
         private readonly HashSet<int> surrenderedMainPlayersConnectionIds = new HashSet<int>();
@@ -95,7 +98,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
         {
             get
             {
-                return this.networkManager.ConnectedClientsConnectionId.Intersect(this.mainPlayersConnectionIds);
+                return ServerNetworkManager.Instance.ConnectedClientsConnectionId.Intersect(this.mainPlayersConnectionIds);
             }
         }
 
@@ -129,19 +132,108 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         void Start()
         {
-            this.networkManager.OnClientDisconnected += this.OnClientDisconneted;
+            var networkManager = ServerNetworkManager.Instance;
+
+            this.playersConnectingToTheServerState = new PlayersConnectingToTheServerState(ServerNetworkManager.Instance);
+            this.gameInfoSender = new CreatedGameInfoSender(networkManager, this);
+
+            var rounds = this.ConfigureRounds();
+            this.roundsSwitcher = this.BuildRoundsSwitcher(rounds);
+            
+            this.roundsSwitcherEventsNotifier =
+                new RoundsSwitcherEventsNotifier(networkManager, this, this.roundsSwitcher);
+
+            this.playersConnectingStateDataSender = 
+                new PlayersConnectingStateDataSender(
+                    this.playersConnectingToTheServerState,
+                    ServerNetworkManager.Instance,
+                    this);
+
+            this.secondsRemainingUiCommandsSender = 
+                new SecondsRemainingUICommandsSender(ServerNetworkManager.Instance, this);
+            this.questionsRemainingCommandsSender = 
+                new QuestionsRemainingUICommandsSender(
+                    ServerNetworkManager.Instance, 
+                    this, 
+                    this.gameDataIterator);
+            this.mistakesRemainingCommandsSender = 
+                new MistakesRemainingCommandsSender(
+                    ServerNetworkManager.Instance,
+                    this,
+                    this.roundsSwitcher,
+                    this.gameDataIterator,
+                    this.stateMachine);
+
+            this.jokersDataSender = 
+                new JokersDataSender(this.jokersData, networkManager, this);
+
+            networkManager.CommandsManager.AddCommand(
+                new MainPlayerConnectingCommand(networkManager, this, this.OnMainPlayerConnecting));
+            networkManager.CommandsManager.AddCommand(
+                new PresenterConnectingCommand(this.OnPresenterConnecting));
+            networkManager.CommandsManager.AddCommand(
+                new SurrenderCommand(networkManager, this, this.gameDataIterator));
+
+            networkManager.OnClientDisconnected += this.OnClientDisconneted;
             this.roundsSwitcher.OnMustEndGame += this.OnMustEndGame;
             this.roundsSwitcher.OnNoMoreRounds += this.OnNoMoreRounds;
             this.playersConnectingToTheServerState.OnEveryBodyRequestedGameStart += this.OnEveryBodyRequestedGameStart;
-            
-            this.networkManager.CommandsManager.AddCommand(
-                new MainPlayerConnectingCommand(this.networkManager, this, this.OnMainPlayerConnecting));
-            this.networkManager.CommandsManager.AddCommand(
-                new PresenterConnectingCommand(this.OnPresenterConnecting));
-            this.networkManager.CommandsManager.AddCommand(
-                new SurrenderCommand(this.networkManager, this, this.gameDataIterator));
 
             this.stateMachine.SetCurrentState(this.playersConnectingToTheServerState);
+        }
+        
+        private IRoundState[] ConfigureRounds()
+        {
+            var networkManager = ServerNetworkManager.Instance;
+            var answersCollector = new VoteResultForAnswerForCurrentQuestionCollector(this, ServerNetworkManager.Instance, gameDataIterator);
+            var firstRoundBuilder = new FirstRoundState.Builder
+                                    {
+                                        GameDataExtractor = gameDataExtractor,
+                                        Server = this,
+                                        CurrentQuestionAnswersCollector = answersCollector,
+                                        GameDataIterator = gameDataIterator,
+                                        JokersData = jokersData,
+                                        ServerNetworkManager = networkManager
+                                    };
+            var firstRound = firstRoundBuilder.Build();
+            var secondRoundBuilder = new SecondRoundState.Builder()
+                                     {
+                                         CurrentQuestionAnswersCollector = answersCollector,
+                                         GameDataIterator = gameDataIterator,
+                                         JokersData = jokersData,
+                                         Server = this,
+                                         ServerNetworkManager = networkManager
+                                     };
+            var secondRound = secondRoundBuilder.Build();
+            var thirdRoundBuilder = new ThirdRoundState.Builder()
+                                    {
+                                        CurrentQuestionAnswersCollector = answersCollector,
+                                        GameDataIterator = gameDataIterator,
+                                        JokersData = jokersData,
+                                        Server = this,
+                                        ServerNetworkManager = networkManager
+                                    };
+            var thirdRound = thirdRoundBuilder.Build();
+
+            return new IRoundState[]
+                   {
+                       firstRound,
+                       secondRound,
+                       thirdRound
+                   };
+        }
+
+        private IRoundsSwitcher BuildRoundsSwitcher(IRoundState[] rounds)
+        {
+            var roundsSwitcherBuilder = new RoundsSwitcher.Builder(this.stateMachine);
+
+            for (int i = 0; i < rounds.Length; i++)
+            {
+                var round = rounds[i];
+                roundsSwitcherBuilder.AddRound(round);
+            }
+
+            return roundsSwitcherBuilder.Build();
         }
 
         private void OnClientDisconneted(object sender, ClientConnectionIdEventArgs args)
@@ -161,7 +253,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
             if (this.PresenterId > 0)
             {
-                this.networkManager.KickPlayer(connectionId, "Presenter already connected");//TODO: Transate
+                ServerNetworkManager.Instance.KickPlayer(connectionId, "Presenter already connected");//TODO: Transate
                 return;
             }
 
@@ -187,7 +279,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             }
 
             var activateStateCommand = new NetworkCommandData("Activate" + stateName);
-            this.networkManager.SendClientCommand(this.PresenterId, activateStateCommand);
+            ServerNetworkManager.Instance.SendClientCommand(this.PresenterId, activateStateCommand);
         }
 
         private void OnMainPlayerConnecting(int connectionId)
@@ -198,7 +290,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
                 return;
             }
 
-            this.networkManager.KickPlayer(connectionId);
+            ServerNetworkManager.Instance.KickPlayer(connectionId);
         }
 
         private void OnMustEndGame(object sender, EventArgs args)
@@ -216,7 +308,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
             for (int i = 0; i < this.mainPlayersConnectionIds.Count; i++)
             {
                 var connectionId = this.mainPlayersConnectionIds.Skip(i).First();
-                this.networkManager.SendClientCommand(connectionId, command);
+                ServerNetworkManager.Instance.SendClientCommand(connectionId, command);
             }
         }
 
@@ -240,7 +332,7 @@ namespace Network.Servers.EveryBodyVsTheTeacher
 
         public void EndGame()
         {
-            var endGameState = new EndGameState(this.networkManager, this.gameDataIterator);
+            var endGameState = new EndGameState(ServerNetworkManager.Instance, this.gameDataIterator);
             this.stateMachine.SetCurrentState(endGameState);
 
             this.IsGameOver = true;

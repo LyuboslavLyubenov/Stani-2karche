@@ -44,7 +44,7 @@
             get;
             set;
         }
-        
+
         public event EventHandler<ClientConnectionIdEventArgs> OnClientConnected = delegate
             {
             };
@@ -158,7 +158,7 @@
 
             ThreadUtils.Instance.RunOnMainThread(this.ReceiveMessagesCoroutine());
         }
-        
+
         private void ConfigureServer()
         {
             NetworkTransport.Init();
@@ -215,7 +215,7 @@
                 case NetworkEventType.DisconnectEvent:
                     this.OnClientDisconnect(networkData);
                     break;
-            }    
+            }
         }
 
         private IList<int> GetDeadClientsIds()
@@ -254,13 +254,13 @@
                 try
                 {
                     byte error;
-                    NetworkTransport.Disconnect(this.genericHostId, deadClientConnectionId, out error);   
+                    NetworkTransport.Disconnect(this.genericHostId, deadClientConnectionId, out error);
                 }
                 catch (Exception e)
                 {
                     Debug.LogException(e);
                 }
-                
+
                 this.connectedClientsNames.Remove(deadClientConnectionId);
 
                 if (this.OnClientDisconnected != null)
@@ -290,7 +290,7 @@
 
             if (this.OnClientConnected != null)
             {
-                this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));    
+                this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));
             }
         }
 
@@ -302,9 +302,9 @@
             try
             {
                 this.connectedClientsIds.Remove(connectionId);
-                this.connectedClientsNames.Remove(connectionId);    
+                this.connectedClientsNames.Remove(connectionId);
             }
-            finally 
+            finally
             {
                 if (this.OnClientDisconnected != null)
                 {
@@ -352,7 +352,7 @@
 
                 try
                 {
-                    this.commandsManager.Execute(commandData);    
+                    this.commandsManager.Execute(commandData);
                 }
                 catch (Exception ex)
                 {
@@ -363,7 +363,7 @@
             {
                 if (this.OnReceivedData != null)
                 {
-                    this.OnReceivedData(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, message));    
+                    this.OnReceivedData(this, new DataSentEventArgs(receiveNetworkData.ConnectionId, message));
                 }
             }
         }
@@ -383,7 +383,7 @@
             }
             else
             {
-                return username.Value;    
+                return username.Value;
             }
         }
 
@@ -417,7 +417,7 @@
             if (!this.connectedClientsIds.Contains(connectionId))
             {
                 throw new ArgumentException("Client with id " + connectionId + " is not connected");
-            } 
+            }
 
             this.connectedClientsNames.Add(connectionId, username);
 
@@ -480,8 +480,8 @@
         {
             if (!this.IsConnected(connectionId))
             {
-                throw new Exception("Client with id " + connectionId + " not connected"); 
-            }   
+                throw new Exception("Client with id " + connectionId + " not connected");
+            }
 
             try
             {
@@ -490,7 +490,7 @@
                 commandLine.AddOption("Color", "red");
                 commandLine.AddOption("Message", message);
 
-                this.SendClientCommand(connectionId, commandLine);    
+                this.SendClientCommand(connectionId, commandLine);
             }
             catch (NetworkException ex)
             {
@@ -516,7 +516,7 @@
             this.bannedConnections.Add(connectionId);
             this.KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
         }
-       
+
         public bool IsConnected(int connectionId)
         {
             return this.connectedClientsIds.Contains(connectionId);
@@ -587,5 +587,5 @@
         }
 
         #endregion
-    }   
+    }
 }
