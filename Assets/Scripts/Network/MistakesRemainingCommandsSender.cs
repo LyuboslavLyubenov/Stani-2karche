@@ -6,12 +6,15 @@ using NetworkCommandData = Commands.NetworkCommandData;
 namespace Assets.Scripts.Network
 {
     using System;
+    using System.Linq;
 
     using Assets.Scripts.Commands.EveryBodyVsTheTeacher;
     using Assets.Scripts.Commands.UI;
+    using Assets.Scripts.EventArgs;
     using Assets.Scripts.Extensions;
     using Assets.Scripts.Interfaces.Network;
     using Assets.Scripts.Interfaces.States.EveryBodyVsTheTeacher.Server;
+    using Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds;
 
     using StateMachine;
 
@@ -71,6 +74,19 @@ namespace Assets.Scripts.Network
             this.roundsSwitcher.OnSwitchedToNextRound += this.OnSwitchedToNextRound;
             
             this.iterator.OnLoaded += this.OnLoadedGameData;
+
+            this.stateMachine.OnChangedState += OnChangedState;
+        }
+
+        private void OnChangedState(object sender, StateEventArgs args)
+        {
+            var stateType = args.State.GetType();
+
+            if (stateType.GetInterfaces().FirstOrDefault(i => i == typeof(IRoundState)) != null &&
+                stateType == typeof(FirstRoundState))
+            {
+                this.SendLoadMistakesRemainingCommandToPresenter();
+            }
         }
 
         private void OnLoadedGameData(object sender, EventArgs args)
