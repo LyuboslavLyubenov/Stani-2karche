@@ -153,10 +153,15 @@ namespace Network
 
             this.OnPlayerVoted(this, new AnswerEventArgs(answer, null));
 
-            if (this.clientsVoted.Count != this.server.ConnectedMainPlayersConnectionIds.Count())
+            if (
+                this.clientsVoted.Count != this.server.ConnectedMainPlayersConnectionIds.Count(
+                                                id => !this.server.SurrenderedMainPlayersConnectionIds.Contains(id))
+                )
             {
                 return;
             }
+
+            
 
             this.StopCollecting();
             this.RaiseOnCollectedVoteEvent();
