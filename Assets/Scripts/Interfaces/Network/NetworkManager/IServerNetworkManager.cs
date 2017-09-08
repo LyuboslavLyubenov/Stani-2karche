@@ -39,7 +39,7 @@ namespace Interfaces.Network.NetworkManager
             get;
         }
 
-        int[] BannedClientsConnectionIds
+        string[] BannedClientsConnectionIds
         {
             get;
         }

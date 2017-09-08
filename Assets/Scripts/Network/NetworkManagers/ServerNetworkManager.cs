@@ -6,6 +6,7 @@
     using System.Linq;
     using System.Timers;
 
+    using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Utils;
 
     using Commands;
@@ -36,6 +37,8 @@
         private const int Port = 7788;
 
         private const float CheckForDeadClientsDelayInSeconds = 5f;
+
+        private const float ReceiveDeviceIdMaxTimeInSeconds = 5f;
 
         public bool AutoStart = true;
         //how many clients can be connected to the server
@@ -69,9 +72,10 @@
         private bool isRunning = false;
         //Id of all connected clients
         private readonly List<int> connectedClientsIds = new List<int>();
-        private readonly List<int> bannedConnections = new List<int>();
+        private readonly List<string> bannedDeviceIds = new List<string>();
         private readonly HashSet<int> aliveClientsId = new HashSet<int>();
         private readonly Dictionary<int, string> connectedClientsNames = new Dictionary<int, string>();
+        private readonly Dictionary<int, string> connectedClientsDeviceIds = new Dictionary<int, string>();
         private readonly CommandsManager commandsManager = new CommandsManager();
         private readonly LANServerOnlineBroadcastService LANServerOnlineBroadcastService = new LANServerOnlineBroadcastService();
 
@@ -116,11 +120,11 @@
             }
         }
 
-        public int[] BannedClientsConnectionIds
+        public string[] BannedClientsConnectionIds
         {
             get
             {
-                return this.bannedConnections.ToArray();
+                return this.bannedDeviceIds.ToArray();
             }
         }
 
@@ -137,9 +141,9 @@
             }
         }
 
-        public ServerNetworkManager()
+        private ServerNetworkManager()
         {
-            this.MaxConnections = 30;
+            this.MaxConnections = 15;
 
             this.ConfigureCommands();
             this.ConfigureServer();
@@ -148,7 +152,7 @@
             {
                 this.StartServer();
             }
-
+            
             this.updateAliveClientsTimer = TimerUtils.ExecuteEvery(
                 CheckForDeadClientsDelayInSeconds,
                 this.UpdateAliveClients);
@@ -170,10 +174,34 @@
 
         private void ConfigureCommands()
         {
+            this.commandsManager.AddCommand(new SetClientIdCommand(this.OnReceivedClientId));
             this.commandsManager.AddCommand(new SetUsernameCommand(this));
             this.commandsManager.AddCommand(new KeepAliveCommand(this.aliveClientsId));
             this.commandsManager.AddCommand(new ServerSendConnectedClientsCountCommand(this));
             this.commandsManager.AddCommand(new ServerSendConnectedClientsIdsNamesCommand(this, this.connectedClientsNames));
+        }
+
+        private void OnReceivedClientId(int connectionId, string deviceId)
+        {
+            if (this.aliveClientsId.Contains(connectionId) || 
+                this.connectedClientsDeviceIds.ContainsKey(connectionId) ||
+                this.bannedDeviceIds.Contains(deviceId) || 
+                this.connectedClientsDeviceIds.ContainsValue(deviceId))
+            {
+                return;
+            }
+            
+            var commandData = new NetworkCommandData("AllowedToConnect");
+            this.SendClientCommand(connectionId, commandData);
+            
+            this.connectedClientsDeviceIds.Add(connectionId, deviceId);
+            this.aliveClientsId.Add(connectionId);
+            this.connectedClientsIds.Add(connectionId);
+
+            if (this.OnClientConnected != null)
+            {
+                this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));
+            }
         }
 
         private IEnumerator ReceiveMessagesCoroutine()
@@ -262,6 +290,7 @@
                 }
 
                 this.connectedClientsNames.Remove(deadClientConnectionId);
+                this.connectedClientsDeviceIds.Remove(deadClientConnectionId);
 
                 if (this.OnClientDisconnected != null)
                 {
@@ -273,27 +302,10 @@
         private void OnConnectedClient(NetworkData networkData)
         {
             var connectionId = networkData.ConnectionId;
-            this.connectedClientsIds.Add(connectionId);
-
-            var isBanned = this.bannedConnections.IndexOf(connectionId) > -1;
-
-            if (isBanned)
-            {
-                this.KickPlayer(connectionId, "Забранено ти е да влизаш във този сървър.");
-                return;
-            }
-
-            var commandData = new NetworkCommandData("AllowedToConnect");
-            this.SendClientCommand(connectionId, commandData);
-
-            this.aliveClientsId.Add(connectionId);
-
-            if (this.OnClientConnected != null)
-            {
-                this.OnClientConnected(this, new ClientConnectionIdEventArgs(connectionId));
-            }
+            var command = NetworkCommandData.From<SendDeviceIdToServerCommand>();
+            this.SendClientCommand(connectionId, command);
         }
-
+        
         private void OnClientDisconnect(NetworkData networkData)
         {
             //if disconnected remove from connected clients list
@@ -303,6 +315,7 @@
             {
                 this.connectedClientsIds.Remove(connectionId);
                 this.connectedClientsNames.Remove(connectionId);
+                this.connectedClientsDeviceIds.Remove(connectionId);
             }
             finally
             {
@@ -508,12 +521,8 @@
 
         public void BanPlayer(int connectionId)
         {
-            if (this.bannedConnections.Contains(connectionId))
-            {
-                return;
-            }
-
-            this.bannedConnections.Add(connectionId);
+            var deviceId = this.connectedClientsDeviceIds[connectionId];
+            this.bannedDeviceIds.Add(deviceId);
             this.KickPlayer(connectionId, "Нямаш право да влизаш във сървъра.");
         }
 

@@ -71,9 +71,10 @@ namespace Assets.Scripts.Commands.EveryBodyVsTheTeacher
             this.server.AddMainPlayerToSurrenderList(connectionId);
 
             var areAllMainPlayersSurrenderedGame = 
-                !this.server.SurrenderedMainPlayersConnectionIds
-                    .Except(this.server.MainPlayersConnectionIds)
+                !this.server.MainPlayersConnectionIds
+                    .Except(this.server.SurrenderedMainPlayersConnectionIds)
                     .Any();
+
             if (areAllMainPlayersSurrenderedGame)
             {
                 this.server.EndGame();

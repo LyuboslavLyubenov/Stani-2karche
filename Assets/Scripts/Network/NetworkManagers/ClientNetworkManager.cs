@@ -4,6 +4,7 @@
     using System.Collections;
     using System.Timers;
 
+    using Assets.Scripts.Commands.Client;
     using Assets.Scripts.Extensions;
 
     using Commands;
@@ -17,7 +18,7 @@
     using Interfaces.Network.NetworkManager;
 
     using Notifications;
-
+    
     using UnityEngine;
     using UnityEngine.Networking;
 
@@ -184,6 +185,7 @@
                 };
 
             this.commandsManager.AddCommand("AllowedToConnect", allowedToConnect);
+            this.commandsManager.AddCommand(new SendDeviceIdToServerCommand(this));
             this.commandsManager.AddCommand("ConnectedClientsCount", new ClientReceiveConnectedClientsCountCommand(this.serverConnectedClientsCount));
         }
 
@@ -328,7 +330,7 @@
                 this.Disconnect();
             }
         }
-
+        
         public NetworkConnectionError ConnectToHost(string ip)
         {
             if (!ip.IsValidIPV4())
@@ -384,11 +386,6 @@
 
         public void SendServerMessage(string data)
         {
-            if (!this.isConnected)
-            {
-                throw new InvalidOperationException("Not connected to server");
-            }
-
             NetworkTransportUtils.SendMessageAsync(this.genericHostId, this.connectionId, this.communicationChannel, data, (exception) =>
                 {
                     var errorN = exception.ErrorN;
@@ -427,7 +424,7 @@
             }
         }
 
-        #region DEBUG
+#region DEBUG
 
         private string debug_connectIp = "(example 127.0.0.1)";
         
@@ -453,6 +450,6 @@
             }
         }
 
-        #endregion
+#endregion
     }
 }

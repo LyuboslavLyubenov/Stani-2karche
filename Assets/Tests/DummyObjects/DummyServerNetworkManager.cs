@@ -84,7 +84,7 @@ namespace Tests.DummyObjects
             }
         }
 
-        public int[] BannedClientsConnectionIds
+        public string[] BannedClientsConnectionIds
         {
             get;
             set;
