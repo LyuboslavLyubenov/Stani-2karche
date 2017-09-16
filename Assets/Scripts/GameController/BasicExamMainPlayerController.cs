@@ -7,6 +7,7 @@ namespace GameController
 
     using System;
     using System.Collections;
+    using System.Diagnostics;
 
     using Assets.Scripts.Interfaces;
 
@@ -79,6 +80,8 @@ namespace GameController
 
         private ILeaderboardReceiver leaderboardReceiver = null;
 
+        private Process serverProcess;
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
@@ -103,7 +106,7 @@ namespace GameController
                 //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
                 this.CoroutineUtils.WaitForSeconds(9f, () => this.ConnectToServer("127.0.0.1"));
                 
-                GameServerUtils.StartServer("BasicExam");
+                this.serverProcess = GameServerUtils.StartServer("BasicExam");
             }
             else
             {
@@ -350,11 +353,10 @@ namespace GameController
 
         private void KillLocalServer()
         {
-            var serverProcesses = System.Diagnostics.Process.GetProcessesByName(ServerBinaryName);
-
-            for (int i = 0; i < serverProcesses.Length; i++)
+            if (this.serverProcess != null)
             {
-                serverProcesses[i].Kill();
+                this.serverProcess.Kill();
+                this.serverProcess.Close();
             }
         }
 
