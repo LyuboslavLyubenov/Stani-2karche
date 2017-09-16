@@ -23,12 +23,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scene/EverybodyVsTheTeacher/EveryBodyVsTheTeacherServer.unity
     guid: a4f1da71d7e6a65448f590fceb8c2bcb
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scene/EverybodyVsTheTeacher/Presenter.unity
     guid: fefe940d0b992314db146aa801c41d2e
   - enabled: 0
     path: Assets/Scene/EverybodyVsTheTeacher/EveryBodyVsTheTeacherMainPlayer.unity
     guid: af05e2d50bd214c4eb6ed92891345e85
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scene/EverybodyVsTheTeacher/Audience.unity
     guid: 2ba3f790f29dbaf4a850ddd5090a42c0

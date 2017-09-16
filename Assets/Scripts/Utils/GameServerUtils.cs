@@ -1,11 +1,20 @@
 ﻿namespace Scripts.Utils
 {
+    using System.Diagnostics;
+
     public class GameServerUtils
     {
-        public static void StartServer(string gameTypeName)
+        public static Process StartServer(string gameTypeName)
         {
-            var serverPath = string.Format("Servers\\{0}\\server.exe", gameTypeName);
-            System.Diagnostics.Process.Start(serverPath);
+			#if UNITY_STANDALONE_LINUX
+			var extension = ".x86";
+			#else
+			var extension = ".exe";
+			#endif
+			var serverPath = string.Format("Servers\\{0}\\server{1}", gameTypeName, extension);
+            var processInfo = new ProcessStartInfo(serverPath, "-batchmode -nographics");
+            var process = Process.Start(processInfo);
+            return process;
         }
     }
 }

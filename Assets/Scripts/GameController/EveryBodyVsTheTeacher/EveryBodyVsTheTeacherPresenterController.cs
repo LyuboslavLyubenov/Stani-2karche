@@ -39,10 +39,13 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         
         void Start()
         {
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
             PlayerPrefsEncryptionUtils.SetString("Username", "Ivan");
             PlayerPrefsEncryptionUtils.SetString("ServerExternalIP", "127.0.0.1");
             PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");
-            
+#endif
+
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
             this.networkManager.OnDisconnectedEvent += this.OnDisconnectedFromServer;
             

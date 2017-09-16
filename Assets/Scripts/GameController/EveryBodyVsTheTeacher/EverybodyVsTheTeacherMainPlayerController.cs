@@ -33,7 +33,7 @@
 
         void Start()
         {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (!PlayerPrefsEncryptionUtils.HasKey("ServerLocalIP"))
             {
                 PlayerPrefsEncryptionUtils.SetString("ServerLocalIP", "127.0.0.1");

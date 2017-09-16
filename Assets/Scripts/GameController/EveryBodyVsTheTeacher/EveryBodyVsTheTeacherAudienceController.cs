@@ -30,7 +30,7 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
         void Start()
         {
-#if DEVELOPMENT_BUILD
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
             PlayerPrefsEncryptionUtils.SetString("Username", "Test");
 #endif
             this.networkManager.OnConnectedEvent += this.OnConnectedToServer;
