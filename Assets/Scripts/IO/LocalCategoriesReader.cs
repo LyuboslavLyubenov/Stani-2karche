@@ -19,8 +19,8 @@
                 throw new ArgumentNullException("onGetAllCategories");
             }
 
-            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\";
-            var themesPath = execPath + "LevelData\\теми\\";
+            var gameDirectoryPath = Assets.Scripts.Utils.PathUtils.GetGameDirectoryPath();
+            var themesPath = gameDirectoryPath + "LevelData\\теми\\";
             var availableCategories = Directory.GetDirectories(themesPath)
                 .Where(this.IsValidLevel)
                 .Select(this.GetNameOfCategory)

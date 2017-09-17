@@ -118,8 +118,8 @@
         /// </summary>
         private string[] GetQuestionsFilesPath()
         {
-            var execPath = PathUtils.GetGameDirectoryPath();
-            var levelPath = execPath + LevelPath + this.LevelCategory;
+            var gameDirectoryPath = PathUtils.GetGameDirectoryPath();
+            var levelPath = gameDirectoryPath + LevelPath + this.LevelCategory;
             var questionsFilesPath = Directory.GetFiles(levelPath).Where(p => p.EndsWith(".xls")).ToArray();
             return questionsFilesPath;
         }

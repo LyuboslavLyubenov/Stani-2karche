@@ -12,7 +12,8 @@
         public static string GetGameDirectoryPath()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            return Path.GetDirectoryName(assembly.Location) + "\\..\\..\\";
+            var assemblyPath = Path.GetDirectoryName(assembly.Location);
+            return Directory.GetParent(assemblyPath).Parent.FullName;
         }
     }
 }
