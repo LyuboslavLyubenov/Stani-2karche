@@ -27,7 +27,7 @@
 
     public class GameDataExtractor : IGameDataExtractor
     {
-        public const string LevelPath = "LevelData\\теми\\";
+        public const string LevelPath = "/LevelData/теми/";
         public const int QuestionsStartRow = 5;
 
         private const int DefaultSecondsForAnswerQuestion = 60;

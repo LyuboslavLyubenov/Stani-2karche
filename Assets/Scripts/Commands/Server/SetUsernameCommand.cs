@@ -55,8 +55,9 @@
 
         private bool DoesUsernameContaisForbiddenWords(string username)
         {
-            var execPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\..\\..\\LevelData\\" + BannedWordsInUsernameFileName;
-            var forbiddenUsernames = File.ReadAllLines(execPath);
+            var gameDirectoryPath = Assets.Scripts.Utils.PathUtils.GetGameDirectoryPath();
+            var forbiddenUsernamesFilePath = gameDirectoryPath + "/LevelData/" + BannedWordsInUsernameFileName;
+            var forbiddenUsernames = File.ReadAllLines(forbiddenUsernamesFilePath);
             var usernameLower = username.ToLowerInvariant();
             return forbiddenUsernames.Any(u => u.ToLowerInvariant().Contains(usernameLower));
         }

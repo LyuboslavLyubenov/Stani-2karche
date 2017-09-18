@@ -20,21 +20,13 @@
             }
 
             var gameDirectoryPath = Assets.Scripts.Utils.PathUtils.GetGameDirectoryPath();
-            var themesPath = gameDirectoryPath + "LevelData\\теми\\";
+            var themesPath = gameDirectoryPath + "/LevelData/теми/";
             var availableCategories = Directory.GetDirectories(themesPath)
                 .Where(this.IsValidLevel)
-                .Select(this.GetNameOfCategory)
+                .Select((categoryPath) => new DirectoryInfo(categoryPath).Name)
                 .ToArray();
         
             onGetAllCategories(availableCategories);
-        }
-
-        private string GetNameOfCategory(string category)
-        {
-            var categoryNameStartIndex = category.LastIndexOf('\\') + 1;
-            var categoryName = category.Substring(categoryNameStartIndex);
-
-            return categoryName;
         }
 
         private bool IsValidLevel(string path)
