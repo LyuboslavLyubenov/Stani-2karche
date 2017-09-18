@@ -356,7 +356,7 @@ namespace GameController
             if (this.serverProcess != null)
             {
                 this.serverProcess.Kill();
-                this.serverProcess.Close();
+                //this.serverProcess.Close();
             }
         }
 
