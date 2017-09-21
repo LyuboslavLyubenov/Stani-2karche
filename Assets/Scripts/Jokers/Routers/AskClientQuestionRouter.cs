@@ -51,6 +51,8 @@ namespace Jokers.Routers
 
         private Timer_ExecuteMethodEverySeconds updateTimeTimer;
 
+        private INetworkManagerCommand answerSelectedCommand = new SelectedAnswerOneTimeCommand(this.OnReceivedClientResponse);
+
         public AskClientQuestionRouter(IServerNetworkManager networkManager)
         {
             if (networkManager == null)
@@ -143,7 +145,7 @@ namespace Jokers.Routers
             this.SendSettings(this.clientConnectionId);
             this.SendQuestionToClient(question);
 
-            this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerOneTimeCommand(this.OnReceivedClientResponse));
+            this.networkManager.CommandsManager.AddCommand("AnswerSelected", answerSelectedCommand);
 
             this.Active = true;
             this.OnActivated(this, EventArgs.Empty);
@@ -151,9 +153,9 @@ namespace Jokers.Routers
 
         public void Deactivate()
         {
-            if (this.networkManager.CommandsManager.Exists("AnswerSelected"))
+            if (this.networkManager.CommandsManager.Exists(this.answerSelectedCommand))
             {
-                this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
+                this.networkManager.CommandsManager.RemoveCommand(this.answerSelectedCommand);
             }
 
             this.clientConnectionId = -1;
