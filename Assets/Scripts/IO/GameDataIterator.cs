@@ -102,7 +102,7 @@
             {
                 this.currentMarkIndex = value;
 
-                if (this.OnMarkIncrease != null)
+                if (value > this.currentMarkIndex && this.OnMarkIncrease != null)
                 {
                     this.OnMarkIncrease(this, new MarkEventArgs(value));
                 }
