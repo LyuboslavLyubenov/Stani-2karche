@@ -11,6 +11,7 @@ namespace Network.Servers
     using Commands.Client;
     using Commands.Jokers.Selected;
     using Commands.Server;
+    using Commands.GameData;
 
     using Controllers;
 
@@ -133,7 +134,13 @@ namespace Network.Servers
 
             this.gameInfoSender = new CreatedGameInfoSender(ServerNetworkManager.Instance, this);
 
-            this.gameDataExtractor = new GameDataExtractor();
+            this.gameDataExtractor = 
+                new GameDataExtractor() 
+                {
+                    ShuffleAnswers = true,
+                    ShuffleQuestions = true
+                };
+            
             this.GameDataIterator = new GameDataIterator(this.gameDataExtractor);
             this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
 
@@ -286,6 +293,15 @@ namespace Network.Servers
             this.remainingTimeToAnswerMainQuestion = this.GameDataIterator.SecondsForAnswerQuestion;
         }
 
+        private void OnMarkIncrease(object sender, MarkEventArgs args)
+        {
+            var command = NetworkCommandData.From<GameDataMarkCommand>();
+            var mainPlayerConnectionId = this.MainPlayerData.ConnectionId;
+            command.AddOption("Mark", args.Mark.ToString());
+
+            ServerNetworkManager.Instance.SendClientCommand(mainPlayerConnectionId, command);
+        }
+
         private void OnSentQuestion(object sender, ServerSentQuestionEventArgs args)
         {
             if (args.QuestionType == QuestionRequestType.Next)
@@ -333,8 +349,10 @@ namespace Network.Servers
             this.MainPlayerData.OnDisconnected += this.OnMainPlayerDisconnected;
 
             this.GameDataIterator.OnLoaded += this.OnLoadedGameData;
+            this.GameDataIterator.OnMarkIncrease += this.OnMarkIncrease;
             this.GameDataQuestionsSender.OnSentQuestion += this.OnSentQuestion;
             this.GameDataQuestionsSender.OnBeforeSend += this.OnBeforeSendQuestion;
+
 
             ServerNetworkManager.Instance.OnClientConnected += this.OnClientConnected;
 
