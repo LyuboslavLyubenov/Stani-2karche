@@ -52,6 +52,8 @@ namespace Jokers.Routers
 
         private ISimpleQuestion question;
 
+        private SelectedAnswerCommand selectedAnswerCommand;
+
         public bool Activated
         {
             get;
@@ -66,6 +68,7 @@ namespace Jokers.Routers
             }
             
             this.networkManager = networkManager;
+            this.selectedAnswerCommand = new SelectedAnswerCommand(this.OnReceivedVote);
 
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTime);
             this.updateTimeTimer.RunOnUnityThread = true;
@@ -194,9 +197,9 @@ namespace Jokers.Routers
        
         public void Deactivate()
         {
-            if (this.networkManager.CommandsManager.Exists("AnswerSelected"))
+            if (this.networkManager.CommandsManager.Exists(this.selectedAnswerCommand))
             {
-                this.networkManager.CommandsManager.RemoveCommand("AnswerSelected");
+                this.networkManager.CommandsManager.RemoveCommand(this.selectedAnswerCommand);
             }
             
             this.TellClientsThatVotingIsOver();
@@ -235,12 +238,12 @@ namespace Jokers.Routers
 
             this.elapsedTime = 1;
 
-            this.networkManager.CommandsManager.AddCommand("AnswerSelected", new SelectedAnswerCommand(this.OnReceivedVote));
+            networkManager.CommandsManager.AddCommand("AnswerSelected", this.selectedAnswerCommand);
 
             this.ResetAnswerVotes(question);
             this.SendSettings();
             this.SendQuestionToClients(question);
-            
+
             this.updateTimeTimer.Reset();
 
             this.Activated = true;
@@ -252,6 +255,11 @@ namespace Jokers.Routers
         /// </summary>
         public void Dispose()
         {
+            if (this.Activated)
+            {
+                this.Deactivate();
+            }
+
             this.OnActivated = null;
             this.OnVoteFinished = null;
 

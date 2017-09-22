@@ -51,7 +51,7 @@ namespace Jokers.Routers
 
         private Timer_ExecuteMethodEverySeconds updateTimeTimer;
 
-        private INetworkManagerCommand answerSelectedCommand = new SelectedAnswerOneTimeCommand(this.OnReceivedClientResponse);
+        private INetworkManagerCommand answerSelectedCommand;
 
         public AskClientQuestionRouter(IServerNetworkManager networkManager)
         {
@@ -61,6 +61,8 @@ namespace Jokers.Routers
             }
 
             this.networkManager = networkManager;
+
+            this.answerSelectedCommand = new SelectedAnswerOneTimeCommand(this.OnReceivedClientResponse);
 
             this.updateTimeTimer = TimerUtils.ExecuteEvery(1f, this.UpdateTimer);
             this.updateTimeTimer.RunOnUnityThread = true;
