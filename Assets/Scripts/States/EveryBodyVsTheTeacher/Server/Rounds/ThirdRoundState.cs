@@ -29,7 +29,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                 var trustRanomPersonJokerRouter = 
                     new TrustRandomPersonJokerRouter(base.ServerNetworkManager, base.Server, base.GameDataIterator);
                 var selectedTrustRandomPersonJokerCommand =
-                    new SelectedTrustRandomPersonJokerCommand(base.Server, trustRanomPersonJokerRouter);
+                    new SelectedTrustRandomPersonJokerCommand(base.Server, this.JokersData, trustRanomPersonJokerRouter);
                 var commands = new IElectionJokerCommand[]
                                {
                                    selectedTrustRandomPersonJokerCommand

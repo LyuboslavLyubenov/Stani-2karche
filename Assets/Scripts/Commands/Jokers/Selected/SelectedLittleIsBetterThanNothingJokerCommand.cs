@@ -1,4 +1,7 @@
-﻿namespace Commands.Jokers.Selected
+﻿using Assets.Scripts.Jokers;
+using Network;
+
+namespace Commands.Jokers.Selected
 {
 
     using System;
@@ -12,9 +15,10 @@
 
         public SelectedLittleIsBetterThanNothingJokerCommand(
             IEveryBodyVsTheTeacherServer server, 
+            JokersData jokersData,
             IDisableRandomAnswersRouter disableRandomAnswersRouter,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
-            : base(server, selectThisJokerTimeoutInSeconds)
+            : base(server, jokersData, typeof(LittleIsBetterThanNothingJoker), selectThisJokerTimeoutInSeconds)
         {
             if (disableRandomAnswersRouter == null)
             {

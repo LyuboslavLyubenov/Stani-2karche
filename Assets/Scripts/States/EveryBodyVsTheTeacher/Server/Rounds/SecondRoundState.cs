@@ -37,9 +37,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                 var helpFromAudienceJokerRouter = new HelpFromAudienceJokerRouter(base.ServerNetworkManager, base.GameDataIterator, answerPollRouter);
 
                 var selectedLittleIsBetterThatNothingJokerCommand =
-                    new SelectedLittleIsBetterThanNothingJokerCommand(base.Server, disableRandomAnswersJokerRouter);
+                    new SelectedLittleIsBetterThanNothingJokerCommand(base.Server, this.JokersData, disableRandomAnswersJokerRouter);
                 var selectedHelpFromAudienceElectionJokerCommand =
-                    new SelectedHelpFromAudienceElectionJokerCommand(base.Server, helpFromAudienceJokerRouter, base.GameDataIterator);
+                    new SelectedHelpFromAudienceElectionJokerCommand(base.Server, this.JokersData, helpFromAudienceJokerRouter, base.GameDataIterator);
                 var commands = new IElectionJokerCommand[]
                                {
                                    selectedLittleIsBetterThatNothingJokerCommand,

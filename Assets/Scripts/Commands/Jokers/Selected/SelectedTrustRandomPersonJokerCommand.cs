@@ -1,4 +1,6 @@
 ﻿using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using Network;
+using Assets.Scripts.Jokers.EveryBodyVsTheTeacher.Presenter;
 
 namespace Commands.Jokers.Selected
 {
@@ -13,9 +15,10 @@ namespace Commands.Jokers.Selected
 
         public SelectedTrustRandomPersonJokerCommand(
             IEveryBodyVsTheTeacherServer server, 
+            JokersData jokersData,
             ITrustRandomPersonJokerRouter jokerRouter,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
-            : base(server, selectThisJokerTimeoutInSeconds)
+            : base(server, jokersData, typeof(TrustRandomPersonJoker), selectThisJokerTimeoutInSeconds)
         {
             if (jokerRouter == null)
             {

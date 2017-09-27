@@ -3,6 +3,8 @@ using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherSe
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using SelectedElectionJokerCommand = Commands.Jokers.Selected.SelectedElectionJokerCommand;
+using Network;
+using Jokers;
 
 namespace Assets.Scripts.Commands.Jokers.Selected
 {
@@ -19,12 +21,13 @@ namespace Assets.Scripts.Commands.Jokers.Selected
         private readonly IGameDataIterator gameDataIterator;
 
         public SelectedHelpFromFriendElectionJoker(
-            IEveryBodyVsTheTeacherServer server, 
+            IEveryBodyVsTheTeacherServer server,
+            JokersData jokersData,
             IAskPlayerQuestionJokerRouter askPlayerQuestionJoker,
             IServerNetworkManager networkManager,
             IGameDataIterator gameDataIterator,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
-            : base(server, selectThisJokerTimeoutInSeconds)
+            : base(server, jokersData, typeof(HelpFromFriendJoker), selectThisJokerTimeoutInSeconds)
         {
             if (askPlayerQuestionJoker == null)
             {

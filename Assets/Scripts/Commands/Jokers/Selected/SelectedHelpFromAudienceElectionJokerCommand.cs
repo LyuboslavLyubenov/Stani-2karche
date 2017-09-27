@@ -2,6 +2,8 @@
 using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IHelpFromAudienceJokerRouter = Interfaces.Network.Jokers.Routers.IHelpFromAudienceJokerRouter;
 using SelectedElectionJokerCommand = Commands.Jokers.Selected.SelectedElectionJokerCommand;
+using Network;
+using Jokers;
 
 namespace Assets.Scripts.Commands.Jokers.Selected
 {
@@ -14,11 +16,12 @@ namespace Assets.Scripts.Commands.Jokers.Selected
         private readonly IGameDataIterator gameDataIterator;
 
         public SelectedHelpFromAudienceElectionJokerCommand(
-            IEveryBodyVsTheTeacherServer server, 
+            IEveryBodyVsTheTeacherServer server,
+            JokersData jokersData,
             IHelpFromAudienceJokerRouter helpFromAudienceJokerRouter,
             IGameDataIterator gameDataIterator,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
-            : base(server, selectThisJokerTimeoutInSeconds)
+            : base(server, jokersData, typeof(AskAudienceJoker), selectThisJokerTimeoutInSeconds)
         {
             if (helpFromAudienceJokerRouter == null)
             {

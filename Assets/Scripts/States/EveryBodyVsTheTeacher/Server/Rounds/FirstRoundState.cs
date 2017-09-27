@@ -51,9 +51,9 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
                 var trustRandomPersonJokerRouter = new TrustRandomPersonJokerRouter(base.ServerNetworkManager, base.Server, base.GameDataIterator);
                 var disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(base.ServerNetworkManager);
 
-                var selectedKalitkoJokerCommand = new SelectedKalitkoJokerCommand(base.Server, kalitkoJokerRouter);
-                var selectedTrustRandomPersonJokerCommand = new SelectedTrustRandomPersonJokerCommand(base.Server, trustRandomPersonJokerRouter);
-                var selectedConsultWithTeacherJokerCommand = new SelectedConsultWithTeacherJokerCommand(base.Server, disableRandomAnswersJokerRouter);
+                var selectedKalitkoJokerCommand = new SelectedKalitkoJokerCommand(base.Server, this.JokersData, kalitkoJokerRouter);
+                var selectedTrustRandomPersonJokerCommand = new SelectedTrustRandomPersonJokerCommand(base.Server, this.JokersData, trustRandomPersonJokerRouter);
+                var selectedConsultWithTeacherJokerCommand = new SelectedConsultWithTeacherJokerCommand(base.Server, this.JokersData, disableRandomAnswersJokerRouter);
 
                 var commands = new IElectionJokerCommand[]
                                {

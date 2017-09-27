@@ -1,5 +1,7 @@
 ﻿using IDisableRandomAnswersRouter = Interfaces.Network.Jokers.Routers.IDisableRandomAnswersRouter;
 using IEveryBodyVsTheTeacherServer = Interfaces.Network.IEveryBodyVsTheTeacherServer;
+using Network;
+using Jokers;
 
 namespace Commands.Jokers.Selected
 {
@@ -11,9 +13,10 @@ namespace Commands.Jokers.Selected
         
         public SelectedConsultWithTeacherJokerCommand(
             IEveryBodyVsTheTeacherServer server,
+            JokersData jokersData,
             IDisableRandomAnswersRouter jokerRouter,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
-            : base(server, selectThisJokerTimeoutInSeconds)
+            : base(server, jokersData, typeof(ConsultWithTheTeacherJoker), selectThisJokerTimeoutInSeconds)
         {
             if (jokerRouter == null)
             {

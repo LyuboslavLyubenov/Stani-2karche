@@ -1,4 +1,7 @@
-﻿namespace Commands.Jokers.Selected
+﻿using Network;
+using Jokers.Kalitko;
+
+namespace Commands.Jokers.Selected
 {
 
     using System;
@@ -42,25 +45,42 @@
         private readonly IList<int> playersVotedAgainst = new List<int>();
         private readonly Timer selectThisJokerTimeoutTimer;
 
+        private readonly JokersData jokersData;
+        private readonly Type thisJokerType;
+
         private bool startedSelecting = false;
-        
+
         protected readonly IEveryBodyVsTheTeacherServer server;
 
         protected SelectedElectionJokerCommand(
             IEveryBodyVsTheTeacherServer server,
+            JokersData jokersData,
+            Type thisJokerType,
             int selectThisJokerTimeoutInSeconds = MinTimeTimeoutInSeconds)
-        {
+        {     
             if (server == null)
             {
                 throw new ArgumentNullException("server");
             }
-            
+           
+            if (jokersData == null)
+            {
+                throw new ArgumentNullException("jokersData");
+            }
+
+            if (thisJokerType == null)
+            {
+                throw new ArgumentNullException("thisJokerType");
+            }
+
             if (selectThisJokerTimeoutInSeconds < MinTimeTimeoutInSeconds)
             {
                 throw new ArgumentOutOfRangeException("selectThisJokerTimeoutInSeconds");
             }
 
             this.server = server;
+            this.jokersData = jokersData;
+            this.thisJokerType = thisJokerType;
             this.selectThisJokerTimeoutTimer = TimerUtils.ExecuteAfter(selectThisJokerTimeoutInSeconds, this.SelectThisJokerTimeout);
 
             ((IExtendedTimer)this.selectThisJokerTimeoutTimer).RunOnUnityThread = true;
@@ -105,7 +125,8 @@
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            if (!this.server.StartedGame)
+            if (!this.server.StartedGame || 
+                !this.jokersData.AvailableJokers.Contains(this.thisJokerType))
             {
                 return;
             }
