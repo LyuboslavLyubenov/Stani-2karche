@@ -19,9 +19,9 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
     using Zenject;
 
-    public class Utils
+    public class KalitkoJokerUtils
     {
-        Utils()
+        KalitkoJokerUtils()
         {
         }
 

@@ -36,6 +36,10 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
                     {
                         IntegrationTest.Pass();
                     }
+                    else
+                    {
+                        IntegrationTest.Fail();
+                    }
                 };
 
             this.StartCoroutine(this.SimulateVoteFromAll());

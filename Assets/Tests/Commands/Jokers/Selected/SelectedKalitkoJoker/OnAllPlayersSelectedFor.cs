@@ -2,7 +2,6 @@
 
 namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
-
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -39,7 +38,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
                     }
                 };
 
-            Utils.SimulateMainPlayerDecision(this, this.server, this.command, ElectionDecision.For);
+            KalitkoJokerUtils.SimulateMainPlayerDecision(this, this.server, this.command, ElectionDecision.For);
         }
     }
 }
