@@ -39,35 +39,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
                     }
                 };
 
-            this.StartCoroutine(this.SimulateAllMainPlayersSelectedKalitkoJoker());
-        }
-
-        private IEnumerator SimulateAllMainPlayersSelectedKalitkoJoker()
-        {
-            yield return null;
-
-            var optionValues = new Dictionary<string, string>()
-                               {
-                                   {
-                                       "ConnectionId", "0"
-                                   },
-                                   {
-                                       "Decision", ""
-                                   }
-                               };
-
-            for (int i = 0; i < server.ConnectedMainPlayersConnectionIds.Count(); i++)
-            {
-                var mainPlayerConnectionId = server.ConnectedMainPlayersConnectionIds.Skip(i)
-                    .First();
-                optionValues["ConnectionId"] = mainPlayerConnectionId.ToString();
-                optionValues["Decision"] = ElectionDecision.For.ToString();
-
-                this.command.Execute(optionValues);
-
-                yield return null;
-            }
+            Utils.SimulateMainPlayerDecision(this, this.server, this.command, ElectionDecision.For);
         }
     }
-
 }
