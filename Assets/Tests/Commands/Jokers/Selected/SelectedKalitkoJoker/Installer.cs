@@ -1,8 +1,8 @@
 ﻿using SelectedKalitkoJokerCommand = Commands.Jokers.Selected.SelectedKalitkoJokerCommand;
+using Network;
 
 namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
-
     using Interfaces.Network;
 
     using Tests.DummyObjects;
@@ -20,6 +20,10 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 
             Container.Bind<IEveryBodyVsTheTeacherServer>()
                 .FromInstance(server)
+                .AsSingle();
+
+            Container.Bind<JokersData>()
+                .ToSelf()
                 .AsSingle();
             
             Container.Bind<SelectedKalitkoJokerCommand>()
