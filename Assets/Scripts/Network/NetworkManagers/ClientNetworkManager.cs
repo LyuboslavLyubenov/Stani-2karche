@@ -226,7 +226,11 @@
 
         private string GetUsername()
         {
+            #if UNITY_EDITOR || UNITY_EDITOR_64 || UNITY_EDITOR_LINUX || DEVELOPMENT_BUILD
+            var username = Guid.NewGuid().ToString();
+            #else
             var username = SystemInfo.deviceUniqueIdentifier;
+            #endif
 
             if (PlayerPrefsEncryptionUtils.HasKey("Username"))
             {
