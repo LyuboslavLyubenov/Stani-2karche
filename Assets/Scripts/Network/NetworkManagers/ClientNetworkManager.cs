@@ -226,7 +226,7 @@
 
         private string GetUsername()
         {
-            var username = string.Empty;
+            var username = SystemInfo.deviceUniqueIdentifier;
 
             if (PlayerPrefsEncryptionUtils.HasKey("Username"))
             {
