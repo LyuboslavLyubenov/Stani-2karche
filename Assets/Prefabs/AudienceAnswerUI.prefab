@@ -25,7 +25,6 @@ GameObject:
   - component: {fileID: 114000011214591680}
   - component: {fileID: 95000011423292198}
   - component: {fileID: 114000011958911642}
-  - component: {fileID: 114000012395981138}
   m_Layer: 5
   m_Name: AudienceAnswerUI
   m_TagString: AskAudienceUI
@@ -100,18 +99,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114000012395981138
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000010419025046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5df8506ea53977a46821a5da824370cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AudienceAnswer: {fileID: 114000011214591680}
 --- !u!114 &114000012948260372
 MonoBehaviour:
   m_ObjectHideFlags: 1
