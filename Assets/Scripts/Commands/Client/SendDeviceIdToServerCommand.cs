@@ -28,7 +28,7 @@ namespace Assets.Scripts.Commands.Client
         {
             var deviceId = "";
 
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
+#if DEVELOPMENT_BUILD || UNITY_EDITOR || UNITY_EDITOR_64 || UNITY_EDITOR_LINUX
             deviceId = Guid.NewGuid().ToString();
 #else
             deviceId = SystemInfo.deviceUniqueIdentifier;
