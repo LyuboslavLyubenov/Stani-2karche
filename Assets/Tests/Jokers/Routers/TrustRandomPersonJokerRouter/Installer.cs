@@ -55,7 +55,8 @@ namespace Tests.Jokers.Routers.TrustRandomPersonJokerRouter
                 .AsSingle();
 
             this.Container.Bind<ITrustRandomPersonJokerRouter>()
-                .To<Routers_TrustRandomPersonJokerRouter>();
+                .To<Routers_TrustRandomPersonJokerRouter>()
+                .AsTransient();
         }
     }
 

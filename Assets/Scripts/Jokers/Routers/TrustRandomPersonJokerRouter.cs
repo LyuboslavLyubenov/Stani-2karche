@@ -1,4 +1,6 @@
-﻿namespace Jokers.Routers
+﻿using Assets.Scripts.Commands.Jokers.Result;
+
+namespace Jokers.Routers
 {
     using System;
     using System.Linq;
@@ -25,6 +27,8 @@
 
     public class TrustRandomPersonJokerRouter : ITrustRandomPersonJokerRouter
     {
+        private const float ChanceForCorrectAnswer = 0.5f;
+
         public event EventHandler OnActivated = delegate { };
         public event EventHandler<AnswerEventArgs> OnReceivedAnswer = delegate {};
         public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate { };
@@ -74,9 +78,10 @@
         private int GetRandomPersonConnectionId(IServerNetworkManager networkManager, IEveryBodyVsTheTeacherServer server)
         {
             var presenterConnectionId = new[] { server.PresenterId };
-            var playersConnectionIds = networkManager.ConnectedClientsConnectionId.Except(presenterConnectionId);
-            return playersConnectionIds.ToList()
-                .GetRandomElement();
+            var playersConnectionIds = networkManager.ConnectedClientsConnectionId.Except(presenterConnectionId)
+                .Except(this.server.MainPlayersConnectionIds)
+                .ToList();
+            return playersConnectionIds.GetRandomElement();
         }
 
         private void SendPlayerQuestion(ISimpleQuestion question, int timeToAnswerInSeconds, int playerConnectionId)
@@ -97,7 +102,19 @@
 
             this.CleanUp();
             this.Activated = false;
+
+            var username = this.networkManager.GetClientUsername(connectionId);
+            this.SendAnswerToPresenter(username, answer);
+
             this.OnReceivedAnswer(this, new AnswerEventArgs(answer, null));
+        }
+
+        private void SendAnswerToPresenter(string username, string answer)
+        {
+            var commandData = NetworkCommandData.From<TrustRandomPersonJokerResultCommand>();
+            commandData.AddOption("Username", username);
+            commandData.AddOption("Answer", answer);
+            this.networkManager.SendClientCommand(this.server.PresenterId, commandData);
         }
 
         private void OnReceiveAnswerTimeout()
@@ -117,6 +134,32 @@
             this.answerTimeoutTimer.Stop();
             this.answerTimeoutTimer.Dispose();
         }
+
+        private void SendQuestionToRandomAudiencePlayer(ISimpleQuestion question)
+        {
+            this.playerConnectionId = this.GetRandomPersonConnectionId(this.networkManager, this.server);
+            this.SendPlayerQuestion(question, this.gameDataIterator.SecondsForAnswerQuestion, this.playerConnectionId);
+            this.networkManager.CommandsManager.AddCommand("AnswerSelected", this.selectedAnswerCommand);
+        }
+
+        private void SendGeneratedQuestionToPresenter(ISimpleQuestion question)
+        {
+            var shouldSendCorrect = new System.Random().NextDouble() <= ChanceForCorrectAnswer;
+            var answer = string.Empty;
+
+            if (shouldSendCorrect)
+            {
+                answer = question.CorrectAnswer;
+            }
+            else
+            {
+                answer = question.Answers.Except(new string[] { question.CorrectAnswer })
+                    .ToList()
+                    .GetRandomElement();
+            }
+
+            this.SendAnswerToPresenter("Компютър", answer);
+        }
         
         public void Activate()
         {
@@ -133,16 +176,25 @@
             this.gameDataIterator.GetCurrentQuestion(
                 (question) =>
                     {
-                        this.playerConnectionId = this.GetRandomPersonConnectionId(this.networkManager, this.server);
-                        this.SendPlayerQuestion(question, this.gameDataIterator.SecondsForAnswerQuestion, this.playerConnectionId);
-                        this.networkManager.CommandsManager.AddCommand("AnswerSelected", this.selectedAnswerCommand);
+                        var connectedMainPlayersConnectionIds = this.server.ConnectedMainPlayersConnectionIds; 
+                        var areAnyAudiencePlayersConnected = 
+                            connectedMainPlayersConnectionIds.Except(this.networkManager.ConnectedClientsConnectionId)
+                                .Any();  
 
-                        this.answerTimeoutTimer = 
-                            TimerUtils.ExecuteAfter(this.gameDataIterator.SecondsForAnswerQuestion, this.OnReceiveAnswerTimeout);
-                        this.answerTimeoutTimer.AutoDispose = true;
-                        this.answerTimeoutTimer.RunOnUnityThread = true;
-                        this.answerTimeoutTimer.Start();
-
+                        if (areAnyAudiencePlayersConnected)
+                        {
+                            this.SendQuestionToRandomAudiencePlayer(question);
+                            this.answerTimeoutTimer = 
+                                TimerUtils.ExecuteAfter(this.gameDataIterator.SecondsForAnswerQuestion, this.OnReceiveAnswerTimeout);
+                            this.answerTimeoutTimer.AutoDispose = true;
+                            this.answerTimeoutTimer.RunOnUnityThread = true;
+                            this.answerTimeoutTimer.Start();
+                        }
+                        else
+                        {
+                            this.SendGeneratedQuestionToPresenter(question);
+                        }
+                        
                         this.Activated = true;
                         this.OnActivated(true, EventArgs.Empty);
                     },
