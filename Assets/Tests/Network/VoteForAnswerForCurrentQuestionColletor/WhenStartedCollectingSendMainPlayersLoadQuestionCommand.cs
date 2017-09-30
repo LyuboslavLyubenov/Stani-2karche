@@ -1,4 +1,4 @@
-﻿using NetworkCommandData = Commands.NetworkCommandData;
+﻿using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
@@ -43,7 +43,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 
             dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>
                 {
-                    var command = NetworkCommandData.Parse(args.Message);
+                    var command = NetworkCommandDataClass.Parse(args.Message);
                     if (this.server.ConnectedMainPlayersConnectionIds.Contains(args.ConnectionId) &&
                         command.Name == "LoadQuestion" &&
                         command.Options["QuestionJSON"] == questionJSON)

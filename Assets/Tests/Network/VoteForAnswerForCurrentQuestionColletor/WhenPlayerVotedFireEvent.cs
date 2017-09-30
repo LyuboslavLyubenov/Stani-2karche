@@ -1,6 +1,6 @@
 ﻿using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
@@ -52,7 +52,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
                         this.CoroutineUtils.WaitForFrames(1,
                             () =>
                                 {
-                                    var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+                                    var answerSelectedCommand = new NetworkCommandDataClass("AnswerSelected");
                                     answerSelectedCommand.AddOption("Answer", this.question.CorrectAnswer);
                                     dummyServerNetworkManager.FakeReceiveMessage(1, answerSelectedCommand.ToString());
                                 });

@@ -1,5 +1,5 @@
 ﻿using MainPlayerConnectingCommand = Commands.Server.MainPlayerConnectingCommand;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network
 {
@@ -27,7 +27,7 @@ namespace Tests.Network
 
         void MakeAsMainPlayer()
         {
-            var commandData = NetworkCommandData.From<MainPlayerConnectingCommand>();
+            var commandData = NetworkCommandDataClass.From<MainPlayerConnectingCommand>();
             ((DummyServerNetworkManager)this.serverNetworkManager).FakeReceiveMessage(this.ConnectionId, commandData.ToString());
         }
 	

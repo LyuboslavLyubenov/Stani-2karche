@@ -1,7 +1,7 @@
 ﻿using DummyEveryBodyVsTheTeacherServer = Tests.DummyObjects.DummyEveryBodyVsTheTeacherServer;
 using DummyServerNetworkManager = Tests.DummyObjects.DummyServerNetworkManager;
 using ExtendedMonoBehaviour = Utils.Unity.ExtendedMonoBehaviour;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
@@ -52,7 +52,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
                         var dummyNetworkManager = (DummyServerNetworkManager)this.networkManager;
                         dummyNetworkManager.OnSentDataToClient += (sender, args) =>
                             {
-                                var command = NetworkCommandData.Parse(args.Message);
+                                var command = NetworkCommandDataClass.Parse(args.Message);
 
                                 if (
                                     command.Name == "LoadQuestion" &&

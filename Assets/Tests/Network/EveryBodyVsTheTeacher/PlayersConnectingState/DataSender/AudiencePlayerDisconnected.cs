@@ -1,4 +1,4 @@
-﻿using NetworkCommandData = Commands.NetworkCommandData;
+﻿using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
@@ -45,7 +45,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 
             dummyNetworkManager.OnSentDataToClient += (sender, args) =>
                 {
-                    var command = NetworkCommandData.Parse(args.Message);
+                    var command = NetworkCommandDataClass.Parse(args.Message);
                     if (args.ConnectionId == this.server.PresenterId &&
                         command.Name == "AudiencePlayerDisconnected" &&
                         command.Options["ConnectionId"] == connectionId.ToString() &&

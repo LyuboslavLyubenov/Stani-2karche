@@ -1,6 +1,6 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
 using INetworkManagerCommand = Interfaces.Network.NetworkManager.INetworkManagerCommand;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.Commands.Client
 {
@@ -34,7 +34,7 @@ namespace Assets.Scripts.Commands.Client
             deviceId = SystemInfo.deviceUniqueIdentifier;
 #endif
 
-            var command = NetworkCommandData.From<SetClientIdCommand>();
+            var command = NetworkCommandDataClass.From<SetClientIdCommand>();
             command.AddOption("DeviceId", deviceId);
             this.networkManager.SendServerCommand(command);
         }

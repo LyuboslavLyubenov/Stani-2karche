@@ -1,5 +1,5 @@
 ﻿using EnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.EnoughPlayersToStartGameCommand;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 {
@@ -55,7 +55,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
             dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>
                 {
-                    var command = NetworkCommandData.Parse(args.Message);
+                    var command = NetworkCommandDataClass.Parse(args.Message);
                     if (command.Name == typeof(EnoughPlayersToStartGameCommand).Name.Replace("Command", ""))
                     {
                         IntegrationTest.Pass();

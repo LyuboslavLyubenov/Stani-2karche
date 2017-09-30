@@ -1,4 +1,4 @@
-﻿using NetworkCommandData = Commands.NetworkCommandData;
+﻿using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
 {
@@ -55,7 +55,7 @@ namespace Tests.Network.VoteForAnswerForCurrentQuestionColletor
         {
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
             var mainPlayersConnectionIds = this.server.ConnectedMainPlayersConnectionIds.Skip(1).ToList();
-            var answerSelectedCommand = new NetworkCommandData("AnswerSelected");
+            var answerSelectedCommand = new NetworkCommandDataClass("AnswerSelected");
             answerSelectedCommand.AddOption("Answer", answerToSelect);
             
             for (int i = 0; i < mainPlayersConnectionIds.Count; i++)

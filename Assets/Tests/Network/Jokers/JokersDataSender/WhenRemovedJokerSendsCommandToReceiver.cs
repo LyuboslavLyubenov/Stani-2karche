@@ -1,5 +1,5 @@
 using JokersData = Network.JokersData;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 using Network_JokersDataSender = Network.JokersDataSender;
 using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
@@ -33,7 +33,7 @@ namespace Tests.Network.Jokers.JokersDataSender
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.serverNetworkManager;
             dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>
                 {
-                    var command = NetworkCommandData.Parse(args.Message);
+                    var command = NetworkCommandDataClass.Parse(args.Message);
                     if (command.Name == "Remove" + jokerType.Name)
                     {
                         IntegrationTest.Pass();

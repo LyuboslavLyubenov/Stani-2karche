@@ -1,5 +1,5 @@
 ﻿using JokersData = Network.JokersData;
-using NetworkCommandData = Commands.NetworkCommandData;
+using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Tests.Network.Jokers.JokersUsedNotifier
 {
@@ -48,7 +48,7 @@ namespace Tests.Network.Jokers.JokersUsedNotifier
                 () =>
                     {
                         var dummyServerNetworkManager = (DummyServerNetworkManager)this.networkManager;
-                        var usedJokerCommand = new NetworkCommandData("Selected" + jokerType.Name);
+                        var usedJokerCommand = new NetworkCommandDataClass("Selected" + jokerType.Name);
                         dummyServerNetworkManager.FakeReceiveMessage(1, usedJokerCommand.ToString());
                     });
         }

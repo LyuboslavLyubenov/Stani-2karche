@@ -1,4 +1,4 @@
-﻿using NetworkCommandData = Commands.NetworkCommandData;
+﻿using NetworkCommandDataClass = Commands.NetworkCommandData;
 using NotEnoughPlayersToStartGameCommand = Commands.EveryBodyVsTheTeacher.NotEnoughPlayersToStartGameCommand;
 
 namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
@@ -75,7 +75,7 @@ namespace Tests.Network.EveryBodyVsTheTeacher.PlayersConnectingState.DataSender
 
                         dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>
                             {
-                                var command = NetworkCommandData.Parse(args.Message);
+                                var command = NetworkCommandDataClass.Parse(args.Message);
                                 if (command.Name == typeof(NotEnoughPlayersToStartGameCommand).Name.Replace("Command", ""))
                                 {
                                     playersNotReceivedCommand.Remove(args.ConnectionId);
