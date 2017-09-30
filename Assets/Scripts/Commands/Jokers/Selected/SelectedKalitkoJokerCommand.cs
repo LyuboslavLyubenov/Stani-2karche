@@ -1,5 +1,5 @@
 ﻿using Network;
-using Jokers.Kalitko;
+using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
 namespace Commands.Jokers.Selected
 {
@@ -17,7 +17,7 @@ namespace Commands.Jokers.Selected
             JokersData jokersData,
             IKalitkoJokerRouter kalitkoJokerRouter,             
             int selectThisJokerTimeoutInSeconds = SelectedElectionJokerCommand.MinTimeTimeoutInSeconds)
-            : base(server, jokersData, typeof(MainPlayerKalitkoJoker), selectThisJokerTimeoutInSeconds)
+            : base(server, jokersData, typeof(KalitkoJoker), selectThisJokerTimeoutInSeconds)
         {
             if (kalitkoJokerRouter == null)
             {

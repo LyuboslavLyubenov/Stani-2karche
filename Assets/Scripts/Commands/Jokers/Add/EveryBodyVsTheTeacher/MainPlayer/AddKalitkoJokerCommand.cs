@@ -1,12 +1,12 @@
 ﻿using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkManager;
-using MainPlayerKalitkoJoker = Jokers.Kalitko.MainPlayerKalitkoJoker;
+using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
 namespace Assets.Scripts.Commands.Jokers.Add.EveryBodyVsTheTeacher.MainPlayer
 {
 
     using Assets.Scripts.Interfaces.Controllers;
 
-    public class AddKalitkoJokerCommand : AddJokerToMainPlayerAbstract<MainPlayerKalitkoJoker>
+    public class AddKalitkoJokerCommand : AddJokerToMainPlayerAbstract<KalitkoJoker>
     {
         public AddKalitkoJokerCommand(
             IAvailableJokersUIController jokersUIController, 

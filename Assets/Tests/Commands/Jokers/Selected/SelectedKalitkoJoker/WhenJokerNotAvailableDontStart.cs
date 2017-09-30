@@ -1,7 +1,7 @@
 ﻿using Commands.Jokers.Selected;
 using Network;
 using Jokers;
-using Jokers.Kalitko;
+using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
 namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker 
 {
@@ -36,7 +36,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
             var dummyServer = (DummyEveryBodyVsTheTeacherServer)this.server;
             dummyServer.ConnectedMainPlayersConnectionIds = Enumerable.Range(1, 10);
 
-            jokersData.RemoveJoker<MainPlayerKalitkoJoker>();
+            jokersData.RemoveJoker<KalitkoJoker>();
 
             this.command.OnElectionStarted += (object sender, System.EventArgs args) => 
                 {

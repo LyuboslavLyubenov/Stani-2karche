@@ -152,6 +152,7 @@ namespace GameController
 
         private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
+            Debug.Log(args.Mark.ToString());
             this.MarkChangedConfetti.SetActive(true);
             this.MarkPanelController.SetMark(args.Mark.ToString());
         }

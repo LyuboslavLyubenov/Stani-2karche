@@ -1,4 +1,4 @@
-﻿namespace Jokers.Kalitko
+﻿namespace Jokers.EveryBodyVsTheTeacher.Kalitko
 {
     using System;
 
@@ -14,7 +14,7 @@
 
     using Utils;
 
-    public class MainPlayerKalitkoJoker : IJoker
+    public class KalitkoJoker : IJoker
     {
         public event EventHandler OnActivated = delegate {};
         public event EventHandler<UnhandledExceptionEventArgs> OnError = delegate {};
@@ -29,7 +29,7 @@
 
         public bool Activated { get; private set; }
 
-        public MainPlayerKalitkoJoker(IClientNetworkManager networkManager)
+        public KalitkoJoker(IClientNetworkManager networkManager)
         {
             if (networkManager == null)
             {

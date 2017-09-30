@@ -1,7 +1,7 @@
 using JokersData = Network.JokersData;
-using MainPlayerKalitkoJoker = Jokers.Kalitko.MainPlayerKalitkoJoker;
 using NetworkCommandData = Commands.NetworkCommandData;
 using Network_JokersDataSender = Network.JokersDataSender;
+using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
 namespace Tests.Network.Jokers.JokersDataSender
 {
@@ -28,7 +28,7 @@ namespace Tests.Network.Jokers.JokersDataSender
         {
             var connectionId = 1;
             var jokersDataSender = new Network_JokersDataSender(this.jokersData, connectionId, this.serverNetworkManager);
-            var jokerType = typeof(MainPlayerKalitkoJoker);
+            var jokerType = typeof(KalitkoJoker);
             
             var dummyServerNetworkManager = (DummyServerNetworkManager)this.serverNetworkManager;
             dummyServerNetworkManager.OnSentDataToClient += (sender, args) =>

@@ -1,6 +1,6 @@
 ﻿using SelectedKalitkoJokerCommand = Commands.Jokers.Selected.SelectedKalitkoJokerCommand;
 using Network;
-using Jokers.Kalitko;
+using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
 namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
 {
@@ -24,7 +24,7 @@ namespace Tests.Commands.Jokers.Selected.SelectedKalitkoJoker
                 .AsSingle();
 
             var jokersData = new JokersData();
-            jokersData.AddJoker<MainPlayerKalitkoJoker>();
+            jokersData.AddJoker<KalitkoJoker>();
 
             Container.Bind<JokersData>()
                 .FromInstance(jokersData)

@@ -8,13 +8,13 @@ using IGameDataIterator = Interfaces.GameData.IGameDataIterator;
 using IServerNetworkManager = Interfaces.Network.NetworkManager.IServerNetworkManager;
 using JokersData = Network.JokersData;
 using KalitkoJokerRouter = Jokers.Routers.KalitkoJokerRouter;
-using KalitkoJoker = Jokers.Kalitko.MainPlayerKalitkoJoker;
 using PlayerPrefsEncryptionUtils = Utils.Unity.PlayerPrefsEncryptionUtils;
 using SelectedConsultWithTeacherJokerCommand = Commands.Jokers.Selected.SelectedConsultWithTeacherJokerCommand;
 using SelectedKalitkoJokerCommand = Commands.Jokers.Selected.SelectedKalitkoJokerCommand;
 using SelectedTrustRandomPersonJokerCommand = Commands.Jokers.Selected.SelectedTrustRandomPersonJokerCommand;
 using TrustRandomPersonJoker = Jokers.TrustRandomPersonJoker;
 using TrustRandomPersonJokerRouter = Jokers.Routers.TrustRandomPersonJokerRouter;
+using Jokers.EveryBodyVsTheTeacher.Kalitko;
 
 namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
 {
