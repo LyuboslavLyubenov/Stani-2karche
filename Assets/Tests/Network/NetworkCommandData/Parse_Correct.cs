@@ -8,12 +8,11 @@ using System.Collections.Generic;
 namespace Tests.Network.NetworkCommandData
 {
 
+
     public class Parse_Correct : MonoBehaviour
     {
         void Start()
         {
-            Int64 length = int.MaxValue;
-            length++;
             var commandName = "asdfghjklq";
             var optionKey = "o";
             var optionValue = "v";

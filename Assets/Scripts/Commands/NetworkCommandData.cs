@@ -13,21 +13,19 @@
         public const int CODE_Option_ClientConnectionId_AI = -3;
 
         private const int MinCommandNameLength = 3;
+        private const int MaxCommandNameLength = 100;
 
-        private const int MinOptionNameLength = 3;
+        private const int MinOptionsCount = 1;
 
+        private const int MinOptionNameLength = 1;
         private const int MinOptionValueLength = 1;
 
-        private const string CommandTag = "[COMMAND]";
-
-        private const char OptionsDelimiterSymbol = ';';
-
-        private const char OptionsBeginDelimiterSymbol = '-';
-
-        private const char OptionValueDelimiterSymbol = '=';
+        private const string NotEnoughSymbols = "{0} must be at least {1} symbols long";
+        private const string TooMuchSymbols = "{0} must be less than {1} symbols long";
+        private const string OptionAlreadyExists = "Already have option with name {0}";
+        private const string CantFindOption = "Cant find option with name {0}";
 
         private readonly string commandName;
-
         private readonly Dictionary<string, string> commandOptions;
 
         public string Name
@@ -39,7 +37,7 @@
         }
 
         /// <summary>
-        /// Cannot sent values from here
+        /// Cannot set values from here
         /// </summary>
         public Dictionary<string, string> Options
         {
@@ -49,26 +47,9 @@
             }
         }
 
-        public static char[] ForbiddenSymbolsInCommandName
-        {
-            get
-            {
-                return new char[] { OptionsDelimiterSymbol, OptionsBeginDelimiterSymbol, OptionValueDelimiterSymbol };
-            }
-        }
-
         public NetworkCommandData(string commandName, Dictionary<string, string> commandOptions)
         {
-            if (string.IsNullOrEmpty(commandName) || commandName.Length < MinCommandNameLength)
-            {
-                throw new ArgumentException("Command Name must be at least " + MinCommandNameLength + " symbols long", "commandName");
-            }
-
-            if (this.HaveCommandNameForbiddenSymbols(commandName))
-            {
-                var forbiddenSymbols = ForbiddenSymbolsInCommandName.Select(s => s.ToString()).ToArray();
-                throw new ArgumentException("Command name cannot contain " + string.Join(" ", forbiddenSymbols));
-            }
+            ValidateCommandName(commandName);
 
             if (commandOptions == null)
             {
@@ -77,7 +58,7 @@
 
             foreach (var option in commandOptions.ToList())
             {
-                ValidateOption(option.Key, option.Value);
+                this.ValidateOption(option.Key, option.Value);
             }
 
             this.commandName = commandName;
@@ -95,13 +76,176 @@
             return new NetworkCommandData(commandName);
         }
 
+        private static void ValidateCommandName(string commandName)
+        {
+            if (string.IsNullOrEmpty(commandName) || commandName.Trim().Length < MinCommandNameLength)
+            {
+                var exceptionMessage = string.Format(NotEnoughSymbols, "commandName", MinCommandNameLength);
+                throw new ArgumentException(exceptionMessage);
+            }
+
+            if (commandName.Length > MaxCommandNameLength)
+            {
+                var exceptionMessage = string.Format(TooMuchSymbols, "commandName", MaxCommandNameLength);
+                throw new ArgumentException(exceptionMessage);
+            }
+        }
+
+        private void ValidateOption(string optionName, string optionValue)
+        {
+            if (string.IsNullOrEmpty(optionName) || optionName.Trim().Length < MinOptionNameLength)
+            {
+                var exceptionMessage = string.Format(NotEnoughSymbols, "optionName", MinOptionNameLength);
+                throw new ArgumentException(exceptionMessage);
+            } 
+
+            if (string.IsNullOrEmpty(optionValue) || optionValue.Trim().Length < MinOptionValueLength)
+            {
+                var exceptionMessage = string.Format(NotEnoughSymbols, "optionValue", MinOptionValueLength);
+                throw new ArgumentException(exceptionMessage);
+            }
+        }
+       
+        private static int FilterNameLength(string[] commandArgs)
+        {
+            int commandNameLength = -1;
+
+            try
+            {
+                commandNameLength = int.Parse(commandArgs[0]);
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException();
+            }
+            catch
+            {
+                throw new ArgumentException("Invalid command name length");
+            }
+
+            if (commandNameLength < MinCommandNameLength)
+            {
+                var exceptionMessage = string.Format(NotEnoughSymbols, "commandName", MinCommandNameLength);
+                throw new ArgumentException(exceptionMessage);
+            }
+
+            return commandNameLength;
+        }
+
+        private static int FilterOptionsCount(string[] commandArgs)
+        {
+            int optionsCount = -1;
+
+            try
+            {
+                optionsCount = int.Parse(commandArgs[1]);
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException();
+            }
+            catch
+            {
+                throw new ArgumentException("Invalid command options count");
+            }
+
+            return optionsCount;
+        }
+
+        private static int ParseOptionNameLength(string nameLength)
+        {
+            int result = -1;
+
+            try
+            {
+                result = int.Parse(nameLength);
+            }
+            catch
+            {
+                throw new ArgumentException("Invalid option length");
+            }
+
+            return result;
+        }
+
+        private static int ParseOptionValueLength(string valueLength)
+        {
+            int result;
+
+            try
+            {
+                result = int.Parse(valueLength);
+            }
+            catch
+            {
+                throw new ArgumentException("Invalid value length");
+            }
+
+            return result;
+        }
+
+
+        private static Dictionary<int, int> FilterOptionNamesLengthValuesLength(string[] commandArgs, int optionsCount)
+        {
+            var optionsLengthValuesLength = new Dictionary<int, int>();
+
+            for (int begin = 2, i = begin; (i < begin + (optionsCount * 2)) && (i < commandArgs.Length - 1); i += 2)
+            {
+                var option = ParseOptionNameLength(commandArgs[i]);
+                var value = ParseOptionValueLength(commandArgs[i + 1]);
+
+                if (option < MinOptionNameLength)
+                {
+                    var exceptionMessage = string.Format(NotEnoughSymbols, "optionName", MinOptionNameLength);
+                    throw new ArgumentException(exceptionMessage);
+                }
+
+                if (value < MinOptionValueLength)
+                {
+                    var exceptionMessage = string.Format(NotEnoughSymbols, "optionValue", MinOptionValueLength);
+                    throw new ArgumentException(exceptionMessage);
+                }
+
+                optionsLengthValuesLength.Add(option, value);
+            }
+
+            return optionsLengthValuesLength;
+        }
+
+
+        private static Dictionary<string, string> FilterOptionsValues(
+            string text, 
+            Dictionary<int, int> optionsNamesLengthValuesLength,
+            int nameLength)
+        {
+            var result = new Dictionary<string, string>();
+            var optionsText = text.Substring(nameLength);
+            var filterIndex = 0;
+
+            for (int i = 0; i < optionsNamesLengthValuesLength.Count; i++)
+            {
+                var namesLengthValuesLength = optionsNamesLengthValuesLength.Skip(i).First();
+                var optionNameLength = namesLengthValuesLength.Key;
+                var valueLength = namesLengthValuesLength.Value;
+                var name = optionsText.Substring(filterIndex, optionNameLength);
+                var value = optionsText.Substring(filterIndex + optionNameLength, valueLength);
+
+                result.Add(name, value);
+
+                filterIndex += optionNameLength + valueLength;
+            }
+
+            return result;
+        }
+
         public void AddOption(string optionName, string optionValue)
         {
-            ValidateOption(optionName, optionValue);
+            this.ValidateOption(optionName, optionValue);
 
             if (this.commandOptions.ContainsKey(optionName))
             {
-                throw new ArgumentException("Already have option with name " + optionName);
+                var exceptionMessage = string.Format(OptionAlreadyExists, optionName);
+                throw new InvalidOperationException(exceptionMessage);
             }
 
             this.commandOptions.Add(optionName, optionValue);
@@ -111,7 +255,8 @@
         {
             if (!this.commandOptions.ContainsKey(optionName))
             {
-                throw new ArgumentException("Cant find option with name " + optionName);
+                var excetionMessage = string.Format(CantFindOption, optionName);
+                throw new InvalidOperationException(excetionMessage);
             }
 
             this.commandOptions.Remove(optionName);
@@ -119,122 +264,64 @@
 
         public static NetworkCommandData Parse(string command)
         {
-            if (!command.Contains(CommandTag))
+            if (string.IsNullOrEmpty(command) || command.Trim().Length < 1)
             {
-                throw new ArgumentException("Invalid command");
+                throw new ArgumentNullException();
             }
 
-            if (command.Length < (CommandTag.Length + MinCommandNameLength))
+            var commandArgs = command.Split(' ');
+
+            var nameLength = FilterNameLength(commandArgs);
+            var optionsCount = FilterOptionsCount(commandArgs);
+            var optionsNamesLengthValuesLength = FilterOptionNamesLengthValuesLength(commandArgs, optionsCount);
+
+            if (optionsNamesLengthValuesLength.Count < optionsCount)
             {
-                throw new ArgumentException("Command must be at least " + MinCommandNameLength + " symbols long");
+                throw new ArgumentException("Invalid options length");
             }
 
-            var commandWithoutTag = command.Substring(CommandTag.Length);
-            var optionsBeginDelitemerIndex = commandWithoutTag.IndexOf(OptionsBeginDelimiterSymbol);
+            var textBeginIndex = 2 + (optionsCount * 2);
+            var text = string.Join("", commandArgs.Skip(textBeginIndex).ToArray());
 
-            if (optionsBeginDelitemerIndex < 0)
+            if (text.Length < nameLength)
             {
-                return new NetworkCommandData(commandWithoutTag);
+                throw new ArgumentException("Name value length cant be less than stated length");
             }
 
-            var commandName = commandWithoutTag.Remove(optionsBeginDelitemerIndex);
+            var name = text.Remove(nameLength);
+            var commandOptionsValues = FilterOptionsValues(text, optionsNamesLengthValuesLength, nameLength);
 
-            if (commandName.Length < MinCommandNameLength)
-            {
-                throw new ArgumentException("Command name must be min " + MinCommandNameLength + " symbols long");
-            }
-
-            var commandOptionsValues = new Dictionary<string, string>();
-            var options = commandWithoutTag.Substring(optionsBeginDelitemerIndex + 1)
-                .Split(new char[] { OptionsDelimiterSymbol }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (options.Length < 1)
-            {
-                throw new ArgumentException("Invalid command");
-            }
-
-            for (int i = 0; i < options.Length; i++)
-            {
-                var option = options[i];
-                var optionNameValueDelitemerIndex = option.IndexOf(OptionValueDelimiterSymbol);
-
-                if (optionNameValueDelitemerIndex < 0)
-                {
-                    throw new ArgumentException("Option must have value");
-                }
-
-                var optionNameValue = option.Split(new char[] { OptionValueDelimiterSymbol }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (optionNameValue.Length != 2)
-                {
-                    throw new ArgumentException("Invalid option - " + option);
-                }
-
-                var optionName = optionNameValue[0];
-                var optionValue = optionNameValue[1];
-
-                if (commandOptionsValues.ContainsKey(optionName))
-                {
-                    throw new ArgumentException("Cannot have options with same names");
-                }
-
-                ValidateOption(optionName, optionValue);
-                commandOptionsValues.Add(optionName, optionValue);
-            }
-
-            return new NetworkCommandData(commandName, commandOptionsValues);
+            return new NetworkCommandData(name, commandOptionsValues);
         }
 
-        private static void ValidateOption(string optionName, string optionValue)
-        {
-            if (string.IsNullOrEmpty(optionName) || optionName.Length < MinOptionNameLength)
-            {
-                throw new ArgumentException("Option name must be at least " + MinOptionNameLength + " symbols long");
-            } 
-
-            if (string.IsNullOrEmpty(optionValue) || optionValue.Length < MinOptionValueLength)
-            {
-                throw new ArgumentException("Option " + optionName + " value must be at least " + MinOptionValueLength + " symbols long");
-            }
-        }
-
-        private bool HaveCommandNameForbiddenSymbols(string commandName)
-        {
-            return ForbiddenSymbolsInCommandName.Any(c => commandName.Contains(c));
-        }
 
         public override string ToString()
         {
-            var command = new StringBuilder();
+            var result = new StringBuilder();
+            var allText = new StringBuilder();
+            var nameLength = this.Name.Length;
+            var optionsCount = this.Options.Count;
+            var options = this.Options.ToList();
 
-            command.Append(CommandTag)
-                .Append(this.Name);
+            allText.Append(this.Name);
 
-            if (this.Options.Count > 0)
+            result.Append(nameLength)
+                .Append(" ")
+                .Append(optionsCount)
+                .Append(" ");
+
+            for (int i = 0; i < options.Count; i++)
             {
-                command.Append(OptionsBeginDelimiterSymbol);
+                var option = options[i];
+                result.AppendFormat("{0} {1} ", option.Key.Length, option.Value);
+
+                allText.Append(option.Key)
+                    .Append(option.Value);
             }
 
-            var optionsKeyValues = this.Options.ToArray();
+            result.Append(allText.ToString());
 
-            for (int i = 0; i < optionsKeyValues.Length; i++)
-            {
-                var parameter = optionsKeyValues[i];
-                var parameterName = parameter.Key;
-                var parameterValue = parameter.Value;
-
-                if (string.IsNullOrEmpty(parameterName) ||
-                    parameterName.Length < MinOptionNameLength ||
-                    string.IsNullOrEmpty(parameterValue) ||
-                    parameterValue.Length < MinOptionValueLength)
-                {
-                    continue;
-                }
-
-                command.Append(parameterName).Append(OptionValueDelimiterSymbol).Append(parameterValue).Append(OptionsDelimiterSymbol);
-            }
-
-            return command.ToString();
+            return result.ToString();
         }
     }
 
