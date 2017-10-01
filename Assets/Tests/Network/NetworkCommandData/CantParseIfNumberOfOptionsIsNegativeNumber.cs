@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Tests.Network.NetworkCommandData
 {
 
-    public class CantParseIfNumberOfOptionsIsNotPositiveNumber : MonoBehaviour
+    public class CantParseIfNumberOfOptionsIsNegativeNumber : MonoBehaviour
     {
         void Start()
         {

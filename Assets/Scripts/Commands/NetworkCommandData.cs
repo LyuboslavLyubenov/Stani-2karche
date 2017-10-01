@@ -288,6 +288,11 @@
                 throw new ArgumentException("Name value length cant be less than stated length");
             }
 
+            if (optionsCount == 0)
+            {
+                return new NetworkCommandData(text, new Dictionary<string, string>());
+            }
+
             var name = text.Remove(nameLength);
             var commandOptionsValues = FilterOptionsValues(text, optionsNamesLengthValuesLength, nameLength);
 
