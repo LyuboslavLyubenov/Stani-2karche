@@ -245,22 +245,20 @@
             }
         }
 
-        private IList<int> GetDeadClientsIds()
+        private void GetDeadClientsIds(ref IList<int> deadClientsIds)
         {
-            var result = new List<int>();
-
             for (int i = 0; i < this.connectedClientsIds.Count; i++)
             {
                 var clientId = this.connectedClientsIds[i];
 
                 if (!this.aliveClientsId.Contains(clientId))
                 {
-                    result.Add(clientId);
+                    deadClientsIds.Add(clientId);
                 }
             }
-
-            return result;
         }
+
+        private IList<int> deadClientsIds = new List<int>();
 
         private void UpdateAliveClients()
         {
@@ -269,12 +267,14 @@
                 return;
             }
 
-            var deadClientsIds = this.GetDeadClientsIds();
+            deadClientsIds.Clear();
 
-            this.connectedClientsIds.RemoveAll(deadClientsIds.Contains);
+            this.GetDeadClientsIds(ref this.deadClientsIds);
+
+            this.connectedClientsIds.RemoveAll(this.deadClientsIds.Contains);
             this.aliveClientsId.Clear();
 
-            for (int i = 0; i < deadClientsIds.Count; i++)
+            for (int i = 0; i < this.deadClientsIds.Count; i++)
             {
                 var deadClientConnectionId = deadClientsIds[i];
                 //better safe than sorry
