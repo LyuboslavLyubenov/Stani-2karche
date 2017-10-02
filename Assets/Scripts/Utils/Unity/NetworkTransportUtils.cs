@@ -77,29 +77,24 @@
             onEncrypted(buffer);
         }
 
-        private static void ValidateNetworkOperation(byte error)
+        private static bool IsValidNetworkOperation(byte error)
         {
-            var networkError = (NetworkError)error;
-            if (networkError != NetworkError.Ok)
-            {
-                throw new NetworkException(error);
-            }
+            const byte errorCodeOk = (byte)NetworkError.Ok; 
+            return (error == errorCodeOk);
         }
 
         private static string ConvertBufferToString(byte[] buffer)
         {
-            var message = System.Text.Encoding.UTF8.GetString(buffer).ToCharArray();
-            var result = new System.Text.StringBuilder();
+            const char empty = '\0';
 
-            foreach (var c in message)
-            {
-                if (c != '\0')
-                {
-                    result.Append(c);
-                }
-            }
+            var message = System.Text.Encoding.UTF8.GetString(buffer).TrimEnd(empty);
+            return message;
+        }
 
-            return result.ToString();
+        private static void OnDecryptedMessage(int connectionId, NetworkEventType receiveEventType, string decryptedMessage, Action<NetworkData> onReceivedMessage)
+        {
+            var networkData = new NetworkData(connectionId, decryptedMessage, receiveEventType);
+            onReceivedMessage(networkData);
         }
 
         public static void ReceiveMessageAsync(Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
@@ -117,65 +112,55 @@
             int dataSize;
             byte error;
 
-            NetworkEventType receiveEventType = NetworkTransport.Receive(out recHostId, out connectionId, out channelId, recBuffer, bufferSize, out dataSize, out error);
+            NetworkEventType receiveEventType = 
+                NetworkTransport.Receive(
+                    out recHostId, 
+                    out connectionId, 
+                    out channelId, 
+                    recBuffer, 
+                    bufferSize, 
+                    out dataSize, 
+                    out error);
 
-            try
-            {
-                ValidateNetworkOperation(error);
-            }
-            catch (NetworkException ex)
+            if (!IsValidNetworkOperation(error))
             {
                 if (onError != null)
                 {
-                    onError(ex);
-                    return;
+                    onError(new Exceptions.NetworkException(error));
                 }
 
-                throw;
+                return;
             }
 
             var message = ConvertBufferToString(recBuffer);
 
-            DecryptMessageAsync(message, (decryptedMessage) =>
-            {
-                var networkData = new NetworkData(connectionId, decryptedMessage, receiveEventType);
-                onReceivedMessage(networkData);
-            });
+            DecryptMessageAsync(
+                message, 
+                (decryptedMessage) => OnDecryptedMessage(
+                                        connectionId, 
+                                        receiveEventType, 
+                                        decryptedMessage, 
+                                        onReceivedMessage));
         }
 
         public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null, Action onSent = null)
         {
             EncryptMessageAsync(message, (buffer) =>
-            {
-                byte error;
-
-                var isSent = NetworkTransport.Send(hostId, connectionId, channelId, buffer, buffer.Length, out error);
-
-                if (!isSent)
                 {
-                    if (onError != null)
+                    byte error;
+
+                    var isSent = NetworkTransport.Send(hostId, connectionId, channelId, buffer, buffer.Length, out error);
+
+                    if (!IsValidNetworkOperation(error) || !isSent)
                     {
-                        onError(new NetworkException(6));
-                    }
+                        if (onError != null)
+                        {
+                            onError(new NetworkException(error));
+                        }
 
-                    return;
-                }
-
-                try
-                {
-                    ValidateNetworkOperation(error);
-                }
-                catch (NetworkException ex)
-                {
-                    if (onError != null)
-                    {
-                        onError(ex);
                         return;
                     }
-
-                    throw;
-                }
-            });
+                });
         }
     }
 
