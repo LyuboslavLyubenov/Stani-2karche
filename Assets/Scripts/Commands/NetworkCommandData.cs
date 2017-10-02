@@ -318,7 +318,7 @@
             for (int i = 0; i < options.Count; i++)
             {
                 var option = options[i];
-                result.AppendFormat("{0} {1} ", option.Key.Length, option.Value);
+                result.AppendFormat("{0} {1} ", option.Key.Length, option.Value.Length);
 
                 allText.Append(option.Key)
                     .Append(option.Value);
