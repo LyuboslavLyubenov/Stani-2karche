@@ -32,14 +32,14 @@
     {
         public const int Port = 7788;
 
-        private const float ReceiveNetworkMessagesDelayInSeconds = 0.5f;
+        private const float ReceiveNetworkMessagesDelayInSeconds = 1f;
         private const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
         private const float SendKeepAliveRequestDelayInSeconds = 3f;
         private const float ReceiveConnectedClientsCountDelayInSeconds = 3f;
         private const float ValidateConnectionDelayInSeconds = 1f;
 
         private const int MaxConnectionAttempts = 3;
-        private const int MaxServerReactionTimeInSeconds = 6;
+        private const int MaxServerReactionTimeInSeconds = 10;
         private const int MaxNetworkErrorsBeforeDisconnect = 5;
         
         public event EventHandler OnConnectedEvent = delegate { };
@@ -65,7 +65,6 @@
         private int networkErrorsCount = 0;
         
         private Timer_ExecuteMethodEverySeconds keepAliveTimer;
-        private Timer_ExecuteMethodEverySeconds connectedClientsCountTimer;
         private Timer_ExecuteMethodEverySeconds receiveNetworkMessagesTimer;
         private Timer_ExecuteMethodEverySeconds validateConnectionTimer;
 
@@ -108,14 +107,6 @@
             }
         }
 
-        public int ServerConnectedClientsCount
-        {
-            get
-            {
-                return this.serverConnectedClientsCount.Value;
-            }
-        }
-
         private ClientNetworkManager()
         {
             NetworkTransport.Init();
@@ -126,9 +117,6 @@
             this.keepAliveTimer =
                 TimerUtils.ExecuteEvery(SendKeepAliveRequestDelayInSeconds, this.SendKeepAliveRequest);
 
-            this.connectedClientsCountTimer =
-                TimerUtils.ExecuteEvery(ReceiveConnectedClientsCountDelayInSeconds, this.BeginReceiveConnectedClientsCount);
-
             this.receiveNetworkMessagesTimer =
                 TimerUtils.ExecuteEvery(ReceiveNetworkMessagesDelayInSeconds, this.ReceiveMessages);
 
@@ -136,12 +124,10 @@
                 TimerUtils.ExecuteEvery(ValidateConnectionDelayInSeconds, this.ValidateConnection);
 
             this.keepAliveTimer.RunOnUnityThread = true;
-            this.connectedClientsCountTimer.RunOnUnityThread = true;
             this.receiveNetworkMessagesTimer.RunOnUnityThread = true;
             this.validateConnectionTimer.RunOnUnityThread = true;
 
             this.keepAliveTimer.Start();
-            this.connectedClientsCountTimer.Start();
             this.receiveNetworkMessagesTimer.Start();
             this.validateConnectionTimer.Start();
         }
@@ -186,7 +172,6 @@
 
             this.commandsManager.AddCommand("AllowedToConnect", allowedToConnect);
             this.commandsManager.AddCommand(new SendDeviceIdToServerCommand(this));
-            this.commandsManager.AddCommand("ConnectedClientsCount", new ClientReceiveConnectedClientsCountCommand(this.serverConnectedClientsCount));
         }
 
         private void BeginReceiveConnectedClientsCount()
@@ -408,19 +393,16 @@
                 this.Disconnect();
 
                 this.keepAliveTimer.Stop();
-                this.connectedClientsCountTimer.Stop();
                 this.receiveNetworkMessagesTimer.Stop();
                 this.validateConnectionTimer.Stop();
             }
             finally
             {
                 this.keepAliveTimer.Dispose();
-                this.connectedClientsCountTimer.Dispose();
                 this.receiveNetworkMessagesTimer.Dispose();
                 this.validateConnectionTimer.Dispose();
 
                 this.keepAliveTimer = null;
-                this.connectedClientsCountTimer = null;
                 this.receiveNetworkMessagesTimer = null;
                 this.validateConnectionTimer = null;
 

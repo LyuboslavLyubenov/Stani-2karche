@@ -38,7 +38,7 @@
 
         private const float CheckForDeadClientsDelayInSeconds = 5f;
 
-        private const float ReceiveDeviceIdMaxTimeInSeconds = 5f;
+        private const float ReceiveDeviceIdMaxTimeInSeconds = 8f;
 
         public bool AutoStart = true;
         //how many clients can be connected to the server
@@ -143,7 +143,7 @@
 
         private ServerNetworkManager()
         {
-            this.MaxConnections = 15;
+            this.MaxConnections = 30;
 
             this.ConfigureCommands();
             this.ConfigureServer();
@@ -177,7 +177,6 @@
             this.commandsManager.AddCommand(new SetClientIdCommand(this.OnReceivedClientId));
             this.commandsManager.AddCommand(new SetUsernameCommand(this));
             this.commandsManager.AddCommand(new KeepAliveCommand(this.aliveClientsId));
-            this.commandsManager.AddCommand(new ServerSendConnectedClientsCountCommand(this));
             this.commandsManager.AddCommand(new ServerSendConnectedClientsIdsNamesCommand(this, this.connectedClientsNames));
         }
 
@@ -328,17 +327,9 @@
 
         private void FilterCommandLineOptions(NetworkCommandData command)
         {
-            var optionsKeyValue = command.Options.ToArray();
-
-            for (int i = 0; i < optionsKeyValue.Length; i++)
+            if (command.Options.ContainsKey("ConnectionId"))
             {
-                var optionKeyValue = optionsKeyValue[i];
-                var key = optionKeyValue.Key;
-
-                if (key == "ConnectionId")
-                {
-                    command.Options.Remove(key);
-                }
+                command.RemoveOption("ConnectionId");
             }
         }
 
