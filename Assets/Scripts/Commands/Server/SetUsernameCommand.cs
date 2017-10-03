@@ -30,16 +30,17 @@
         public void Execute(Dictionary<string, string> commandsParamsValues)
         {
             var connectionId = int.Parse(commandsParamsValues["ConnectionId"]);
+            var username = this.networkManager.GetClientUsername(connectionId);
 
-            if (!commandsParamsValues.ContainsKey("Username"))
+            //username already set
+            if (!string.IsNullOrEmpty(username))
             {
-                //empty username :(
-                this.networkManager.SetClientUsername(connectionId, "Играч " + connectionId);
                 return;
             }
-            else
+
+            if (commandsParamsValues.ContainsKey("Username"))
             {
-                var username = commandsParamsValues["Username"];
+                username = commandsParamsValues["Username"];
 
                 if (this.DoesUsernameContaisForbiddenWords(username))
                 {
@@ -47,10 +48,14 @@
                     this.networkManager.KickPlayer(connectionId, message);
                     return;
                 }
-
-                this.networkManager.SetClientUsername(connectionId, username);
-                return;
             }
+            else
+            {
+                //empty username :(
+                username = "Играч " + username;
+            }
+
+            this.networkManager.SetClientUsername(connectionId, username);
         }
 
         private bool DoesUsernameContaisForbiddenWords(string username)
