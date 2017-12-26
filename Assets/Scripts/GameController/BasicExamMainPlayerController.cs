@@ -104,7 +104,7 @@ namespace GameController
                 PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
 
                 //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-                this.CoroutineUtils.WaitForSeconds(9f, () => this.ConnectToServer("127.0.0.1"));
+                this.CoroutineUtils.WaitForSeconds(10f, () => this.ConnectToServer("127.0.0.1"));
                 
                 this.serverProcess = GameServerUtils.StartServer("BasicExam");
             }

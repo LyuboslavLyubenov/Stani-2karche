@@ -1,6 +1,7 @@
-﻿namespace Jokers
-{
+﻿using Extensions;
 
+namespace Jokers
+{
     using System;
     using System.Linq;
 
@@ -38,22 +39,25 @@
             {
             };
 
-        private IClientNetworkManager networkManager;
-        private IQuestionUIController questionUIController;
-        private Timer_ExecuteMethodAfterTime receiveSettingsTimeoutTimer;
+        private readonly IClientNetworkManager networkManager;
+        private readonly IQuestionUIController questionUIController;
+        private readonly Timer_ExecuteMethodAfterTime receiveSettingsTimeoutTimer;
 
         public Sprite Image
         {
             get;
             private set;
         }
+
         public bool Activated
         {
             get;
             private set;
         }
-        
-        public DisableRandomAnswersJoker(IClientNetworkManager networkManager, IQuestionUIController questionUIController)
+
+        public DisableRandomAnswersJoker(
+            IClientNetworkManager networkManager, 
+            IQuestionUIController questionUIController)
         {
             if (networkManager == null)
             {
@@ -68,12 +72,26 @@
             this.networkManager = networkManager;
             this.questionUIController = questionUIController;
 
+            this.receiveSettingsTimeoutTimer = 
+                TimerUtils.ExecuteAfter(
+                SettingsReceiveTimeoutInSeconds, 
+                this.OnReceiveSettingsTimeout);
+            
+            this.receiveSettingsTimeoutTimer.AutoDispose = true;
+            this.receiveSettingsTimeoutTimer.RunOnUnityThread = true;
+            this.receiveSettingsTimeoutTimer.Stop();
+
             this.Image = JokerUtils.LoadSprite("DisableRandomAnswers");
         }
-        
+
         private void OnReceiveSettingsTimeout()
         {
-            this.DisposeTimer();
+            if (!this.Activated)
+            {
+                return;
+            }
+
+            this.Activated = false;
             this.networkManager.CommandsManager.RemoveCommand<DisableRandomAnswersJokerSettingsCommand>();
 
             if (this.OnError != null)
@@ -83,18 +101,18 @@
             }
         }
 
-        private void OnReceivedJokerSettings(int answersToDisableCount)
+        private void OnReceivedJokerSettings(string[] answersToDisable)
         {
-            this.ActivateJoker(answersToDisableCount);
+            this.Activated = false;
+
+            if (this.OnFinishedExecution != null)
+            {
+                this.OnFinishedExecution(this, EventArgs.Empty);    
+            }
         }
 
-        void DisposeTimer()
+        private void DisposeTimer()
         {
-            if (this.receiveSettingsTimeoutTimer == null)
-            {
-                return;
-            }
-
             try
             {
                 this.receiveSettingsTimeoutTimer.Stop();
@@ -102,49 +120,9 @@
             finally
             {
                 this.receiveSettingsTimeoutTimer.Dispose();
-                this.receiveSettingsTimeoutTimer = null;
             }
         }
 
-        private void ActivateJoker(int answersToDisableCount)
-        {
-            var currentQuestion = this.questionUIController.CurrentlyLoadedQuestion;
-
-            if (answersToDisableCount >= currentQuestion.Answers.Length)
-            {
-                var exception = new ArgumentException("Answers to disable count must be less than answers count");
-
-                if (this.OnError != null)
-                {
-                    this.OnError(this, new UnhandledExceptionEventArgs(exception, true));
-                }
-
-                return;
-            }
-
-            var allAnswers = currentQuestion.Answers.ToList();
-            var correctAnswerIndex = currentQuestion.CorrectAnswerIndex;
-            var correctAnswer = allAnswers[correctAnswerIndex];
-            var wrongAnswersIndexes = allAnswers.Where(a => a != correctAnswer)
-                .ToArray()
-                .GetRandomElements(answersToDisableCount)
-                .Select(a => allAnswers.FindIndex(answer => answer == a))
-                .ToArray();
-
-            for (int i = 0; i < wrongAnswersIndexes.Length; i++)
-            {
-                var disabledAnswerIndex = wrongAnswersIndexes[i];
-                this.questionUIController.HideAnswer(disabledAnswerIndex);
-            }
-
-            this.Dispose();
-
-            if (this.OnFinishedExecution != null)
-            {
-                this.OnFinishedExecution(this, EventArgs.Empty);
-            }
-        }
-        
         public void Activate()
         {
             if (this.questionUIController.CurrentlyLoadedQuestion == null)
@@ -155,15 +133,16 @@
             var selectedJokerCommand = NetworkCommandData.From<SelectedDisableRandomAnswersJokerCommand>();
             this.networkManager.SendServerCommand(selectedJokerCommand);
 
-            var receiveJokerSettings = new DisableRandomAnswersJokerSettingsCommand(this.OnReceivedJokerSettings);
+            var receiveJokerSettings = new DisableRandomAnswersJokerSettingsCommand(this.questionUIController);
+            receiveJokerSettings.OnFinishedExecution += (sender, args) =>
+            {
+                this.Dispose();
+                this.OnFinishedExecution(sender, args);
+            };
+            
             this.networkManager.CommandsManager.AddCommand(receiveJokerSettings);
 
-            this.receiveSettingsTimeoutTimer =
-                TimerUtils.ExecuteAfter(SettingsReceiveTimeoutInSeconds, this.OnReceiveSettingsTimeout);
-
-            this.receiveSettingsTimeoutTimer.AutoDispose = true;
-            this.receiveSettingsTimeoutTimer.RunOnUnityThread = true;
-            this.receiveSettingsTimeoutTimer.Start();
+            this.receiveSettingsTimeoutTimer.Reset();
 
             if (this.OnActivated != null)
             {

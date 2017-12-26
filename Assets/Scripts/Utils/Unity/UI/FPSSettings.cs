@@ -7,6 +7,12 @@
     {
         private static FPSSettings instance;
 
+        [SerializeField]
+        private int TargetFPS = 60;
+       
+        [SerializeField]
+        private int VSync = 1;
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
@@ -19,12 +25,12 @@
 
             DontDestroyOnLoad(this);
 
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate = this.TargetFPS;
 
-#if !UNITY_STANDALONE 
+#if !UNITY_STANDALONE && !UNITY_STANDALONE_LINUX 
             QualitySettings.vSyncCount = 2;
 #else
-            QualitySettings.vSyncCount = 1;
+            QualitySettings.vSyncCount = VSync;
             Application.runInBackground = true;
 #endif
             instance = this;

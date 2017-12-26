@@ -49,7 +49,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
             {
                 var kalitkoJokerRouter = new KalitkoJokerRouter(base.ServerNetworkManager, base.Server, base.GameDataIterator);
                 var trustRandomPersonJokerRouter = new TrustRandomPersonJokerRouter(base.ServerNetworkManager, base.Server, base.GameDataIterator);
-                var disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(base.ServerNetworkManager);
+                var disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(base.ServerNetworkManager, this.GameDataIterator);
 
                 var selectedKalitkoJokerCommand = new SelectedKalitkoJokerCommand(base.Server, this.JokersData, kalitkoJokerRouter);
                 var selectedTrustRandomPersonJokerCommand = new SelectedTrustRandomPersonJokerCommand(base.Server, this.JokersData, trustRandomPersonJokerRouter);

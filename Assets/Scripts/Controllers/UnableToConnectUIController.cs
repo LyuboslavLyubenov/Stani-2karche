@@ -1,7 +1,5 @@
-﻿
-namespace Controllers
+﻿namespace Controllers
 {
-
     using System;
 
     using Interfaces.Controllers;

@@ -1,3 +1,7 @@
+using Interfaces.GameData;
+using System.Linq;
+using Assets.Scripts.Utils;
+
 namespace Jokers.Routers
 {
     using System;
@@ -13,6 +17,8 @@ namespace Jokers.Routers
     {
         private readonly IServerNetworkManager networkManager;
 
+        private readonly IGameDataIterator gameDataIterator;
+
         public event EventHandler OnActivated = delegate
             {
             };
@@ -21,33 +27,63 @@ namespace Jokers.Routers
             {
             };
 
-        public DisableRandomAnswersJokerRouter(IServerNetworkManager networkManager)
+        public DisableRandomAnswersJokerRouter(
+            IServerNetworkManager networkManager, 
+            IGameDataIterator gameDataIterator)
         {
             if (networkManager == null)
             {
                 throw new ArgumentNullException("networkManager");
             }
-            
+
+            if (gameDataIterator == null)
+            {
+                throw new ArgumentNullException("gameDataIterator");
+            }
+                
             this.networkManager = networkManager;
+            this.gameDataIterator = gameDataIterator;
         }
 
         public void Activate(int answersToDisableCount, int connectionId)
         {
-            if (answersToDisableCount < 0)
-            {
-                throw new ArgumentOutOfRangeException("answersToDisableCount");
-            }
+            this.gameDataIterator.GetCurrentQuestion(
+                (question) =>
+                {
+                    if (answersToDisableCount < 0 || answersToDisableCount >= question.Answers.Length)
+                    {
+                        var exception = new ArgumentOutOfRangeException("answersToDisableCount");
+                        this.OnError(this, new UnhandledExceptionEventArgs(exception, false));
+                        return;
+                    }
 
-            if (connectionId <= 0)
-            {
-                throw new ArgumentOutOfRangeException("connectionId");
-            }
+                    if (connectionId <= 0)
+                    {
+                        var exception = new ArgumentOutOfRangeException("connectionId");
+                        this.OnError(this, new UnhandledExceptionEventArgs(exception, false));
+                        return;
+                    }
 
-            var settingsCommand = new NetworkCommandData("DisableRandomAnswersJokerSettings");
-            settingsCommand.AddOption("AnswersToDisableCount", answersToDisableCount.ToString());
-            this.networkManager.SendClientCommand(connectionId, settingsCommand);
+                    var settingsCommand = new NetworkCommandData("DisableRandomAnswersJokerSettings");
+                    var answersToDisable = question.Answers.Where(a => question.CorrectAnswer != a)
+                        .ToList()
+                        .GetRandomElements(answersToDisableCount)
+                        .ToArray();
 
-            this.OnActivated(this, EventArgs.Empty);
+                    for (int i = 0; i < answersToDisable.Length; i++)
+                    {
+                        var answer = answersToDisable[i];
+                        settingsCommand.AddOption(i.ToString(), answer);
+                    }
+
+                    this.networkManager.SendClientCommand(connectionId, settingsCommand);
+
+                    this.OnActivated(this, EventArgs.Empty);
+                }, 
+                (exception) =>
+                {
+                    this.OnError(this, new UnhandledExceptionEventArgs(exception, false));
+                });
         }
     }
 }

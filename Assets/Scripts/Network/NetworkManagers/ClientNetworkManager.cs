@@ -35,10 +35,9 @@
         private const float ReceiveNetworkMessagesDelayInSeconds = 1f;
         private const float ReceivePermissionToConnectTimeoutInSeconds = 6f;
         private const float SendKeepAliveRequestDelayInSeconds = 3f;
-        private const float ReceiveConnectedClientsCountDelayInSeconds = 3f;
         private const float ValidateConnectionDelayInSeconds = 1f;
 
-        private const int MaxConnectionAttempts = 3;
+        private const int MaxConnectionAttempts = 10;
         private const int MaxServerReactionTimeInSeconds = 10;
         private const int MaxNetworkErrorsBeforeDisconnect = 5;
         

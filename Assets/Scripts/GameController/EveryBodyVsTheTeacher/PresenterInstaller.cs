@@ -3,6 +3,12 @@ using IClientNetworkManager = Interfaces.Network.NetworkManager.IClientNetworkMa
 using QuestionsRemainingUIController = Controllers.QuestionsRemainingUIController;
 using SecondsRemainingUIController = Controllers.SecondsRemainingUIController;
 using ThreadUtils = Utils.ThreadUtils;
+using Commands;
+using Assets.Scripts.Commands.Jokers.Result;
+using Assets.Scripts.Interfaces.Controllers;
+using Controllers.EveryBodyVsTheTeacher.Jokers;
+using Commands.Jokers;
+using Controllers;
 
 namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 {
@@ -28,6 +34,36 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
         [SerializeField]
         private MistakesRemainingUIController mistakesRemainingUIController;
 
+        [SerializeField]
+        private GameObject kalitkoJokerUI;
+
+        [SerializeField]
+        private QuestionUIController questionUIController;
+
+        [SerializeField]
+        private GameObject notReceivedAnswerUI;
+
+        //friend answer ui controller
+        [SerializeField]
+        private FriendAnswerUIController playerAnswerUIController;
+
+        private void AddResultJokerCommands(CommandsManager commandsManager)
+        {
+            var kalitkoJokerUIController = kalitkoJokerUI.GetComponent<KalitkoJokerContainerUIController>();
+            commandsManager.AddCommand(
+                new KalitkoJokerResultCommand(kalitkoJokerUIController, kalitkoJokerUI));
+            commandsManager.AddCommand(
+                new TrustRandomPersonJokerResultCommand(
+                    this.secondsRemainingUIController.gameObject,
+                    this.notReceivedAnswerUI,
+                    this.playerAnswerUIController.gameObject,
+                    this.playerAnswerUIController));
+            commandsManager.AddCommand(
+                new DisableRandomAnswersJokerSettingsCommand(this.questionUIController));
+
+        }
+
+
         public override void InstallBindings()
         {
             var threadUtils = ThreadUtils.Instance;
@@ -51,6 +87,8 @@ namespace Assets.Scripts.GameController.EveryBodyVsTheTeacher
 
             networkManager.CommandsManager.AddCommand(new LoadQuestionRemainingCountCommand(this.questionsRemainingUIController));
             networkManager.CommandsManager.AddCommand(new LoadMistakesRemainingCommand(this.mistakesRemainingUIController));
+        
+            this.AddResultJokerCommands(networkManager.CommandsManager);   
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Tests.Network.NetworkCommandData
         {
             this.AllocateMoreMemory();
 
-            this.CoroutineUtils.RepeatEverySeconds(10, System.GC.Collect);
+            this.CoroutineUtils.RepeatEverySeconds(60, System.GC.Collect);
 
             var networkManager = ServerNetworkManager.Instance;
             networkManager.CommandsManager.AddCommand(new DummyCommand());
@@ -22,7 +22,7 @@ namespace Tests.Network.NetworkCommandData
 
         private void AllocateMoreMemory()
         {
-            var tmp = new System.Object[1024 * 512];
+            var tmp = new System.Object[1024 * 1024];
 
             // make allocations in smaller blocks to avoid them to be treated in a special way, which is designed for large blocks
             for (int i = 0; i < tmp.Length; i++)

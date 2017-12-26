@@ -1,6 +1,8 @@
+using System.Linq;
+using Interfaces.Controllers;
+
 namespace Commands.Jokers
 {
-
     using System;
     using System.Collections.Generic;
 
@@ -10,9 +12,7 @@ namespace Commands.Jokers
 
     public class DisableRandomAnswersJokerSettingsCommand : IOneTimeExecuteCommand
     {
-        public delegate void OnReceivedJokerSettings(int answersToDisableCount);
-
-        private OnReceivedJokerSettings onReceivedJokerSettings;
+        private IQuestionUIController questionUIController;
 
         public bool FinishedExecution
         {
@@ -26,20 +26,33 @@ namespace Commands.Jokers
             set;
         }
 
-        public DisableRandomAnswersJokerSettingsCommand(OnReceivedJokerSettings onReceivedJokerSettings)
+        public DisableRandomAnswersJokerSettingsCommand(IQuestionUIController questionUIController)
         {
-            if (onReceivedJokerSettings == null)
+            if (questionUIController == null)
             {
-                throw new ArgumentNullException("onReceivedJokerSettings");
+                throw new ArgumentNullException("questionUIController");
             }
-            
-            this.onReceivedJokerSettings = onReceivedJokerSettings;
+                
+            this.questionUIController = questionUIController;
         }
 
         public void Execute(Dictionary<string, string> commandsOptionsValues)
         {
-            var answersToDisableCount = int.Parse(commandsOptionsValues["AnswersToDisableCount"]);
-            this.onReceivedJokerSettings(answersToDisableCount);
+            var answersToDisable = 
+                commandsOptionsValues.Values.Select(ov => ov)
+                    .ToArray();
+            
+            var currentQuestion = this.questionUIController.CurrentlyLoadedQuestion;
+            var answersToHide = 
+                currentQuestion.Answers.Where(answersToDisable.Contains)
+                    .ToArray();
+
+            for (int i = 0; i < answersToHide.Length; i++)
+            {
+                var answerToHide = answersToHide[i];
+                this.questionUIController.HideAnswer(answerToHide);
+            }
+
             this.FinishedExecution = true;
 
             if (this.OnFinishedExecution != null)
@@ -48,5 +61,4 @@ namespace Commands.Jokers
             }
         }
     }
-
 }

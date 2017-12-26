@@ -32,7 +32,7 @@ namespace Assets.Scripts.States.EveryBodyVsTheTeacher.Server.Rounds
         {
             public SecondRoundState Build()
             {
-                var disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(base.ServerNetworkManager);
+                var disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(base.ServerNetworkManager, this.GameDataIterator);
                 var answerPollRouter = new AnswerPollRouter(base.ServerNetworkManager);
                 var helpFromAudienceJokerRouter = new HelpFromAudienceJokerRouter(base.ServerNetworkManager, base.GameDataIterator, answerPollRouter);
 

@@ -323,7 +323,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 1
+  m_AllowMSAA: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -615,6 +615,60 @@ Prefab:
         type: 2}
       propertyPath: m_Color.a
       value: 0.9607843
+      objectReference: {fileID: 0}
+    - target: {fileID: 1646247014538750, guid: 65fb89c279e15e348857f8a3fcbd5339, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: -1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_SizeDelta.x
+      value: 564
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: 326
+      objectReference: {fileID: 0}
+    - target: {fileID: 224209335501868690, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 10.101
+      objectReference: {fileID: 0}
+    - target: {fileID: 224358246928374842, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.17004395
+      objectReference: {fileID: 0}
+    - target: {fileID: 224537936763405234, guid: 65fb89c279e15e348857f8a3fcbd5339,
+        type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0000076293945
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 65fb89c279e15e348857f8a3fcbd5339, type: 2}

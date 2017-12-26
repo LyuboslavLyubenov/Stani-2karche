@@ -47,7 +47,7 @@ namespace Network.Servers
     public class BasicExamServer : ExtendedMonoBehaviour, IGameServer, IDisposable
     {
         private const float DefaultChanceToAddRandomJokerOnMarkChange = 0.08f;
-        private const int DefaultServerMaxPlayers = 40;
+        private const int DefaultServerMaxPlayers = 30;
 
         public event EventHandler OnGameOver = delegate
             {
@@ -115,8 +115,23 @@ namespace Network.Servers
 
         private ICreatedGameInfoSender gameInfoSender = null;
 
+        private void AllocateMoreMemory()
+        {
+            var tmp = new System.Object[1024 * 512];
+
+            // make allocations in smaller blocks to avoid them to be treated in a special way, which is designed for large blocks
+            for (int i = 0; i < tmp.Length; i++)
+                tmp[i] = new byte[1024];
+
+            // release reference
+            tmp = null;
+        }
+
         void Awake()
         {
+            this.AllocateMoreMemory();
+            this.CoroutineUtils.WaitForSeconds(60, System.GC.Collect);
+
             var threadUtils = ThreadUtils.Instance;//Initialize
         }
 
@@ -145,7 +160,7 @@ namespace Network.Servers
             this.GameDataQuestionsSender = new GameDataQuestionsSender(this.GameDataIterator, serverNetworkManager);
 
             this.leaderboardDataManipulator = new LeaderboardDataManipulator();
-            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager);
+            this.disableRandomAnswersJokerRouter = new DisableRandomAnswersJokerRouter(serverNetworkManager, this.GameDataIterator);
             this.addRandomJokerRouter = new AddRandomJokerRouter(serverNetworkManager, this.MainPlayerData.JokersData);
 
             this.askPlayerQuestionRouter = new AskPlayerQuestionJokerRouter(serverNetworkManager, this.GameDataIterator, new AskClientQuestionRouter(serverNetworkManager));

@@ -1442,6 +1442,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cc671aa9e6b1e24a9f2eaa25548257b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TargetFPS: 60
+  VSync: 1
 --- !u!1 &208649643
 GameObject:
   m_ObjectHideFlags: 0
