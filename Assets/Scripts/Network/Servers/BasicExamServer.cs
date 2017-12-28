@@ -368,7 +368,6 @@ namespace Network.Servers
             this.GameDataQuestionsSender.OnSentQuestion += this.OnSentQuestion;
             this.GameDataQuestionsSender.OnBeforeSend += this.OnBeforeSendQuestion;
 
-
             ServerNetworkManager.Instance.OnClientConnected += this.OnClientConnected;
 
             this.askPlayerQuestionRouter.OnSent += (sender, args) => this.OnFinishedJokerExecution();

@@ -152,7 +152,6 @@ namespace GameController
 
         private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
-            Debug.Log(args.Mark.ToString());
             this.MarkChangedConfetti.SetActive(true);
             this.MarkPanelController.SetMark(args.Mark.ToString());
         }
@@ -307,6 +306,17 @@ namespace GameController
             networkManager.CommandsManager.AddCommand(new AddRandomJokerCommand(this.SelectRandomJokerUIController));
         }
 
+        private void RemoveUsedCommands()
+        {
+            var commandsManager = ClientNetworkManager.Instance.CommandsManager;
+            
+            commandsManager.RemoveCommand<GameEndCommand>();
+            commandsManager.RemoveCommand<AddHelpFromFriendJokerCommand>();
+            commandsManager.RemoveCommand<AddAskAudienceJokerCommand>();
+            commandsManager.RemoveCommand<AddDisableRandomAnswersJokerCommand>();
+            commandsManager.RemoveCommand<AddRandomJokerCommand>();
+        }
+
         private void AttachEventHandlers()
         {
             var networkManager = ClientNetworkManager.Instance;
@@ -367,7 +377,7 @@ namespace GameController
             this.askClientQuestionResultRetriever.Dispose();
             this.leaderboardReceiver.Dispose();
 
-            ClientNetworkManager.Instance.CommandsManager.RemoveAllCommands();
+            this.RemoveUsedCommands();
             ClientNetworkManager.Instance.Dispose();
 
             this.remoteGameDataIterator = null;
