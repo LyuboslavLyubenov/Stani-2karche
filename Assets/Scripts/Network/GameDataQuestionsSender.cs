@@ -87,7 +87,7 @@
 
         private void OnMarkIncrease(object sender, MarkEventArgs args)
         {
-            var commandData = new NetworkCommandData("GameDataMark");
+            var commandData = NetworkCommandData.From<GameDataMarkCommand>();
             commandData.AddOption("Mark", args.Mark.ToString());
             this.networkManager.SendAllClientsCommand(commandData);
         }
@@ -104,7 +104,7 @@
 
         private void SendLoadedGameData(int connectionId)
         {
-            var loadedGameDataCommand = new NetworkCommandData("LoadedGameData");
+            var loadedGameDataCommand = NetworkCommandData.From<LoadedGameDataCommand>();
             loadedGameDataCommand.AddOption("LevelCategory", this.gameDataIterator.LevelCategory);
             this.networkManager.SendClientCommand(connectionId, loadedGameDataCommand);
         }

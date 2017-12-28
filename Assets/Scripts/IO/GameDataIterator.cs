@@ -100,9 +100,11 @@
             }
             private set
             {
-                this.currentMarkIndex = value;
+                var oldMark = this.currentMarkIndex;
+                var newMark = value;
+                this.currentMarkIndex = newMark;
 
-                if (value > this.currentMarkIndex && this.OnMarkIncrease != null)
+                if (newMark > oldMark && this.OnMarkIncrease != null)
                 {
                     this.OnMarkIncrease(this, new MarkEventArgs(value));
                 }
@@ -182,7 +184,7 @@
 
             if (this.IsLastQuestion)
             {
-                this.currentMarkIndex++;
+                this.CurrentMark++;
                 this.currentQuestionIndex = 0;
             }
             else
