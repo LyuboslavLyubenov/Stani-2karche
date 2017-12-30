@@ -100,9 +100,15 @@
             }
             private set
             {
-                var oldMark = this.currentMarkIndex;
+                if (value < MarkMin)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
+                var oldMark = this.CurrentMark;
                 var newMark = value;
-                this.currentMarkIndex = newMark;
+                 
+                this.currentMarkIndex = newMark - MarkMin;
 
                 if (newMark > oldMark && this.OnMarkIncrease != null)
                 {
