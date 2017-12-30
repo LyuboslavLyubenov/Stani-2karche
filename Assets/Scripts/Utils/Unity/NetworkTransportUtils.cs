@@ -107,7 +107,7 @@
             int recHostId;
             int connectionId;
             int channelId;
-            int bufferSize = 4096;
+            int bufferSize = 8192;
             byte[] recBuffer = new byte[bufferSize];
             int dataSize;
             byte error;
