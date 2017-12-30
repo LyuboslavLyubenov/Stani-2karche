@@ -164,11 +164,6 @@
 
                 ISimpleQuestion[] allQuestionsForMark = this.ExtractQuestions(sheet, questionsToTake);
 
-                if (this.ShuffleQuestions)
-                {
-                    allQuestionsForMark.Shuffle();
-                }
-
                 this.marksQuestions.Add(allQuestionsForMark);
             }
         }
@@ -179,11 +174,6 @@
 
             for (int rowi = QuestionsStartRow; rowi < sheet.getRows();)
             {
-                if (questions.Count >= questionsToTake)
-                {
-                    break;
-                }
-
                 var questionText = sheet.GetCellOrDefault(0, rowi).getContents().Trim();
 
                 if (string.IsNullOrEmpty(questionText))
@@ -199,7 +189,14 @@
                 rowi += question.Answers.Length + 2;
             }
 
-            return questions.ToArray();
+            if (this.ShuffleQuestions)
+            {
+                return questions.GetRandomElements(questionsToTake).ToArray();                
+            }
+            else
+            {
+                return questions.ToArray();
+            }
         }
 
         /// <summary>
