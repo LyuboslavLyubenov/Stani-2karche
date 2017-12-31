@@ -260,6 +260,9 @@ namespace Network.Servers
 
         private void OnMainPlayerAnsweredCorrectly()
         {
+            //TODO:
+            return;
+
             if (UnityEngine.Random.value < this.chanceToAddRandomJoker)
             {
                 var jokers = JokerUtils.AllJokersTypes;

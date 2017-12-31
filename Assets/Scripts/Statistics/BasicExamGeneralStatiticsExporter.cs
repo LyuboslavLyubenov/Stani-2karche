@@ -66,7 +66,12 @@
             var currentGameAvgSpentTimeOnQestion = this.GetAvgSpentTimeOnQuestion();
             var avgSpentTimeOnQuestion = this.ExtractAvgSpentTimeOnQuestion(sheet);
             avgSpentTimeOnQuestion += currentGameAvgSpentTimeOnQestion;
-            avgSpentTimeOnQuestion /= 2;
+
+            if ((avgSpentTimeOnQuestion - currentGameAvgSpentTimeOnQestion) != 0)
+            {
+                avgSpentTimeOnQuestion /= 2;
+            } 
+
             return avgSpentTimeOnQuestion;
         }
 
