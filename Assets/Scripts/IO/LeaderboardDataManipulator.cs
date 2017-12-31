@@ -55,16 +55,21 @@
             return string.Format("{0}\\{1}\\{2}\\{3}", execPath, FilePath, this.LevelCategory, FileName);
         }
 
+        private void CreateLeaderboardFileIfDoesntExists(string path)
+        {
+            if (!File.Exists(path))
+            {
+                File.Create(path).Close();
+            }
+        }
+
         private IEnumerator LoadLeaderboardAsync()
         {
             yield return null;
 
             var endPath = this.GetEndPath();
 
-            if (!File.Exists(endPath))
-            {
-                File.Create(endPath).Close();
-            }
+            this.CreateLeaderboardFileIfDoesntExists(endPath);
 
             var sr = new StreamReader(endPath);
 
@@ -104,6 +109,9 @@
         private IEnumerator SavePlayerScoreAsync(PlayerScore playerScore)
         {
             var path = this.GetEndPath();
+
+            this.CreateLeaderboardFileIfDoesntExists(path);
+
             var playersScore = File.ReadAllLines(path).ToList();
 
             int playerIndex = -1;
