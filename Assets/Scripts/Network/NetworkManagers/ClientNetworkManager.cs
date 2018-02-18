@@ -201,8 +201,7 @@
         {
             if (this.isRunning)
             {
-                NetworkTransportUtils.ReceiveMessageAsync(this.encryptionKey, 
-                    this.ReceivedMessageFromServerAsync, 
+                NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromServerAsync, 
                     (exception) =>
                     {
                         Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
@@ -383,7 +382,6 @@
                 this.connectionId, 
                 this.communicationChannel, 
                 data, 
-                this.encryptionKey,
                 (exception) =>
                 {
                     var errorN = exception.ErrorN;

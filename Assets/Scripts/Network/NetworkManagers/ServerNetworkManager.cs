@@ -218,7 +218,10 @@
 
         private void ReceiveMessage()
         {
-            NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedDataFromClientAsync, (exception) =>
+            NetworkTransportUtils.ReceiveMessageAsync(
+                
+                this.ReceivedDataFromClientAsync, 
+                (exception) =>
                 {
                     var error = (NetworkError)exception.ErrorN;
                     var errorMessage = NetworkErrorUtils.GetMessage(error);
