@@ -12,9 +12,18 @@
 
     public class SetUsernameCommand : INetworkManagerCommand
     {
+        private static string[] forbiddenWordsInUsernames;
+
         private IServerNetworkManager networkManager;
 
         private const string BannedWordsInUsernameFileName = "bannedWordsInUsernames.txt";
+
+        static SetUsernameCommand()
+        {
+            var gameDirectoryPath = Assets.Scripts.Utils.PathUtils.GetGameDirectoryPath();
+            var forbiddenUsernamesFilePath = gameDirectoryPath + "/LevelData/" + BannedWordsInUsernameFileName;
+            forbiddenWordsInUsernames = File.ReadAllLines(forbiddenUsernamesFilePath);
+        }
 
         public SetUsernameCommand(IServerNetworkManager networkManager)
         {
@@ -59,11 +68,8 @@
 
         private bool DoesUsernameContaisForbiddenWords(string username)
         {
-            var gameDirectoryPath = Assets.Scripts.Utils.PathUtils.GetGameDirectoryPath();
-            var forbiddenUsernamesFilePath = gameDirectoryPath + "/LevelData/" + BannedWordsInUsernameFileName;
-            var forbiddenUsernames = File.ReadAllLines(forbiddenUsernamesFilePath);
             var usernameLower = username.ToLowerInvariant();
-            return forbiddenUsernames.Any(u => u.ToLowerInvariant().Contains(usernameLower));
+            return forbiddenWordsInUsernames.Any(u => usernameLower.Contains(u.ToLowerInvariant()));
         }
     }
 }
