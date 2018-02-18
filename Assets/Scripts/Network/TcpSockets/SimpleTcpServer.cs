@@ -211,7 +211,7 @@ namespace Network.TcpSockets
                 var buffer = state.Data.ToArray();
                 var message = Encoding.UTF8.GetString(buffer);
                 var filteredMessage = this.FilterReceivedMessage(message);
-                var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
+                var decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(filteredMessage, SecuritySettings.LANBROADCASTSERVICE_PASSWORD, SecuritySettings.SALT);
                 var args = new MessageEventArgs(state.IPAddress, decryptedMessage);
 
                 if (this.OnReceivedMessage != null)

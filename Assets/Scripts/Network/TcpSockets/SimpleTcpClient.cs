@@ -114,7 +114,7 @@
                 socket = this.connectedToServersIPsSockets[ipAddress];
             }
 
-            var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
+            var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, SecuritySettings.LANBROADCASTSERVICE_PASSWORD, SecuritySettings.SALT);
             var messageBuffer = Encoding.UTF8.GetBytes(encryptedMessage);
             var prefix = BitConverter.GetBytes(messageBuffer.Length);
             var state = new SendMessageState() { Client = socket, DataToSend = new byte[messageBuffer.Length + 4], OnSuccess = onSent, OnError = onError };
