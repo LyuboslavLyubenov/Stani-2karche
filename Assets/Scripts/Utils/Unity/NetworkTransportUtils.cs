@@ -23,7 +23,7 @@
         {
         }
 
-        private static void DecryptMessageAsync(string message, Action<string> onDecrypted)
+        private static void DecryptMessageAsync(string message, string key, Action<string> onDecrypted)
         {   
             if (onDecrypted == null)
             {
@@ -36,23 +36,23 @@
                 return;
             }
 
-            NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(DecryptMessageAsyncCoroutine(message, onDecrypted));
+            NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(DecryptMessageAsyncCoroutine(message, key, onDecrypted));
         }
 
-        private static IEnumerator DecryptMessageAsyncCoroutine(string message, Action<string> onDecrypted)
+        private static IEnumerator DecryptMessageAsyncCoroutine(string message, string key, Action<string> onDecrypted)
         {
             var decryptedMessage = string.Empty;
 
             if (!string.IsNullOrEmpty(message))
             {
-                decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(message, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT); 
+                decryptedMessage = CipherUtility.Decrypt<RijndaelManaged>(message, key, SecuritySettings.SALT); 
             }
 
             yield return Ninja.JumpToUnity;
             onDecrypted(decryptedMessage);
         }
 
-        private static void EncryptMessageAsync(string message, Action<byte[]> onEncrypted)
+        private static void EncryptMessageAsync(string message, string key, Action<byte[]> onEncrypted)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -64,12 +64,12 @@
                 throw new ArgumentNullException("onEncrypted");
             }
 
-            NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(EncryptMessageAsyncCoroutine(message, onEncrypted));
+            NetworkTransportUtilsDummyClass.Instance.StartCoroutineAsync(EncryptMessageAsyncCoroutine(message, key, onEncrypted));
         }
 
-        private static IEnumerator EncryptMessageAsyncCoroutine(string message, Action<byte[]> onEncrypted)
+        private static IEnumerator EncryptMessageAsyncCoroutine(string message, string key, Action<byte[]> onEncrypted)
         {
-            var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, SecuritySettings.NETWORK_ENCRYPTION_PASSWORD, SecuritySettings.SALT);
+            var encryptedMessage = CipherUtility.Encrypt<RijndaelManaged>(message, key, SecuritySettings.SALT);
             var buffer = System.Text.Encoding.UTF8.GetBytes(encryptedMessage);
 
             yield return Ninja.JumpToUnity;
@@ -97,7 +97,7 @@
             onReceivedMessage(networkData);
         }
 
-        public static void ReceiveMessageAsync(Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
+        public static void ReceiveMessageAsync(string key, Action<NetworkData> onReceivedMessage, Action<NetworkException> onError = null)
         {
             if (onReceivedMessage == null)
             {
@@ -136,6 +136,7 @@
 
             DecryptMessageAsync(
                 message, 
+                key,
                 (decryptedMessage) => OnDecryptedMessage(
                                         connectionId, 
                                         receiveEventType, 
@@ -143,9 +144,11 @@
                                         onReceivedMessage));
         }
 
-        public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, Action<NetworkException> onError = null, Action onSent = null)
+        public static void SendMessageAsync(int hostId, int connectionId, int channelId, string message, string key, Action<NetworkException> onError = null, Action onSent = null)
         {
-            EncryptMessageAsync(message, (buffer) =>
+            EncryptMessageAsync(message, 
+                key,
+                (buffer) =>
                 {
                     byte error;
 

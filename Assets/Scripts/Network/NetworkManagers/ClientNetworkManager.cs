@@ -62,6 +62,8 @@
 
         private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
+
+        private string encryptionKey = "";
         
         private Timer_ExecuteMethodEverySeconds keepAliveTimer;
         private Timer_ExecuteMethodEverySeconds receiveNetworkMessagesTimer;
@@ -199,7 +201,9 @@
         {
             if (this.isRunning)
             {
-                NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromServerAsync, (exception) =>
+                NetworkTransportUtils.ReceiveMessageAsync(this.encryptionKey, 
+                    this.ReceivedMessageFromServerAsync, 
+                    (exception) =>
                     {
                         Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
                         Debug.LogException(exception);
@@ -374,7 +378,13 @@
 
         public void SendServerMessage(string data)
         {
-            NetworkTransportUtils.SendMessageAsync(this.genericHostId, this.connectionId, this.communicationChannel, data, (exception) =>
+            NetworkTransportUtils.SendMessageAsync(
+                this.genericHostId, 
+                this.connectionId, 
+                this.communicationChannel, 
+                data, 
+                this.encryptionKey,
+                (exception) =>
                 {
                     var errorN = exception.ErrorN;
                     var error = (NetworkError)errorN;

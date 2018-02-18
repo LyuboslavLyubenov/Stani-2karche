@@ -4,7 +4,6 @@ using NetworkCommandDataClass = Commands.NetworkCommandData;
 
 namespace Assets.Scripts.Commands.Client
 {
-
     using System;
     using System.Collections.Generic;
 
