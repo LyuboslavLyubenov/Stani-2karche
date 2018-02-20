@@ -63,7 +63,7 @@
         private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
 
-        private string encryptionKey = "";
+        private string encryptionKey = SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
         
         private Timer_ExecuteMethodEverySeconds keepAliveTimer;
         private Timer_ExecuteMethodEverySeconds receiveNetworkMessagesTimer;
@@ -114,6 +114,9 @@
             
             this.ConfigureCommands();
             this.ConfigureClient();
+
+            this.OnConnectedEvent += (sender, args) => this.encryptionKey = SystemInfo.deviceUniqueIdentifier;
+            this.OnDisconnectedEvent += (sender, args) => this.encryptionKey = SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
 
             this.keepAliveTimer =
                 TimerUtils.ExecuteEvery(SendKeepAliveRequestDelayInSeconds, this.SendKeepAliveRequest);
@@ -201,7 +204,19 @@
         {
             if (this.isRunning)
             {
-                NetworkTransportUtils.ReceiveMessageAsync(this.ReceivedMessageFromServerAsync, 
+                NetworkTransportUtils.ReceiveMessageAsync(
+                    (networkData) => 
+                    {
+                        var key = this.IsConnected ? this.encryptionKey : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+                        EncryptionUtils.DecryptMessageAsync(
+                            networkData.Message, 
+                            key, 
+                            (decryptedMessage) => 
+                            {
+                                var decryptedMessageNetworkData = new NetworkData(networkData.ConnectionId, decryptedMessage, networkData.NetworkEventType);
+                                this.ReceivedMessageFromServerAsync(decryptedMessageNetworkData);
+                            });
+                    }, 
                     (exception) =>
                     {
                         Debug.LogErrorFormat("NetworkException {0}", (NetworkError)exception.ErrorN);
@@ -262,6 +277,8 @@
         {
             var message = networkData.Message;
             NetworkCommandData commandLine = null;
+
+            Debug.LogFormat("Received from {1} {0} Message {2}", Environment.NewLine, networkData.ConnectionId, networkData.Message);
 
             try
             {
@@ -377,20 +394,26 @@
 
         public void SendServerMessage(string data)
         {
-            NetworkTransportUtils.SendMessageAsync(
-                this.genericHostId, 
-                this.connectionId, 
-                this.communicationChannel, 
+            EncryptionUtils.EncryptMessageAsync(
                 data, 
-                (exception) =>
+                this.encryptionKey, 
+                (encryptedMessage) => 
                 {
-                    var errorN = exception.ErrorN;
-                    var error = (NetworkError)errorN;
-                    var errorMessage = NetworkErrorUtils.GetMessage(error);
-                    Debug.LogException(new Exception(errorMessage));
+                    NetworkTransportUtils.SendMessageAsync(
+                        this.genericHostId,
+                        this.connectionId,
+                        this.communicationChannel,
+                        encryptedMessage,
+                        (exception) =>
+                        {
+                            var errorN = exception.ErrorN;
+                            var error = (NetworkError)errorN;
+                            var errorMessage = NetworkErrorUtils.GetMessage(error);
+                            Debug.LogException(new Exception(errorMessage));
 
-                    this.networkErrorsCount++;
-                });
+                            this.networkErrorsCount++;
+                        });
+            });
         }
 
         public void Dispose()

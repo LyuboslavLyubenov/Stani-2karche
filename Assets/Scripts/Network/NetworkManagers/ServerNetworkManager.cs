@@ -79,6 +79,8 @@
         private readonly CommandsManager commandsManager = new CommandsManager();
         private readonly LANServerOnlineBroadcastService LANServerOnlineBroadcastService = new LANServerOnlineBroadcastService();
 
+        private IList<int> deadClientsIds = new List<int>();
+
         private Timer updateAliveClientsTimer;
 
         private static ServerNetworkManager instance;
@@ -218,9 +220,29 @@
 
         private void ReceiveMessage()
         {
+            //this.ReceivedDataFromClientAsync
             NetworkTransportUtils.ReceiveMessageAsync(
-                
-                this.ReceivedDataFromClientAsync, 
+                (networkData) => 
+                {
+                    var connectionId = networkData.ConnectionId;
+                    var key = this.IsConnected(connectionId) ? this.connectedClientsDeviceIds[connectionId] : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+
+                    if (connectionId < 1)
+                    {
+                        return;
+                    }
+
+                    EncryptionUtils.DecryptMessageAsync(
+                        networkData.Message, 
+                        key, 
+                        (decryptedMessage) => 
+                        {
+                            Debug.LogFormat("Received from {1} {0} Message {2}", Environment.NewLine, networkData.ConnectionId, decryptedMessage);
+
+                            var decryptedMessageNetworkData = new NetworkData(connectionId, decryptedMessage, networkData.NetworkEventType);
+                            this.ReceivedDataFromClientAsync(decryptedMessageNetworkData);
+                        });
+                }, 
                 (exception) =>
                 {
                     var error = (NetworkError)exception.ErrorN;
@@ -260,8 +282,6 @@
                 }
             }
         }
-
-        private IList<int> deadClientsIds = new List<int>();
 
         private void UpdateAliveClients()
         {
@@ -439,13 +459,21 @@
 
         public void SendClientMessage(int connectionId, string message)
         {
-            NetworkTransportUtils.SendMessageAsync(this.genericHostId, connectionId, this.communicationChannel, message, (exception) =>
+            Debug.LogFormat("Sending to {1} {0} Message {2}", Environment.NewLine, connectionId, message);
+            var key = this.IsConnected(connectionId) ? this.connectedClientsDeviceIds[connectionId] : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+            EncryptionUtils.EncryptMessageAsync(
+                message, 
+                key, 
+                (encryptedMessage) => 
                 {
-                    var errorN = exception.ErrorN;
-                    var error = (NetworkError)errorN;
-                    var errorMessage = NetworkErrorUtils.GetMessage(error);
+                    NetworkTransportUtils.SendMessageAsync(this.genericHostId, connectionId, this.communicationChannel, encryptedMessage, (exception) =>
+                        {
+                            var errorN = exception.ErrorN;
+                            var error = (NetworkError)errorN;
+                            var errorMessage = NetworkErrorUtils.GetMessage(error);
 
-                    Debug.LogError(errorMessage);
+                            Debug.LogError(errorMessage);
+                        });
                 });
         }
 
