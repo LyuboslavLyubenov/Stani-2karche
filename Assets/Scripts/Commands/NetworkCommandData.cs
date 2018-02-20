@@ -1,6 +1,5 @@
 namespace Commands
 {
-
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -184,9 +183,9 @@ namespace Commands
             return result;
         }
 
-        private static Dictionary<int, int> FilterOptionNamesLengthValuesLength(string[] commandArgs, int optionsCount)
+        private static KeyValuePair<int, int>[] FilterOptionNamesLengthValuesLength(string[] commandArgs, int optionsCount)
         {
-            var optionsLengthValuesLength = new Dictionary<int, int>();
+            var optionsLengthValuesLength = new List<KeyValuePair<int, int>>();
 
             for (int begin = 2, i = begin; (i < begin + (optionsCount * 2)) && (i < commandArgs.Length - 1); i += 2)
             {
@@ -205,22 +204,22 @@ namespace Commands
                     throw new ArgumentException(exceptionMessage);
                 }
 
-                optionsLengthValuesLength.Add(option, value);
+                optionsLengthValuesLength.Add(new KeyValuePair<int, int>(option, value));
             }
 
-            return optionsLengthValuesLength;
+            return optionsLengthValuesLength.ToArray();
         }
 
         private static Dictionary<string, string> FilterOptionsValues(
             string text,
-            Dictionary<int, int> optionsNamesLengthValuesLength,
+            KeyValuePair<int, int>[] optionsNamesLengthValuesLength,
             int nameLength)
         {
             var result = new Dictionary<string, string>();
             var optionsText = text.Substring(nameLength);
             var filterIndex = 0;
 
-            for (int i = 0; i < optionsNamesLengthValuesLength.Count; i++)
+            for (int i = 0; i < optionsNamesLengthValuesLength.Length; i++)
             {
                 var namesLengthValuesLength = optionsNamesLengthValuesLength.Skip(i).First();
                 var optionNameLength = namesLengthValuesLength.Key;
@@ -273,7 +272,7 @@ namespace Commands
             var optionsCount = FilterOptionsCount(commandArgs);
             var optionsNamesLengthValuesLength = FilterOptionNamesLengthValuesLength(commandArgs, optionsCount);
 
-            if (optionsNamesLengthValuesLength.Count < optionsCount)
+            if (optionsNamesLengthValuesLength.Length < optionsCount)
             {
                 throw new ArgumentException("Invalid options length");
             }
