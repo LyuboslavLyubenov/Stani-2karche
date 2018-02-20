@@ -22,7 +22,7 @@
         {
             var gameDirectoryPath = Assets.Scripts.Utils.PathUtils.GetGameDirectoryPath();
             var forbiddenUsernamesFilePath = gameDirectoryPath + "/LevelData/" + BannedWordsInUsernameFileName;
-            forbiddenWordsInUsernames = File.ReadAllLines(forbiddenUsernamesFilePath);
+            forbiddenWordsInUsernames = File.ReadAllLines(forbiddenUsernamesFilePath).Select(u => u.ToLowerInvariant()).ToArray();
         }
 
         public SetUsernameCommand(IServerNetworkManager networkManager)
@@ -69,7 +69,8 @@
         private bool DoesUsernameContaisForbiddenWords(string username)
         {
             var usernameLower = username.ToLowerInvariant();
-            return forbiddenWordsInUsernames.Any(u => usernameLower.Contains(u.ToLowerInvariant()));
+            UnityEngine.Debug.LogFormat("Username {0} forbiddenWords {1}", username, string.Join(", ", forbiddenWordsInUsernames));
+            return !forbiddenWordsInUsernames.Any(usernameLower.Contains);
         }
     }
 }
