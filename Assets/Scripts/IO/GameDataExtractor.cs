@@ -92,6 +92,7 @@
                 this.Loaded = false;
                 this.Loading = true;
                 this.ExtractData();
+                this.Loading = false;
                 this.Loaded = true;
             }
             catch (Exception ex)
@@ -246,6 +247,11 @@
             if (string.IsNullOrEmpty(correctAnswer))
             {
                 throw new NoCorrectAnswerException();
+            }
+
+            if (this.ShuffleAnswers)
+            {
+                answers.Shuffle();
             }
 
             var correctAnswerIndex = answers.IndexOf(correctAnswer);
