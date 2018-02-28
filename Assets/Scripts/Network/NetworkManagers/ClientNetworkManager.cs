@@ -62,8 +62,6 @@
 
         private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
-
-        private string encryptionKey = SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
         
         private Timer_ExecuteMethodEverySeconds keepAliveTimer;
         private Timer_ExecuteMethodEverySeconds receiveNetworkMessagesTimer;
@@ -114,9 +112,6 @@
             
             this.ConfigureCommands();
             this.ConfigureClient();
-
-            this.OnConnectedEvent += (sender, args) => this.encryptionKey = SystemInfo.deviceUniqueIdentifier;
-            this.OnDisconnectedEvent += (sender, args) => this.encryptionKey = SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
 
             this.keepAliveTimer =
                 TimerUtils.ExecuteEvery(SendKeepAliveRequestDelayInSeconds, this.SendKeepAliveRequest);
@@ -207,7 +202,7 @@
                 NetworkTransportUtils.ReceiveMessageAsync(
                     (networkData) => 
                     {
-                        var key = this.IsConnected ? this.encryptionKey : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+                        var key = this.IsConnected ? SystemInfo.deviceUniqueIdentifier : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
                         EncryptionUtils.DecryptMessageAsync(
                             networkData.Message, 
                             key, 
@@ -394,11 +389,15 @@
 
         public void SendServerMessage(string data)
         {
+            var key = this.IsConnected ? SystemInfo.deviceUniqueIdentifier : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+
             EncryptionUtils.EncryptMessageAsync(
                 data, 
-                this.encryptionKey, 
+                key,
                 (encryptedMessage) => 
                 {
+                    Debug.LogFormat("Sending to server {0} Message {1}", Environment.NewLine, data);
+
                     NetworkTransportUtils.SendMessageAsync(
                         this.genericHostId,
                         this.connectionId,
