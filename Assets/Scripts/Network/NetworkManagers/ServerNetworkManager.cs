@@ -226,18 +226,22 @@
                 {
                     var connectionId = networkData.ConnectionId;
                     var key = this.IsConnected(connectionId) ? this.connectedClientsDeviceIds[connectionId] : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+                    //var key = SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
 
                     if (connectionId < 1)
                     {
                         return;
                     }
 
+                    Debug.LogFormat("Receiving from {1} {0} with key {2} {0}", Environment.NewLine, networkData.ConnectionId, key);
+
+
                     EncryptionUtils.DecryptMessageAsync(
                         networkData.Message, 
                         key, 
                         (decryptedMessage) => 
                         {
-                            Debug.LogFormat("Received from {1} {0} Message {2}", Environment.NewLine, networkData.ConnectionId, decryptedMessage);
+                            Debug.LogFormat("Received from {1} {0} with key {2} {0} Message {3}", Environment.NewLine, networkData.ConnectionId, key, decryptedMessage);
 
                             var decryptedMessageNetworkData = new NetworkData(connectionId, decryptedMessage, networkData.NetworkEventType);
                             this.ReceivedDataFromClientAsync(decryptedMessageNetworkData);
@@ -459,8 +463,8 @@
 
         public void SendClientMessage(int connectionId, string message)
         {
-            Debug.LogFormat("Sending to {1} {0} Message {2}", Environment.NewLine, connectionId, message);
             var key = this.IsConnected(connectionId) ? this.connectedClientsDeviceIds[connectionId] : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+            Debug.LogFormat("Sending to {1} {0} With key {2} {0} Message {3}", Environment.NewLine, connectionId, key, message);
             EncryptionUtils.EncryptMessageAsync(
                 message, 
                 key, 

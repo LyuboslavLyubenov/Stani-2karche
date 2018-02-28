@@ -62,7 +62,7 @@
 
         private int elapsedTimeSinceNetworkError = 0;
         private int networkErrorsCount = 0;
-        
+
         private Timer_ExecuteMethodEverySeconds keepAliveTimer;
         private Timer_ExecuteMethodEverySeconds receiveNetworkMessagesTimer;
         private Timer_ExecuteMethodEverySeconds validateConnectionTimer;
@@ -203,6 +203,7 @@
                     (networkData) => 
                     {
                         var key = this.IsConnected ? SystemInfo.deviceUniqueIdentifier : SecuritySettings.SecuritySettings.DEFAULT_ENCRYPTION_PASSWORD;
+                        Debug.LogFormat("Receiving from {1} {0} with key {2} {0}", Environment.NewLine, connectionId, key);
                         EncryptionUtils.DecryptMessageAsync(
                             networkData.Message, 
                             key, 
@@ -396,7 +397,7 @@
                 key,
                 (encryptedMessage) => 
                 {
-                    Debug.LogFormat("Sending to server {0} Message {1}", Environment.NewLine, data);
+                    Debug.LogFormat("Sending to server {0} with key {1} {0} Message {2}", Environment.NewLine, key, data);
 
                     NetworkTransportUtils.SendMessageAsync(
                         this.genericHostId,
