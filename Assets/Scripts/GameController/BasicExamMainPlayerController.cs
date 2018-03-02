@@ -82,6 +82,14 @@ namespace GameController
 
         private Process serverProcess;
 
+        private bool IsRunningServerLocally 
+        {
+            get 
+            {
+                return PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost");
+            }
+        }
+
         // ReSharper disable once ArrangeTypeMemberModifiers
         void Start()
         {
@@ -99,17 +107,15 @@ namespace GameController
             this.InitializeCommands();
             this.AttachEventHandlers();
 
-            if (PlayerPrefsEncryptionUtils.HasKey("MainPlayerHost"))
+            if (this.IsRunningServerLocally)
             {
-                PlayerPrefsEncryptionUtils.DeleteKey("MainPlayerHost");
-
-                //wait until server is loaded. starting the server takes about ~7 seconds on i7 + SSD.
-                this.CoroutineUtils.WaitForSeconds(10f, () => this.ConnectToServer("127.0.0.1"));
-                
+                Debug.Log("Running local server...");
                 this.serverProcess = GameServerUtils.StartServer("BasicExam");
+                this.ConnectToServer("127.0.0.1");
             }
             else
             {
+                Debug.Log("Searching for server...");
                 this.FindServerIpAndConnectToServer();
             }
 
@@ -118,6 +124,7 @@ namespace GameController
 
         private void OnFoundServerIP(string ip)
         {
+            Debug.Log("Found server ip " + ip);
             this.ConnectToServer(ip);
         }
 
@@ -208,6 +215,13 @@ namespace GameController
 
         private void OnDisconnectedFromServer(object sender, EventArgs args)
         {
+            if (this.IsRunningServerLocally)
+            {
+                this.LoadingUI.SetActive(true);
+                this.CoroutineUtils.WaitForSeconds(1f, () => this.ConnectToServer("127.0.0.1"));
+                return;    
+            }
+
             this.ChooseCategoryUIController.gameObject.SetActive(false);
             this.LoadingUI.SetActive(false);
             this.SecondsRemainingUIController.Paused = true;
@@ -273,11 +287,22 @@ namespace GameController
 
         private void OnTryingAgainToConnectToServer(object sender, EventArgs args)
         {
-            this.LoadingUI.SetActive(true);
+            if (this.IsRunningServerLocally)
+            {
+                this.ConnectToServer("127.0.0.1");
+            }
+            else
+            {
+                this.FindServerIpAndConnectToServer();
+            }
         }
 
         private void ConnectToServer(string ip)
         {
+            Debug.Log("Connecting to " + ip);
+
+            this.LoadingUI.SetActive(true);
+
             try
             {
                 ClientNetworkManager.Instance.ConnectToHost(ip);
