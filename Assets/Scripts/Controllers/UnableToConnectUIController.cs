@@ -37,5 +37,4 @@
             SceneManager.LoadScene("Lobby");
         }
     }
-
 }

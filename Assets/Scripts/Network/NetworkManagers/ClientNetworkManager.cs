@@ -254,6 +254,8 @@
 
         private IEnumerator ConnectedToServerCoroutine()
         {
+            Debug.Log("Conneted to the server");
+
             var username = this.GetUsername();
             var setUsernameCommand = NetworkCommandData.From<SetUsernameCommand>();
             setUsernameCommand.AddOption("Username", username);
@@ -347,6 +349,8 @@
                 this.Disconnect();
             }
 
+            Debug.Log("Connecting to " + ip);
+
             HostTopology topology = new HostTopology(this.connectionConfig, 2);
             this.genericHostId = NetworkTransport.AddHost(topology, 0);
 
@@ -357,11 +361,14 @@
 
             if (networkError == NetworkConnectionError.NoError)
             {
+                Debug.Log("Connected... does server senpai wants us to connect?");
+
                 this.isRunning = true;
                 ThreadUtils.Instance.RunOnMainThread(this.CheckCommandAllowedToConnectReceivedCoroutine());
             }
             else
             {
+                Debug.Log("Cant connect. Error " + networkError.ToString());
                 this.Disconnect();
             }
 
@@ -370,6 +377,8 @@
 
         public NetworkError Disconnect()
         {
+            Debug.Log("Disconecting from server");
+
             byte error = 0;
 
             NetworkTransport.Disconnect(this.genericHostId, this.connectionId, out error);

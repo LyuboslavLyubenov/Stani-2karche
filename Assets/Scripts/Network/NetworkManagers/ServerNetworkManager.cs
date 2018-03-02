@@ -327,6 +327,8 @@
 
         private void OnConnectedClient(NetworkData networkData)
         {
+            Debug.Log("Client " + networkData.ConnectionId + " connected");
+
             var connectionId = networkData.ConnectionId;
             var command = NetworkCommandData.From<SendDeviceIdToServerCommand>();
             this.SendClientCommand(connectionId, command);
@@ -334,6 +336,8 @@
         
         private void OnClientDisconnect(NetworkData networkData)
         {
+            Debug.Log("Client " + networkData.ConnectionId + " disconnected");
+
             //if disconnected remove from connected clients list
             var connectionId = networkData.ConnectionId;
 
